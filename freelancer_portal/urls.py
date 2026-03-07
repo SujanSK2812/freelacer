@@ -27,4 +27,8 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('bids/', include('bids.urls')),
     path("how-it-works/", views.how_it_works, name="how_it_works"),
+    path("Terms/", views.Terms, name="Terms"),
+    path("rivacy_policy/", views.privacy_policy, name="privacy_policy"),
+    path("contact/", views.contact, name="contact"),
+    path("about_us/", views.about_us, name="about_us"),
 ]

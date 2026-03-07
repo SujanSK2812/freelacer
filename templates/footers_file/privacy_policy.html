@@ -1,0 +1,561 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Privacy Policy - Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: #14a800;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #14a800;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .last-updated {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #475569;
+            margin-top: 1rem;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .content-card h2 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #14a800;
+        }
+
+        .content-card h3 {
+            font-size: 1.3rem;
+            color: #0f172a;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .content-card p {
+            color: #475569;
+            margin-bottom: 1rem;
+        }
+
+        .content-card ul, .content-card ol {
+            margin: 1rem 0 1.5rem 2rem;
+            color: #475569;
+        }
+
+        .content-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Privacy Badges */
+        .privacy-badges {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 0.75rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge i {
+            color: #14a800;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .data-table th {
+            background: #f1f5f9;
+            padding: 1rem;
+            text-align: left;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Cookie Preferences */
+        .cookie-preferences {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .cookie-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .cookie-option:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 24px;
+            background: #cbd5e1;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-switch.active {
+            background: #14a800;
+        }
+
+        .toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            left: 28px;
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: #14a800;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h4 {
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul li a:hover {
+            color: #14a800;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            color: #14a800;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .content-card {
+                padding: 1.5rem;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+            
+            .privacy-badges {
+                flex-direction: column;
+            }
+            
+            .badge {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Privacy Policy</h1>
+        <p>How we collect, use, and protect your information</p>
+        <div class="last-updated">
+            <i class="fas fa-calendar-alt"></i> Last Updated: March 7, 2026
+        </div>
+    </div>
+
+    <!-- Privacy Badges -->
+    <div class="privacy-badges">
+        <div class="badge">
+            <i class="fas fa-lock"></i> 256-bit Encryption
+        </div>
+        <div class="badge">
+            <i class="fas fa-eye"></i> No Third-party Tracking
+        </div>
+        <div class="badge">
+            <i class="fas fa-shield-alt"></i> GDPR Compliant
+        </div>
+        <div class="badge">
+            <i class="fas fa-database"></i> Data Protection
+        </div>
+    </div>
+
+    <!-- Introduction -->
+    <div class="content-card">
+        <h2>Our Commitment to Privacy</h2>
+        <p>At Freelancer Portal, we take your privacy seriously. This policy describes how we collect, use, and protect your personal information when you use our platform. By using our services, you consent to the practices described in this policy.</p>
+        <p>We comply with applicable data protection laws, including the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA).</p>
+    </div>
+
+    <!-- Information We Collect -->
+    <div class="content-card">
+        <h2>Information We Collect</h2>
+        
+        <h3>Information You Provide</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Examples</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Account Information</strong></td>
+                    <td>Name, email, password, phone</td>
+                    <td>Account creation and security</td>
+                </tr>
+                <tr>
+                    <td><strong>Profile Information</strong></td>
+                    <td>Skills, portfolio, work history</td>
+                    <td>Showcase to potential clients</td>
+                </tr>
+                <tr>
+                    <td><strong>Payment Information</strong></td>
+                    <td>Bank details, PayPal, card info</td>
+                    <td>Process payments (encrypted)</td>
+                </tr>
+                <tr>
+                    <td><strong>Communications</strong></td>
+                    <td>Messages, project details</td>
+                    <td>Facilitate work collaboration</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Information Collected Automatically</h3>
+        <ul>
+            <li><strong>Usage Data:</strong> Pages visited, time spent, features used</li>
+            <li><strong>Device Information:</strong> IP address, browser type, operating system</li>
+            <li><strong>Cookies:</strong> See our Cookie Preferences below</li>
+            <li><strong>Location Data:</strong> Approximate location based on IP</li>
+        </ul>
+    </div>
+
+    <!-- How We Use Information -->
+    <div class="content-card">
+        <h2>How We Use Your Information</h2>
+        <ul>
+            <li><strong>Provide Services:</strong> Create accounts, process payments, enable communication</li>
+            <li><strong>Improve Platform:</strong> Analyze usage to enhance user experience</li>
+            <li><strong>Security:</strong> Detect fraud, prevent abuse, ensure safety</li>
+            <li><strong>Communications:</strong> Send updates, notifications, and support messages</li>
+            <li><strong>Legal Compliance:</strong> Fulfill legal obligations</li>
+        </ul>
+    </div>
+
+    <!-- Information Sharing -->
+    <div class="content-card">
+        <h2>When We Share Information</h2>
+        <p>We do not sell your personal information. We may share information in these limited circumstances:</p>
+        
+        <h3>With Other Users</h3>
+        <p>When you communicate or work with clients/freelancers, necessary information is shared to facilitate the relationship.</p>
+        
+        <h3>Service Providers</h3>
+        <p>We work with trusted partners for payment processing, analytics, and customer support. They are bound by confidentiality agreements.</p>
+        
+        <h3>Legal Requirements</h3>
+        <p>We may disclose information if required by law or to protect rights and safety.</p>
+        
+        <h3>Business Transfers</h3>
+        <p>If Freelancer Portal is involved in a merger or acquisition, user information may be transferred.</p>
+    </div>
+
+    <!-- Cookie Preferences -->
+    <div class="content-card">
+        <h2>Cookie Preferences</h2>
+        <p>We use cookies to enhance your experience. You can control your preferences below:</p>
+        
+        <div class="cookie-preferences">
+            <div class="cookie-option">
+                <div>
+                    <strong>Essential Cookies</strong>
+                    <p style="margin: 0; font-size: 0.9rem;">Required for basic platform functionality</p>
+                </div>
+                <div class="toggle-switch active">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            
+            <div class="cookie-option">
+                <div>
+                    <strong>Analytics Cookies</strong>
+                    <p style="margin: 0; font-size: 0.9rem;">Help us improve our platform</p>
+                </div>
+                <div class="toggle-switch" onclick="this.classList.toggle('active')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            
+            <div class="cookie-option">
+                <div>
+                    <strong>Marketing Cookies</strong>
+                    <p style="margin: 0; font-size: 0.9rem;">Personalize advertisements</p>
+                </div>
+                <div class="toggle-switch" onclick="this.classList.toggle('active')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            
+            <div class="cookie-option">
+                <div>
+                    <strong>Functional Cookies</strong>
+                    <p style="margin: 0; font-size: 0.9rem;">Remember your preferences</p>
+                </div>
+                <div class="toggle-switch" onclick="this.classList.toggle('active')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+        
+        <p style="text-align: right; margin: 1rem 0 0;">
+            <a href="#" style="color: #14a800;">Save Preferences</a>
+        </p>
+    </div>
+
+    <!-- Data Security -->
+    <div class="content-card">
+        <h2>Data Security</h2>
+        <p>We implement industry-standard security measures:</p>
+        <ul>
+            <li><i class="fas fa-check" style="color: #14a800;"></i> 256-bit SSL encryption</li>
+            <li><i class="fas fa-check" style="color: #14a800;"></i> Regular security audits</li>
+            <li><i class="fas fa-check" style="color: #14a800;"></i> Two-factor authentication</li>
+            <li><i class="fas fa-check" style="color: #14a800;"></i> Secure data centers</li>
+            <li><i class="fas fa-check" style="color: #14a800;"></i> Employee training on data protection</li>
+        </ul>
+        <p>While we take every precaution, no online transmission is 100% secure. You share information at your own risk.</p>
+    </div>
+
+    <!-- Your Rights -->
+    <div class="content-card">
+        <h2>Your Rights</h2>
+        <p>Depending on your location, you may have these rights:</p>
+        <ul>
+            <li><strong>Access:</strong> Request a copy of your data</li>
+            <li><strong>Correction:</strong> Update inaccurate information</li>
+            <li><strong>Deletion:</strong> Request account deletion</li>
+            <li><strong>Restriction:</strong> Limit how we use your data</li>
+            <li><strong>Portability:</strong> Receive data in portable format</li>
+            <li><strong>Opt-out:</strong> Decline marketing communications</li>
+        </ul>
+        <p>To exercise your rights, contact us at privacy@freelancerportal.com. We respond within 30 days.</p>
+    </div>
+
+    <!-- Children's Privacy -->
+    <div class="content-card">
+        <h2>Children's Privacy</h2>
+        <p>Our services are not directed to individuals under 18. We do not knowingly collect information from minors. If we learn we have collected minor's information, we will delete it.</p>
+    </div>
+
+    <!-- International Transfers -->
+    <div class="content-card">
+        <h2>International Data Transfers</h2>
+        <p>We operate globally, which means your information may be transferred to and processed in countries with different data protection laws. We ensure appropriate safeguards through standard contractual clauses.</p>
+    </div>
+
+    <!-- Changes to Policy -->
+    <div class="content-card">
+        <h2>Changes to This Policy</h2>
+        <p>We may update this privacy policy periodically. We will notify you of significant changes via email or platform notice. The "Last Updated" date at the top indicates when changes take effect.</p>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="content-card">
+        <h2>Contact Us</h2>
+        <p>If you have questions about this privacy policy or your data:</p>
+        <ul>
+            <li><i class="fas fa-envelope"></i> sujanshettysk28@gmail.com</li>
+            <li><i class="fas fa-phone"></i> +91 9148937633</li>
+            <li><i class="fas fa-building"></i> KVG college of Engineering, Sulya,DK-574327</li>
+        </ul>
+        
+        <h3>Data Protection Officer</h3>
+        <p>For privacy-specific inquiries, contact our DPO: rohankmair94@gmail.com</p>
+    </div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+<script>
+    // Simple toggle functionality
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,449 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Terms of Service - Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: #14a800;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #14a800;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .last-updated {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #475569;
+            margin-top: 1rem;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .content-card h2 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #14a800;
+        }
+
+        .content-card h3 {
+            font-size: 1.3rem;
+            color: #0f172a;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .content-card h4 {
+            font-size: 1.1rem;
+            color: #0f172a;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        .content-card p {
+            color: #475569;
+            margin-bottom: 1rem;
+        }
+
+        .content-card ul, .content-card ol {
+            margin: 1rem 0 1.5rem 2rem;
+            color: #475569;
+        }
+
+        .content-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content-card strong {
+            color: #0f172a;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: #f0fdf4;
+            border-left: 4px solid #14a800;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: #166534;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .toc h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #0f172a;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .toc-item a {
+            color: #14a800;
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .toc-item a:hover {
+            background: #f0fdf4;
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: #14a800;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h4 {
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul li a:hover {
+            color: #14a800;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            color: #14a800;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .content-card {
+                padding: 1.5rem;
+            }
+            
+            .content-card h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+            
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Terms of Service</h1>
+        <p>Please read these terms carefully before using our platform</p>
+        <div class="last-updated">
+            <i class="fas fa-calendar-alt"></i> Last Updated: March 7, 2026
+        </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h3><i class="fas fa-list"></i> Table of Contents</h3>
+        <div class="toc-grid">
+            <div class="toc-item"><a href="#agreement">1. Agreement to Terms</a></div>
+            <div class="toc-item"><a href="#eligibility">2. Eligibility</a></div>
+            <div class="toc-item"><a href="#accounts">3. User Accounts</a></div>
+            <div class="toc-item"><a href="#services">4. Services</a></div>
+            <div class="toc-item"><a href="#payments">5. Payments & Fees</a></div>
+            <div class="toc-item"><a href="#conduct">6. User Conduct</a></div>
+            <div class="toc-item"><a href="#ip">7. Intellectual Property</a></div>
+            <div class="toc-item"><a href="#termination">8. Termination</a></div>
+            <div class="toc-item"><a href="#disclaimers">9. Disclaimers</a></div>
+            <div class="toc-item"><a href="#limitation">10. Limitation of Liability</a></div>
+            <div class="toc-item"><a href="#indemnification">11. Indemnification</a></div>
+            <div class="toc-item"><a href="#changes">12. Changes to Terms</a></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-card" id="agreement">
+        <h2>1. Agreement to Terms</h2>
+        <p>By accessing or using the Freelancer Portal website and services, you agree to be bound by these Terms of Service. If you do not agree to all of these terms, you may not access or use our services.</p>
+        <p>These terms constitute a legally binding agreement between you and Freelancer Portal regarding your use of our platform to connect with clients or freelancers.</p>
+    </div>
+
+    <div class="content-card" id="eligibility">
+        <h2>2. Eligibility</h2>
+        <p>By using our services, you represent and warrant that:</p>
+        <ul>
+            <li>You are at least 18 years of age</li>
+            <li>You have the legal capacity to enter into a binding contract</li>
+            <li>You are not located in a country that is subject to sanctions</li>
+            <li>You have not been previously suspended or removed from our services</li>
+            <li>All information you provide is accurate and complete</li>
+        </ul>
+    </div>
+
+    <div class="content-card" id="accounts">
+        <h2>3. User Accounts</h2>
+        <h3>Account Registration</h3>
+        <p>To use certain features, you must create an account. You are responsible for maintaining the security of your account and password. Freelancer Portal cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.</p>
+        
+        <h3>Account Types</h3>
+        <ul>
+            <li><strong>Client Accounts:</strong> For users hiring freelancers</li>
+            <li><strong>Freelancer Accounts:</strong> For users offering services</li>
+        </ul>
+
+        <div class="highlight-box">
+            <p><i class="fas fa-info-circle"></i> You may not create multiple accounts or transfer your account to another party without our consent.</p>
+        </div>
+    </div>
+
+    <div class="content-card" id="services">
+        <h2>4. Services</h2>
+        <p>Freelancer Portal provides an online platform connecting clients with freelancers. We facilitate:</p>
+        <ul>
+            <li>Project posting and discovery</li>
+            <li>Bidding and proposal submission</li>
+            <li>Communication between parties</li>
+            <li>Payment processing and escrow services</li>
+            <li>Dispute resolution</li>
+        </ul>
+        <p>We do not provide the services listed in projects; we simply provide the platform. All work is directly between clients and freelancers.</p>
+    </div>
+
+    <div class="content-card" id="payments">
+        <h2>5. Payments & Fees</h2>
+        <h3>For Clients</h3>
+        <ul>
+            <li>Posting projects is free</li>
+            <li>Funds are held in escrow until project completion</li>
+        </ul>
+
+        <h3>For Freelancers</h3>
+        <ul>
+            <li>Free to create profile and browse projects</li>
+            <li>Service fee: 10% of project earnings</li>
+            <li>Withdrawal fees may apply based on payment method</li>
+        </ul>
+
+        <h3>Payment Terms</h3>
+        <p>All payments are processed securely through our payment partners. Freelancer Portal reserves the right to change fees with 30 days notice.</p>
+    </div>
+
+    <div class="content-card" id="conduct">
+        <h2>6. User Conduct</h2>
+        <p>You agree not to:</p>
+        <ul>
+            <li>Violate any laws or regulations</li>
+            <li>Infringe on intellectual property rights</li>
+            <li>Post false, inaccurate, or misleading information</li>
+            <li>Harass, abuse, or harm others</li>
+            <li>Circumvent our fee structure</li>
+            <li>Share account credentials</li>
+            <li>Use the platform for unauthorized advertising</li>
+            <li>Attempt to manipulate our system</li>
+        </ul>
+    </div>
+
+    <div class="content-card" id="ip">
+        <h2>7. Intellectual Property</h2>
+        <h3>Your Content</h3>
+        <p>You retain ownership of any intellectual property you share on our platform. By posting content, you grant us a license to display and distribute it on our services.</p>
+        
+        <h3>Our Property</h3>
+        <p>The Freelancer Portal name, logo, and platform design are our trademarks. You may not use them without permission.</p>
+        
+        <h3>Work Product</h3>
+        <p>Unless otherwise agreed, freelancers retain rights to their work until payment is received. Upon full payment, clients receive the rights as specified in the project agreement.</p>
+    </div>
+
+    <div class="content-card" id="termination">
+        <h2>8. Termination</h2>
+        <p>We may terminate or suspend your account immediately, without prior notice, for conduct that we believe violates these terms or is harmful to other users.</p>
+        <p>You may terminate your account at any time by contacting support. Upon termination, your right to use the services will immediately cease.</p>
+    </div>
+
+    <div class="content-card" id="disclaimers">
+        <h2>9. Disclaimers</h2>
+        <p>Our services are provided "as is" without warranties of any kind. We do not guarantee:</p>
+        <ul>
+            <li>That you will find work or hire freelancers</li>
+            <li>The quality of work provided by freelancers</li>
+            <li>That our platform will be error-free or uninterrupted</li>
+            <li>The accuracy of user-provided information</li>
+        </ul>
+    </div>
+
+    <div class="content-card" id="limitation">
+        <h2>10. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by law, Freelancer Portal shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or goodwill.</p>
+        <p>Our total liability shall not exceed the amount you paid us in the past 12 months.</p>
+    </div>
+
+    <div class="content-card" id="indemnification">
+        <h2>11. Indemnification</h2>
+        <p>You agree to indemnify and hold Freelancer Portal harmless from any claims, damages, losses, and expenses arising from your use of our services, violation of these terms, or infringement of any rights.</p>
+    </div>
+
+    <div class="content-card" id="changes">
+        <h2>12. Changes to Terms</h2>
+        <p>We may modify these terms at any time. We will provide notice of significant changes. Your continued use after changes constitutes acceptance.</p>
+        
+        <h3>Contact Us</h3>
+        <p>If you have questions about these terms, please contact us at:</p>
+        <p><i class="fas fa-envelope"></i> sujanshettysk28@gmail.com</p>
+    </div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>
