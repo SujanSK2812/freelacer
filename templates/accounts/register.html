@@ -1,0 +1,626 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register as {{ role|title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #2d3a2d;
+        }
+
+        /* Header Styles */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: #14a800;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #404145;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: #14a800;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #14a800;
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+        }
+
+        .how-it-works {
+            background: #f0f5f0;
+            padding: 0.5rem 1rem !important;
+            border-radius: 40px;
+        }
+
+        .how-it-works:hover {
+            background: #14a800 !important;
+            color: white !important;
+        }
+
+        .how-it-works:hover::after {
+            display: none;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .register-container {
+            background: white;
+            max-width: 500px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section */
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .role-icon {
+            font-size: 2.5rem;
+            color: #14a800;
+            background: #f0f7f0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .register-header h2 {
+            color: #1a2b1a;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .role-highlight {
+            color: #14a800;
+            position: relative;
+        }
+
+        .role-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #14a800;
+        }
+
+        .register-header p {
+            color: #5e6b7e;
+            font-size: 1rem;
+        }
+
+        /* Message Styles */
+        .message {
+            background: #f0f7f0;
+            border-left: 4px solid #14a800;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .message.error {
+            background: #fee9e7;
+            border-left-color: #bc1c1e;
+        }
+
+        .message.error i {
+            color: #bc1c1e;
+        }
+
+        .message.success {
+            background: #f0fff4;
+            border-left-color: #28a745;
+        }
+
+        .message i {
+            color: #14a800;
+        }
+
+        /* Form Styles */
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #2d3a2d;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group label i {
+            color: #14a800;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            padding: 1rem 1.2rem;
+            border: 2px solid #e0e6e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            outline: none;
+            background: #f8f9fc;
+        }
+
+        .form-group input:hover {
+            border-color: #b3c7b3;
+        }
+
+        .form-group input:focus {
+            border-color: #14a800;
+            box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #9aa6b5;
+        }
+
+        /* Password Strength */
+        .password-strength {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .strength-bar {
+            height: 4px;
+            flex: 1;
+            background: #14a800;
+            border-radius: 2px;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        .password-hint {
+            color: #5e6b7e;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Register Button */
+        .register-btn {
+            background: #14a800;
+            color: white;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .register-btn:hover {
+            background: #108700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(20, 168, 0, 0.3);
+        }
+
+        .register-btn i {
+            transition: transform 0.2s ease;
+        }
+
+        .register-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .login-link p {
+            color: #5e6b7e;
+            font-size: 0.95rem;
+        }
+
+        .login-link a {
+            color: #14a800;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.25rem;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Terms */
+        .terms {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .terms p {
+            color: #9aa6b5;
+            font-size: 0.85rem;
+        }
+
+        .terms a {
+            color: #5e6b7e;
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            color: #14a800;
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: #14a800;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h4 {
+            color: #2d3a2d;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .footer-section p {
+            color: #5e6b7e;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            text-decoration: none;
+            color: #5e6b7e;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #14a800;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #5e6b7e;
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #14a800;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-bottom p {
+            color: #5e6b7e;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .register-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .register-header h2 {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 1.5rem;
+            }
+            
+            .register-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .role-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .form-group input {
+                padding: 0.875rem 1rem;
+            }
+            
+            .register-btn {
+                padding: 0.875rem 1.25rem;
+                font-size: 1rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        /* Selection Color */
+        ::selection {
+            background: #14a800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="register-container">
+        <div class="register-header">
+            <i class="{% if role == 'client' %}fas fa-user-tie{% else %}fas fa-laptop-code{% endif %} role-icon"></i>
+            <h2>Register as <span class="role-highlight">{{ role|title }}</span></h2>
+            <p>{% if role == 'client' %}Find talented freelancers for your projects{% else %}Start your freelancing journey today{% endif %}</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    <i class="fas fa-info-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="register-form">
+            {% csrf_token %}
+            <input type="hidden" name="role" value="{{ role }}">
+
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i>
+                    <span>Username</span>
+                </label>
+                <input type="text" 
+                       name="username" 
+                       id="username" 
+                       placeholder="Enter your username" 
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email Address</span>
+                </label>
+                <input type="email" 
+                       name="email" 
+                       id="email" 
+                       placeholder="Enter your email" 
+                       required>
+            </div>
+            <div class="form-group">
+    <label for="phone">
+        <i class="fas fa-phone"></i>
+        <span>Phone Number</span>
+    </label>
+    <input type="text" 
+           name="phone" 
+           id="phone" 
+           placeholder="Enter your phone number" 
+           pattern="[0-9]{10}" 
+           maxlength="10"
+           required>
+    <small class="password-hint">Enter 10 digit mobile number</small>
+</div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i>
+                    <span>Password</span>
+                </label>
+                <input type="password" 
+                       name="password" 
+                       id="password" 
+                       placeholder="Create a password" 
+                       required>
+                <div class="password-strength">
+                    <div class="strength-bar"></div>
+                    <div class="strength-bar"></div>
+                    <div class="strength-bar"></div>
+                </div>
+                <small class="password-hint">Use at least 8 characters with letters and numbers</small>
+            </div>
+
+            <button type="submit" class="register-btn">
+                <span>Create Account</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="login-link">
+            <p>Already have an account? <a href="/login/">Sign In</a></p>
+        </div>
+
+        <div class="terms">
+            <p>By registering, you agree to our <a href="/terms/">Terms of Service</a> and <a href="/privacy/">Privacy Policy</a></p>
+        </div>
+    </div>
+</main>
+
+{% include 'includes/footer.html' %}
+<script>
+// Mobile menu toggle
+document.querySelector('.mobile-menu')?.addEventListener('click', function() {
+    document.querySelector('.nav-links').classList.toggle('show');
+});
+
+// Password strength indicator
+document.getElementById('password')?.addEventListener('input', function(e) {
+    const password = e.target.value;
+    const bars = document.querySelectorAll('.strength-bar');
+    let strength = 0;
+    
+    if (password.length >= 8) strength++;
+    if (password.match(/[A-Z]/)) strength++;
+    if (password.match(/[0-9]/)) strength++;
+    
+    bars.forEach((bar, index) => {
+        if (index < strength) {
+            bar.style.background = index === 0 ? '#ff4444' : index === 1 ? '#ffbb33' : '#00C851';
+            bar.style.opacity = '1';
+        } else {
+            bar.style.opacity = '0.3';
+        }
+    });
+});
+</script>
+
+</body>
+</html>

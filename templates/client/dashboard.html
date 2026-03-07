@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Dashboard</title>
+    <link rel="stylesheet" href="{% static 'client/dashboard.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<nav>
+    <h2>Client Panel</h2>
+    <a href="/">Home</a>
+</nav>
+
+<section class="content">
+    <h1>Welcome, {{ request.user.username }}</h1>
+    <p>This is Client Dashboard</p>
+</section>
+
+</body>
+</html>

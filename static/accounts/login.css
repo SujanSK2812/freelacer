@@ -1,0 +1,251 @@
+/* static/accounts/login.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #f8f9fc 0%, #f1f4f9 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.login-container {
+    background: white;
+    max-width: 420px;
+    width: 100%;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.5s ease-out;
+    transition: all 0.3s ease;
+}
+
+.login-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(20, 168, 0, 0.15);
+}
+
+.login-container h2 {
+    color: #003912;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.login-container h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: #14a800;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.login-container:hover h2::after {
+    width: 100px;
+}
+
+.error {
+    background: #fee9e7;
+    color: #bc1c1e;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    text-align: center;
+    border-left: 4px solid #bc1c1e;
+    animation: slideIn 0.3s ease;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+input {
+    padding: 1rem 1.25rem;
+    border: 2px solid #e0e6e0;
+    border-radius: 40px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    background: #f8f9fc;
+    color: #404145;
+}
+
+input::placeholder {
+    color: #9aa6b5;
+    transition: opacity 0.3s ease;
+}
+
+input:hover {
+    border-color: #b3c7b3;
+    background: white;
+}
+
+input:focus {
+    border-color: #14a800;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
+}
+
+button {
+    background: #14a800;
+    color: white;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+button:hover {
+    background: #108700;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(20, 168, 0, 0.3);
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.forgot-password a {
+    color: #5e6b7e;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.forgot-password a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #14a800;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: right;
+}
+
+.forgot-password a:hover {
+    color: #14a800;
+}
+
+.forgot-password a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e6e0;
+}
+
+.signup-link p {
+    color: #5e6b7e;
+    font-size: 0.95rem;
+}
+
+.signup-link a {
+    color: #14a800;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.signup-link a:hover {
+    color: #108700;
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .login-container h2 {
+        font-size: 1.75rem;
+    }
+    
+    input, button {
+        padding: 0.9rem 1.1rem;
+    }
+}
+
+::selection {
+    background: #14a800;
+    color: white;
+}

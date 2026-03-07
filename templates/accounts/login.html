@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="login-container">
+        <h2>Login</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="forgot-password">
+            <a href="/password-reset/">Forgot Password?</a>
+        </div>
+
+        <div class="signup-link">
+            <p>Don't have an account? <a href="/register/">Sign Up</a></p>
+        </div>
+    </div>
+</main>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

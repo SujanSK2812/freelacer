@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="{% static 'accounts/verify_otp.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="otp-container">
+    <h2>Email Verification</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="otp" placeholder="Enter 6 Digit OTP" required>
+        <button type="submit">Verify Account</button>
+    </form>
+</div>
+
+</body>
+</html>

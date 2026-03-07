@@ -1,0 +1,204 @@
+/* static/pages/how-it-works.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #f8f9fc 0%, #f1f4f9 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    padding: 2rem 1rem;
+}
+
+.how-it-works-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.how-it-works-container h1 {
+    text-align: center;
+    color: #003912;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin: 4rem 0;
+}
+
+.step-card {
+    background: white;
+    padding: 2.5rem 2rem;
+    border-radius: 24px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(20, 168, 0, 0.15);
+}
+
+.step-number {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #14a800;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(20, 168, 0, 0.3);
+}
+
+.step-card i {
+    font-size: 3rem;
+    color: #14a800;
+    margin: 1.5rem 0 1rem;
+    transition: transform 0.3s ease;
+}
+
+.step-card:hover i {
+    transform: scale(1.2);
+}
+
+.step-card h3 {
+    font-size: 1.5rem;
+    color: #003912;
+    margin-bottom: 1rem;
+}
+
+.step-card p {
+    color: #5e6b7e;
+    line-height: 1.6;
+}
+
+.cta-section {
+    text-align: center;
+    background: white;
+    padding: 4rem;
+    border-radius: 24px;
+    margin-top: 3rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.cta-section h2 {
+    font-size: 2rem;
+    color: #003912;
+    margin-bottom: 2rem;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #14a800;
+    color: white;
+    border: 2px solid #14a800;
+}
+
+.btn-primary:hover {
+    background: #108700;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(20, 168, 0, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #14a800;
+    border: 2px solid #14a800;
+}
+
+.btn-secondary:hover {
+    background: #14a800;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(20, 168, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .how-it-works-container h1 {
+        font-size: 2rem;
+    }
+    
+    .steps-grid {
+        gap: 1.5rem;
+        margin: 3rem 0;
+    }
+    
+    .cta-section {
+        padding: 3rem 2rem;
+    }
+    
+    .cta-section h2 {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .how-it-works-container h1 {
+        font-size: 1.75rem;
+    }
+    
+    .step-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .step-card i {
+        font-size: 2.5rem;
+    }
+    
+    .step-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .cta-section {
+        padding: 2rem 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+::selection {
+    background: #14a800;
+    color: white;
+}

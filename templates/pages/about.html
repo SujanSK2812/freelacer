@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About Us - Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'pages/about.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="about-container">
+        <div class="about-hero">
+            <h1>About Freelancer Portal</h1>
+            <p>Connecting talented freelancers with amazing clients since 2024</p>
+        </div>
+
+        <div class="mission-section">
+            <h2>Our Mission</h2>
+            <p>To create a platform where talented professionals can find meaningful work and businesses can access top-tier talent effortlessly.</p>
+        </div>
+
+        <div class="values-section">
+            <h2>Our Core Values</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <h3>Trust</h3>
+                    <p>Building reliable connections between clients and freelancers</p>
+                </div>
+                <div class="value-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Quality</h3>
+                    <p>Maintaining high standards for all projects and professionals</p>
+                </div>
+                <div class="value-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Security</h3>
+                    <p>Ensuring safe and secure transactions for everyone</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h2>Our Team</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <img src="{% static 'images/team1.jpg' %}" alt="Team Member">
+                    <h3>John Smith</h3>
+                    <p>CEO & Founder</p>
+                </div>
+                <div class="team-card">
+                    <img src="{% static 'images/team2.jpg' %}" alt="Team Member">
+                    <h3>Sarah Johnson</h3>
+                    <p>Head of Operations</p>
+                </div>
+                <div class="team-card">
+                    <img src="{% static 'images/team3.jpg' %}" alt="Team Member">
+                    <h3>Mike Williams</h3>
+                    <p>Technical Lead</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

@@ -1,0 +1,361 @@
+/* static/accounts/select_role.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #66785F 0%, #91AC8C 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.role-container {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 3rem;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.6s ease-out;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.role-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 50px rgba(102, 120, 95, 0.3);
+}
+
+.role-container h2 {
+    color: #2C3A2B;
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.75rem;
+    letter-spacing: -0.5px;
+}
+
+.role-container h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: #91AC8C;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.role-container:hover h2::after {
+    width: 120px;
+}
+
+.role-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.role-card {
+    background: linear-gradient(145deg, #ffffff, #f5f7f5);
+    padding: 3rem 2rem;
+    border-radius: 24px;
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+    transition: all 0.4s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(102, 120, 95, 0.1);
+}
+
+.role-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #66785F, #91AC8C, #B2C9AD);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.role-card:hover::before {
+    transform: translateX(0);
+}
+
+.role-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: #91AC8C;
+    box-shadow: 0 30px 40px rgba(102, 120, 95, 0.2);
+    background: white;
+}
+
+.role-card i {
+    font-size: 3.5rem;
+    color: #66785F;
+    margin-bottom: 1.5rem;
+    transition: all 0.4s ease;
+}
+
+.role-card:hover i {
+    transform: scale(1.2) rotate(5deg);
+    color: #91AC8C;
+}
+
+.role-card h3 {
+    font-size: 1.8rem;
+    color: #2C3A2B;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.role-card:hover h3 {
+    color: #66785F;
+}
+
+.role-card p {
+    color: #5B6E5A;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* Card-specific icon rotations */
+.role-card:first-child:hover i {
+    transform: scale(1.2) rotate(-5deg);
+}
+
+.role-card:last-child:hover i {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .role-container {
+        padding: 2.5rem;
+        margin: 1rem;
+    }
+    
+    .role-container h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .role-options {
+        gap: 1.5rem;
+    }
+    
+    .role-card {
+        padding: 2.5rem 1.5rem;
+    }
+    
+    .role-card i {
+        font-size: 3rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .role-card h3 {
+        font-size: 1.6rem;
+    }
+    
+    .role-card p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 0.5rem;
+    }
+    
+    .role-container {
+        padding: 2rem 1.2rem;
+    }
+    
+    .role-container h2 {
+        font-size: 1.6rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .role-container h2::after {
+        width: 60px;
+        height: 3px;
+    }
+    
+    .role-container:hover h2::after {
+        width: 90px;
+    }
+    
+    .role-options {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+    
+    .role-card {
+        padding: 2rem 1.2rem;
+    }
+    
+    .role-card i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .role-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .role-card p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+    .role-container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .role-container h2 {
+        font-size: 1.4rem;
+    }
+    
+    .role-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .role-card i {
+        font-size: 2.2rem;
+    }
+    
+    .role-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .role-card p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Selection color */
+::selection {
+    background: #91AC8C;
+    color: white;
+}
+
+/* Focus states for accessibility */
+.role-card:focus-visible {
+    outline: 3px solid #91AC8C;
+    outline-offset: 4px;
+}
+
+/* Optional: Add decorative background pattern */
+.role-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(145, 172, 140, 0.05) 0%, transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.role-container > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Loading animation for cards (optional) */
+.role-card {
+    animation: cardAppear 0.6s ease-out backwards;
+}
+
+.role-card:first-child {
+    animation-delay: 0.2s;
+}
+
+.role-card:last-child {
+    animation-delay: 0.4s;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover glow effect */
+.role-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 24px;
+    box-shadow: 0 0 20px rgba(145, 172, 140, 0);
+    transition: box-shadow 0.3s ease;
+    pointer-events: none;
+}
+
+.role-card:hover::after {
+    box-shadow: 0 0 30px rgba(145, 172, 140, 0.3);
+}
+
+/* Optional: Add subtle texture to background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path d="M20 20 L80 20 L80 80 L20 80 Z" fill="none" stroke="white" stroke-width="1"/></svg>');
+    pointer-events: none;
+}

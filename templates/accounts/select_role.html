@@ -1,0 +1,425 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Role</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #2d3a2d;
+        }
+
+        /* Header Styles */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: #14a800;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #404145;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: #14a800;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #14a800;
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+        }
+
+        .how-it-works {
+            background: #f0f5f0;
+            padding: 0.5rem 1rem !important;
+            border-radius: 40px;
+        }
+
+        .how-it-works:hover {
+            background: #14a800 !important;
+            color: white !important;
+        }
+
+        .how-it-works:hover::after {
+            display: none;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .role-container {
+            background: white;
+            max-width: 900px;
+            width: 100%;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.6s ease-out;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .role-container h2 {
+            color: #1a2b1a;
+            font-size: 2.2rem;
+            margin-bottom: 2.5rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .role-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #14a800;
+            border-radius: 2px;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .role-card {
+            background: #f8f9fc;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: inherit;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px);
+            border-color: #14a800;
+            box-shadow: 0 20px 30px rgba(20, 168, 0, 0.15);
+            background: white;
+        }
+
+        .role-card i {
+            font-size: 3.5rem;
+            color: #14a800;
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover i {
+            transform: scale(1.2);
+        }
+
+        .role-card h3 {
+            font-size: 1.8rem;
+            color: #1a2b1a;
+            font-weight: 600;
+        }
+
+        .role-card p {
+            color: #5e6b7e;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: #14a800;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h4 {
+            color: #2d3a2d;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .footer-section p {
+            color: #5e6b7e;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            text-decoration: none;
+            color: #5e6b7e;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #14a800;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #5e6b7e;
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #14a800;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-bottom p {
+            color: #5e6b7e;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .nav-links.show {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 2rem;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .role-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .role-container h2 {
+                font-size: 1.8rem;
+            }
+            
+            .role-options {
+                gap: 1.5rem;
+            }
+            
+            .role-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .role-card h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .role-container {
+                padding: 1.5rem;
+            }
+            
+            .role-container h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .role-options {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .role-card {
+                padding: 1.5rem;
+            }
+            
+            .role-card i {
+                font-size: 2.5rem;
+            }
+            
+            .role-card h3 {
+                font-size: 1.3rem;
+            }
+            
+            .role-card p {
+                font-size: 0.95rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        /* Selection Color */
+        ::selection {
+            background: #14a800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="role-container">
+        <h2>Join as a Client or Freelancer</h2>
+
+        <div class="role-options">
+            <a href="{% url 'select_role' %}?role=client" class="role-card">
+                <i class="fas fa-user-tie"></i>
+                <h3>I'm a Client</h3>
+                <p>Hire talent for a project</p>
+            </a>
+
+            <a href="{% url 'select_role' %}?role=freelancer" class="role-card">
+                <i class="fas fa-laptop-code"></i>
+                <h3>I'm a Freelancer</h3>
+                <p>Find work and grow your career</p>
+            </a>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+{% include 'includes/footer.html' %}
+<script>
+// Mobile menu toggle
+document.querySelector('.mobile-menu')?.addEventListener('click', function() {
+    document.querySelector('.nav-links').classList.toggle('show');
+});
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(event) {
+    const navLinks = document.querySelector('.nav-links');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    
+    if (navLinks?.classList.contains('show')) {
+        if (!navLinks.contains(event.target) && !mobileMenu.contains(event.target)) {
+            navLinks.classList.remove('show');
+        }
+    }
+});
+</script>
+
+</body>
+</html>
