@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ job.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#f6f7f9;
+margin:0;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+
+.job-card{
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+margin-bottom:20px;
+}
+
+.job-title{
+font-size:28px;
+margin-bottom:10px;
+}
+
+.job-meta{
+display:flex;
+gap:20px;
+color:#666;
+font-size:14px;
+margin-bottom:20px;
+}
+
+.job-budget{
+font-weight:bold;
+color:#108a00;
+}
+
+.section-title{
+font-size:18px;
+margin-top:20px;
+margin-bottom:10px;
+}
+
+.job-description{
+line-height:1.6;
+color:#444;
+}
+
+.skills{
+margin-top:10px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.skill{
+background:#f1f3f6;
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+}
+
+.apply-btn{
+margin-top:25px;
+display:inline-block;
+background:#108a00;
+color:white;
+padding:10px 20px;
+border-radius:6px;
+text-decoration:none;
+font-weight:bold;
+}
+
+.apply-btn:hover{
+background:#0e7600;
+}
+
+.client-box{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.client-box h3{
+margin-bottom:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="container">
+
+<div class="job-card">
+
+<h1 class="job-title">{{ job.title }}</h1>
+
+<div class="job-meta">
+
+<span><i class="fas fa-user"></i> {{ job.client.username }}</span>
+
+<span class="job-budget"><i class="fas fa-dollar-sign"></i> {{ job.budget }}</span>
+
+<span><i class="fas fa-clock"></i> Posted {{ job.created_at|timesince }} ago</span>
+
+</div>
+
+<div class="section-title">Job Description</div>
+
+<p class="job-description">
+{{ job.description }}
+</p>
+
+<div class="section-title">Skills Required</div>
+
+<div class="skills">
+
+{% for skill in job.skills.split "," %}
+
+<span class="skill">{{ skill }}</span>
+
+{% endfor %}
+
+</div>
+
+<a href="{% url 'apply_job' job.id %}" class="apply-btn">
+Apply for this Job
+</a>
+
+</div>
+
+
+<div class="client-box">
+
+<h3>About the Client</h3>
+
+<p>Client Name: {{ job.client.username }}</p>
+
+<p>Member since: {{ job.client.date_joined|date:"Y" }}</p>
+
+<p>More projects from this client coming soon.</p>
+
+</div>
+
+</div>
+
+</body>
+</html>

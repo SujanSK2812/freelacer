@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import home
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
@@ -25,10 +27,14 @@ urlpatterns = [
     path('client/', include('client.urls')),
     path('freelancer/', include('freelancer.urls')),
     path('projects/', include('projects.urls')),
-    path('bids/', include('bids.urls')),
     path("how-it-works/", views.how_it_works, name="how_it_works"),
     path("Terms/", views.Terms, name="Terms"),
     path("rivacy_policy/", views.privacy_policy, name="privacy_policy"),
     path("contact/", views.contact, name="contact"),
     path("about_us/", views.about_us, name="about_us"),
-]
+    path("how_to_find_work/", views.how_to_find_work, name="how_to_find_work"),
+    path("freelancer_tips/", views.freelancer_tips, name="freelancer_tips"),
+    path("create_profile/", views.create_profile, name="create_profile"),
+    # path("browse_projects/", views.browse_projects, name="browse_projects"),
+    
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

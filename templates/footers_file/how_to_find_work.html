@@ -1,0 +1,1042 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <title>How to Find Work - Freelancer Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        line-height: 1.6;
+      }
+
+      /* Header */
+      nav {
+        background: white;
+        padding: 1rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      nav h2 {
+        color: #14a800;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #475569;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: #14a800;
+      }
+
+      /* Main Container */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+      }
+
+      /* Page Header */
+      .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .page-header h1 {
+        font-size: 2.5rem;
+        color: #0f172a;
+        margin-bottom: 1rem;
+      }
+
+      .page-header p {
+        color: #64748b;
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        background: linear-gradient(135deg, #14a80010, #0f172a05);
+        border-radius: 30px;
+        padding: 3rem;
+        margin-bottom: 3rem;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 3rem;
+      }
+
+      .hero-content {
+        flex: 1;
+      }
+
+      .hero-content h2 {
+        font-size: 2rem;
+        color: #0f172a;
+        margin-bottom: 1rem;
+      }
+
+      .hero-content p {
+        color: #475569;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .hero-stat {
+        text-align: center;
+      }
+
+      .hero-stat .number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #14a800;
+        line-height: 1.2;
+      }
+
+      .hero-stat .label {
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      .hero-image {
+        flex: 1;
+        text-align: center;
+      }
+
+      .hero-image i {
+        font-size: 8rem;
+        color: #14a800;
+        opacity: 0.8;
+      }
+
+      /* Steps Section */
+      .section-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .section-title h2 {
+        font-size: 2rem;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+      }
+
+      .section-title p {
+        color: #64748b;
+      }
+
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .step-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .step-card:hover {
+        transform: translateY(-5px);
+        border-color: #14a800;
+        box-shadow: 0 10px 30px rgba(20, 168, 0, 0.1);
+      }
+
+      .step-number {
+        position: absolute;
+        top: -15px;
+        left: 2rem;
+        width: 40px;
+        height: 40px;
+        background: #14a800;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 10px rgba(20, 168, 0, 0.3);
+      }
+
+      .step-card i {
+        font-size: 2.5rem;
+        color: #14a800;
+        margin: 1.5rem 0 1rem;
+      }
+
+      .step-card h3 {
+        font-size: 1.3rem;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+      }
+
+      .step-card p {
+        color: #64748b;
+        font-size: 0.95rem;
+      }
+
+      /* Profile Tips Section */
+      .profile-tips {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        margin-bottom: 3rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .tip-item {
+        display: flex;
+        gap: 1rem;
+        align-items: start;
+      }
+
+      .tip-icon {
+        width: 40px;
+        height: 40px;
+        background: #f0fdf4;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #14a800;
+        flex-shrink: 0;
+      }
+
+      .tip-content h4 {
+        font-size: 1.1rem;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+      }
+
+      .tip-content p {
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      /* Bidding Strategies */
+      .bidding-section {
+        background: linear-gradient(145deg, white, #f8fafc);
+        border-radius: 24px;
+        padding: 2.5rem;
+        margin-bottom: 3rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      .bidding-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .bidding-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .bidding-card h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+        color: #0f172a;
+        margin-bottom: 1rem;
+      }
+
+      .bidding-card h4 i {
+        color: #14a800;
+      }
+
+      .bidding-card ul {
+        list-style: none;
+      }
+
+      .bidding-card ul li {
+        margin-bottom: 0.75rem;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .bidding-card ul li i {
+        color: #14a800;
+        font-size: 0.9rem;
+      }
+
+      .bidding-card.do ul li i {
+        color: #14a800;
+      }
+
+      .bidding-card.dont ul li i {
+        color: #ef4444;
+      }
+
+      /* Success Stories */
+      .stories-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 3rem 0;
+      }
+
+      .story-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s;
+      }
+
+      .story-card:hover {
+        transform: translateY(-5px);
+        border-color: #14a800;
+      }
+
+      .story-avatar {
+        width: 60px;
+        height: 60px;
+        background: #f0fdf4;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        color: #14a800;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .story-card h4 {
+        font-size: 1.2rem;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+      }
+
+      .story-role {
+        color: #14a800;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .story-quote {
+        color: #475569;
+        font-style: italic;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+      }
+
+      .story-stats {
+        display: flex;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .story-stat {
+        text-align: center;
+      }
+
+      .story-stat .value {
+        font-weight: 700;
+        color: #0f172a;
+      }
+
+      .story-stat .label {
+        font-size: 0.8rem;
+        color: #64748b;
+      }
+
+      /* Resources Section */
+      .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .resource-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        text-align: center;
+        transition: all 0.3s;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .resource-card:hover {
+        border-color: #14a800;
+        transform: translateY(-3px);
+      }
+
+      .resource-card i {
+        font-size: 2rem;
+        color: #14a800;
+        margin-bottom: 1rem;
+      }
+
+      .resource-card h4 {
+        font-size: 1.1rem;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+      }
+
+      .resource-card p {
+        color: #64748b;
+        font-size: 0.85rem;
+      }
+
+      /* FAQ Section */
+      .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .faq-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .faq-item h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #0f172a;
+        margin-bottom: 0.75rem;
+      }
+
+      .faq-item h4 i {
+        color: #14a800;
+      }
+
+      .faq-item p {
+        color: #475569;
+        font-size: 0.95rem;
+        margin-left: 2rem;
+      }
+
+      /* CTA Section */
+      .cta-section {
+        background: white;
+        border-radius: 30px;
+        padding: 3rem;
+        text-align: center;
+        margin: 3rem 0;
+        border: 1px solid #e2e8f0;
+      }
+
+      .cta-section h2 {
+        font-size: 2rem;
+        color: #0f172a;
+        margin-bottom: 1rem;
+      }
+
+      .cta-section p {
+        color: #64748b;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        padding: 1rem 2.5rem;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.2s;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: #14a800;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #108700;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(20, 168, 0, 0.3);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #14a800;
+        border: 2px solid #14a800;
+        margin-left: 1rem;
+      }
+
+      .btn-secondary:hover {
+        background: #f0fdf4;
+        transform: translateY(-2px);
+      }
+
+      /* Footer */
+      footer {
+        background: white;
+        padding: 3rem 5% 1.5rem;
+        margin-top: 4rem;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-section h3 {
+        color: #14a800;
+        margin-bottom: 1rem;
+      }
+
+      .footer-section h4 {
+        color: #0f172a;
+        margin-bottom: 1rem;
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-section ul li a {
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      .footer-section ul li a:hover {
+        color: #14a800;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .social-links a {
+        color: #64748b;
+        font-size: 1.2rem;
+      }
+
+      .social-links a:hover {
+        color: #14a800;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e2e8f0;
+        color: #64748b;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .steps-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .tips-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .resources-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .hero-section {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .hero-stats {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .steps-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tips-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .bidding-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stories-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .faq-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .resources-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .page-header h1 {
+          font-size: 2rem;
+        }
+
+        .hero-stats {
+          flex-direction: column;
+          gap: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 2rem 1rem;
+        }
+
+        .cta-section {
+          padding: 2rem;
+        }
+
+        .btn-secondary {
+          margin-left: 0;
+          margin-top: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'includes/header.html' %}
+
+    <div class="container">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>How to Find Work</h1>
+        <p>Your complete guide to landing great freelance projects</p>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-content">
+          <h2>Start Your Freelance Journey</h2>
+          <p>
+            Join thousands of freelancers who have found meaningful work on our
+            platform. Follow these proven strategies to build your reputation
+            and win projects.
+          </p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="number">10K+</div>
+              <div class="label">Active Freelancers</div>
+            </div>
+            <div class="hero-stat">
+              <div class="number">5K+</div>
+              <div class="label">Projects Monthly</div>
+            </div>
+            <div class="hero-stat">
+              <div class="number">$2M+</div>
+              <div class="label">Paid to Freelancers</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image">
+          <i class="fas fa-briefcase"></i>
+        </div>
+      </div>
+
+      <!-- Step by Step Guide -->
+      <div class="section-title">
+        <h2>4 Steps to Success</h2>
+        <p>Your roadmap to landing freelance projects</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <i class="fas fa-user-edit"></i>
+          <h3>Create a Standout Profile</h3>
+          <p>
+            Build a professional profile showcasing your skills, experience, and
+            portfolio. Add a clear bio and professional photo.
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <i class="fas fa-search"></i>
+          <h3>Find the Right Projects</h3>
+          <p>
+            Browse projects that match your skills. Use filters to find work in
+            your preferred categories and budget range.
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <i class="fas fa-file-signature"></i>
+          <h3>Submit Winning Proposals</h3>
+          <p>
+            Write personalized proposals that address client needs. Showcase
+            relevant experience and explain your approach.
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <i class="fas fa-star"></i>
+          <h3>Deliver & Build Reputation</h3>
+          <p>
+            Complete projects on time, communicate well, and earn positive
+            reviews to attract more clients.
+          </p>
+        </div>
+      </div>
+
+      <!-- Profile Tips -->
+      <div class="profile-tips">
+        <h2 style="margin-bottom: 1rem">Create a Winning Profile</h2>
+        <p style="color: #64748b; margin-bottom: 2rem">
+          Your profile is your first impression - make it count
+        </p>
+
+        <div class="tips-grid">
+          <div class="tip-item">
+            <div class="tip-icon">
+              <i class="fas fa-camera"></i>
+            </div>
+            <div class="tip-content">
+              <h4>Professional Photo</h4>
+              <p>
+                Use a clear, professional headshot. Profiles with photos get 7x
+                more views.
+              </p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">
+              <i class="fas fa-pen"></i>
+            </div>
+            <div class="tip-content">
+              <h4>Compelling Bio</h4>
+              <p>
+                Write a concise bio highlighting your expertise, experience, and
+                what makes you unique.
+              </p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">
+              <i class="fas fa-folder-open"></i>
+            </div>
+            <div class="tip-content">
+              <h4>Portfolio Showcase</h4>
+              <p>
+                Add your best work samples. Quality over quantity - show 5-10
+                best projects.
+              </p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">
+              <i class="fas fa-certificate"></i>
+            </div>
+            <div class="tip-content">
+              <h4>Skills & Certifications</h4>
+              <p>
+                List all relevant skills and add certifications to build
+                credibility.
+              </p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="tip-content">
+              <h4>Availability Status</h4>
+              <p>
+                Clearly state your availability and response time to set
+                expectations.
+              </p>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">
+              <i class="fas fa-language"></i>
+            </div>
+            <div class="tip-content">
+              <h4>Language Proficiency</h4>
+              <p>
+                List languages you speak and your proficiency level for each.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bidding Strategies -->
+      <div class="bidding-section">
+        <h2 style="margin-bottom: 1rem">How to Write Winning Proposals</h2>
+        <p style="color: #64748b; margin-bottom: 2rem">
+          Stand out from the competition with these tips
+        </p>
+
+        <div class="bidding-grid">
+          <div class="bidding-card do">
+            <h4><i class="fas fa-check-circle"></i> Do's</h4>
+            <ul>
+              <li><i class="fas fa-check"></i> Personalize each proposal</li>
+              <li><i class="fas fa-check"></i> Address the client by name</li>
+              <li>
+                <i class="fas fa-check"></i> Show understanding of project
+              </li>
+              <li><i class="fas fa-check"></i> Share relevant experience</li>
+              <li><i class="fas fa-check"></i> Ask thoughtful questions</li>
+              <li><i class="fas fa-check"></i> Be clear about timeline</li>
+              <li><i class="fas fa-check"></i> Proofread before sending</li>
+            </ul>
+          </div>
+          <div class="bidding-card dont">
+            <h4><i class="fas fa-times-circle"></i> Don'ts</h4>
+            <ul>
+              <li><i class="fas fa-times"></i> Send generic templates</li>
+              <li><i class="fas fa-times"></i> Undersell your rates</li>
+              <li><i class="fas fa-times"></i> Make unrealistic promises</li>
+              <li><i class="fas fa-times"></i> Ignore project requirements</li>
+              <li><i class="fas fa-times"></i> Use unprofessional language</li>
+              <li><i class="fas fa-times"></i> Forget to attach samples</li>
+              <li><i class="fas fa-times"></i> Bid on every project</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Stories -->
+      <div class="section-title">
+        <h2>Success Stories</h2>
+        <p>Real freelancers who found work on our platform</p>
+      </div>
+
+      <div class="stories-grid">
+        <div class="story-card">
+          <div class="story-avatar">P</div>
+          <h4>Priya Sharma</h4>
+          <div class="story-role">Web Developer</div>
+          <p class="story-quote">
+            "Started with small projects and built my reputation. Now I work
+            with international clients full-time."
+          </p>
+          <div class="story-stats">
+            <div class="story-stat">
+              <div class="value">45+</div>
+              <div class="label">Projects</div>
+            </div>
+            <div class="story-stat">
+              <div class="value">5.0</div>
+              <div class="label">Rating</div>
+            </div>
+            <div class="story-stat">
+              <div class="value">$50k+</div>
+              <div class="label">Earned</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-avatar">R</div>
+          <h4>Rahul Kumar</h4>
+          <div class="story-role">Graphic Designer</div>
+          <p class="story-quote">
+            "The platform helped me transition from a 9-5 job to freelancing.
+            Best decision of my career."
+          </p>
+          <div class="story-stats">
+            <div class="story-stat">
+              <div class="value">80+</div>
+              <div class="label">Projects</div>
+            </div>
+            <div class="story-stat">
+              <div class="value">4.9</div>
+              <div class="label">Rating</div>
+            </div>
+            <div class="story-stat">
+              <div class="value">$35k+</div>
+              <div class="label">Earned</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-avatar">A</div>
+          <h4>Anjali Patel</h4>
+          <div class="story-role">Content Writer</div>
+          <p class="story-quote">
+            "Consistent work and great clients. The tips from this guide really
+            helped me improve my proposals."
+          </p>
+          <div class="story-stats">
+            <div class="story-stat">
+              <div class="value">60+</div>
+              <div class="label">Projects</div>
+            </div>
+            <div class="story-stat">
+              <div class="value">4.8</div>
+              <div class="label">Rating</div>
+            </div>
+            <div class="story-stat">
+              <div class="value">$25k+</div>
+              <div class="label">Earned</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+
+      <!-- FAQ -->
+      <div class="section-title">
+        <h2>Frequently Asked Questions</h2>
+        <p>Common questions about finding work</p>
+      </div>
+
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>
+            <i class="fas fa-question-circle"></i> How do I get my first
+            project?
+          </h4>
+          <p>
+            Start by completing your profile fully, then bid on smaller projects
+            to build your reputation. Consider offering a competitive rate
+            initially to attract first clients.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h4><i class="fas fa-question-circle"></i> What should I charge?</h4>
+          <p>
+            Research market rates for your skill level. Start competitive but
+            don't undervalue yourself. You can increase rates as you gain
+            reviews.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h4>
+            <i class="fas fa-question-circle"></i> How many proposals should I
+            send?
+          </h4>
+          <p>
+            Quality over quantity. Send 3-5 well-researched proposals daily
+            rather than 20 generic ones. Focus on projects that match your
+            skills.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h4>
+            <i class="fas fa-question-circle"></i> How long until I get hired?
+          </h4>
+          <p>
+            It varies, but with a strong profile and good proposals, many
+            freelancers get their first project within 1-2 weeks.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h4>
+            <i class="fas fa-question-circle"></i> Can I work with multiple
+            clients?
+          </h4>
+          <p>
+            Yes! You can work with multiple clients simultaneously. Just ensure
+            you can manage your time and meet all deadlines.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h4>
+            <i class="fas fa-question-circle"></i> How do I handle difficult
+            clients?
+          </h4>
+          <p>
+            Communicate clearly, set expectations upfront, and use our dispute
+            resolution if needed. Most issues can be resolved with good
+            communication.
+          </p>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="cta-section">
+        <h2>Ready to Start Finding Work?</h2>
+        <p>Join our community of successful freelancers today</p>
+        <div>
+          <a
+            href="{% url 'select_role' %}?role=freelancer"
+            class="btn btn-primary"
+            >Create Freelancer Profile</a
+          >
+          <a href="{% url 'browse_projects' %}" class="btn btn-secondary"
+            >Browse Projects</a
+          >
+        </div>
+      </div>
+    </div>
+
+    {% include 'includes/footer.html' %}
+  </body>
+</html>

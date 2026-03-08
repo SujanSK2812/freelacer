@@ -1,0 +1,77 @@
+{% include 'includes/header.html' %}
+
+<div class="job-post-container">
+
+<h2>Post a Job</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Job Title</label>
+<input type="text" name="title" placeholder="Example: React Developer" required>
+
+<label>Job Description</label>
+<textarea name="description" rows="6" placeholder="Describe the work..." required></textarea>
+
+<label>Budget</label>
+<input type="text" name="budget" placeholder="$500 - $1000">
+
+<label>Experience Level</label>
+<select name="experience">
+<option>Beginner</option>
+<option>Intermediate</option>
+<option>Expert</option>
+</select>
+
+<label>Skills</label>
+<input type="text" name="skills" placeholder="React, JavaScript, API">
+
+<button type="submit">Post Job</button>
+
+</form>
+
+</div>
+
+<style>
+
+.job-post-container{
+max-width:700px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+label{
+display:block;
+margin-top:15px;
+font-weight:600;
+}
+
+input,textarea,select{
+width:100%;
+padding:10px;
+margin-top:5px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+margin-top:20px;
+background:#108a00;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0e7600;
+}
+
+</style>
+
+{% include 'includes/footer.html' %}

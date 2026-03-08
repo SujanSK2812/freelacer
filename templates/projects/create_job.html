@@ -1,0 +1,47 @@
+{% include 'includes/header.html' %}
+
+<div class="post-box">
+
+<h2>Create Job Post</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<input type="text" name="title" placeholder="Job title" required>
+
+<textarea name="description" placeholder="Describe the job..." required></textarea>
+
+<input type="file" name="image">
+
+<button type="submit">Post Job</button>
+
+</form>
+
+</div>
+
+<style>
+
+.post-box{
+max-width:600px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+}
+
+button{
+margin-top:15px;
+background:#0a66c2;
+color:white;
+border:none;
+padding:10px 20px;
+}
+
+</style>

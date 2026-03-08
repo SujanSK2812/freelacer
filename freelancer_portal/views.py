@@ -1,5 +1,8 @@
 from django.shortcuts import render
-
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 def home(request):
     context = {}
 
@@ -9,37 +12,6 @@ def home(request):
         context["role"] = "public"
 
     return render(request, "home/index.html", context)
-
-
-def how_it_works(request):
-    return render(request, "how_it_works.html")
-
-def Terms(request):
-    return render(request, "footers_file/terms.html")
-
-def privacy_policy(request):
-    return render(request, "footers_file/privacy_policy.html")
-
-
-
-
-def about_us(request):
-    return render(request, "footers_file/about_us.html")
-
-
-from django.shortcuts import render
-from django.core.mail import send_mail
-from django.contrib import messages
-from django.conf import settings
-
-from django.core.mail import send_mail
-from django.conf import settings
-from django.shortcuts import render
-from django.contrib import messages
-from django.core.mail import send_mail
-from django.conf import settings
-from django.shortcuts import render
-from django.contrib import messages
 
 
 def contact(request):
@@ -100,3 +72,47 @@ Freelancer Portal Team
         messages.success(request, "Your message has been sent successfully!")
 
     return render(request, "footers_file/contact.html")
+
+def how_it_works(request):
+    return render(request, "how_it_works.html")
+
+def Terms(request):
+    return render(request, "footers_file/terms.html")
+
+def privacy_policy(request):
+    return render(request, "footers_file/privacy_policy.html")
+
+def about_us(request):
+    return render(request, "footers_file/about_us.html")
+
+def how_to_find_work(request):
+    return render(request, "footers_file/how_to_find_work.html")
+
+def freelancer_tips(request):
+    return render(request, "footers_file/freelancer_tips.html")
+
+@login_required
+def browse_projects(request):
+    return render(request, "footers_file/browse_projects.html")
+
+@login_required
+def create_profile(request):
+    return render(request, "footers_file/create_profile.html")
+
+
+def how_to_hire(request):
+    return render(request, "footers_file/how_to_hire.html")
+
+@login_required
+def post_to_project(request):
+    return render(request, "footers_file/post_to_project.html")
+
+@login_required
+def find_freelancers(request):
+    return render(request, "footers_file/find_freelancers.html")
+
+
+def succes_stories(request):
+    return render(request, "footers_file/succes_stories.html")
+
+

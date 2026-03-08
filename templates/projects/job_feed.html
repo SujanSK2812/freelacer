@@ -1,0 +1,77 @@
+{% include 'includes/header.html' %}
+
+<div class="feed">
+
+{% for job in jobs %}
+
+<div class="post">
+
+<h3>{{ job.client.username }}</h3>
+
+<h4>{{ job.title }}</h4>
+
+<p>{{ job.description }}</p>
+
+{% if job.image %}
+<img src="{{ job.image.url }}" class="post-img">
+{% endif %}
+
+<div class="post-actions">
+
+<a href="{% url 'like_job' job.id %}">
+👍 Like ({{ job.total_likes }})
+</a>
+
+</div>
+
+<div class="comments">
+
+{% for c in job.comments.all %}
+
+<p><b>{{ c.user.username }}</b>: {{ c.text }}</p>
+
+{% endfor %}
+
+<form method="POST" action="{% url 'comment_job' job.id %}">
+
+{% csrf_token %}
+
+<input type="text" name="comment" placeholder="Write comment...">
+
+</form>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<style>
+
+.feed{
+max-width:700px;
+margin:30px auto;
+}
+
+.post{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+.post-img{
+width:100%;
+margin-top:10px;
+border-radius:10px;
+}
+
+.post-actions{
+margin-top:10px;
+}
+
+</style>
+
+{% include 'includes/footer.html' %}

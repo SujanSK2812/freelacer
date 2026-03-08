@@ -2,11 +2,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Freelancer-Home</title>
+    <title>Freelancer Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Reset & Base */
         * {
             margin: 0;
             padding: 0;
@@ -15,547 +14,603 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
+            background: #f9f9f9;
+            color: #1d2c3c;
         }
 
         /* Header */
-        nav {
-            background: white;
-            padding: 1rem 5%;
+       
+
+
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background: #3a4b5c;
+            border-radius: 50%;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        nav h2 {
-            color: #14a800;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #475569;
-            font-weight: 500;
-        }
-
-        .nav-links a:hover {
-            color: #14a800;
+            justify-content: center;
+            color: white;
         }
 
         /* Main Container */
         .container {
-            max-width: 1280px;
+            max-width: 1300px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 2rem 5%;
         }
 
-        /* Page Title */
-        .page-title {
+        /* Page Header */
+        .page-header {
             margin-bottom: 2rem;
         }
 
-        .page-title h1 {
-            font-size: 2rem;
-            color: #0f172a;
-            margin-bottom: 0.5rem;
-        }
-
-        .page-title p {
-            color: #64748b;
-        }
-
-        /* Grid Layouts */
-        .jobs-grid, .bids-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        /* Cards */
-        .job-card, .bid-card {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s;
-        }
-
-        .job-card:hover, .bid-card:hover {
-            border-color: #14a800;
-            box-shadow: 0 4px 12px rgba(20,168,0,0.1);
-        }
-
-        /* Job Header */
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-
-        .job-title h3 {
-            font-size: 1.25rem;
-            color: #0f172a;
-            margin-bottom: 0.25rem;
-        }
-
-        .job-company {
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        .job-budget {
-            background: #f0fdf4;
-            color: #14a800;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .job-description {
-            color: #475569;
-            margin: 1rem 0;
-            line-height: 1.5;
-        }
-
-        /* Skills */
-        .skills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-
-        .skill {
-            background: #f1f5f9;
-            color: #334155;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-
-        /* Bid Status */
-        .bid-status {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
+        .page-header h1 {
+            font-size: 1.8rem;
+            color: #1d2c3c;
             font-weight: 500;
-            margin: 0.5rem 0;
         }
 
-        .status-pending {
-            background: #fff7ed;
-            color: #c2410c;
-        }
-
-        .status-accepted {
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        /* Bid Details */
-        .bid-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin: 1rem 0;
-            padding: 1rem 0;
-            border-top: 1px solid #e2e8f0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .detail-item span {
-            display: block;
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-        }
-
-        .detail-item strong {
-            font-size: 0.95rem;
-            color: #0f172a;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.5rem 1.25rem;
+        /* To Do Section */
+        .todo-section {
+            background: #f2f7ff;
+            border: 1px solid #c8e0ff;
             border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: inline-block;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: #14a800;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #108700;
-        }
-
-        .btn-outline {
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            background: white;
-        }
-
-        .btn-outline:hover {
-            border-color: #14a800;
-            color: #14a800;
-        }
-
-        .btn-danger {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        .btn-danger:hover {
-            background: #fee2e2;
-        }
-
-        .action-buttons {
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
             display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-        }
-
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin: 2rem 0 1rem;
-        }
-
-        .section-header h2 {
-            font-size: 1.5rem;
-            color: #0f172a;
-        }
-
-        .view-all {
-            color: #14a800;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        /* Categories */
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
-            margin: 2rem 0;
         }
 
-        .category-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            text-align: center;
-            transition: all 0.2s;
-        }
-
-        .category-card:hover {
-            border-color: #14a800;
-            transform: translateY(-2px);
-        }
-
-        .category-card i {
-            font-size: 1.5rem;
-            color: #14a800;
-            margin-bottom: 0.5rem;
-        }
-
-        .category-card span {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .category-card small {
-            color: #64748b;
-            font-size: 0.8rem;
-        }
-
-        /* Footer */
-        footer {
-            background: white;
-            padding: 3rem 5% 1.5rem;
-            margin-top: 4rem;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .footer-section h3 {
-            color: #14a800;
-            margin-bottom: 1rem;
-        }
-
-        .footer-section h4 {
-            color: #0f172a;
-            margin-bottom: 1rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section ul li a {
-            color: #64748b;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-
-        .footer-section ul li a:hover {
-            color: #14a800;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-links a {
-            color: #64748b;
+        .todo-icon {
+            color: #1d2c3c;
             font-size: 1.2rem;
         }
 
-        .social-links a:hover {
-            color: #14a800;
+        .todo-content {
+            flex: 1;
         }
 
-        .footer-bottom {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #e2e8f0;
-            color: #64748b;
+        .todo-content p {
+            color: #1d2c3c;
+            font-size: 0.95rem;
+        }
+
+        .todo-close {
+            color: #5e6b7c;
+            cursor: pointer;
+        }
+
+        /* Get Hired Section */
+        .hired-section {
+            background: #e8f0fe;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .hired-content h3 {
+            color: #1d2c3c;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hired-content p {
+            color: #5e6b7c;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .learn-link {
+            color: #108a00;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .hired-icon {
+            font-size: 2.5rem;
+            color: #108a00;
+        }
+
+        /* Search Bar */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-label {
+            color: #5e6b7c;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #d0d9e2;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+        }
+
+        .search-input i {
+            color: #5e6b7c;
+            margin-right: 0.75rem;
+        }
+
+        .search-input input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .search-btn {
+            background: #108a00;
+            color: white;
+            border: none;
+            padding: 0.5rem 2rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background: #0f7a00;
+        }
+
+        /* Jobs Header */
+        .jobs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .jobs-header h2 {
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .job-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .job-tab {
+            color: #5e6b7c;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .job-tab.active {
+            color: #108a00;
+            border-bottom: 2px solid #108a00;
+        }
+
+        .jobs-subtitle {
+            color: #5e6b7c;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Job Cards */
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        .job-card {
+            background: white;
+            border: 1px solid #e4e6eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .job-time {
+            color: #5e6b7c;
+            font-size: 0.9rem;
+        }
+
+        .job-title {
+            font-size: 1.2rem;
+            color: #1d2c3c;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 1rem;
+            color: #5e6b7c;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .job-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .job-description {
+            color: #5e6b7c;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .read-more {
+            color: #108a00;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-card {
+            background: white;
+            border: 1px solid #e4e6eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .verification-card {
+            background: #f7f9fc;
+            border: 1px solid #d0d9e2;
+        }
+
+        .verification-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .verification-title i {
+            color: #108a00;
+        }
+
+        .verification-title h4 {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .verification-text {
+            color: #5e6b7c;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .verify-btn {
+            background: #108a00;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .verify-btn:hover {
+            background: #0f7a00;
+        }
+
+        /* Promote Section */
+        .promote-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .promote-item:last-child {
+            border-bottom: none;
+        }
+
+        .promote-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .promote-info i {
+            color: #5e6b7c;
+            width: 20px;
+        }
+
+        .promote-info span {
+            font-size: 0.95rem;
+        }
+
+        .promote-status {
+            color: #5e6b7c;
+            font-size: 0.9rem;
+        }
+
+        .toggle {
+            width: 40px;
+            height: 20px;
+            background: #e4e6eb;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle.active {
+            background: #108a00;
+        }
+
+        .toggle-slider {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+        }
+
+        .toggle.active .toggle-slider {
+            left: 22px;
+        }
+
+        /* Stats Card */
+        .stats-card {
+            margin-top: 1rem;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            color: #5e6b7c;
+            font-size: 0.95rem;
+        }
+
+        .stats-value {
+            font-weight: 500;
+            color: #1d2c3c;
+        }
+
+        .stats-link {
+            color: #108a00;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .connects {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e4e6eb;
+            display: flex;
+            justify-content: space-between;
+            color: #5e6b7c;
+            font-size: 0.95rem;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .bid-details {
+        @media (max-width: 1024px) {
+            .jobs-grid {
                 grid-template-columns: 1fr;
             }
+        }
+
+        @media (max-width: 768px) {
+            .hired-section {
+                flex-direction: column;
+                text-align: center;
+            }
             
-            .action-buttons {
+            .search-bar {
                 flex-direction: column;
             }
             
-            .btn {
-                text-align: center;
+            .job-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .job-tabs {
+                gap: 1rem;
             }
         }
     </style>
 </head>
 <body>
-
 {% include 'includes/header.html' %}
 
+
 <div class="container">
-    <!-- Page Title -->
-    <div class="page-title">
-        <h1>Find Work</h1>
-        <p>Browse recommended jobs for you</p>
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Jobs</h1>
+    </div>
+
+    
+
+    <!-- Get Hired Faster Section -->
+    
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="search-label">Search for jobs</div>
+        <div class="search-bar">
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search for jobs">
+            </div>
+            <button class="search-btn">Search</button>
+        </div>
+    </div>
+
+    <!-- Jobs Section -->
+    <div class="jobs-header">
+        <h2>Jobs you might like</h2>
+        <div class="job-tabs">
+            <a href="#" class="job-tab active">Best Matches</a>
+            <a href="#" class="job-tab">Most Recent</a>
+            <a href="#" class="job-tab">Saved Jobs</a>
+        </div>
+    </div>
+    <div class="jobs-subtitle">
+        Browse jobs that match your experience to a client's hiring preferences. Ordered by most relevant.
     </div>
 
     <!-- Jobs Grid -->
     <div class="jobs-grid">
-        <!-- Full Stack Developer -->
-        <div class="job-card">
-            <div class="job-header">
-                <div>
-                    <h3>Full Stack Developer</h3>
-                    <div class="job-company">TechCorp Solutions</div>
-                </div>
-                <span class="job-budget">$2k+</span>
-            </div>
-            <p class="job-description">Looking for an experienced full-stack developer with React and Node.js expertise for a 3-month project.</p>
-            <div class="skills">
-                <span class="skill">React</span>
-                <span class="skill">Node.js</span>
-                <span class="skill">MongoDB</span>
-                <span class="skill">AWS</span>
-            </div>
-            <a href="#" class="btn btn-primary">Apply Now</a>
-        </div>
+        <!-- Left Column - Job Listings -->
+        <div>
+            <!-- Job Card -->
+            
 
-        <!-- UI/UX Designer -->
-        <div class="job-card">
-            <div class="job-header">
-                <div>
-                    <h3>UI/UX Designer</h3>
-                    <div class="job-company">Creative Studio</div>
-                </div>
-                <span class="job-budget">$1.5k+</span>
-            </div>
-            <p class="job-description">Seeking a talented UI/UX designer for mobile app redesign. Must have Figma experience and portfolio.</p>
-            <div class="skills">
-                <span class="skill">Figma</span>
-                <span class="skill">UI Design</span>
-                <span class="skill">Wireframing</span>
-                <span class="skill">Prototyping</span>
-            </div>
-            <a href="#" class="btn btn-primary">Apply Now</a>
-        </div>
+            <!-- Add more job cards as needed -->
+           <div>
+{% for job in jobs %}
 
-        <!-- Content Writer -->
-        <div class="job-card">
-            <div class="job-header">
-                <div>
-                    <h3>Content Writer</h3>
-                    <div class="job-company">Digital Marketing Agency</div>
-                </div>
-                <span class="job-budget">$800+</span>
-            </div>
-            <p class="job-description">Need a content writer for blog posts and social media content. SEO experience preferred.</p>
-            <div class="skills">
-                <span class="skill">Blog Writing</span>
-                <span class="skill">SEO</span>
-                <span class="skill">Copywriting</span>
-                <span class="skill">WordPress</span>
-            </div>
-            <a href="#" class="btn btn-primary">Apply Now</a>
-        </div>
+<div class="job-card">
+
+    <div class="job-header">
+        <span class="job-time">
+            Posted {{ job.created_at|timesince }} ago
+        </span>
     </div>
 
-    <!-- Active Bids Section -->
-    <div class="section-header">
-        <h2>Your Active Bids</h2>
-        <a href="#" class="view-all">View All →</a>
+    <h3 class="job-title">{{ job.title }}</h3>
+
+    <div class="job-meta">
+        <span><i class="fas fa-tag"></i> Fixed-price</span>
+        <span><i class="fas fa-chart-line"></i> Intermediate</span>
+        <span><i class="fas fa-money-bill"></i> Est. Budget: {{ job.budget }}</span>
     </div>
 
-    <div class="bids-grid">
-        <!-- E-commerce Bid -->
-        <div class="bid-card">
-            <div class="job-header">
-                <div>
-                    <h3>E-commerce Website Development</h3>
-                    <div class="job-company">Retail Store Chain</div>
-                </div>
-                <span class="job-budget">$2.5k</span>
-            </div>
-            <span class="bid-status status-pending">Pending</span>
-            <div class="bid-details">
-                <div class="detail-item">
-                    <span>Bid placed</span>
-                    <strong>2 days ago</strong>
-                </div>
-                <div class="detail-item">
-                    <span>Other bids</span>
-                    <strong>6</strong>
-                </div>
-                <div class="detail-item">
-                    <span>Client rating</span>
-                    <strong>4.8 ★</strong>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <a href="#" class="btn btn-outline">Edit Bid</a>
-                <a href="#" class="btn btn-danger">Withdraw</a>
-            </div>
+    <p class="job-description">
+        {{ job.description|truncatewords:30 }}
+        <a href="{% url 'job_detail' job.id %}" class="read-more">more</a>
+    </p>
+
+</div>
+
+{% empty %}
+
+<p>No jobs available right now.</p>
+
+{% endfor %}
+</div>
         </div>
 
-        <!-- Mobile App Bid -->
-        <div class="bid-card">
-            <div class="job-header">
-                <div>
-                    <h3>Mobile App Development</h3>
-                    <div class="job-company">Startup Inc.</div>
+        <!-- Right Column - Sidebar -->
+        <div class="sidebar">
+            <!-- Identity Verification Card -->
+            <div class="sidebar-card verification-card">
+                <div class="verification-title">
+                    <i class="fas fa-id-card"></i>
+                    <h4>Identity verification</h4>
                 </div>
-                <span class="job-budget">$3.8k</span>
+                <p class="verification-text">
+                    Increase your profile visibility in search results and win more work with an IDV Badge.
+                </p>
+                <button class="verify-btn">Get an IDV Badge</button>
             </div>
-            <span class="bid-status status-accepted">Accepted</span>
-            <div class="bid-details">
-                <div class="detail-item">
-                    <span>Bid placed</span>
-                    <strong>5 days ago</strong>
-                </div>
-                <div class="detail-item">
-                    <span>Other bids</span>
-                    <strong>4</strong>
-                </div>
-                <div class="detail-item">
-                    <span>Client rating</span>
-                    <strong>5.0 ★</strong>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <a href="#" class="btn btn-outline">View Project</a>
-                <a href="#" class="btn btn-outline">Message</a>
-            </div>
-        </div>
-    </div>
 
-    <!-- Popular Categories -->
-    <div class="section-header">
-        <h2>Popular Categories</h2>
-        <a href="#" class="view-all">Browse All Jobs →</a>
-    </div>
+            <!-- Promote with Ads Card -->
+            <div class="sidebar-card">
+                <h4 style="margin-bottom: 1rem;">Promote with ads</h4>
+                
+                <div class="promote-item">
+                    <div class="promote-info">
+                        <i class="fas fa-circle"></i>
+                        <span>Availability badge</span>
+                    </div>
+                    <div class="promote-status">Off</div>
+                </div>
 
-    <div class="categories-grid">
-        <div class="category-card">
-            <i class="fas fa-code"></i>
-            <span>Web Dev</span>
-            <small>245 jobs</small>
-        </div>
-        <div class="category-card">
-            <i class="fas fa-paint-brush"></i>
-            <span>Design</span>
-            <small>189 jobs</small>
-        </div>
-        <div class="category-card">
-            <i class="fas fa-pen"></i>
-            <span>Writing</span>
-            <small>156 jobs</small>
-        </div>
-        <div class="category-card">
-            <i class="fas fa-chart-line"></i>
-            <span>Marketing</span>
-            <small>134 jobs</small>
-        </div>
-        <div class="category-card">
-            <i class="fas fa-mobile-alt"></i>
-            <span>Mobile</span>
-            <small>98 jobs</small>
-        </div>
-        <div class="category-card">
-            <i class="fas fa-database"></i>
-            <span>Data</span>
-            <small>87 jobs</small>
+                <div class="promote-item">
+                    <div class="promote-info">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Boost your profile</span>
+                    </div>
+                    <div class="promote-status">Off</div>
+                </div>
+
+                <div class="promote-item">
+                    <div class="promote-info">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Stats and trends</span>
+                    </div>
+                    <div class="promote-status">Stats and trends</div>
+                </div>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="sidebar-card stats-card">
+                <div class="stats-item">
+                    <span>Profile views</span>
+                    <span class="stats-value">24</span>
+                </div>
+                <div class="stats-item">
+                    <span>Proposals sent</span>
+                    <span class="stats-value">12</span>
+                </div>
+                <div class="stats-item">
+                    <span>Interviews</span>
+                    <span class="stats-value">3</span>
+                </div>
+                <a href="#" class="stats-link">Stats and trends →</a>
+
+                <div class="connects">
+                    <span>Connects</span>
+                    <span class="stats-value">0</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-{% include 'includes/footer.html' %}
+
+<script>
+    // Close todo section
+    document.querySelector('.todo-close')?.addEventListener('click', function() {
+        this.closest('.todo-section').style.display = 'none';
+    });
+
+    // Toggle functionality (example)
+    document.querySelectorAll('.toggle').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+    });
+</script>
+
 </body>
 </html>

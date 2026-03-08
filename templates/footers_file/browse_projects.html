@@ -1,0 +1,1125 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browse Projects - Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: #14a800;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #14a800;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        /* Search and Filter Bar */
+        .search-bar {
+            background: white;
+            border-radius: 50px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .search-input {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+
+        .search-input i {
+            color: #94a3b8;
+            margin-right: 0.75rem;
+        }
+
+        .search-input input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: #1e293b;
+        }
+
+        .search-input input::placeholder {
+            color: #94a3b8;
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 40px;
+            margin: 0 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .search-btn {
+            background: #14a800;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .search-btn:hover {
+            background: #108700;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        /* Filters Sidebar */
+        .filters-sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .filter-header h3 {
+            font-size: 1.1rem;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .filter-header i {
+            color: #64748b;
+            transition: transform 0.2s;
+        }
+
+        .filter-header.active i {
+            transform: rotate(180deg);
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .filter-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #14a800;
+        }
+
+        .filter-option .count {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        .price-range {
+            margin-top: 1rem;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .range-slider {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .range-fill {
+            height: 100%;
+            background: #14a800;
+            width: 60%;
+            border-radius: 2px;
+        }
+
+        .range-handle {
+            width: 16px;
+            height: 16px;
+            background: #14a800;
+            border-radius: 50%;
+            position: absolute;
+            top: -6px;
+            left: 60%;
+            cursor: pointer;
+        }
+
+        .clear-filters {
+            color: #14a800;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        /* Projects Grid */
+        .projects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-count {
+            color: #64748b;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Project Card */
+        .project-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: #14a800;
+            box-shadow: 0 10px 30px rgba(20,168,0,0.1);
+        }
+
+        .project-featured {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+            padding-right: 80px;
+        }
+
+        .project-title h3 {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+
+        .project-client {
+            color: #64748b;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .project-client i {
+            color: #14a800;
+            font-size: 0.8rem;
+        }
+
+        .project-budget {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .project-description {
+            color: #475569;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .project-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .skill-tag {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .skill-tag:hover {
+            background: #14a800;
+            color: white;
+            cursor: pointer;
+        }
+
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 1rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .project-meta i {
+            margin-right: 0.25rem;
+            color: #14a800;
+        }
+
+        .bid-btn {
+            background: #14a800;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .bid-btn:hover {
+            background: #108700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(20,168,0,0.2);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .page-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .page-item:hover, .page-item.active {
+            background: #14a800;
+            color: white;
+            border-color: #14a800;
+        }
+
+        .page-item.next {
+            width: auto;
+            padding: 0 1rem;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 4rem;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .no-results i {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            color: #64748b;
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: #14a800;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h4 {
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul li a:hover {
+            color: #14a800;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: #64748b;
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            color: #14a800;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-bar {
+                flex-direction: column;
+                border-radius: 20px;
+                gap: 0.5rem;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .filter-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .search-btn {
+                width: 100%;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .project-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .project-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: start;
+            }
+            
+            .bid-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Browse Projects</h1>
+        <p>Find your next freelance opportunity from {{ project_count|default:"500+" }} active projects</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <div class="search-input">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search for projects... (e.g., Python, React, Design)">
+        </div>
+        <button class="filter-btn">
+            <i class="fas fa-sliders-h"></i> Filters
+        </button>
+        <button class="search-btn">Search</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Filters Sidebar -->
+        <div class="filters-sidebar">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.2rem;">Filters</h3>
+                <a href="#" class="clear-filters">Clear all</a>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="filter-section">
+                <div class="filter-header active">
+                    <h3>Category</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox"> Web Development
+                        <span class="count">(124)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Mobile Development
+                        <span class="count">(86)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> UI/UX Design
+                        <span class="count">(52)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Content Writing
+                        <span class="count">(48)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Digital Marketing
+                        <span class="count">(36)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Data Science
+                        <span class="count">(24)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Budget Filter -->
+            <div class="filter-section">
+                <div class="filter-header active">
+                    <h3>Budget Range</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="price-range">
+                    <div class="price-inputs">
+                        <input type="text" class="price-input" placeholder="Min" value="$0">
+                        <input type="text" class="price-input" placeholder="Max" value="$5000+">
+                    </div>
+                    <div class="range-slider">
+                        <div class="range-fill" style="width: 60%;"></div>
+                        <div class="range-handle" style="left: 60%;"></div>
+                    </div>
+                </div>
+                <div class="filter-options" style="margin-top: 1rem;">
+                    <label class="filter-option">
+                        <input type="checkbox"> Fixed Price
+                        <span class="count">(245)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Hourly
+                        <span class="count">(156)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Experience Level -->
+            <div class="filter-section">
+                <div class="filter-header active">
+                    <h3>Experience Level</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox"> Entry Level
+                        <span class="count">(98)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Intermediate
+                        <span class="count">(156)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Expert
+                        <span class="count">(87)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Project Length -->
+            <div class="filter-section">
+                <div class="filter-header active">
+                    <h3>Project Length</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox"> Less than 1 week
+                        <span class="count">(45)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> 1-4 weeks
+                        <span class="count">(89)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> 1-3 months
+                        <span class="count">(76)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> 3+ months
+                        <span class="count">(52)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Client History -->
+            <div class="filter-section">
+                <div class="filter-header active">
+                    <h3>Client History</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox"> New Clients
+                        <span class="count">(67)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> Payment Verified
+                        <span class="count">(189)</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox"> 5+ Hires
+                        <span class="count">(98)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects List -->
+        <div>
+            <!-- Projects Header -->
+            <div class="projects-header">
+                <span class="results-count">Showing 1-9 of 347 projects</span>
+                <select class="sort-select">
+                    <option>Most Relevant</option>
+                    <option>Newest First</option>
+                    <option>Budget: High to Low</option>
+                    <option>Budget: Low to High</option>
+                    <option>Ending Soon</option>
+                </select>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="projects-grid">
+                <!-- Project Card 1 -->
+                <div class="project-card">
+                    <div class="project-featured">Featured</div>
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>Full Stack E-Commerce Website</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> TechCorp Solutions
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.9
+                            </div>
+                        </div>
+                        <div class="project-budget">$2k-3k</div>
+                    </div>
+                    <p class="project-description">
+                        Looking for an experienced full-stack developer to build a modern e-commerce platform with product listing, cart, and payment integration.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">MongoDB</span>
+                        <span class="skill-tag">Stripe</span>
+                        <span class="skill-tag">AWS</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 2 days ago</span>
+                            <span><i class="far fa-file-alt"></i> 12 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>Mobile App UI/UX Design</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> Creative Studio
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.8
+                            </div>
+                        </div>
+                        <div class="project-budget">$1.5k-2k</div>
+                    </div>
+                    <p class="project-description">
+                        Need a talented UI/UX designer for a fitness tracking app. Must have experience with mobile design patterns and Figma.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">Figma</span>
+                        <span class="skill-tag">UI Design</span>
+                        <span class="skill-tag">Wireframing</span>
+                        <span class="skill-tag">Prototyping</span>
+                        <span class="skill-tag">Mobile Design</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 5 hours ago</span>
+                            <span><i class="far fa-file-alt"></i> 8 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>SEO Content Writing (10 Articles)</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> Digital Marketing Agency
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.7
+                            </div>
+                        </div>
+                        <div class="project-budget">$800-1k</div>
+                    </div>
+                    <p class="project-description">
+                        Looking for a content writer to create 10 SEO-optimized blog posts about digital marketing topics. 1000 words each.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">SEO</span>
+                        <span class="skill-tag">Blog Writing</span>
+                        <span class="skill-tag">Copywriting</span>
+                        <span class="skill-tag">WordPress</span>
+                        <span class="skill-tag">Research</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 1 day ago</span>
+                            <span><i class="far fa-file-alt"></i> 15 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 4 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>Python Data Analysis Script</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> Research Institute
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 5.0
+                            </div>
+                        </div>
+                        <div class="project-budget">$1.2k-1.8k</div>
+                    </div>
+                    <p class="project-description">
+                        Need a Python developer to create data analysis scripts for research data. Experience with Pandas, NumPy required.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Pandas</span>
+                        <span class="skill-tag">NumPy</span>
+                        <span class="skill-tag">Matplotlib</span>
+                        <span class="skill-tag">Jupyter</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 3 days ago</span>
+                            <span><i class="far fa-file-alt"></i> 6 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 5 -->
+                <div class="project-card">
+                    <div class="project-featured">Urgent</div>
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>WordPress Website Fixes</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> Local Business
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.5
+                            </div>
+                        </div>
+                        <div class="project-budget">$500-800</div>
+                    </div>
+                    <p class="project-description">
+                        Need help fixing several issues on WordPress site including plugin conflicts and speed optimization.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">WordPress</span>
+                        <span class="skill-tag">PHP</span>
+                        <span class="skill-tag">CSS</span>
+                        <span class="skill-tag">Plugins</span>
+                        <span class="skill-tag">Optimization</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 12 hours ago</span>
+                            <span><i class="far fa-file-alt"></i> 4 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 6 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>Social Media Graphics Pack</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> Startup Brand
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.6
+                            </div>
+                        </div>
+                        <div class="project-budget">$600-900</div>
+                    </div>
+                    <p class="project-description">
+                        Need 20 social media graphics for Instagram, Facebook, and LinkedIn. Must follow brand guidelines.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">Photoshop</span>
+                        <span class="skill-tag">Illustrator</span>
+                        <span class="skill-tag">Canva</span>
+                        <span class="skill-tag">Social Media</span>
+                        <span class="skill-tag">Branding</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 2 days ago</span>
+                            <span><i class="far fa-file-alt"></i> 9 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 7 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>Django REST API Development</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> Tech Startup
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.9
+                            </div>
+                        </div>
+                        <div class="project-budget">$2.5k-3.5k</div>
+                    </div>
+                    <p class="project-description">
+                        Build RESTful APIs using Django REST Framework for a mobile app backend. Need documentation and testing.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">Django</span>
+                        <span class="skill-tag">DRF</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">Docker</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 4 days ago</span>
+                            <span><i class="far fa-file-alt"></i> 7 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 8 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>Video Editing for YouTube</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> Content Creator
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> 4.8
+                            </div>
+                        </div>
+                        <div class="project-budget">$400-600/month</div>
+                    </div>
+                    <p class="project-description">
+                        Looking for a video editor for weekly YouTube videos. Need experience with Premiere Pro or DaVinci Resolve.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">Premiere Pro</span>
+                        <span class="skill-tag">DaVinci</span>
+                        <span class="skill-tag">After Effects</span>
+                        <span class="skill-tag">Audio Mixing</span>
+                        <span class="skill-tag">Color Grading</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 1 day ago</span>
+                            <span><i class="far fa-file-alt"></i> 11 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 9 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h3>Logo and Brand Identity</h3>
+                            <div class="project-client">
+                                <i class="fas fa-building"></i> New Business
+                                <i class="fas fa-star" style="color: #fbbf24;"></i> New Client
+                            </div>
+                        </div>
+                        <div class="project-budget">$700-1k</div>
+                    </div>
+                    <p class="project-description">
+                        Need a complete brand identity including logo, color palette, typography, and business card design.
+                    </p>
+                    <div class="project-skills">
+                        <span class="skill-tag">Logo Design</span>
+                        <span class="skill-tag">Branding</span>
+                        <span class="skill-tag">Illustrator</span>
+                        <span class="skill-tag">Typography</span>
+                        <span class="skill-tag">Creative</span>
+                    </div>
+                    <div class="project-footer">
+                        <div class="project-meta">
+                            <span><i class="far fa-clock"></i> 6 hours ago</span>
+                            <span><i class="far fa-file-alt"></i> 3 proposals</span>
+                        </div>
+                        <a href="#" class="bid-btn">Bid Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <a href="#" class="page-item"><i class="fas fa-chevron-left"></i></a>
+                <a href="#" class="page-item active">1</a>
+                <a href="#" class="page-item">2</a>
+                <a href="#" class="page-item">3</a>
+                <a href="#" class="page-item">4</a>
+                <a href="#" class="page-item">5</a>
+                <a href="#" class="page-item">...</a>
+                <a href="#" class="page-item">12</a>
+                <a href="#" class="page-item next"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+<script>
+    // Toggle filter sections
+    document.querySelectorAll('.filter-header').forEach(header => {
+        header.addEventListener('click', () => {
+            header.classList.toggle('active');
+            const options = header.nextElementSibling;
+            if (options.style.display === 'none') {
+                options.style.display = 'flex';
+            } else {
+                options.style.display = 'none';
+            }
+        });
+    });
+
+    // Simple range slider functionality (demo only)
+    const rangeHandle = document.querySelector('.range-handle');
+    if (rangeHandle) {
+        rangeHandle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            // In real implementation, add drag functionality
+            alert('Range slider would be interactive here');
+        });
+    }
+</script>
+
+</body>
+</html>
