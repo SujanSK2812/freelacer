@@ -3,119 +3,180 @@
 <html>
 <head>
     <title>Freelancer Portal - Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <link rel="stylesheet" href="{% static 'home/home.css' %}">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
 
 {% include 'includes/header.html' %}
 
 <main>
-    <section class="container">
-        <div class="hero">
-            <h1>Welcome to Freelancer Hiring Portal</h1>
-            <p>Connect Clients with Skilled Freelancers Easily</p>
+<section class="container">
+
+<div class="hero">
+    <h1>Welcome to Freelancer Hiring Portal</h1>
+    <p>Connect Clients with Skilled Freelancers Easily</p>
+</div>
+
+<!-- ROLE BASED DASHBOARD -->
+
+{% if request.user.is_authenticated %}
+
+    {% if request.user.role == "client" %}
+
+        <div class="dashboard-box">
+            <h3>Client Dashboard</h3>
+
+            <a href="/projects/post/" class="btn">
+                Post a Project
+            </a>
+
+            <a href="/projects/my-projects/" class="btn">
+                View My Projects
+            </a>
         </div>
 
-        {% if role == "client" %}
-            <div class="dashboard-box">
-                <h3>Client Dashboard</h3>
-                <a href="/post-project/" class="btn">Post a Project</a>
-                <a href="/my-projects/" class="btn">View My Projects</a>
-            </div>
+    {% elif request.user.role == "freelancer" %}
 
-        {% elif role == "freelancer" %}
-            <div class="dashboard-box">
-                <h3>Freelancer Dashboard</h3>
-                <a href="/browse-projects/" class="btn">Browse Projects</a>
-                <a href="/my-bids/" class="btn">My Bids</a>
-            </div>
+        <div class="dashboard-box">
+            <h3>Freelancer Dashboard</h3>
 
-        {% else %}
-            <div class="selection-box">
-                <a href="{% url 'select_role' %}" class="btn">Join To Become a Freelancer</a>
-            </div>
-        {% endif %}
+            <a href="/projects/browse/" class="btn">
+                Browse Projects
+            </a>
 
-        <!-- Features Section -->
-        <div class="features-section">
-            <h2>Why Choose Our Platform?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-briefcase"></i>
-                    <h3>Find Quality Work</h3>
-                    <p>Access thousands of projects from clients worldwide</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-users"></i>
-                    <h3>Top Talent</h3>
-                    <p>Connect with verified and skilled professionals</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Secure Payments</h3>
-                    <p>Protected payments and milestone-based releases</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-clock"></i>
-                    <h3>24/7 Support</h3>
-                    <p>Round-the-clock assistance for your projects</p>
-                </div>
-            </div>
+            <a href="/projects/my-bids/" class="btn">
+                My Bids
+            </a>
         </div>
 
-        <!-- Stats Section -->
-        <div class="stats-section">
-            <div class="stat-item">
-                <h3>10K+</h3>
-                <p>Active Freelancers</p>
-            </div>
-            <div class="stat-item">
-                <h3>5K+</h3>
-                <p>Projects Completed</p>
-            </div>
-            <div class="stat-item">
-                <h3>2K+</h3>
-                <p>Happy Clients</p>
-            </div>
-            <div class="stat-item">
-                <h3>95%</h3>
-                <p>Satisfaction Rate</p>
-            </div>
-        </div>
+    {% endif %}
 
-        <!-- Testimonials Section -->
-        <div class="testimonials-section">
-            <h2>What Our Users Say</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <i class="fas fa-quote-left"></i>
-                    <p>"Found amazing freelancers for my projects. The platform is easy to use and very secure."</p>
-                    <div class="testimonial-author">
-                        <strong>John Doe</strong>
-                        <span>Client</span>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <i class="fas fa-quote-left"></i>
-                    <p>"As a freelancer, I've found consistent work and built long-term relationships with clients."</p>
-                    <div class="testimonial-author">
-                        <strong>Jane Smith</strong>
-                        <span>Freelancer</span>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <i class="fas fa-quote-left"></i>
-                    <p>"The payment protection and support team are excellent. Highly recommended!"</p>
-                    <div class="testimonial-author">
-                        <strong>Mike Johnson</strong>
-                        <span>Client</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+{% else %}
+
+    <div class="selection-box">
+        <a href="{% url 'select_role' %}" class="btn">
+            Join To Become a Freelancer
+        </a>
+    </div>
+
+{% endif %}
+
+
+<!-- FEATURES -->
+
+<div class="features-section">
+
+<h2>Why Choose Our Platform?</h2>
+
+<div class="features-grid">
+
+<div class="feature-card">
+<i class="fas fa-briefcase"></i>
+<h3>Find Quality Work</h3>
+<p>Access thousands of projects from clients worldwide</p>
+</div>
+
+<div class="feature-card">
+<i class="fas fa-users"></i>
+<h3>Top Talent</h3>
+<p>Connect with verified and skilled professionals</p>
+</div>
+
+<div class="feature-card">
+<i class="fas fa-shield-alt"></i>
+<h3>Secure Payments</h3>
+<p>Protected payments and milestone-based releases</p>
+</div>
+
+<div class="feature-card">
+<i class="fas fa-clock"></i>
+<h3>24/7 Support</h3>
+<p>Round-the-clock assistance for your projects</p>
+</div>
+
+</div>
+</div>
+
+
+<!-- STATS -->
+
+<div class="stats-section">
+
+<div class="stat-item">
+<h3>10K+</h3>
+<p>Active Freelancers</p>
+</div>
+
+<div class="stat-item">
+<h3>5K+</h3>
+<p>Projects Completed</p>
+</div>
+
+<div class="stat-item">
+<h3>2K+</h3>
+<p>Happy Clients</p>
+</div>
+
+<div class="stat-item">
+<h3>95%</h3>
+<p>Satisfaction Rate</p>
+</div>
+
+</div>
+
+
+<!-- TESTIMONIALS -->
+
+<div class="testimonials-section">
+
+<h2>What Our Users Say</h2>
+
+<div class="testimonials-grid">
+
+<div class="testimonial-card">
+<i class="fas fa-quote-left"></i>
+<p>"Found amazing freelancers for my projects. The platform is easy to use and very secure."</p>
+
+<div class="testimonial-author">
+<strong>John Doe</strong>
+<span>Client</span>
+</div>
+
+</div>
+
+<div class="testimonial-card">
+<i class="fas fa-quote-left"></i>
+<p>"As a freelancer, I've found consistent work and built long-term relationships with clients."</p>
+
+<div class="testimonial-author">
+<strong>Jane Smith</strong>
+<span>Freelancer</span>
+</div>
+
+</div>
+
+<div class="testimonial-card">
+<i class="fas fa-quote-left"></i>
+<p>"The payment protection and support team are excellent. Highly recommended!"</p>
+
+<div class="testimonial-author">
+<strong>Mike Johnson</strong>
+<span>Client</span>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</section>
 </main>
 
 {% include 'includes/footer.html' %}

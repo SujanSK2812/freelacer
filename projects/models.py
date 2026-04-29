@@ -20,8 +20,9 @@ class JobPost(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def total_likes(self):
-        return self.likes.count()
+    # Count reactions
+    def total_reactions(self):
+        return self.reactions.count()
 
     def __str__(self):
         return self.title
@@ -37,22 +38,39 @@ class Reaction(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    job = models.ForeignKey(JobPost, related_name="reactions", on_delete=models.CASCADE)
+    job = models.ForeignKey(
+        JobPost,
+        related_name="reactions",
+        on_delete=models.CASCADE
+    )
 
-    reaction_type = models.CharField(max_length=10, choices=REACTION_CHOICES)
+    reaction_type = models.CharField(
+        max_length=10,
+        choices=REACTION_CHOICES
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} reacted {self.reaction_type}"
 
 
 class Comment(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    job = models.ForeignKey(JobPost, related_name="comments", on_delete=models.CASCADE)
+    job = models.ForeignKey(
+        JobPost,
+        related_name="comments",
+        on_delete=models.CASCADE
+    )
 
     text = models.TextField()
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user}"
 
 
 # ===============================

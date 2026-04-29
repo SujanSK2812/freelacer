@@ -10,6 +10,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 def register(request):
@@ -239,13 +240,22 @@ def activate_account(request, uidb64, token):
 # ==========================
 # LOGIN
 # ==========================
+
 def user_login(request):
 
     if request.method == "POST":
+
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        user = authenticate(request, email=email, password=password)
+        try:
+            user_obj = User.objects.get(email=email)
+            username = user_obj.username
+        except User.DoesNotExist:
+            messages.error(request, "Invalid email or password")
+            return redirect("login")
+
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
 
@@ -255,18 +265,19 @@ def user_login(request):
 
             login(request, user)
 
-            # ROLE BASED HOME REDIRECT
             if user.role == "client":
-                return redirect("/client/home/")
+                return redirect("client_home")
+
+            elif user.role == "freelancer":
+                return redirect("freelancer_home")
+
             else:
-                return redirect("/freelancer/home/")
+                return redirect("/")
 
         else:
             messages.error(request, "Invalid email or password")
 
     return render(request, "accounts/login.html")
-
-
 # ==========================
 # LOGOUT
 # ==========================
@@ -275,6 +286,21 @@ def logout_view(request):
     return redirect("login")
 
 
+
+@login_required
+def role_redirect(request, role):
+
+    if role == "client":
+        if request.user.role == "client":
+            return redirect("client_dashboard")
+        else:
+            return redirect("select_role")
+
+    elif role == "freelancer":
+        if request.user.role == "freelancer":
+            return redirect("freelancer_dashboard")
+        else:
+            return redirect("select_role")
 
 
 

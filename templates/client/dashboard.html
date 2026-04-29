@@ -2,21 +2,944 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Client Dashboard</title>
-    <link rel="stylesheet" href="{% static 'client/dashboard.css' %}">
+    <title>Client Dashboard - Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f9fc;
+            color: #1d2c3c;
+        }
+
+        /* Navigation */
+        nav {
+            background: #1d2c3c;
+            padding: 0.75rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h2 {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .logo a {
+            color: #e4e6eb;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            background: #2a3b4b;
+            transition: all 0.2s;
+        }
+
+        .logo a:hover {
+            background: #3a4b5c;
+            color: white;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: #e4e6eb;
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            border-bottom-color: #108a00;
+        }
+
+        .nav-links a i {
+            font-size: 1.1rem;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            background: #2a3b4b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .profile-icon:hover {
+            border-color: #108a00;
+        }
+
+        .profile-icon i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 1.5rem;
+        }
+
+        /* Left Sidebar - Profile Card */
+        .left-sidebar {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e4e6eb;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+
+        .profile-summary {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #108a00, #0a5c00);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .profile-summary h3 {
+            font-size: 1.3rem;
+            color: #1d2c3c;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-title {
+            color: #5e6b7c;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1d2c3c;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #5e6b7c;
+        }
+
+        .edit-profile-btn {
+            background: #f3f2ef;
+            color: #1d2c3c;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .edit-profile-btn:hover {
+            background: #e4e6eb;
+        }
+
+        .quick-links {
+            padding: 1.5rem 0;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            color: #5e6b7c;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .quick-link:hover {
+            background: #f3f2ef;
+            color: #108a00;
+        }
+
+        .quick-link i {
+            width: 20px;
+            color: #108a00;
+        }
+
+        .connects-card {
+            background: #f7f9fc;
+            border-radius: 12px;
+            padding: 1.2rem;
+            border: 1px solid #e4e6eb;
+        }
+
+        .connects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .connects-header h4 {
+            font-size: 0.95rem;
+            color: #5e6b7c;
+        }
+
+        .connects-count {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #108a00;
+        }
+
+        .get-connects {
+            color: #108a00;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #108a00, #0a5c00);
+            border-radius: 16px;
+            padding: 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text p {
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-job-btn {
+            background: white;
+            color: #108a00;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .post-job-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .stats-cards {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Posted Projects Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .view-all {
+            color: #108a00;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e4e6eb;
+            transition: all 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: #108a00;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .project-title h4 {
+            font-size: 1.1rem;
+            color: #1d2c3c;
+            margin-bottom: 0.25rem;
+        }
+
+        .project-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-open {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-in-progress {
+            background: #fff3e0;
+            color: #ed6c02;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            color: #5e6b7c;
+            font-size: 0.9rem;
+        }
+
+        .project-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .proposals {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e4e6eb;
+        }
+
+        .proposals-count {
+            color: #108a00;
+            font-weight: 500;
+        }
+
+        .view-proposals {
+            color: #5e6b7c;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e4e6eb;
+            padding: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #f3f2ef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #108a00;
+        }
+
+        .activity-content p {
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #5e6b7c;
+        }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e4e6eb;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+
+        .hiring-tips {
+            margin-bottom: 2rem;
+        }
+
+        .hiring-tips h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #1d2c3c;
+        }
+
+        .tip-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .tip-item:last-child {
+            border-bottom: none;
+        }
+
+        .tip-icon {
+            width: 32px;
+            height: 32px;
+            background: #f3f2ef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #108a00;
+        }
+
+        .tip-content h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tip-content p {
+            font-size: 0.85rem;
+            color: #5e6b7c;
+        }
+
+        .recommended-freelancers {
+            margin-top: 2rem;
+        }
+
+        .freelancer-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .freelancer-card:last-child {
+            border-bottom: none;
+        }
+
+        .freelancer-avatar {
+            width: 48px;
+            height: 48px;
+            background: #f3f2ef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #5e6b7c;
+        }
+
+        .freelancer-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .freelancer-skill {
+            font-size: 0.85rem;
+            color: #5e6b7c;
+            margin-bottom: 0.25rem;
+        }
+
+        .freelancer-rating {
+            color: #f4b400;
+            font-size: 0.85rem;
+        }
+
+        .hire-btn {
+            background: #108a00;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .hire-btn:hover {
+            background: #0f7a00;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                grid-template-columns: 250px 1fr 280px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .left-sidebar, .right-sidebar {
+                position: static;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .stats-cards {
+                justify-content: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <nav>
-    <h2>Client Panel</h2>
-    <a href="/">Home</a>
+    <div class="logo">
+        <h2>Freelancer Portal</h2>
+        <a href="/"><i class="fas fa-home"></i> Home</a>
+    </div>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a href="#" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="#"><i class="fas fa-briefcase"></i> My Projects</a>
+            <a href="#"><i class="fas fa-users"></i> Freelancers</a>
+            <a href="#"><i class="fas fa-envelope"></i> Messages</a>
+            <a href="#"><i class="fas fa-bell"></i> Notifications</a>
+        </div>
+        <div class="profile-icon">
+            <i class="fas fa-user"></i>
+        </div>
+    </div>
 </nav>
 
-<section class="content">
-    <h1>Welcome, {{ request.user.username }}</h1>
-    <p>This is Client Dashboard</p>
-</section>
+<div class="dashboard-container">
+    <!-- Left Sidebar - Profile -->
+    <div class="left-sidebar">
+        <div class="profile-summary">
+            <div class="profile-avatar">
+                {{ request.user.username|first|upper }}
+            </div>
+            <h3>{{ request.user.username }}</h3>
+            <div class="profile-title">Client</div>
+            <div class="profile-stats">
+                <div class="stat">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Projects</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Hired</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">4.9</div>
+                    <div class="stat-label">Rating</div>
+                </div>
+            </div>
+            <button class="edit-profile-btn">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+
+        <div class="quick-links">
+            <a href="#" class="quick-link">
+                <i class="fas fa-file-alt"></i>
+                <span>Post a Project</span>
+            </a>
+            <a href="#" class="quick-link">
+                <i class="fas fa-search"></i>
+                <span>Find Freelancers</span>
+            </a>
+            <a href="#" class="quick-link">
+                <i class="fas fa-credit-card"></i>
+                <span>Payment Methods</span>
+            </a>
+            <a href="#" class="quick-link">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+
+        <div class="connects-card">
+            <div class="connects-header">
+                <h4>Available Connects</h4>
+                <span class="connects-count">80</span>
+            </div>
+            <p style="color: #5e6b7c; font-size: 0.85rem;">Used 20 this month</p>
+            <a href="#" class="get-connects">Get more connects →</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h1>Welcome back, {{ request.user.username }}!</h1>
+                <p>Ready to find your next great freelancer?</p>
+                <button class="post-job-btn">
+                    <i class="fas fa-plus-circle"></i> Post a Job
+                </button>
+            </div>
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="number">3</div>
+                    <div class="label">Active Jobs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">12</div>
+                    <div class="label">Proposals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">8</div>
+                    <div class="label">Interviews</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posted Projects Section -->
+        <div>
+            <div class="section-header">
+                <h2><i class="fas fa-briefcase"></i> Your Posted Projects</h2>
+                <a href="#" class="view-all">View All Projects →</a>
+            </div>
+
+            <div class="projects-grid">
+                <!-- Project Card 1 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h4>E-Commerce Website Development</h4>
+                            <span class="project-status status-open">Open</span>
+                        </div>
+                    </div>
+                    <div class="project-meta">
+                        <span><i class="fas fa-tag"></i> Fixed-price</span>
+                        <span><i class="fas fa-clock"></i> Posted 2 days ago</span>
+                    </div>
+                    <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
+                        Need a full-stack developer for an e-commerce platform...
+                    </p>
+                    <div class="proposals">
+                        <span class="proposals-count">8 proposals</span>
+                        <a href="#" class="view-proposals">View →</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h4>Mobile App UI/UX Design</h4>
+                            <span class="project-status status-in-progress">In Progress</span>
+                        </div>
+                    </div>
+                    <div class="project-meta">
+                        <span><i class="fas fa-tag"></i> Fixed-price</span>
+                        <span><i class="fas fa-clock"></i> Posted 5 days ago</span>
+                    </div>
+                    <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
+                        Looking for a UI/UX designer for a fitness tracking app...
+                    </p>
+                    <div class="proposals">
+                        <span class="proposals-count">5 proposals</span>
+                        <a href="#" class="view-proposals">View →</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h4>Content Writing for Blog</h4>
+                            <span class="project-status status-open">Open</span>
+                        </div>
+                    </div>
+                    <div class="project-meta">
+                        <span><i class="fas fa-tag"></i> Hourly</span>
+                        <span><i class="fas fa-clock"></i> Posted 1 day ago</span>
+                    </div>
+                    <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
+                        Need SEO-optimized content for tech blog...
+                    </p>
+                    <div class="proposals">
+                        <span class="proposals-count">12 proposals</span>
+                        <a href="#" class="view-proposals">View →</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 4 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <h4>WordPress Website Fixes</h4>
+                            <span class="project-status status-completed">Completed</span>
+                        </div>
+                    </div>
+                    <div class="project-meta">
+                        <span><i class="fas fa-tag"></i> Fixed-price</span>
+                        <span><i class="fas fa-clock"></i> Completed 3 days ago</span>
+                    </div>
+                    <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
+                        Various fixes and optimizations for WordPress site...
+                    </p>
+                    <div class="proposals">
+                        <span class="proposals-count">4 proposals</span>
+                        <a href="#" class="view-proposals">Review →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-feed">
+            <h3 style="margin-bottom: 1rem;">Recent Activity</h3>
+            
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="activity-content">
+                    <p><strong>New proposal</strong> received for "E-Commerce Website"</p>
+                    <span class="activity-time">2 hours ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="activity-content">
+                    <p><strong>Project completed:</strong> "Logo Design" marked as complete</p>
+                    <span class="activity-time">1 day ago</span>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="activity-content">
+                    <p><strong>New review</strong> received from John D. - 5 stars</p>
+                    <span class="activity-time">2 days ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-sidebar">
+        <!-- Hiring Tips -->
+        <div class="hiring-tips">
+            <h3><i class="fas fa-lightbulb"></i> Hiring Tips</h3>
+            
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>Write clear job posts</h4>
+                    <p>Detailed descriptions get 40% more proposals</p>
+                </div>
+            </div>
+
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>Respond quickly</h4>
+                    <p>Clients who respond within 24h hire 2x faster</p>
+                </div>
+            </div>
+
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="tip-content">
+                    <h4>Check portfolios</h4>
+                    <p>Review past work before interviewing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Freelancers -->
+        <div class="recommended-freelancers">
+            <h3><i class="fas fa-users"></i> Recommended Freelancers</h3>
+            
+            <div class="freelancer-card">
+                <div class="freelancer-avatar">JS</div>
+                <div class="freelancer-info">
+                    <h4>John Smith</h4>
+                    <div class="freelancer-skill">Full Stack Developer</div>
+                    <div class="freelancer-rating">★★★★★ 5.0</div>
+                </div>
+                <button class="hire-btn">Hire</button>
+            </div>
+
+            <div class="freelancer-card">
+                <div class="freelancer-avatar">SD</div>
+                <div class="freelancer-info">
+                    <h4>Sarah Davis</h4>
+                    <div class="freelancer-skill">UI/UX Designer</div>
+                    <div class="freelancer-rating">★★★★☆ 4.8</div>
+                </div>
+                <button class="hire-btn">Hire</button>
+            </div>
+
+            <div class="freelancer-card">
+                <div class="freelancer-avatar">MW</div>
+                <div class="freelancer-info">
+                    <h4>Mike Wilson</h4>
+                    <div class="freelancer-skill">Content Writer</div>
+                    <div class="freelancer-rating">★★★★★ 4.9</div>
+                </div>
+                <button class="hire-btn">Hire</button>
+            </div>
+
+            <a href="#" style="color: #108a00; text-decoration: none; font-size: 0.9rem; display: block; margin-top: 1rem; text-align: center;">
+                View all recommendations →
+            </a>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

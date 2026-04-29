@@ -72,7 +72,7 @@ Freelancer Portal Team
         messages.success(request, "Your message has been sent successfully!")
 
     return render(request, "footers_file/contact.html")
-
+@login_required
 def how_it_works(request):
     return render(request, "how_it_works.html")
 

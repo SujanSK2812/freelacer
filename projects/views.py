@@ -152,7 +152,7 @@ def client_home(request):
 
     jobs = JobPost.objects.all().order_by("-created_at")
 
-    return render(request, "client/client_home.html", {"jobs": jobs})
+    return render(request, "client/home.html", {"jobs": jobs})
 
 
 # ===============================
@@ -164,10 +164,13 @@ def create_job(request):
     if request.method == "POST":
 
         title = request.POST.get("title")
-
         description = request.POST.get("description")
-
         image = request.FILES.get("image")
+
+        if not title:
+            return render(request, "projects/create_post.html", {
+                "error": "Title is required"
+            })
 
         JobPost.objects.create(
             client=request.user,
@@ -176,9 +179,9 @@ def create_job(request):
             image=image
         )
 
-        return redirect("client_home")
+        return redirect("/client/home/")
 
-    return render(request, "projects/create_job.html")
+    return render(request, "projects/create_post.html")
 
 
 # ===============================
