@@ -12,7 +12,7 @@ def home(request):
         context["role"] = "public"
 
     return render(request, "home/index.html", context)
-
+from accounts.models import ContactMessage   # import model
 
 def contact(request):
 
@@ -24,8 +24,21 @@ def contact(request):
         phone = request.POST.get("phone")
         subject = request.POST.get("subject")
         message = request.POST.get("message")
+        message_count = ContactMessage.objects.filter(email=email).count()
+        if message_count >= 3:
+            messages.error(request, "You have reached the maximum number of messages allowed. Please wait before sending more.")
+            return render(request, "footers_file/contact.html")
+        # ✅ SAVE TO DATABASE (IMPORTANT)
+        ContactMessage.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone=phone,
+            subject=subject,
+            message=message,
+        )
 
-        # Message sent to ADMIN
+        # ✅ Email to ADMIN
         admin_message = f"""
 New Contact Message
 
@@ -42,11 +55,11 @@ Message:
             f"New Contact Form: {subject}",
             admin_message,
             settings.EMAIL_HOST_USER,
-            ["sujanshettySK28@gmail.com"],  # admin email
+            ["sujanshettySK28@gmail.com"],
             fail_silently=False,
         )
 
-        # Confirmation message sent to USER
+        # ✅ Email to USER
         user_message = f"""
 Hello {first_name},
 
@@ -65,13 +78,15 @@ Freelancer Portal Team
             "Message Received - Freelancer Portal",
             user_message,
             settings.EMAIL_HOST_USER,
-            [email],  # user's email
+            [email],
             fail_silently=False,
         )
 
         messages.success(request, "Your message has been sent successfully!")
 
     return render(request, "footers_file/contact.html")
+
+
 @login_required
 def how_it_works(request):
     return render(request, "how_it_works.html")
