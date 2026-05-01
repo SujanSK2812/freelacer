@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Manage Users | Freelancer Portal Admin</title>
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+      /* ---------- GLOBAL RESET & BASE (consistent with admin theme) ---------- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          "Segoe UI",
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          Roboto,
+          sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+        line-height: 1.5;
+      }
+
+      /* NAVIGATION (identical structure as original design) */
+
+      /* profile section */
+      .profile-section {
+        position: relative;
+      }
+
+      .profile-icon {
+        width: 38px;
+        height: 38px;
+        background: #f3f2ef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .profile-icon:hover {
+        background: #e5e7eb;
+      }
+
+      .profile-menu {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        display: none;
+        min-width: 120px;
+        z-index: 100;
+      }
+
+      .profile-menu a {
+        color: #dc3545;
+        text-decoration: none;
+        display: block;
+        font-weight: 500;
+        padding: 4px 0;
+      }
+
+      /* search box */
+      .search-box {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        margin: 0 20px;
+      }
+
+      .search-box form {
+        display: flex;
+        width: 100%;
+        max-width: 400px;
+        background: #f3f2ef;
+        border-radius: 40px;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+      }
+
+      .search-box input {
+        flex: 1;
+        padding: 8px 15px;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 14px;
+      }
+
+      .search-box button {
+        background: #108a00;
+        border: none;
+        padding: 0 18px;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.2s;
+      }
+
+      .search-box button:hover {
+        background: #0c6e00;
+      }
+
+      /* mobile menu */
+      .mobile-menu {
+        display: none;
+        font-size: 22px;
+        cursor: pointer;
+        color: #1e293b;
+      }
+
+      /* ---------- CUSTOM MANAGE USERS STYLES (enhanced version) ---------- */
+      .container {
+        max-width: 1300px;
+        margin: 2rem auto;
+        padding: 0 1.5rem 3rem;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #108a00, #2b9348);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+
+      .badge-admin {
+        background: #eef2ff;
+        color: #1e3a8a;
+        padding: 0.3rem 1rem;
+        border-radius: 40px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .stats-row-mini {
+        display: flex;
+        gap: 1.5rem;
+        background: white;
+        border-radius: 1rem;
+        padding: 1rem 1.8rem;
+        margin-bottom: 2rem;
+        border: 1px solid #eef2ff;
+        flex-wrap: wrap;
+      }
+
+      .stat-chip {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .stat-chip span:first-child {
+        font-weight: 700;
+        color: #108a00;
+        font-size: 1.4rem;
+      }
+
+      .user-card-section {
+        background: white;
+        border-radius: 1.25rem;
+        box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.03),
+          0 1px 2px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border: 1px solid #edf2f7;
+      }
+
+      .section-header {
+        background: #f9fafb;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #eef2f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .section-header h2 {
+        color: #108a00;
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .user-list {
+        padding: 0.5rem 0;
+      }
+
+      .user-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f0f2f5;
+        transition: background 0.2s;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+      }
+
+      .user-row:hover {
+        background: #fefce8;
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        flex: 2;
+        min-width: 180px;
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .user-email {
+        font-size: 0.8rem;
+        color: #5e6b7c;
+        font-family: monospace;
+      }
+
+      .user-badge {
+        background: #e6f7e6;
+        color: #108a00;
+        padding: 0.2rem 0.6rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      .user-badge.client {
+        background: #e6f0ff;
+        color: #0066cc;
+      }
+
+      .user-actions {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .icon-btn {
+        background: transparent;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 6px 10px;
+        border-radius: 30px;
+        transition: all 0.2s;
+        color: #5e6b7c;
+      }
+
+      .icon-btn.edit {
+        color: #2c7da0;
+      }
+      .icon-btn.edit:hover {
+        background: #e6f4ff;
+        color: #0c6e00;
+      }
+      .icon-btn.delete {
+        color: #dc2626;
+      }
+      .icon-btn.delete:hover {
+        background: #fee2e2;
+      }
+      .icon-btn.suspend {
+        color: #e67e22;
+      }
+      .icon-btn.suspend:hover {
+        background: #fff3e6;
+      }
+
+      .empty-state {
+        padding: 2rem;
+        text-align: center;
+        color: #94a3b8;
+        font-style: italic;
+      }
+
+      .btn-primary {
+        background: #108a00;
+        border: none;
+        padding: 0.5rem 1.2rem;
+        border-radius: 40px;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary:hover {
+        background: #0c6e00;
+      }
+
+      .btn-outline-sm {
+        background: transparent;
+        border: 1px solid #108a00;
+        padding: 0.3rem 1rem;
+        border-radius: 30px;
+        color: #108a00;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn-outline-sm:hover {
+        background: #108a00;
+        color: white;
+      }
+
+      /* responsive */
+      @media (max-width: 768px) {
+        .search-box {
+          order: 3;
+          width: 100%;
+          margin: 12px 0 0;
+        }
+        .search-box form {
+          max-width: 100%;
+        }
+
+        .mobile-menu {
+          display: block;
+        }
+        .user-row {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .user-actions {
+          align-self: flex-end;
+        }
+        .container {
+          padding: 0 1rem 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ==================== FULL NAVIGATION (admin context, exactly same design) ==================== -->
+    {% include 'includes/header.html' %}
+
+    <!-- ==================== MANAGE USERS MAIN CONTENT ==================== -->
+    <div class="container">
+      <div class="page-header">
+        <h1>
+          <i
+            class="fas fa-users"
+            style="color: #108a00; margin-right: 10px"></i>
+          User Management
+        </h1>
+        <span class="badge-admin"
+          ><i class="fas fa-crown"></i> Admin Access · Full Control</span
+        >
+      </div>
+
+      <!-- Quick stats + actions -->
+      <div class="stats-row-mini">
+        <div class="stat-chip">
+          <span id="clientCount">{{client_count}}</span>
+          <span><i class="fas fa-briefcase"></i> Clients</span>
+        </div>
+        <div class="stat-chip">
+          <span id="freelancerCount">{{freelancer_count}}</span>
+          <span><i class="fas fa-laptop-code"></i> Freelancers</span>
+        </div>
+        <div class="stat-chip">
+        <span>{{ project_count }}</span>
+        <span><i class="fas fa-folder"></i> Projects</span>
+    </div>
+        <div class="stat-chip">
+          <span id="totalUsers">{{total_count}}</span>
+          <span><i class="fas fa-users"></i> Total Users</span>
+        </div>
+        
+      </div>
+
+      <!-- CLIENTS SECTION -->
+      <div class="user-card-section">
+        <div class="section-header">
+          <h2><i class="fas fa-briefcase"></i> Clients</h2>
+          <button class="btn-outline-sm" id="exportClientsBtn">
+            <i class="fas fa-download"></i> Export list
+          </button>
+        </div>
+        <div class="user-list">
+          {% for user in clients %}
+          <div class="user-row">
+            <div class="user-info">
+              <div class="user-name">
+                {{ user.username }}
+                <span class="user-badge client">Client</span>
+              </div>
+
+              <div class="user-email">{{ user.email }}</div>
+            </div>
+
+            <div class="user-actions">
+              <button class="icon-btn edit"><i class="fas fa-edit"></i></button>
+              <button class="icon-btn delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state">No clients found</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- FREELANCERS SECTION -->
+      <div class="user-card-section">
+        <div class="section-header">
+          <h2><i class="fas fa-laptop-code"></i> Freelancers</h2>
+          <button class="btn-outline-sm" id="exportFreelancersBtn">
+            <i class="fas fa-download"></i> Export list
+          </button>
+        </div>
+        <div class="user-list">
+          {% for user in freelancers %}
+          <div class="user-row">
+            <div class="user-info">
+              <div class="user-name">
+                {{ user.username }}
+                <span class="user-badge">Freelancer</span>
+              </div>
+
+              <div class="user-email">{{ user.email }}</div>
+
+              {% if user.skills %}
+              <div style="font-size: 0.7rem; color: #475569">
+                Skills: {{ user.skills }}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="user-actions">
+              <button class="icon-btn edit"><i class="fas fa-edit"></i></button>
+              <button class="icon-btn delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state">No freelancers found</div>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- PROJECTS SECTION -->
+<div class="user-card-section">
+    <div class="section-header">
+        <h2><i class="fas fa-folder"></i> Projects</h2>
+    </div>
+
+    <div class="user-list">
+        {% for project in projects %}
+        <div class="user-row">
+            <div class="user-info">
+                <div class="user-name">
+                    {{ project.title }}
+                    <span class="user-badge">{{ project.status }}</span>
+                </div>
+
+                <div class="user-email">
+                    Budget: ₹{{ project.budget }}
+                </div>
+
+                <div style="font-size:0.7rem; color:#475569;">
+                    Client: {{ project.client.username }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">No projects found</div>
+        {% endfor %}
+    </div>
+</div>
+    </div>
+
+    {% include 'includes/footer.html'%}
+
+    <script>
+      /* ---------------------------------------------------------------
+        SIMULATED DATASET (clients & freelancers matching Django context)
+        In real Django template you would loop over `clients` and `freelancers`.
+        Here we replicate the exact same data structure with enhanced actions.
+    --------------------------------------------------------------- */
+      // Mock dataset representing users from backend
+
+      
+
+      // Simple XSS protection
+      function escapeHtml(str) {
+        if (!str) return "";
+        return str
+          .replace(/[&<>]/g, function (m) {
+            if (m === "&") return "&amp;";
+            if (m === "<") return "&lt;";
+            if (m === ">") return "&gt;";
+            return m;
+          })
+          .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function (c) {
+            return c;
+          });
+      }
+
+      // Action functions (simulate admin operations)
+      
+
+      window.toggleSuspend = function (id, role) {
+        let userArray = role === "client" ? mockClients : mockFreelancers;
+        let user = userArray.find((u) => u.id === id);
+        if (user) {
+          if (user.status === "active") {
+            user.status = "suspended";
+            alert(`⛔ ${user.username} has been suspended.`);
+          } else {
+            user.status = "active";
+            alert(`✅ ${user.username} has been activated.`);
+          }
+          if (role === "client") renderClients();
+          else renderFreelancers();
+        }
+      };
+
+      
+
+      // Add new user (dynamic)
+      document.getElementById("addUserBtn")?.addEventListener("click", () => {
+        let role = prompt('Select role: type "client" or "freelancer"');
+        if (!role) return;
+        role = role.toLowerCase();
+        if (role !== "client" && role !== "freelancer") {
+          alert('Invalid role. Please enter "client" or "freelancer".');
+          return;
+        }
+        let username = prompt("Enter username:");
+        if (!username) return;
+        let email = prompt("Enter email address:");
+        if (!email || !email.includes("@")) {
+          alert("Valid email required.");
+          return;
+        }
+        const newId =
+          role === "client"
+            ? Math.max(...mockClients.map((c) => c.id), 0) + 1
+            : Math.max(...mockFreelancers.map((f) => f.id), 0) + 1;
+        const newUser = {
+          id: newId,
+          username: username.trim(),
+          email: email.trim(),
+          role: role,
+          status: "active",
+          joined: new Date().toISOString().slice(0, 10),
+        };
+        if (role === "client") {
+          mockClients.push(newUser);
+          renderClients();
+          alert(`Client ${username} added successfully!`);
+        } else {
+          // additional skills field for freelancer
+          let skills = prompt(
+            "Enter skills (comma separated):",
+            "JavaScript, Communication",
+          );
+          newUser.skills = skills || "General";
+          mockFreelancers.push(newUser);
+          renderFreelancers();
+          alert(`Freelancer ${username} added successfully!`);
+        }
+      });
+
+      // Export functionality
+      document
+        .getElementById("exportClientsBtn")
+        ?.addEventListener("click", () => {
+          let data = mockClients
+            .map((c) => `${c.username},${c.email},${c.status},${c.joined}`)
+            .join("\n");
+          let blob = new Blob(["Username,Email,Status,Joined\n" + data], {
+            type: "text/csv",
+          });
+          let a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "clients_export.csv";
+          a.click();
+          URL.revokeObjectURL(a.href);
+          alert("📁 Clients exported to CSV");
+        });
+
+      document
+        .getElementById("exportFreelancersBtn")
+        ?.addEventListener("click", () => {
+          let data = mockFreelancers
+            .map(
+              (f) =>
+                `${f.username},${f.email},${f.status},${f.skills},${f.joined}`,
+            )
+            .join("\n");
+          let blob = new Blob(
+            ["Username,Email,Status,Skills,Joined\n" + data],
+            { type: "text/csv" },
+          );
+          let a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "freelancers_export.csv";
+          a.click();
+          URL.revokeObjectURL(a.href);
+          alert("📁 Freelancers exported to CSV");
+        });
+
+      // Mobile & profile menu toggle (exactly same logic as original)
+      function toggleProfileMenu() {
+        const menu = document.getElementById("profileMenu");
+        if (menu) {
+          menu.style.display =
+            menu.style.display === "block" ? "none" : "block";
+        }
+      }
+      document.addEventListener("click", function (e) {
+        const profileSection = document.querySelector(".profile-section");
+        const menu = document.getElementById("profileMenu");
+        if (profileSection && menu && !profileSection.contains(e.target)) {
+          menu.style.display = "none";
+        }
+        const mobileMenu = document.querySelector(".mobile-menu");
+        const navLinks = document.querySelector(".nav-links");
+        if (
+          mobileMenu &&
+          navLinks &&
+          !mobileMenu.contains(e.target) &&
+          !navLinks.contains(e.target)
+        ) {
+          navLinks.classList.remove("show");
+        }
+      });
+      document
+        .querySelector(".mobile-menu")
+        ?.addEventListener("click", function (e) {
+          e.stopPropagation();
+          document.querySelector(".nav-links")?.classList.toggle("show");
+        });
+      document
+        .querySelector("#profileMenu a")
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          alert("🚪 Logout simulation. Session ended.");
+        });
+
+      // Initial render
+      renderClients();
+      renderFreelancers();
+    </script>
+  </body>
+</html>

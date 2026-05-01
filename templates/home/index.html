@@ -28,7 +28,21 @@
 
 {% if request.user.is_authenticated %}
 
-    {% if request.user.role == "client" %}
+    {% if request.user.is_superuser %}
+
+        <div class="dashboard-box">
+            <h3>Admin Dashboard</h3>
+
+            <a href="/admin/" class="btn">
+                Go to Admin Panel
+            </a>
+
+            <a href="/admin/auth/user/" class="btn">
+                Manage Users
+            </a>
+        </div>
+
+    {% elif request.user.role == "client" %}
 
         <div class="dashboard-box">
             <h3>Client Dashboard</h3>

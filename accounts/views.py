@@ -11,6 +11,8 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
+from freelancer.models import Project
+
 
 User = get_user_model()
 def register(request):
@@ -248,31 +250,35 @@ def user_login(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
 
+        user = None
+
+        # Try login using EMAIL (normal users)
         try:
             user_obj = User.objects.get(email=email)
-            username = user_obj.username
+            user = authenticate(request, username=user_obj.username, password=password)
         except User.DoesNotExist:
-            messages.error(request, "Invalid email or password")
-            return redirect("login")
+            pass
 
-        user = authenticate(request, username=username, password=password)
+        # ✅ Try login using USERNAME (for admin)
+        if user is None:
+            user = authenticate(request, username=email, password=password)
 
         if user is not None:
 
             if not user.is_active:
-                messages.error(request, "Please activate your account from email.")
+                messages.error(request, "Activate your account first.")
                 return redirect("login")
 
             login(request, user)
 
-            if user.role == "client":
+            if user.is_superuser:
+                return redirect("admin_home")
+
+            elif user.role == "client":
                 return redirect("client_home")
 
             elif user.role == "freelancer":
                 return redirect("freelancer_home")
-
-            else:
-                return redirect("/")
 
         else:
             messages.error(request, "Invalid email or password")
@@ -305,3 +311,45 @@ def role_redirect(request, role):
 
 
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def admin_home(request):
+    if not request.user.is_superuser:
+        return redirect("login")   # security
+
+    return render(request, "admin/home.html")
+
+
+
+@login_required
+def admin_users(request):
+
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    clients = User.objects.filter(role="client")
+    freelancers = User.objects.filter(role="freelancer")
+
+    return render(request, "admin/users.html", {
+        "clients": clients,
+        "freelancers": freelancers
+    })
+
+
+
+
+def manage_users(request):
+    clients = User.objects.filter(role="client")
+    freelancers = User.objects.filter(role="freelancer")
+    projects = Project.objects.all()
+
+    context = {
+        "clients": clients,
+        "freelancers": freelancers,
+        "client_count": clients.count(),
+        "freelancer_count": freelancers.count(),
+        "total_count": clients.count() + freelancers.count(),
+        "project_count": projects.count(),
+    }
+    return render(request, "admin/manage_users.html", context)

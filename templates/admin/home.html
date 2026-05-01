@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard | Freelancer Portal</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ---------- GLOBAL RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* reuse nav styling (identical to original, plus careful adjustments) */
+      
+        /* profile section */
+        .profile-section {
+            position: relative;
+        }
+
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            background: #f3f2ef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .profile-icon:hover {
+            background: #e5e7eb;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            display: none;
+            min-width: 120px;
+            z-index: 100;
+        }
+
+        .profile-menu a {
+            color: #dc3545;
+            text-decoration: none;
+            display: block;
+            font-weight: 500;
+            padding: 4px 0;
+        }
+
+        /* search box */
+        .search-box {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            margin: 0 20px;
+        }
+
+        .search-box form {
+            display: flex;
+            width: 100%;
+            max-width: 400px;
+            background: #f3f2ef;
+            border-radius: 40px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 14px;
+        }
+
+        .search-box button {
+            background: #108a00;
+            border: none;
+            padding: 0 18px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .search-box button:hover {
+            background: #0c6e00;
+        }
+
+        /* mobile menu icon */
+        .mobile-menu {
+            display: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #1e293b;
+        }
+
+        /* ---------- ADMIN DASHBOARD CUSTOM STYLES ---------- */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem 3rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #108a00, #2b9348);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .badge-role {
+            background: #eef2ff;
+            color: #1e3a8a;
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* card grid for admin actions */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 1px solid #edf2f7;
+            text-align: center;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+            border-color: #dcfce7;
+        }
+
+        .card-icon {
+            font-size: 2.8rem;
+            color: #108a00;
+            margin-bottom: 1rem;
+        }
+
+        .admin-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #0f172a;
+        }
+
+        .admin-card p {
+            color: #475569;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #108a00;
+            color: white;
+            font-weight: 600;
+            padding: 0.7rem 1.4rem;
+            border-radius: 40px;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #108a00;
+            color: #108a00;
+        }
+
+        .btn-outline:hover {
+            background: #108a00;
+            color: white;
+        }
+
+        .btn:hover {
+            background: #0c6e00;
+            transform: scale(0.98);
+        }
+
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #eef2ff;
+            justify-content: space-between;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #108a00;
+        }
+
+        .stat-label {
+            color: #475569;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        hr {
+            margin: 2rem 0;
+            border: none;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* footer minimal (matching idea) */
+        footer {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+            padding: 1.5rem;
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 2rem;
+        }
+
+        /* responsive overrides */
+        @media (max-width: 768px) {
+            .search-box {
+                order: 3;
+                width: 100%;
+                margin: 12px 0 0;
+            }
+            .search-box form {
+                max-width: 100%;
+            }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
+                gap: 1rem;
+                border-top: 1px solid #eef2f0;
+            }
+            .nav-links.show {
+                display: flex;
+            }
+            .mobile-menu {
+                display: block;
+            }
+            .container {
+                padding: 0 1.2rem 2rem;
+                margin: 1rem auto;
+            }
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<!-- ===================== ADMIN DASHBOARD MAIN CONTENT ===================== -->
+<div class="container">
+    <div class="dashboard-header">
+        <h1><i class="fas fa-tachometer-alt" style="color: #108a00; margin-right: 10px;"></i> Admin Dashboard</h1>
+        <span class="badge-role"><i class="fas fa-shield-alt"></i> Super Administrator</span>
+    </div>
+
+    <!-- Quick stats section: additional modern element from common admin patterns -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-number">124</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">37</div>
+            <div class="stat-label">Active Projects</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">23</div>
+            <div class="stat-label">Open Jobs</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">$14.2k</div>
+            <div class="stat-label">Total Volume</div>
+        </div>
+    </div>
+
+    <!-- Action cards for admin management (styled with icons) -->
+    <div class="action-grid">
+        <div class="admin-card">
+            <div class="card-icon"><i class="fas fa-database"></i></div>
+            <h3>Django Admin</h3>
+            <p>Full access to users, groups, projects and all backend models.</p>
+            <a href="#" class="btn">Open Django Admin →</a>
+        </div>
+        <div class="admin-card">
+            <div class="card-icon"><i class="fas fa-users"></i></div>
+            <h3>Manage Users</h3>
+            <p>View, edit, suspend or promote freelancers and clients.</p>
+            <a href="#" class="btn btn-outline">Manage Users →</a>
+        </div>
+        <div class="admin-card">
+            <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
+            <h3>Manage Projects</h3>
+            <p>Oversee all projects, bids, milestones, and dispute resolution.</p>
+            <a href="#" class="btn btn-outline">Manage Projects →</a>
+        </div>
+        <div class="admin-card">
+            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+            <h3>Reports & Analytics</h3>
+            <p>Platform insights, revenue reports and activity logs.</p>
+            <a href="#" class="btn btn-outline">View Reports →</a>
+        </div>
+    </div>
+
+    <!-- additional helper actions conforme original request but extended-->
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;">
+        <a href="#" class="btn"><i class="fas fa-user-plus"></i> Add New Admin</a>
+        <a href="#" class="btn btn-outline"><i class="fas fa-envelope"></i> Send Broadcast</a>
+        <a href="#" class="btn btn-outline"><i class="fas fa-cog"></i> Site Settings</a>
+    </div>
+
+    <hr>
+
+
+
+
+<!-- ==================== JAVASCRIPT for mobile & profile menu (exactly same behavior) ==================== -->
+
+
+</body>
+</html>

@@ -1,5 +1,7 @@
 {% load static %}
 
+{% load static %}
+
 <nav>
 
 <!-- ================= LOGO ================= -->
@@ -8,7 +10,12 @@
 
 {% if request.user.is_authenticated %}
 
-    {% if request.user.role == "client" %}
+    {% if request.user.is_superuser %}
+        <a href="{% url 'admin_home' %}">
+            <h2>Freelancer Portal</h2>
+        </a>
+
+    {% elif request.user.role == "client" %}
         <a href="{% url 'client_home' %}">
             <h2>Freelancer Portal</h2>
         </a>
@@ -16,36 +23,29 @@
     {% elif request.user.role == "freelancer" %}
         <a href="{% url 'freelancer_home' %}">
             <h2>Freelancer Portal</h2>
-        </a>
+        </a>d
 
-    {% else %}
-        <a href="/">
-            <h2>Freelancer Portal</h2>
-        </a>
     {% endif %}
 
 {% else %}
-
     <a href="/">
         <h2>Freelancer Portal</h2>
     </a>
-
 {% endif %}
 
 </div>
+
 <!-- ================= SEARCH BAR ================= -->
 
 {% if request.user.is_authenticated %}
-
-    <!-- Normal search -->
-    <div class="search-box">
-        <form action="{% url 'search_results' %}" method="GET">
-            <input type="text" name="q" placeholder="Search projects, freelancers..." required>
-            <button type="submit">
-                <i class="fas fa-search"></i>
-            </button>
-        </form>
-    </div>
+<div class="search-box">
+    <form action="{% url 'search_results' %}" method="GET">
+        <input type="text" name="q" placeholder="Search..." required>
+        <button type="submit">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
 {% endif %}
 
 <!-- ================= NAV LINKS ================= -->
@@ -54,7 +54,16 @@
 
 {% if request.user.is_authenticated %}
 
-    {% if request.user.role == "client" %}
+    <!-- ✅ ADMIN NAV -->
+    {% if request.user.is_superuser %}
+
+        
+        <a href="/admin/">Django Admin</a>
+        <a href="{% url 'admin_users' %}">Users</a>
+        <a href="#">Projects</a>
+
+    <!-- ✅ CLIENT NAV -->
+    {% elif request.user.role == "client" %}
 
         <a href="{% url 'client_dashboard' %}"
         class="{% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
@@ -65,30 +74,31 @@
         <a href="#">Messages</a>
         <a href="#">Freelancers</a>
 
-{% elif request.user.role|lower == "freelancer" %}
+    <!-- ✅ FREELANCER NAV -->
+    {% elif request.user.role == "freelancer" %}
 
-<a href="{% url 'freelancer_dashboard' %}"
-class="{% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
-Dashboard
-</a>
+        <a href="{% url 'freelancer_dashboard' %}"
+        class="{% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
+        Dashboard
+        </a>
 
-<a href="{% url 'browse_projects' %}"
-class="{% if request.resolver_match.url_name == 'browse_projects' %}active{% endif %}">
-Find Work
-</a>
+        <a href="{% url 'browse_projects' %}"
+        class="{% if request.resolver_match.url_name == 'browse_projects' %}active{% endif %}">
+        Find Work
+        </a>
 
-<a href="#">My Bids</a>
-<a href="#">Messages</a>
+        <a href="#">My Bids</a>
+        <a href="#">Messages</a>
 
-{% endif %}
+    {% endif %}
 
-    <!-- Common link -->
+    <!-- COMMON -->
     <a href="{% url 'how_it_works' %}"
-    class="how-it-works {% if request.resolver_match.url_name == 'how_it_works' %}active{% endif %}">
+    class="{% if request.resolver_match.url_name == 'how_it_works' %}active{% endif %}">
     How it Works
     </a>
 
-    <!-- Profile dropdown -->
+    <!-- PROFILE -->
     <div class="profile-section">
 
         <div class="profile-icon" onclick="toggleProfileMenu()">
@@ -103,29 +113,21 @@ Find Work
 
 {% else %}
 
-    <!-- Guest users -->
-
     <a href="{% url 'login' %}">Login</a>
-
     <a href="{% url 'select_role' %}">Register</a>
-
-    <a href="{% url 'how_it_works' %}" class="how-it-works">
-        How it Works
-    </a>
+    <a href="{% url 'how_it_works' %}">How it Works</a>
 
 {% endif %}
 
 </div>
 
-
 <!-- ================= MOBILE MENU ================= -->
 
 <div class="mobile-menu">
-<i class="fas fa-bars"></i>
+    <i class="fas fa-bars"></i>
 </div>
 
 </nav>
-
 
 <!-- ================= CSS ================= -->
 
