@@ -106,14 +106,6 @@ def how_to_find_work(request):
 def freelancer_tips(request):
     return render(request, "footers_file/freelancer_tips.html")
 
-@login_required
-def browse_projects(request):
-    return render(request, "footers_file/browse_projects.html")
-
-@login_required
-def create_profile(request):
-    return render(request, "footers_file/create_profile.html")
-
 
 def how_to_hire(request):
     return render(request, "footers_file/how_to_hire.html")

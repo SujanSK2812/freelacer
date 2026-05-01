@@ -1,0 +1,575 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <title>Create Freelancer Profile - Freelancer Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        line-height: 1.6;
+      }
+
+      /* Main Container */
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+
+      /* Page Header */
+      .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-header h1 {
+        font-size: 2.5rem;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+      }
+
+      /* Profile badges / progress indicator */
+      .profile-badges {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin: 1.5rem 0 2rem;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        background: #f0fdf4;
+        color: #166534;
+        padding: 0.6rem 1.2rem;
+        border-radius: 40px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .badge i {
+        color: #14a800;
+      }
+
+      /* Content Cards - matching privacy policy style */
+      .content-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 1.8rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+
+      .content-card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .content-card h2 {
+        font-size: 1.6rem;
+        color: #0f172a;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid #14a800;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .content-card h2 i {
+        color: #14a800;
+        font-size: 1.4rem;
+      }
+
+      .content-card h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0.5rem 0 0.25rem;
+      }
+
+      /* Form group styling */
+      .form-group {
+        margin-bottom: 1.3rem;
+      }
+
+      label {
+        display: block;
+        font-weight: 500;
+        color: #0f172a;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+      }
+
+      label i {
+        color: #14a800;
+        width: 1.4rem;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: all 0.2s;
+        background: #fff;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #14a800;
+        box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      /* Helper text */
+      .field-hint {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.3rem;
+      }
+
+      /* Two column layout for some sections */
+      .two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      /* Button styling consistent with privacy policy */
+      .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 0.9rem 2rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .btn-primary {
+        background: #14a800;
+        color: white;
+        box-shadow: 0 2px 8px rgba(20, 168, 0, 0.2);
+      }
+
+      .btn-primary:hover {
+        background: #0f8a00;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+      }
+
+      .btn-secondary:hover {
+        background: #e2e8f0;
+      }
+
+      /* Image preview styling */
+      .image-preview {
+        margin-top: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .preview-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #14a800;
+      }
+
+      .remove-img {
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        cursor: pointer;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 1.5rem 1rem;
+        }
+        .page-header h1 {
+          font-size: 1.8rem;
+        }
+        .content-card {
+          padding: 1.5rem;
+        }
+        .two-columns {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .button-group {
+          flex-direction: column;
+        }
+        .btn {
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .profile-badges {
+          flex-direction: column;
+          align-items: center;
+        }
+        .badge {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation identical to privacy policy page -->
+    {% include 'includes/header.html' %}
+
+    <div class="container">
+      <!-- Page Header with profile style -->
+      <div class="page-header">
+        <h1>
+          <i class="fas fa-user-astronaut"></i> Create Your Freelancer Profile
+        </h1>
+        <p>
+          Showcase your skills, experience, and stand out to clients worldwide
+        </p>
+      </div>
+
+      <!-- Profile completion badges - similar to privacy badges -->
+      <div class="profile-badges">
+        <div class="badge">
+          <i class="fas fa-check-circle"></i> Stand Out to Clients
+        </div>
+        <div class="badge">
+          <i class="fas fa-star"></i> Get Matched with Jobs
+        </div>
+        <div class="badge">
+          <i class="fas fa-chart-line"></i> Increase Earnings
+        </div>
+        <div class="badge">
+          <i class="fas fa-shield-alt"></i> Verified Freelancers Get Priority
+        </div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" id="profileForm">
+        {% csrf_token %}
+
+        <!-- BASIC INFO CARD -->
+        <div class="content-card">
+          <h2><i class="fas fa-user-circle"></i> Basic Information</h2>
+
+          <div class="form-group">
+            <label><i class="fas fa-camera"></i> Profile Picture</label>
+            <input type="file" name="profile_picture" id="profilePicture" accept="image/jpeg,image/png,image/jpg" />
+            <div class="field-hint">
+              Upload a professional photo (JPEG, PNG, max 5MB)
+            </div>
+            <div class="image-preview" id="imagePreview"></div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-heading"></i> Professional Title</label>
+            <input
+              type="text"
+              name="title"
+              placeholder="e.g. Senior Full Stack Developer | UI/UX Expert"
+              value="" />
+            <div class="field-hint">
+              This appears at the top of your profile — make it catchy!
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-align-left"></i> Bio / Summary</label>
+            <textarea
+              name="bio"
+              placeholder="Tell clients about your background, strengths, and why they should hire you..."></textarea>
+            <div class="field-hint">
+              Highlight your unique value and experience (200-500 characters
+              recommended).
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFESSIONAL DETAILS CARD -->
+        <div class="content-card">
+          <h2><i class="fas fa-briefcase"></i> Professional Details</h2>
+
+          <div class="two-columns">
+            <div class="form-group">
+              <label
+                ><i class="fas fa-chart-simple"></i> Experience Level</label
+              >
+              <select name="experience_level">
+                <option value="">Select your level</option>
+                <option value="beginner">Entry Level (0-2 years)</option>
+                <option value="intermediate">Intermediate (2-5 years)</option>
+                <option value="expert">Expert (5+ years)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label
+                ><i class="fas fa-dollar-sign"></i> Hourly Rate (USD)</label
+              >
+              <input
+                type="number"
+                name="hourly_rate"
+                step="5"
+                placeholder="e.g. 45"
+                value="" />
+              <div class="field-hint">
+                Set competitive rate based on your skills
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-code"></i> Skills (comma separated)</label>
+            <input
+              type="text"
+              name="skills"
+              placeholder="e.g. Python, Django, React, Node.js, Figma"
+              value="" />
+            <div class="field-hint">
+              Add at least 5 relevant skills to improve discoverability
+            </div>
+          </div>
+        </div>
+
+        <!-- EDUCATION & EXPERIENCE CARD -->
+        <div class="content-card">
+          <h2><i class="fas fa-graduation-cap"></i> Education & Experience</h2>
+
+          <div class="form-group">
+            <label><i class="fas fa-university"></i> Education</label>
+            <textarea
+              name="education"
+              placeholder="Degree, institution, year of graduation&#10;e.g. B.Tech in Computer Science, XYZ University, 2022"></textarea>
+            <div class="field-hint">
+              List your highest degree or relevant certifications
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-history"></i> Work Experience</label>
+            <textarea
+              name="work_experience"
+              placeholder="Describe your previous roles and achievements&#10;e.g. Backend Developer at TechCorp (2022-2024) - Built REST APIs used by 10k+ users"></textarea>
+            <div class="field-hint">
+              Highlight quantifiable achievements and technologies used
+            </div>
+          </div>
+        </div>
+
+        <!-- PORTFOLIO & LINKS CARD -->
+        <div class="content-card">
+          <h2><i class="fas fa-link"></i> Portfolio & Social Links</h2>
+
+          <div class="form-group">
+            <label><i class="fas fa-globe"></i> Portfolio Website</label>
+            <input
+              type="url"
+              name="portfolio_link"
+              placeholder="https://yourportfolio.com" />
+          </div>
+
+          <div class="two-columns">
+            <div class="form-group">
+              <label><i class="fab fa-github"></i> GitHub</label>
+              <input
+                type="url"
+                name="github_link"
+                placeholder="https://github.com/username" />
+            </div>
+
+            <div class="form-group">
+              <label><i class="fab fa-linkedin"></i> LinkedIn</label>
+              <input
+                type="url"
+                name="linkedin"
+                placeholder="https://linkedin.com/in/username" />
+            </div>
+          </div>
+          <div class="field-hint">
+            Adding these links builds trust with potential clients.
+          </div>
+        </div>
+
+        <!-- LOCATION CARD -->
+        <div class="content-card">
+          <h2><i class="fas fa-map-marker-alt"></i> Location</h2>
+
+          <div class="two-columns">
+            <div class="form-group">
+              <label><i class="fas fa-flag"></i> Country</label>
+              <input
+                type="text"
+                name="country"
+                placeholder="e.g. United States, India, UK" />
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-city"></i> City</label>
+              <input
+                type="text"
+                name="city"
+                placeholder="e.g. New York, Bangalore" />
+            </div>
+          </div>
+          <div class="field-hint">
+            Your timezone helps clients coordinate projects efficiently.
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save & Publish Profile
+          </button>
+          <button type="button" name="skip" class="btn btn-secondary" id="skipBtn">
+            <i class="fas fa-clock"></i> Skip for Now
+          </button>
+        </div>
+        <p
+          style="
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #64748b;
+            text-align: center;
+          ">
+          <i class="fas fa-lock"></i> Your information is secure and only shared
+          with potential clients.
+        </p>
+      </form>
+    </div>
+
+    <!-- Footer exactly matching privacy policy style -->
+    {% include 'includes/footer.html' %}
+
+    <script>
+      // Image preview functionality
+      const profilePictureInput = document.getElementById('profilePicture');
+      const imagePreview = document.getElementById('imagePreview');
+      
+      profilePictureInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        imagePreview.innerHTML = '';
+        
+        if (file) {
+          // Validate file size (max 5MB)
+          if (file.size > 5 * 1024 * 1024) {
+            alert('File size exceeds 5MB. Please choose a smaller image.');
+            profilePictureInput.value = '';
+            return;
+          }
+          
+          // Validate file type
+          const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+          if (!validTypes.includes(file.type)) {
+            alert('Please upload a valid image file (JPEG, PNG)');
+            profilePictureInput.value = '';
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const img = document.createElement('img');
+            img.src = event.target.result;
+            img.classList.add('preview-img');
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '<i class="fas fa-trash"></i> Remove';
+            removeBtn.classList.add('remove-img');
+            removeBtn.onclick = function() {
+              profilePictureInput.value = '';
+              imagePreview.innerHTML = '';
+            };
+            imagePreview.appendChild(img);
+            imagePreview.appendChild(removeBtn);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // Skip button functionality
+      const skipBtn = document.getElementById('skipBtn');
+      skipBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to skip profile creation? You can complete it later.')) {
+          // Use the form but add skip parameter
+          const form = document.getElementById('profileForm');
+          const skipInput = document.createElement('input');
+          skipInput.type = 'hidden';
+          skipInput.name = 'skip';
+          skipInput.value = 'true';
+          form.appendChild(skipInput);
+          form.submit();
+        }
+      });
+      
+      // Form validation before submit
+      // const profileForm = document.getElementById('profileForm');
+      // profileForm.addEventListener('submit', function(e) {
+      //   const title = document.querySelector('input[name="title"]').value.trim();
+      //   const bio = document.querySelector('textarea[name="bio"]').value.trim();
+        
+      //   if (!title && !bio) {
+      //     const confirmPartial = confirm('Your profile is mostly empty. Do you want to continue with partial information?');
+      //     if (!confirmPartial) {
+      //       e.preventDefault();
+      //     }
+      //   }
+      // });
+    </script>
+  </body>
+</html>

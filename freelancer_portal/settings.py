@@ -21,7 +21,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c6(1xp-n*2*80q54p)433*rob_83b+v@!3myt^op961$b4w7je'
+import cloudinary
 
+cloudinary.config(
+    cloud_name = "dnqlduwly",
+    api_key = "732819639689197",
+    api_secret = "SiL95QbL4DAiWWo9q_P-RAqmzkQ"
+)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

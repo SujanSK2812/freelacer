@@ -33,7 +33,20 @@
 {% endif %}
 
 </div>
+<!-- ================= SEARCH BAR ================= -->
 
+{% if request.user.is_authenticated %}
+
+    <!-- Normal search -->
+    <div class="search-box">
+        <form action="{% url 'search_results' %}" method="GET">
+            <input type="text" name="q" placeholder="Search projects, freelancers..." required>
+            <button type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+{% endif %}
 
 <!-- ================= NAV LINKS ================= -->
 
@@ -52,22 +65,22 @@
         <a href="#">Messages</a>
         <a href="#">Freelancers</a>
 
-    {% elif request.user.role == "freelancer" %}
+{% elif request.user.role|lower == "freelancer" %}
 
-        <a href="{% url 'freelancer_dashboard' %}"
-        class="{% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
-        Dashboard
-        </a>
+<a href="{% url 'freelancer_dashboard' %}"
+class="{% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
+Dashboard
+</a>
 
-        <a href="{% url 'browse_projects' %}"
-        class="{% if request.resolver_match.url_name == 'browse_projects' %}active{% endif %}">
-        Find Work
-        </a>
+<a href="{% url 'browse_projects' %}"
+class="{% if request.resolver_match.url_name == 'browse_projects' %}active{% endif %}">
+Find Work
+</a>
 
-        <a href="#">My Bids</a>
-        <a href="#">Messages</a>
+<a href="#">My Bids</a>
+<a href="#">Messages</a>
 
-    {% endif %}
+{% endif %}
 
     <!-- Common link -->
     <a href="{% url 'how_it_works' %}"
@@ -165,10 +178,6 @@ padding:6px 15px;
 border-radius:20px;
 }
 
-.how-it-works:hover{
-background:#108a00;
-color:white;
-}
 
 /* Profile */
 
@@ -210,7 +219,56 @@ display:none;
 font-size:22px;
 cursor:pointer;
 }
+/* Search Bar */
 
+.search-box{
+flex:1;
+display:flex;
+justify-content:center;
+margin:0 20px;
+}
+
+.search-box form{
+display:flex;
+width:100%;
+max-width:400px;
+background:#f3f2ef;
+border-radius:25px;
+overflow:hidden;
+}
+
+.search-box input{
+flex:1;
+padding:8px 15px;
+border:none;
+outline:none;
+background:transparent;
+font-size:14px;
+}
+
+.search-box button{
+background:#108a00;
+border:none;
+padding:0 15px;
+color:white;
+cursor:pointer;
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.search-box{
+order:3;
+width:100%;
+margin-top:10px;
+}
+
+.search-box form{
+max-width:100%;
+}
+
+}
 @media(max-width:768px){
 
 .nav-links{
