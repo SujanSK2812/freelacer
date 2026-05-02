@@ -25,62 +25,43 @@
 </div>
 
 <!-- ROLE BASED DASHBOARD -->
-
 {% if request.user.is_authenticated %}
 
     {% if request.user.is_superuser %}
-
         <div class="dashboard-box">
             <h3>Admin Dashboard</h3>
 
-            <a href="/admin/" class="btn">
-                Go to Admin Panel
-            </a>
-
-            <a href="/admin/auth/user/" class="btn">
-                Manage Users
-            </a>
+            <a href="/admin/" class="btn">Go to Admin Panel</a>
+            <a href="/admin/auth/user/" class="btn">Manage Users</a>
         </div>
 
-    {% elif request.user.role == "client" %}
+    {% else %}
+        {% if request.user.role == "client" %}
+            <div class="dashboard-box">
+                <h3>Client Dashboard</h3>
 
-        <div class="dashboard-box">
-            <h3>Client Dashboard</h3>
+                <a href="/projects/post/" class="btn">Post a Project</a>
+                <a href="/projects/my-projects/" class="btn">View My Projects</a>
+            </div>
 
-            <a href="/projects/post/" class="btn">
-                Post a Project
-            </a>
+        {% elif request.user.role == "freelancer" %}
+            <div class="dashboard-box">
+                <h3>Freelancer Dashboard</h3>
 
-            <a href="/projects/my-projects/" class="btn">
-                View My Projects
-            </a>
-        </div>
-
-    {% elif request.user.role == "freelancer" %}
-
-        <div class="dashboard-box">
-            <h3>Freelancer Dashboard</h3>
-
-            <a href="/projects/browse/" class="btn">
-                Browse Projects
-            </a>
-
-            <a href="/projects/my-bids/" class="btn">
-                My Bids
-            </a>
-        </div>
-
+                <a href="/projects/browse/" class="btn">Browse Projects</a>
+                <a href="/projects/my-bids/" class="btn">My Bids</a>
+            </div>
+        {% endif %}
     {% endif %}
 
 {% else %}
-
     <div class="selection-box">
         <a href="{% url 'select_role' %}" class="btn">
             Join To Become a Freelancer
         </a>
     </div>
-
 {% endif %}
+    
 
 
 <!-- FEATURES -->

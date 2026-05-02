@@ -275,7 +275,7 @@ def user_login(request):
                 return redirect("admin_home")
 
             elif user.role == "client":
-                return redirect("client_home")
+                return redirect("client:client_home")
 
             elif user.role == "freelancer":
                 return redirect("freelancer_home")
@@ -353,3 +353,26 @@ def manage_users(request):
         "project_count": projects.count(),
     }
     return render(request, "admin/manage_users.html", context)
+
+
+
+# accounts/views.py
+from django.shortcuts import redirect
+
+def redirect_dashboard(request):
+    user = request.user
+
+    if user.is_superuser:
+        return redirect('/admin/')
+
+    elif user.role == "client":
+        return redirect('client:client_home')
+
+    elif user.role == "freelancer":
+        return redirect('freelancer:freelancer_home')
+
+    return redirect('/')
+
+
+
+

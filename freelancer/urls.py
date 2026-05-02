@@ -6,4 +6,6 @@ urlpatterns = [
     path("dashboard/", views.freelancer_dashboard, name="freelancer_dashboard"),
     path('search/', views.search_results, name='search_results'),
     path('create_profile/', views.create_profile, name='create_profile'),
+    path('my-proposals/', views.my_proposals, name='my_proposals'),
+    path('edit-profile/', views.edit_profile, name='edit_profile'),
 ]

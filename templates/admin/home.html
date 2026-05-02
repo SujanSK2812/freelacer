@@ -358,34 +358,26 @@
             <div class="card-icon"><i class="fas fa-database"></i></div>
             <h3>Django Admin</h3>
             <p>Full access to users, groups, projects and all backend models.</p>
-            <a href="#" class="btn">Open Django Admin →</a>
+            <a href="/admin/" class="btn">Open Django Admin →</a>
         </div>
         <div class="admin-card">
             <div class="card-icon"><i class="fas fa-users"></i></div>
-            <h3>Manage Users</h3>
+            <h3>Manage Users & Projects </h3>
             <p>View, edit, suspend or promote freelancers and clients.</p>
-            <a href="#" class="btn btn-outline">Manage Users →</a>
+            <a href="{% url 'admin_users' %}" class="btn btn-outline">View →</a>
         </div>
-        <div class="admin-card">
-            <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
-            <h3>Manage Projects</h3>
-            <p>Oversee all projects, bids, milestones, and dispute resolution.</p>
-            <a href="#" class="btn btn-outline">Manage Projects →</a>
-        </div>
+        
         <div class="admin-card">
             <div class="card-icon"><i class="fas fa-chart-line"></i></div>
             <h3>Reports & Analytics</h3>
             <p>Platform insights, revenue reports and activity logs.</p>
-            <a href="#" class="btn btn-outline">View Reports →</a>
+            <a href="{% url 'reports' %}" class="btn btn-outline">View Reports →</a>
         </div>
+       
     </div>
 
     <!-- additional helper actions conforme original request but extended-->
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;">
-        <a href="#" class="btn"><i class="fas fa-user-plus"></i> Add New Admin</a>
-        <a href="#" class="btn btn-outline"><i class="fas fa-envelope"></i> Send Broadcast</a>
-        <a href="#" class="btn btn-outline"><i class="fas fa-cog"></i> Site Settings</a>
-    </div>
+    
 
     <hr>
 
@@ -396,4 +388,5 @@
 
 
 </body>
+
 </html>

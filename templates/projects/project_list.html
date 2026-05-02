@@ -1,0 +1,202 @@
+<style>
+    /* ---------- GLOBAL RESET & BASE ---------- */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+        line-height: 1.5;
+    }
+
+    /* Container for projects page */
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem 2rem;
+    }
+
+    .container h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid #108a00;
+        display: inline-block;
+    }
+
+    /* Project card styling (matching user-card-section from manage users) */
+    .user-card-section {
+        background: white;
+        border-radius: 1.25rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+        border: 1px solid #edf2f7;
+        transition: all 0.2s ease;
+    }
+
+    .user-card-section:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-color: #dcfce7;
+    }
+
+    .user-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f0f2f5;
+        transition: background 0.2s;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    /* Remove border from last row if needed (though each card has one project) */
+    .user-card-section:last-child .user-row {
+        border-bottom: none;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 2;
+        min-width: 200px;
+    }
+
+    .user-name {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .user-badge {
+        background: #e6f7e6;
+        color: #108a00;
+        padding: 0.25rem 0.85rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+    }
+
+    /* Status badge variants (optional for different project statuses) */
+    .user-badge[data-status="open"],
+    .user-badge:contains("open") {
+        background: #e6f7e6;
+        color: #108a00;
+    }
+
+    .user-badge[data-status="in_progress"],
+    .user-badge:contains("in_progress") {
+        background: #fff3e6;
+        color: #e67e22;
+    }
+
+    .user-badge[data-status="completed"],
+    .user-badge:contains("completed") {
+        background: #e6f0ff;
+        color: #0066cc;
+    }
+
+    .user-email {
+        font-size: 0.9rem;
+        color: #475569;
+        line-height: 1.4;
+    }
+
+    /* Empty state styling */
+    .container > p {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 1rem;
+        color: #94a3b8;
+        font-style: italic;
+        border: 1px dashed #cbd5e1;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 1rem 1.5rem;
+            margin: 1rem auto;
+        }
+
+        .container h2 {
+            font-size: 1.5rem;
+        }
+
+        .user-row {
+            padding: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-name {
+            font-size: 1rem;
+        }
+
+        .user-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.7rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .user-info {
+            width: 100%;
+        }
+
+        .user-name {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+    }
+</style>
+{% include 'includes/header.html' %}
+
+<div class="container">
+    <h2>All Projects</h2>
+
+    {% for project in projects %}
+    <div class="user-card-section">
+        <div class="user-row">
+            <div class="user-info">
+
+                <div class="user-name">
+                    {{ project.title }}
+                    <span class="user-badge">{{ project.status }}</span>
+                </div>
+
+                <div class="user-email">
+                    {{ project.description }}
+                </div>
+
+                <div style="font-size:0.8rem; color:#475569;">
+                    Budget: ₹{{ project.budget }} |
+                    Client: {{ project.client.username }} |
+                    Posted: {{ project.created_at|date:"M d, Y" }}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p>No projects available</p>
+    {% endfor %}
+</div>
+
+{% include 'includes/footer.html' %}

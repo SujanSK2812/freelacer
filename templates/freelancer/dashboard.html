@@ -1,22 +1,604 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <title>Freelancer Dashboard</title>
-    <link rel="stylesheet" href="{% static 'freelancer/dashboard.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+  <head>
+    <title>Freelancer Dashboard - Freelancer Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-<nav>
-    <h2>Freelancer Panel</h2>
-    <a href="/">Home</a>
-</nav>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f3f2ef;
+        color: #1d2c3c;
+        line-height: 1.5;
+      }
 
-<section class="content">
-    <h1>Welcome, {{ request.user.username }}</h1>
-    <p>This is Freelancer Dashboard</p>
-</section>
+      /* Layout - sidebar + main content */
+      .layout {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+      }
 
-</body>
+      /* Main Content */
+      .main-content {
+        flex: 3;
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e4e6eb;
+      }
+
+      .main-content h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: #1d2c3c;
+        font-weight: 500;
+      }
+
+      /* Stats Cards */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 1.25rem;
+        border: 1px solid #e4e6eb;
+        text-align: center;
+      }
+
+      .stat-card i {
+        font-size: 2rem;
+        color: #108a00;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-card .stat-value {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1d2c3c;
+      }
+
+      .stat-card .stat-label {
+        color: #5e6b7c;
+        font-size: 0.9rem;
+      }
+
+      /* Section Headers */
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1.5rem 0 1rem;
+      }
+
+      .section-header h3 {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #1d2c3c;
+      }
+
+      .btn-link {
+        color: #108a00;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      .btn-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Project Cards */
+      .project-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .project-card {
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        border: 1px solid #e4e6eb;
+        transition: all 0.2s ease;
+      }
+
+      .project-card:hover {
+        border-color: #108a00;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+
+      .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .project-header h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1d2c3c;
+      }
+
+      .project-badge {
+        background: #e8f5e9;
+        color: #108a00;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .project-badge.pending {
+        background: #fff3e0;
+        color: #ed6c02;
+      }
+
+      .project-badge.completed {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .project-details {
+        color: #5e6b7c;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .project-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #5e6b7c;
+      }
+
+      .project-price {
+        font-weight: 600;
+        color: #108a00;
+      }
+
+      /* Proposal Cards */
+      .proposal-card {
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        border: 1px solid #e4e6eb;
+        margin-bottom: 0.75rem;
+      }
+
+      .proposal-card:last-child {
+        margin-bottom: 0;
+      }
+
+      .proposal-title {
+        font-weight: 600;
+        color: #1d2c3c;
+        margin-bottom: 0.25rem;
+      }
+
+      .proposal-meta {
+        font-size: 0.8rem;
+        color: #5e6b7c;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .proposal-status {
+        color: #ed6c02;
+        font-weight: 500;
+      }
+
+      .proposal-status.accepted {
+        color: #108a00;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        flex: 1;
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e4e6eb;
+      }
+
+      .profile-card {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: #108a00;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+      }
+
+      .profile-avatar i {
+        font-size: 2.5rem;
+        color: white;
+      }
+
+      .profile-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .profile-card p {
+        color: #5e6b7c;
+        font-size: 0.85rem;
+      }
+
+      .edit-profile {
+        display: inline-block;
+        margin-top: 0.5rem;
+        color: #108a00;
+        font-size: 0.85rem;
+        text-decoration: none;
+      }
+
+      .sidebar-section {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e4e6eb;
+      }
+
+      .sidebar-section h4 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        color: #1d2c3c;
+      }
+
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .skill-tag {
+        background: #e8f5e9;
+        color: #108a00;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+      }
+
+      .earnings-summary {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .earnings-total {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #108a00;
+        margin-top: 0.5rem;
+        text-align: center;
+      }
+
+      /* Empty state */
+      .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #5e6b7c;
+      }
+
+      /* Footer */
+      footer {
+        background: white;
+        padding: 3rem 5% 1.5rem;
+        margin-top: 3rem;
+        border-top: 1px solid #e4e6eb;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 3rem;
+      }
+
+      .footer-section h3 {
+        color: #108a00;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .footer-section h4 {
+        color: #1d2c3c;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .footer-section p {
+        color: #5e6b7c;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.75rem;
+      }
+
+      .footer-section ul li a {
+        color: #5e6b7c;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .footer-section ul li a:hover {
+        color: #108a00;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .social-links a {
+        color: #5e6b7c;
+        font-size: 1.2rem;
+        transition: color 0.2s;
+      }
+
+      .social-links a:hover {
+        color: #108a00;
+      }
+
+      .footer-bottom {
+        max-width: 1200px;
+        margin: 2rem auto 0;
+        padding-top: 2rem;
+        border-top: 1px solid #e4e6eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #5e6b7c;
+        font-size: 0.9rem;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .footer-links a {
+        color: #5e6b7c;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+
+      .footer-links a:hover {
+        color: #108a00;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .layout {
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .footer-content {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+        }
+
+        .footer-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .layout {
+          padding: 0 1rem;
+        }
+
+        .main-content, .sidebar {
+          padding: 1rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .project-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    {% include 'includes/header.html' %}
+
+    <div class="layout">
+      <!-- MAIN CONTENT -->
+      <div class="main-content">
+        <h2>Freelancer Dashboard</h2>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="fas fa-briefcase"></i>
+            <div class="stat-value">{{ active_projects_count|default:"0" }}</div>
+            <div class="stat-label">Active Projects</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-hourglass-half"></i>
+            <div class="stat-value">{{ pending_proposals_count|default:"0" }}</div>
+            <div class="stat-label">Pending Proposals</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-check-circle"></i>
+            <div class="stat-value">{{ completed_projects_count|default:"0" }}</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-star"></i>
+            <div class="stat-value">{{ rating|default:"4.8" }}</div>
+            <div class="stat-label">Rating</div>
+          </div>
+        </div>
+
+        <!-- Active Projects Section -->
+        <div class="section-header">
+          <h3>Active Projects</h3>
+          <a href="{% url 'project_list' %}" class="btn-link">View All →</a>
+        </div>
+
+        <div class="project-list">
+          {% for project in active_projects %}
+            <div class="project-card">
+              <div class="project-header">
+                <h4>{{ project.title }}</h4>
+                <span class="project-badge">{{ project.status|default:"In Progress" }}</span>
+              </div>
+              <div class="project-details">
+                {{ project.client_name }} • Posted {{ project.posted_date|date:"M d, Y" }}
+              </div>
+              <div class="project-footer">
+                <span class="project-price">${{ project.budget }}</span>
+                <span>Due: {{ project.deadline|date:"M d, Y" }}</span>
+              </div>
+            </div>
+          {% empty %}
+            <div class="empty-state">
+              <i class="fas fa-briefcase" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+              No active projects yet. Start bidding on projects!
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Recent Proposals Section -->
+        <div class="section-header">
+          <h3>Recent Proposals</h3>
+          <a href="{% url 'my_proposals' %}" class="btn-link">View All →</a>
+        </div>
+
+        <div class="project-list">
+          {% for proposal in recent_proposals %}
+            <div class="proposal-card">
+              <div class="proposal-title">{{ proposal.project_title }}</div>
+              <div class="proposal-meta">
+                <span>Bid: ${{ proposal.bid_amount }}</span>
+                <span>Submitted: {{ proposal.submitted_date|date:"M d, Y" }}</span>
+                <span class="proposal-status {% if proposal.status == 'accepted' %}accepted{% endif %}">
+                  Status: {{ proposal.status|title }}
+                </span>
+              </div>
+            </div>
+          {% empty %}
+            <div class="empty-state">
+              <i class="fas fa-paper-plane" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+              No proposals submitted yet. Browse projects to get started!
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- SIDEBAR - Profile & Info -->
+      <aside class="sidebar">
+        <div class="profile-card">
+          <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <h3>{{ freelancer.username|default:"John Doe" }}</h3>
+          <p>{{ freelancer.title|default:"Freelance Developer" }}</p>
+          <a href="{% url 'edit_profile' %}" class="edit-profile">Edit Profile →</a>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fas fa-code"></i> Skills</h4>
+          <div class="skill-tags">
+            {% for skill in freelancer.skills %}
+              <span class="skill-tag">{{ skill }}</span>
+            {% empty %}
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">Django</span>
+              <span class="skill-tag">JavaScript</span>
+              <span class="skill-tag">React</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fas fa-dollar-sign"></i> Earnings</h4>
+          <div class="earnings-summary">
+            <span>This Month</span>
+            <span>${{ monthly_earnings|default:"0" }}</span>
+          </div>
+          <div class="earnings-summary">
+            <span>All Time</span>
+            <span>${{ total_earnings|default:"0" }}</span>
+          </div>
+          <div class="earnings-total">
+            ${{ total_earnings|default:"0" }}
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fas fa-clock"></i> Availability</h4>
+          <div class="earnings-summary">
+            <span>Hours/Week</span>
+            <span>{{ availability_hours|default:"20" }} hrs</span>
+          </div>
+          <div class="earnings-summary">
+            <span>Response Rate</span>
+            <span>{{ response_rate|default:"95" }}%</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
+  </body>
 </html>

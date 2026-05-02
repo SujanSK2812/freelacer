@@ -1,304 +1,358 @@
-<style>
-    /* Search Results Container */
-    .search-results-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 5%;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .search-results-container h2 {
-        color: #2c3e50;
-        font-size: 1.8rem;
-        margin-bottom: 2rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 3px solid #108a00;
-        display: inline-block;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f3f2ef;
+            color: #1d2c3c;
+            line-height: 1.5;
+        }
 
-    /* Section Headers */
-    .section-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin: 2rem 0 1.5rem 0;
-    }
-
-    .section-header h3 {
-        color: #2c3e50;
-        font-size: 1.5rem;
-        margin: 0;
-    }
-
-    .section-header .count {
-        background: #108a00;
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    /* Projects Grid */
-    .projects-grid, .freelancers-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    /* Project Card */
-    .project-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        border: 1px solid #eef2f6;
-    }
-
-    .project-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        border-color: #108a00;
-    }
-
-    .project-title {
-        color: #108a00;
-        font-size: 1.3rem;
-        margin-bottom: 0.75rem;
-        font-weight: 600;
-    }
-
-    .project-description {
-        color: #5e6b7c;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        font-size: 0.95rem;
-    }
-
-    .project-budget {
-        display: inline-block;
-        background: #f3f2ef;
-        color: #108a00;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 1rem;
-        margin-top: 0.5rem;
-    }
-
-    .project-budget i {
-        margin-right: 5px;
-        color: #108a00;
-    }
-
-    /* Freelancer Card */
-    .freelancer-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        border: 1px solid #eef2f6;
-    }
-
-    .freelancer-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        border-color: #108a00;
-    }
-
-    .freelancer-avatar {
-        width: 60px;
-        height: 60px;
-        background: #f3f2ef;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: #108a00;
-    }
-
-    .freelancer-info {
-        flex: 1;
-    }
-
-    .freelancer-name {
-        color: #2c3e50;
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-
-    .freelancer-role {
-        color: #108a00;
-        font-size: 0.85rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .freelancer-stats {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.85rem;
-        color: #5e6b7c;
-    }
-
-    .freelancer-stats i {
-        color: #108a00;
-        margin-right: 4px;
-    }
-
-    /* View Profile Button */
-    .view-profile-btn {
-        background: transparent;
-        border: 1px solid #108a00;
-        color: #108a00;
-        padding: 6px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .view-profile-btn:hover {
-        background: #108a00;
-        color: white;
-    }
-
-    /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: #f9fafb;
-        border-radius: 12px;
-        color: #5e6b7c;
-        margin: 1rem 0;
-    }
-
-    .empty-state i {
-        font-size: 3rem;
-        color: #108a00;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-    }
-
-    .empty-state p {
-        font-size: 1rem;
-    }
-
-    /* Back Button */
-    .back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: white;
-        border: 1px solid #e0e0e0;
-        color: #5e6b7c;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        text-decoration: none;
-        margin-bottom: 1.5rem;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-
-    .back-button:hover {
-        background: #f3f2ef;
-        border-color: #108a00;
-        color: #108a00;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
+        /* Search Results Container */
         .search-results-container {
-            padding: 0 4%;
-            margin: 1rem auto;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
         }
 
         .search-results-container h2 {
-            font-size: 1.5rem;
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #108a00;
+            display: inline-block;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0 1.5rem 0;
         }
 
         .section-header h3 {
-            font-size: 1.3rem;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin: 0;
         }
 
+        .section-header .count {
+            background: #108a00;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Projects Grid */
         .projects-grid, .freelancers-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
+        /* Project Card */
         .project-card {
-            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #eef2f6;
         }
 
-        .freelancer-card {
-            flex-direction: column;
-            text-align: center;
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-color: #108a00;
         }
 
-        .freelancer-stats {
-            justify-content: center;
-        }
-
-        .back-button {
-            margin-bottom: 1rem;
-        }
-    }
-
-    @media (max-width: 480px) {
         .project-title {
-            font-size: 1.1rem;
+            color: #108a00;
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
         }
 
         .project-description {
-            font-size: 0.9rem;
+            color: #5e6b7c;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .project-budget {
+            display: inline-block;
+            background: #f3f2ef;
+            color: #108a00;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .project-budget i {
+            margin-right: 5px;
+            color: #108a00;
+        }
+
+        /* Freelancer Card */
+        .freelancer-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #eef2f6;
+        }
+
+        .freelancer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-color: #108a00;
         }
 
         .freelancer-avatar {
-            width: 50px;
-            height: 50px;
-            font-size: 1.2rem;
+            width: 60px;
+            height: 60px;
+            background: #f3f2ef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #108a00;
         }
-    }
 
-    /* Animation */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
+        .freelancer-info {
+            flex: 1;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        .freelancer-name {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
-    }
 
-    .project-card, .freelancer-card {
-        animation: fadeIn 0.4s ease-out;
-    }
-</style>
+        .freelancer-role {
+            color: #108a00;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
 
+        .freelancer-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #5e6b7c;
+        }
+
+        .freelancer-stats i {
+            color: #108a00;
+            margin-right: 4px;
+        }
+
+        /* View Profile Button */
+        .view-profile-btn {
+            background: transparent;
+            border: 1px solid #108a00;
+            color: #108a00;
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view-profile-btn:hover {
+            background: #108a00;
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: #f9fafb;
+            border-radius: 12px;
+            color: #5e6b7c;
+            margin: 1rem 0;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #108a00;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            color: #5e6b7c;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            background: #f3f2ef;
+            border-color: #108a00;
+            color: #108a00;
+        }
+
+        /* No Results Message */
+        .no-results-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
+            margin-top: 2rem;
+            border: 1px solid #eef2f6;
+        }
+
+        .no-results-message i {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .no-results-message h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results-message p {
+            color: #5e6b7c;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-results-container {
+                padding: 0 4%;
+                margin: 1rem auto;
+            }
+
+            .search-results-container h2 {
+                font-size: 1.5rem;
+            }
+
+            .section-header h3 {
+                font-size: 1.3rem;
+            }
+
+            .projects-grid, .freelancers-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .project-card {
+                padding: 1rem;
+            }
+
+            .freelancer-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .freelancer-stats {
+                justify-content: center;
+            }
+
+            .back-button {
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .search-results-container {
+                padding: 0 1rem;
+            }
+            
+            .project-title {
+                font-size: 1.1rem;
+            }
+
+            .project-description {
+                font-size: 0.9rem;
+            }
+
+            .freelancer-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .section-header {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .project-card, .freelancer-card {
+            animation: fadeIn 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+{% include 'includes/header.html' %}
 <div class="search-results-container">
-    <a href="javascript:history.back()" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back to Search
-    </a>
-
+    
     <h2>Search Results for "{{ query }}"</h2>
 
     <!-- Projects Section -->
     <div class="section-header">
         <h3>Projects</h3>
-        <span class="count">{{ projects.count }}</span>
+        <span class="count">{{ projects|length }}</span>
     </div>
 
+    {% if projects %}
     <div class="projects-grid">
         {% for project in projects %}
         <div class="project-card">
@@ -308,20 +362,22 @@
                 <i class="fas fa-rupee-sign"></i> {{ project.budget }}
             </div>
         </div>
-        {% empty %}
-        <div class="empty-state">
-            <i class="fas fa-search"></i>
-            <p>No projects found matching "{{ query }}"</p>
-        </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>No projects found matching "{{ query }}"</p>
+    </div>
+    {% endif %}
 
     <!-- Freelancers Section -->
     <div class="section-header">
         <h3>Freelancers</h3>
-        <span class="count">{{ freelancers.count }}</span>
+        <span class="count">{{ freelancers|length }}</span>
     </div>
 
+    {% if freelancers %}
     <div class="freelancers-grid">
         {% for user in freelancers %}
         <div class="freelancer-card">
@@ -332,17 +388,34 @@
                 <div class="freelancer-name">{{ user.username }}</div>
                 <div class="freelancer-role">Freelancer</div>
                 <div class="freelancer-stats">
-                    <span><i class="fas fa-star"></i> 4.8</span>
-                    <span><i class="fas fa-check-circle"></i> 25 projects</span>
+                    <span><i class="fas fa-star"></i> {{ user.rating|default:"4.8" }}</span>
+                    <span><i class="fas fa-check-circle"></i> {{ user.project_count|default:"0" }} projects</span>
                 </div>
             </div>
             <a href="{% url 'freelancer_profile' user.id %}" class="view-profile-btn">View Profile</a>
         </div>
-        {% empty %}
-        <div class="empty-state">
-            <i class="fas fa-users"></i>
-            <p>No freelancers found matching "{{ query }}"</p>
-        </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-users"></i>
+        <p>No freelancers found matching "{{ query }}"</p>
+    </div>
+    {% endif %}
+    
+    <!-- Overall No Results Message -->
+    {% if not projects and not freelancers %}
+    <div class="no-results-message">
+        <i class="fas fa-search"></i>
+        <h3>No results found</h3>
+        <p>We couldn't find any projects or freelancers matching "{{ query }}".<br>Try different keywords or browse all listings.</p>
+        
+    </div>
+    {% endif %}
+   
+
 </div>
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

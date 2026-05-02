@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Proposals</title>
+</head>
+<body>
+
+<h2>My Proposals</h2>
+
+{% if proposals %}
+    {% for proposal in proposals %}
+        <div>
+            <p>{{ proposal.project_title }}</p>
+            <p>Bid: {{ proposal.bid_amount }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No proposals yet.</p>
+{% endif %}
+
+</body>
+</html>

@@ -83,3 +83,28 @@ def create_profile(request):
     return render(request, 'footers_file/create_profile.html', {
         'profile': profile
     })
+
+
+@login_required
+def my_proposals(request):
+    # later you can fetch real proposals from DB
+    proposals = []
+
+    return render(request, "freelancer/my_proposals.html", {
+        "proposals": proposals
+    })
+
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+
+    if request.method == "POST":
+        user.username = request.POST.get("username")
+        user.save()
+        return redirect("freelancer_dashboard")
+
+    return render(request, "freelancer/edit_profile.html", {
+        "user": user
+    })

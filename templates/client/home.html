@@ -22,186 +22,107 @@
         line-height: 1.5;
       }
 
-      /* Header */
-      nav {
-        background: white;
-        padding: 1rem 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
-
-      .logo h2 {
-        color: #108a00;
-        font-size: 1.3rem;
-        font-weight: 600;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-      }
-
-      .nav-links a {
-        color: #5e6b7c;
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: color 0.2s;
-      }
-
-      .nav-links a:hover {
-        color: #108a00;
-      }
-
-      .profile-icon {
-        width: 36px;
-        height: 36px;
-        background: #e4e6eb;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #5e6b7c;
-        cursor: pointer;
-      }
-
-      /* Main Container */
-      .container {
-        max-width: 900px;
+      /* Layout - sidebar + main content */
+      .layout {
+        max-width: 1200px;
         margin: 2rem auto;
         padding: 0 1.5rem;
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
       }
 
-      /* Page Header */
-      .page-header {
-        margin-bottom: 2rem;
+      /* Main Content */
+      .main-content {
+        flex: 3;
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e4e6eb;
       }
 
-      .page-header h1 {
-        font-size: 2rem;
+      .main-content h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
         color: #1d2c3c;
         font-weight: 500;
       }
 
-      /* Create Post Card */
-      .create-post {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        border: 1px solid #e4e6eb;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      }
-
-      .create-post h3 {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        color: #1d2c3c;
-      }
-
-      .create-post textarea {
-        width: 100%;
-        height: 100px;
-        padding: 1rem;
-        border: 1px solid #e4e6eb;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-family: inherit;
-        resize: vertical;
-        transition: all 0.2s;
-      }
-
-      .create-post textarea:focus {
-        outline: none;
-        border-color: #108a00;
-        box-shadow: 0 0 0 3px rgba(16, 138, 0, 0.1);
-      }
-
-      .create-post textarea::placeholder {
-        color: #9aa6b5;
-      }
-
-      .post-options {
+      /* Freelancer List / Cards */
+      .freelancer-list {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 1rem;
+        flex-direction: column;
         gap: 1rem;
       }
 
-      .file-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: #f3f2ef;
-        color: #1d2c3c;
-        border-radius: 30px;
-        cursor: pointer;
-        font-size: 0.95rem;
-        transition: background 0.2s;
+      .freelancer-card {
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        border: 1px solid #e4e6eb;
+        transition: all 0.2s ease;
       }
 
-      .file-label:hover {
-        background: #e4e6eb;
+      .freelancer-card:hover {
+        border-color: #108a00;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       }
 
-      .file-label i {
-        color: #108a00;
-      }
-
-      input[type="file"] {
-        display: none;
-      }
-
-      .post-btn {
-        background: #108a00;
-        color: white;
-        border: none;
-        padding: 0.6rem 2rem;
-        border-radius: 30px;
+      .freelancer-card h4 {
+        font-size: 1.1rem;
         font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: background 0.2s;
+        color: #1d2c3c;
+        margin-bottom: 0.25rem;
       }
 
-      .post-btn:hover {
-        background: #0f7a00;
+      .freelancer-card p {
+        color: #5e6b7c;
+        font-size: 0.9rem;
       }
 
-      /* Empty State */
-      .empty-state {
+      /* Sidebar */
+      .sidebar {
+        flex: 1;
         background: white;
         border-radius: 12px;
-        padding: 4rem 2rem;
-        text-align: center;
+        padding: 1.5rem;
         border: 1px solid #e4e6eb;
-        margin-bottom: 3rem;
       }
 
-      .empty-state i {
-        font-size: 4rem;
-        color: #cbd5e1;
-        margin-bottom: 1rem;
-      }
-
-      .empty-state h3 {
-        font-size: 1.3rem;
+      .sidebar h3 {
+        font-size: 1.2rem;
+        font-weight: 500;
         color: #1d2c3c;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #108a00;
+        display: inline-block;
       }
 
-      .empty-state p {
+      .sidebar ul {
+        list-style: none;
+        margin-top: 1rem;
+      }
+
+      .sidebar ul li {
+        padding: 0.5rem 0;
+        color: #2c3e50;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #f0f2f5;
+      }
+
+      .sidebar ul li:last-child {
+        border-bottom: none;
+      }
+
+      /* Empty state text */
+      .freelancer-list p {
+        text-align: center;
         color: #5e6b7c;
+        padding: 2rem;
       }
 
-      /* Footer */
+      /* Footer — already in includes/footer.html, but ensure base styles exist */
       footer {
         background: white;
         padding: 3rem 5% 1.5rem;
@@ -300,17 +221,9 @@
 
       /* Responsive */
       @media (max-width: 768px) {
-        .post-options {
+        .layout {
           flex-direction: column;
-        }
-
-        .file-label {
-          width: 100%;
-          justify-content: center;
-        }
-
-        .post-btn {
-          width: 100%;
+          gap: 1.5rem;
         }
 
         .footer-content {
@@ -331,16 +244,16 @@
       }
 
       @media (max-width: 480px) {
-        .container {
+        .layout {
           padding: 0 1rem;
         }
 
-        .page-header h1 {
-          font-size: 1.5rem;
+        .main-content, .sidebar {
+          padding: 1rem;
         }
 
-        .create-post {
-          padding: 1rem;
+        .main-content h2 {
+          font-size: 1.3rem;
         }
       }
     </style>
@@ -349,47 +262,33 @@
     <!-- Header -->
     {% include 'includes/header.html' %}
 
-    <!-- Main Content -->
-    <div class="container">
-      <!-- Page Header -->
-      <div class="page-header">
-        <h1>Client Home</h1>
+    <div class="layout">
+      <!-- MAIN CONTENT -->
+      <div class="main-content">
+        <h2>Available Freelancers</h2>
+
+        <div class="freelancer-list">
+          {% for freelancer in freelancers %}
+            <div class="freelancer-card">
+              <h4>{{ freelancer.username }}</h4>
+              <p>{{ freelancer.email }}</p>
+            </div>
+          {% empty %}
+            <p>No freelancers found</p>
+          {% endfor %}
+        </div>
       </div>
 
-      <!-- Create Job Post -->
-      <div class="create-post">
-        <h3>Post a Job Opportunity</h3>
-        <form
-          method="POST"
-          enctype="multipart/form-data"
-          action="{% url 'create_job' %}">
-          {% csrf_token %}
-
-          <textarea
-            name="description"
-            placeholder="Share a job opportunity or update..."
-            required></textarea>
-
-          <div class="post-options">
-            <label class="file-label">
-              <i class="fas fa-image"></i>
-              <span>Add image</span>
-              <input type="file" name="image" accept="image/*" />
-            </label>
-
-            <button type="submit" class="post-btn">
-              <i class="fas fa-paper-plane"></i> Post
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state">
-        <i class="fas fa-briefcase"></i>
-        <h3>No jobs posted yet</h3>
-        <p>Be the first to share a job opportunity!</p>
-      </div>
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <h3>Roles</h3>
+        <ul>
+          <li>Web Developer</li>
+          <li>UI/UX Designer</li>
+          <li>Data Analyst</li>
+          <li>Mobile App Developer</li>
+        </ul>
+      </aside>
     </div>
 
     <!-- Footer -->

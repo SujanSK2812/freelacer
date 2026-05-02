@@ -16,14 +16,14 @@
         </a>
 
     {% elif request.user.role == "client" %}
-        <a href="{% url 'client_home' %}">
+        <a href="{% url 'client:client_home' %}">
             <h2>Freelancer Portal</h2>
         </a>
 
     {% elif request.user.role == "freelancer" %}
         <a href="{% url 'freelancer_home' %}">
             <h2>Freelancer Portal</h2>
-        </a>d
+        </a>
 
     {% endif %}
 
@@ -37,7 +37,7 @@
 
 <!-- ================= SEARCH BAR ================= -->
 
-{% if request.user.is_authenticated %}
+{% if request.user.is_authenticated and request.user.role == "freelancer" %}
 <div class="search-box">
     <form action="{% url 'search_results' %}" method="GET">
         <input type="text" name="q" placeholder="Search..." required>
@@ -60,12 +60,12 @@
         
         <a href="/admin/">Django Admin</a>
         <a href="{% url 'admin_users' %}">Users</a>
-        <a href="#">Projects</a>
+        <a href="{% url 'project_list' %}">Projects</a>
 
     <!-- ✅ CLIENT NAV -->
     {% elif request.user.role == "client" %}
 
-        <a href="{% url 'client_dashboard' %}"
+        <a href="{% url 'client:client_dashboard' %}"
         class="{% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
         Dashboard
         </a>
@@ -82,7 +82,7 @@
         Dashboard
         </a>
 
-        <a href="{% url 'browse_projects' %}"
+        <a href="{% url 'search_results' %}"
         class="{% if request.resolver_match.url_name == 'browse_projects' %}active{% endif %}">
         Find Work
         </a>
