@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from freelancer.models import Project
-
+from .models import EmailOTP
 
 User = get_user_model()
 def register(request):
@@ -311,14 +311,26 @@ def role_redirect(request, role):
 
 
 
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def admin_home(request):
-    if not request.user.is_superuser:
-        return redirect("login")   # security
 
-    return render(request, "admin/home.html")
+    if not request.user.is_superuser:
+        return redirect("login")
+
+    clients = User.objects.filter(role="client")
+    freelancers = User.objects.filter(role="freelancer")
+    projects = Project.objects.all()
+
+    context = {
+        "client_count": clients.count(),
+        "freelancer_count": freelancers.count(),
+        "project_count": projects.count(),
+        "total_count": clients.count() + freelancers.count(),
+    }
+
+    return render(request, "admin/home.html", context)
+
+
 
 
 
@@ -330,12 +342,19 @@ def admin_users(request):
 
     clients = User.objects.filter(role="client")
     freelancers = User.objects.filter(role="freelancer")
+    projects = Project.objects.all()
 
-    return render(request, "admin/users.html", {
+    context = {
         "clients": clients,
-        "freelancers": freelancers
-    })
+        "freelancers": freelancers,
 
+        "client_count": clients.count(),
+        "freelancer_count": freelancers.count(),
+        "project_count": projects.count(),
+        "total_count": clients.count() + freelancers.count(),
+    }
+
+    return render(request, "admin/users.html", context)
 
 
 

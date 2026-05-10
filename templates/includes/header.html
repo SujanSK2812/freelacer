@@ -1,346 +1,320 @@
-{% load static %}
-
-{% load static %}
+{% load static %} {% load static %}
 
 <nav>
+  <!-- ================= LOGO ================= -->
 
-<!-- ================= LOGO ================= -->
-
-<div class="logo">
-
-{% if request.user.is_authenticated %}
-
-    {% if request.user.is_superuser %}
-        <a href="{% url 'admin_home' %}">
-            <h2>Freelancer Portal</h2>
-        </a>
+  <div class="logo">
+    {% if request.user.is_authenticated %} {% if request.user.is_superuser %}
+    <a href="{% url 'admin_home' %}">
+      <h2>Freelancer Portal</h2>
+    </a>
 
     {% elif request.user.role == "client" %}
-        <a href="{% url 'client:client_home' %}">
-            <h2>Freelancer Portal</h2>
-        </a>
+    <a href="{% url 'client:client_home' %}">
+      <h2>Freelancer Portal</h2>
+    </a>
 
     {% elif request.user.role == "freelancer" %}
-        <a href="{% url 'freelancer_home' %}">
-            <h2>Freelancer Portal</h2>
-        </a>
-
-    {% endif %}
-
-{% else %}
-    <a href="/">
-        <h2>Freelancer Portal</h2>
+    <a href="{% url 'freelancer_home' %}">
+      <h2>Freelancer Portal</h2>
     </a>
-{% endif %}
 
-</div>
+    {% endif %} {% else %}
+    <a href="/">
+      <h2>Freelancer Portal</h2>
+    </a>
+    {% endif %}
+  </div>
 
-<!-- ================= SEARCH BAR ================= -->
+  <!-- ================= SEARCH BAR ================= -->
 
-{% if request.user.is_authenticated and request.user.role == "freelancer" %}
-<div class="search-box">
+  {% if request.user.is_authenticated and request.user.role == "freelancer" %}
+  <div class="search-box">
     <form action="{% url 'search_results' %}" method="GET">
-        <input type="text" name="q" placeholder="Search..." required>
-        <button type="submit">
-            <i class="fas fa-search"></i>
-        </button>
+      <input type="text" name="q" placeholder="Search..." required />
+      <button type="submit">
+        <i class="fas fa-search"></i>
+      </button>
     </form>
-</div>
-{% endif %}
+  </div>
+  {% endif %}
 
-<!-- ================= NAV LINKS ================= -->
+  <!-- ================= NAV LINKS ================= -->
 
-<div class="nav-links">
-
-{% if request.user.is_authenticated %}
+  <div class="nav-links">
+    {% if request.user.is_authenticated %}
 
     <!-- ✅ ADMIN NAV -->
     {% if request.user.is_superuser %}
 
-        
-        <a href="/admin/">Django Admin</a>
-        <a href="{% url 'admin_users' %}">Users</a>
-        <a href="{% url 'project_list' %}">Projects</a>
+    <a href="/admin/">Django Admin</a>
+    <a href="{% url 'admin_users' %}">Users</a>
+    <a href="{% url 'project_list' %}">Projects</a>
 
     <!-- ✅ CLIENT NAV -->
     {% elif request.user.role == "client" %}
 
-        <a href="{% url 'client:client_dashboard' %}"
-        class="{% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
-        Dashboard
-        </a>
+    <a
+      href="{% url 'client:client_dashboard' %}"
+      class="{% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+      Dashboard
+    </a>
 
-        <a href="#">Jobs</a>
-        <a href="#">Messages</a>
-        <a href="#">Freelancers</a>
+    <a href="#">Jobs</a>
+    <a href="{% url 'chat_home' %}">Messages</a>
+    <a href="#">Freelancers</a>
 
     <!-- ✅ FREELANCER NAV -->
     {% elif request.user.role == "freelancer" %}
 
-        <a href="{% url 'freelancer_dashboard' %}"
-        class="{% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
-        Dashboard
-        </a>
+    <a
+      href="{% url 'freelancer_dashboard' %}"
+      class="{% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
+      Dashboard
+    </a>
 
-        <a href="{% url 'search_results' %}"
-        class="{% if request.resolver_match.url_name == 'browse_projects' %}active{% endif %}">
-        Find Work
-        </a>
+    <a
+      href="{% url 'search_results' %}"
+      class="{% if request.resolver_match.url_name == 'browse_projects' %}active{% endif %}">
+      Find Work
+    </a>
 
-        <a href="#">My Bids</a>
-        <a href="#">Messages</a>
+    <a href="#">My Bids</a>
+    <a href="{% url 'chat_home' %}">Messages</a>
 
     {% endif %}
 
     <!-- COMMON -->
-    <a href="{% url 'how_it_works' %}"
-    class="{% if request.resolver_match.url_name == 'how_it_works' %}active{% endif %}">
-    How it Works
+    {% if not request.user.is_superuser %}
+    <a
+      href="{% url 'how_it_works' %}"
+      class="{% if request.resolver_match.url_name == 'how_it_works' %}active{% endif %}">
+      How it Works
     </a>
+    {% endif %}
 
     <!-- PROFILE -->
     <div class="profile-section">
+      <div class="profile-icon" onclick="toggleProfileMenu()">
+        <i class="fas fa-user"></i>
+      </div>
 
-        <div class="profile-icon" onclick="toggleProfileMenu()">
-            <i class="fas fa-user"></i>
-        </div>
-
-        <div class="profile-menu" id="profileMenu">
-            <a href="{% url 'logout' %}">Logout</a>
-        </div>
-
+      <div class="profile-menu" id="profileMenu">
+        <a href="{% url 'logout' %}">Logout</a>
+      </div>
     </div>
 
-{% else %}
+    {% else %}
 
     <a href="{% url 'login' %}">Login</a>
     <a href="{% url 'select_role' %}">Register</a>
     <a href="{% url 'how_it_works' %}">How it Works</a>
 
-{% endif %}
+    {% endif %}
+  </div>
 
-</div>
+  <!-- ================= MOBILE MENU ================= -->
 
-<!-- ================= MOBILE MENU ================= -->
-
-<div class="mobile-menu">
+  <div class="mobile-menu">
     <i class="fas fa-bars"></i>
-</div>
-
+  </div>
 </nav>
 
 <!-- ================= CSS ================= -->
 
 <style>
+  nav {
+    background: white;
+    padding: 0.8rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
 
-nav{
-background:white;
-padding:0.8rem 5%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-box-shadow:0 2px 10px rgba(0,0,0,0.05);
-position:sticky;
-top:0;
-z-index:1000;
-}
+  .logo h2 {
+    color: #108a00;
+    font-size: 1.3rem;
+  }
 
-.logo h2{
-color:#108a00;
-font-size:1.3rem;
-}
+  .logo a {
+    text-decoration: none;
+  }
 
-.logo a{
-text-decoration:none;
-}
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
 
-.nav-links{
-display:flex;
-gap:2rem;
-align-items:center;
-}
+  .nav-links a {
+    text-decoration: none;
+    color: #5e6b7c;
+    font-weight: 500;
+  }
 
-.nav-links a{
-text-decoration:none;
-color:#5e6b7c;
-font-weight:500;
-}
+  .nav-links a:hover {
+    color: #108a00;
+  }
 
-.nav-links a:hover{
-color:#108a00;
-}
+  .nav-links a.active {
+    color: #108a00;
+  }
 
-.nav-links a.active{
-color:#108a00;
-}
+  .how-it-works {
+    background: #f3f2ef;
+    padding: 6px 15px;
+    border-radius: 20px;
+  }
 
-.how-it-works{
-background:#f3f2ef;
-padding:6px 15px;
-border-radius:20px;
-}
+  /* Profile */
 
+  .profile-section {
+    position: relative;
+  }
 
-/* Profile */
+  .profile-icon {
+    width: 38px;
+    height: 38px;
+    background: #f3f2ef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
 
-.profile-section{
-position:relative;
-}
+  .profile-menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+  }
 
-.profile-icon{
-width:38px;
-height:38px;
-background:#f3f2ef;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-}
+  .profile-menu a {
+    color: #dc3545;
+    text-decoration: none;
+  }
 
-.profile-menu{
-position:absolute;
-top:50px;
-right:0;
-background:white;
-padding:10px 15px;
-border-radius:6px;
-box-shadow:0 4px 12px rgba(0,0,0,0.15);
-display:none;
-}
+  /* Mobile */
 
-.profile-menu a{
-color:#dc3545;
-text-decoration:none;
-}
+  .mobile-menu {
+    display: none;
+    font-size: 22px;
+    cursor: pointer;
+  }
+  /* Search Bar */
 
-/* Mobile */
+  .search-box {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 20px;
+  }
 
-.mobile-menu{
-display:none;
-font-size:22px;
-cursor:pointer;
-}
-/* Search Bar */
+  .search-box form {
+    display: flex;
+    width: 100%;
+    max-width: 400px;
+    background: #f3f2ef;
+    border-radius: 25px;
+    overflow: hidden;
+  }
 
-.search-box{
-flex:1;
-display:flex;
-justify-content:center;
-margin:0 20px;
-}
+  .search-box input {
+    flex: 1;
+    padding: 8px 15px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+  }
 
-.search-box form{
-display:flex;
-width:100%;
-max-width:400px;
-background:#f3f2ef;
-border-radius:25px;
-overflow:hidden;
-}
+  .search-box button {
+    background: #108a00;
+    border: none;
+    padding: 0 15px;
+    color: white;
+    cursor: pointer;
+  }
 
-.search-box input{
-flex:1;
-padding:8px 15px;
-border:none;
-outline:none;
-background:transparent;
-font-size:14px;
-}
+  /* Mobile */
 
-.search-box button{
-background:#108a00;
-border:none;
-padding:0 15px;
-color:white;
-cursor:pointer;
-}
+  @media (max-width: 768px) {
+    .search-box {
+      order: 3;
+      width: 100%;
+      margin-top: 10px;
+    }
 
-/* Mobile */
+    .search-box form {
+      max-width: 100%;
+    }
+  }
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 20px;
+    }
 
-@media(max-width:768px){
+    .nav-links.show {
+      display: flex;
+    }
 
-.search-box{
-order:3;
-width:100%;
-margin-top:10px;
-}
-
-.search-box form{
-max-width:100%;
-}
-
-}
-@media(max-width:768px){
-
-.nav-links{
-display:none;
-flex-direction:column;
-position:absolute;
-top:100%;
-left:0;
-right:0;
-background:white;
-padding:20px;
-}
-
-.nav-links.show{
-display:flex;
-}
-
-.mobile-menu{
-display:block;
-}
-
-}
-
+    .mobile-menu {
+      display: block;
+    }
+  }
 </style>
-
 
 <!-- ================= JS ================= -->
 
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const mobileMenu = document.querySelector(".mobile-menu");
+    const navLinks = document.querySelector(".nav-links");
 
-document.addEventListener("DOMContentLoaded",function(){
+    mobileMenu.addEventListener("click", function (e) {
+      e.stopPropagation();
+      navLinks.classList.toggle("show");
+    });
 
-const mobileMenu=document.querySelector(".mobile-menu");
-const navLinks=document.querySelector(".nav-links");
+    document.addEventListener("click", function (e) {
+      if (!navLinks.contains(e.target) && !mobileMenu.contains(e.target)) {
+        navLinks.classList.remove("show");
+      }
+    });
+  });
 
-mobileMenu.addEventListener("click",function(e){
-e.stopPropagation();
-navLinks.classList.toggle("show");
-});
+  function toggleProfileMenu() {
+    const menu = document.getElementById("profileMenu");
 
-document.addEventListener("click",function(e){
-if(!navLinks.contains(e.target) && !mobileMenu.contains(e.target)){
-navLinks.classList.remove("show");
-}
-});
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
 
-});
+  document.addEventListener("click", function (e) {
+    const profile = document.querySelector(".profile-section");
+    const menu = document.getElementById("profileMenu");
 
-function toggleProfileMenu(){
-
-const menu=document.getElementById("profileMenu");
-
-menu.style.display =
-menu.style.display === "block" ? "none" : "block";
-
-}
-
-document.addEventListener("click",function(e){
-
-const profile=document.querySelector(".profile-section");
-const menu=document.getElementById("profileMenu");
-
-if(profile && !profile.contains(e.target)){
-menu.style.display="none";
-}
-
-});
-
+    if (profile && !profile.contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
 </script>
 
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />

@@ -335,12 +335,12 @@
     <!-- Quick stats section: additional modern element from common admin patterns -->
     <div class="stats-row">
         <div class="stat-item">
-            <div class="stat-number">124</div>
+            <div class="stat-number">{{total_count}}</div>
             <div class="stat-label">Total Users</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">37</div>
-            <div class="stat-label">Active Projects</div>
+            <div class="stat-number">{{ project_count }}</div>
+            <div class="stat-label">Projects</div>
         </div>
         <div class="stat-item">
             <div class="stat-number">23</div>
@@ -386,7 +386,7 @@
 
 <!-- ==================== JAVASCRIPT for mobile & profile menu (exactly same behavior) ==================== -->
 
-
+{% include 'includes/footer.html' %}
 </body>
 
 </html>

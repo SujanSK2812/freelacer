@@ -33,10 +33,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ASGI_APPLICATION = 'freelancer_portal.asgi.application'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +50,8 @@ INSTALLED_APPS = [
     'client',
     'freelancer',
     'projects',
-    
+    'messages_app',
+   
 ]
 
 MIDDLEWARE = [
@@ -59,7 +63,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 ROOT_URLCONF = 'freelancer_portal.urls'
+CHANNEL_LAYERS = {
 
+    "default": {
+
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+
+    },
+
+}
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -74,10 +90,14 @@ TEMPLATES = [
         },
     },
 ]
+STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 WSGI_APPLICATION = 'freelancer_portal.wsgi.application'
 
-
+STATIC_ROOT = BASE_DIR / "staticfiles"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 

@@ -1,0 +1,69 @@
+
+
+{% block content %}
+
+<div class="chat-users">
+
+    <h2>Messages</h2>
+
+    {% for user in users %}
+
+    <a href="{% url 'chat_detail' user.id %}" class="user-card">
+
+        <div class="avatar">
+            <i class="fas fa-user"></i>
+        </div>
+
+        <div>
+            <h4>{{ user.username }}</h4>
+            <p>Start Conversation</p>
+        </div>
+
+    </a>
+
+    {% endfor %}
+
+</div>
+
+<style>
+
+.chat-users{
+    max-width:700px;
+    margin:40px auto;
+}
+
+.user-card{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:15px;
+    margin-bottom:10px;
+    background:white;
+    border-radius:10px;
+    text-decoration:none;
+    color:black;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+.avatar{
+    width:50px;
+    height:50px;
+    background:#108a00;
+    color:white;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+@media(max-width:380px){
+
+.user-card{
+    padding:12px;
+}
+
+}
+
+</style>
+
+{% endblock %}

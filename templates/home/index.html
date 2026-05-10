@@ -20,48 +20,113 @@
 <section class="container">
 
 <div class="hero">
-    <h1>Welcome to Freelancer Hiring Portal</h1>
-    <p>Connect Clients with Skilled Freelancers Easily</p>
-</div>
 
-<!-- ROLE BASED DASHBOARD -->
 {% if request.user.is_authenticated %}
 
+    <!-- ADMIN -->
+
     {% if request.user.is_superuser %}
-        <div class="dashboard-box">
-            <h3>Admin Dashboard</h3>
 
-            <a href="/admin/" class="btn">Go to Admin Panel</a>
-            <a href="/admin/auth/user/" class="btn">Manage Users</a>
-        </div>
+        <h1>Welcome Admin</h1>
+        <p>Manage users, projects and platform activities.</p>
 
-    {% else %}
-        {% if request.user.role == "client" %}
-            <div class="dashboard-box">
-                <h3>Client Dashboard</h3>
+    <!-- CLIENT -->
 
-                <a href="/projects/post/" class="btn">Post a Project</a>
-                <a href="/projects/my-projects/" class="btn">View My Projects</a>
-            </div>
+    {% elif request.user.role == "client" %}
 
-        {% elif request.user.role == "freelancer" %}
-            <div class="dashboard-box">
-                <h3>Freelancer Dashboard</h3>
+        <h1>Hire Skilled Freelancers</h1>
+        <p>Post projects and connect with talented professionals.</p>
 
-                <a href="/projects/browse/" class="btn">Browse Projects</a>
-                <a href="/projects/my-bids/" class="btn">My Bids</a>
-            </div>
-        {% endif %}
+    <!-- FREELANCER -->
+
+    {% elif request.user.role == "freelancer" %}
+
+        <h1>Find Freelance Projects</h1>
+        <p>Discover projects and grow your freelance career.</p>
+
     {% endif %}
 
 {% else %}
-    <div class="selection-box">
-        <a href="{% url 'select_role' %}" class="btn">
-            Join To Become a Freelancer
+
+    <h1>Welcome to Freelancer Hiring Portal</h1>
+    <p>Connect Clients with Skilled Freelancers Easily</p>
+
+{% endif %}
+
+</div>
+
+<!-- ROLE BASED DASHBOARD -->
+
+{% if request.user.is_authenticated %}
+
+    <!-- ================= ADMIN ================= -->
+
+    {% if request.user.is_superuser %}
+
+    <div class="dashboard-box">
+        <h3>Admin Dashboard</h3>
+
+        <a href="/admin/" class="btn">
+            Django Admin
+        </a>
+
+        <a href="{% url 'admin_users' %}" class="btn">
+            Manage Users
+        </a>
+
+    </div>
+
+    <!-- ================= CLIENT ================= -->
+
+    {% elif request.user.role == "client" %}
+
+    <div class="dashboard-box">
+        <h3>Client Dashboard</h3>
+
+        <a href="/projects/post/" class="btn">
+            Post a Project
+        </a>
+
+        <a href="/projects/my-projects/" class="btn">
+            View My Projects
+        </a>
+
+        <a href="#" class="btn">
+            Messages
         </a>
     </div>
-{% endif %}
+
+    <!-- ================= FREELANCER ================= -->
+
+    {% elif request.user.role == "freelancer" %}
+
+    <div class="dashboard-box">
+        <h3>Freelancer Dashboard</h3>
+
+        <a href="{% url 'search_results' %}" class="btn">
+            Browse Projects
+        </a>
+
+        <a href="/projects/my-bids/" class="btn">
+            My Bids
+        </a>
+
     
+    </div>
+
+    {% endif %}
+
+{% else %}
+
+<div class="selection-box">
+
+    <a href="{% url 'select_role' %}" class="btn">
+        Join To Become a Freelancer
+    </a>
+
+</div>
+
+{% endif %}
 
 
 <!-- FEATURES -->
@@ -102,27 +167,28 @@
 
 <!-- STATS -->
 
+
 <div class="stats-section">
 
-<div class="stat-item">
-<h3>10K+</h3>
-<p>Active Freelancers</p>
-</div>
+  <div class="stat-item">
+    <h3>{{ total_count }}+</h3>
+    <p>Active Freelancers</p>
+  </div>
 
-<div class="stat-item">
-<h3>5K+</h3>
-<p>Projects Completed</p>
-</div>
+  <div class="stat-item">
+    <h3>{{ projects_count }}+</h3>
+    <p>Projects Completed</p>
+  </div>
 
-<div class="stat-item">
-<h3>2K+</h3>
-<p>Happy Clients</p>
-</div>
+  <div class="stat-item">
+    <h3>{{ clients_count }}+</h3>
+    <p>Happy Clients</p>
+  </div>
 
-<div class="stat-item">
-<h3>95%</h3>
-<p>Satisfaction Rate</p>
-</div>
+  <div class="stat-item">
+    <h3>95%</h3>
+    <p>Satisfaction Rate</p>
+  </div>
 
 </div>
 
@@ -135,38 +201,22 @@
 
 <div class="testimonials-grid">
 
-<div class="testimonial-card">
-<i class="fas fa-quote-left"></i>
-<p>"Found amazing freelancers for my projects. The platform is easy to use and very secure."</p>
+    {% for testimonial in testimonials %}
 
-<div class="testimonial-author">
-<strong>John Doe</strong>
-<span>Client</span>
-</div>
+    <div class="testimonial-card">
 
-</div>
+        <i class="fas fa-quote-left"></i>
 
-<div class="testimonial-card">
-<i class="fas fa-quote-left"></i>
-<p>"As a freelancer, I've found consistent work and built long-term relationships with clients."</p>
+        <p>"{{ testimonial.message }}"</p>
 
-<div class="testimonial-author">
-<strong>Jane Smith</strong>
-<span>Freelancer</span>
-</div>
+        <div class="testimonial-author">
+            <strong>{{ testimonial.name }}</strong>
+            <span>{{ testimonial.role }}</span>
+        </div>
 
-</div>
+    </div>
 
-<div class="testimonial-card">
-<i class="fas fa-quote-left"></i>
-<p>"The payment protection and support team are excellent. Highly recommended!"</p>
-
-<div class="testimonial-author">
-<strong>Mike Johnson</strong>
-<span>Client</span>
-</div>
-
-</div>
+    {% endfor %}
 
 </div>
 </div>

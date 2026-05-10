@@ -3,8 +3,31 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from accounts.models import Testimonial
+from accounts.models import ContactMessage 
+from django.contrib.auth import get_user_model
+from freelancer.models import Project
+User = get_user_model()
+
+
+User = get_user_model()
+
 def home(request):
-    context = {}
+
+    testimonials = Testimonial.objects.all()
+
+    freelancers_count = User.objects.filter(role="freelancer").count()
+    clients_count = User.objects.filter(role="client").count()
+    projects_count = Project.objects.count()
+
+    context = {
+        "testimonials": testimonials,
+
+        "total_count": freelancers_count,
+        "clients_count": clients_count,
+        "projects_count": projects_count,
+    }
 
     if request.user.is_authenticated:
         context["role"] = request.user.role
@@ -12,7 +35,8 @@ def home(request):
         context["role"] = "public"
 
     return render(request, "home/index.html", context)
-from accounts.models import ContactMessage   # import model
+
+  # import model
 
 def contact(request):
 

@@ -8,13 +8,38 @@
         Your trusted platform for connecting clients with top freelance talent
         worldwide.
       </p>
-      <div class="social-links">
-        <a href="#"><i class="fab fa-facebook"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-linkedin"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-      </div>
+      
     </div>
+
+ {% if request.user.is_authenticated %}
+
+    <!-- ================= ADMIN ================= -->
+
+    {% if request.user.is_superuser %}
+
+    <div class="footer-section">
+      <h4>Admin Panel</h4>
+      <ul>
+        <li><a href="/admin/">Django Admin</a></li>
+        <li><a href="{% url 'admin_users' %}">Manage Users</a></li>
+        <li><a href="{% url 'project_list' %}">Manage Projects</a></li>
+        <li><a href="{% url 'reports' %}">Reports</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="{% url 'about_us' %}">About Us</a></li>
+        <li><a href="{% url 'contact' %}">Contact</a></li>
+        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+        <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
+      </ul>
+    </div>
+
+    <!-- ================= CLIENT ================= -->
+
+    {% elif request.user.role == "client" %}
 
     <div class="footer-section">
       <h4>For Clients</h4>
@@ -25,6 +50,20 @@
         <li><a href="/success-stories/">Success Stories</a></li>
       </ul>
     </div>
+
+    <div class="footer-section">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="{% url 'about_us' %}">About Us</a></li>
+        <li><a href="{% url 'contact' %}">Contact</a></li>
+        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+        <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
+      </ul>
+    </div>
+
+    <!-- ================= FREELANCER ================= -->
+
+    {% elif request.user.role == "freelancer" %}
 
     <div class="footer-section">
       <h4>For Freelancers</h4>
@@ -45,15 +84,56 @@
         <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
       </ul>
     </div>
+
+    {% endif %}
+
+{% else %}
+
+<!-- ================= GUEST USERS ================= -->
+
+<div class="footer-section">
+  <h4>For Clients</h4>
+  <ul>
+    <li><a href="/how-to-hire/">How to Hire</a></li>
+    <li><a href="/post-project/">Post a Project</a></li>
+    <li><a href="/find-freelancers/">Find Freelancers</a></li>
+  </ul>
+</div>
+
+<div class="footer-section">
+  <h4>For Freelancers</h4>
+  <ul>
+    <li><a href="{% url 'how_to_find_work' %}">How to Find Work</a></li>
+    <li><a href="{% url 'search_results' %}">Browse Projects</a></li>
+    <li><a href="{% url 'create_profile' %}">Create Profile</a></li>
+  </ul>
+</div>
+
+<div class="footer-section">
+  <h4>Company</h4>
+  <ul>
+    <li><a href="{% url 'about_us' %}">About Us</a></li>
+    <li><a href="{% url 'contact' %}">Contact</a></li>
+    <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+    <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
+  </ul>
+</div>
+
+{% endif %}
+    
   </div>
 
   <div class="footer-bottom">
     <p>&copy; 2024 Freelancer Portal. All rights reserved.</p>
     <div class="footer-links">
-      <a href="/faq/">FAQ</a>
-      <a href="/support/">Support</a>
-      <a href="/blog/">Blog</a>
+      <a href="https://django-blog-8esp.onrender.com">Blog</a>
     </div>
+    <div class="social-links">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="www.linkedin.com/in/freelancer-hiring-portal-a60a69408"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
   </div>
 </footer>
 
