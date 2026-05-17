@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>All Freelancers | FreelanceHub</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f7fb;
+      color: #1e293b;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* main container */
+    .freelancers-page {
+      flex: 1;
+      max-width: 1280px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    /* header area */
+    .page-header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .page-header h1 i {
+      color: #108a00;
+      font-size: 1.8rem;
+    }
+    .stats-badge {
+      background: #eef2ff;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1e293b;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 40px;
+      padding: 0.5rem 1.2rem;
+      text-decoration: none;
+      color: #1e293b;
+      font-weight: 500;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .back-link:hover {
+      background: #f8fafc;
+      border-color: #108a00;
+      color: #108a00;
+    }
+
+    /* freelancer grid (clean cards) */
+    .freelancer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .freelancer-card {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #eef2f6;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      overflow: hidden;
+    }
+    .freelancer-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+      border-color: #e0e7ef;
+    }
+
+    .card-inner {
+      padding: 1.5rem;
+    }
+
+    /* clickable username area */
+    .freelancer-name-link {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: 0.2s;
+    }
+    .freelancer-name-link h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+      transition: color 0.2s;
+    }
+    .freelancer-name-link i {
+      color: #108a00;
+      font-size: 1rem;
+      opacity: 0.7;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .freelancer-name-link:hover h3 {
+      color: #108a00;
+    }
+    .freelancer-name-link:hover i {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+
+    .freelancer-email {
+      color: #475569;
+      font-size: 0.85rem;
+      margin: 0.5rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px dashed #eef2f8;
+      padding-bottom: 0.75rem;
+    }
+    .freelancer-email i {
+      color: #6c757d;
+      width: 1.1rem;
+    }
+
+    .skill-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.75rem 0;
+    }
+    .skill-tag {
+      background: #f1f5f9;
+      padding: 0.2rem 0.7rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #1e293b;
+    }
+    .skill-tag i {
+      margin-right: 0.3rem;
+      font-size: 0.65rem;
+      color: #108a00;
+    }
+    .rate-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.9rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #f0f2f5;
+      font-size: 0.85rem;
+      color: #334155;
+      flex-wrap: wrap;
+    }
+    .rate-info span {
+      background: #f8fafc;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+
+    /* CONNECT/FOLLOW BUTTON STYLES */
+    .connect-btn {
+      margin-top: 1rem;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, #108a00 0%, #0b6d00 100%);
+      border: none;
+      border-radius: 40px;
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2);
+    }
+    .connect-btn i {
+      font-size: 0.9rem;
+    }
+    .connect-btn:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #0b6d00 0%, #095a00 100%);
+      box-shadow: 0 6px 14px rgba(16, 138, 0, 0.3);
+    }
+    .connect-btn.connected {
+      background: #eef2ff;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+      box-shadow: none;
+    }
+    .connect-btn.connected i {
+      color: #108a00;
+    }
+    .connect-btn.connected:hover {
+      background: #e2e8f0;
+      transform: none;
+    }
+
+    .profile-btn {
+      margin-top: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      border-radius: 40px;
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #1e293b;
+      text-decoration: none;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .profile-btn i {
+      font-size: 0.7rem;
+    }
+    .profile-btn:hover {
+      background: #f1f5f9;
+      border-color: #108a00;
+      color: #108a00;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .empty-state-modern {
+      text-align: center;
+      background: white;
+      border-radius: 32px;
+      padding: 3rem 2rem;
+      margin-top: 2rem;
+      border: 1px solid #edf2f7;
+    }
+    .empty-state-modern i {
+      font-size: 3rem;
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+    .empty-state-modern p {
+      color: #64748b;
+    }
+
+    /* Toast notification */
+    .toast-notification {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e293b;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 48px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 2000;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.95);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      animation: slideUp 0.2s ease;
+      pointer-events: none;
+    }
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+   
+    @media (max-width: 680px) {
+      .freelancer-grid {
+        grid-template-columns: 1fr;
+      }
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Include header (Django) -->
+{% include 'includes/header.html' %}
+
+<main class="freelancers-page">
+  <div class="page-header">
+    <h1>
+      <i class="fas fa-users"></i>
+      All Freelancers
+    </h1>
+    <div class="stats-badge">
+      <i class="fas fa-user-check"></i> {{ freelancers|length }} professionals
+    </div>
+    <a href="{% url 'client:client_home' %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <!-- Freelancer grid with Follow/Connect feature -->
+  <div class="freelancer-grid">
+    {% for freelancer in freelancers %}
+    <div class="freelancer-card" data-freelancer-id="{{ freelancer.id }}">
+      <div class="card-inner">
+        <!-- Username is clickable -> leads to profile detail page -->
+        <a href="{% url 'freelancer:freelancer_profile' freelancer.id %}" class="freelancer-name-link">
+          <h3>{{ freelancer.username }}</h3>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+
+        <div class="freelancer-email">
+          <i class="fas fa-envelope"></i>
+          <span>{{ freelancer.email }}</span>
+        </div>
+
+        <!-- Display skills / categories if present -->
+        <div class="skill-section">
+          {% if freelancer.skill_category %}
+          <span class="skill-tag">
+            <i class="fas fa-code"></i> {{ freelancer.skill_category }}
+          </span>
+          {% endif %}
+          {% if freelancer.top_skill %}
+          <span class="skill-tag">
+            <i class="fas fa-star"></i> {{ freelancer.top_skill }}
+          </span>
+          {% else %}
+          <span class="skill-tag">
+            <i class="fas fa-medal"></i> Top Rated
+          </span>
+          {% endif %}
+          {% if freelancer.primary_language %}
+          <span class="skill-tag">
+            <i class="fas fa-language"></i> {{ freelancer.primary_language }}
+          </span>
+          {% endif %}
+        </div>
+
+        <!-- Rate & experience hints -->
+        <div class="rate-info">
+          {% if freelancer.hourly_rate %}
+          <span><i class="fas fa-dollar-sign"></i> ${{ freelancer.hourly_rate }}/hr</span>
+          {% else %}
+          <span><i class="fas fa-briefcase"></i> Open to offers</span>
+          {% endif %}
+          {% if freelancer.experience_years %}
+          <span><i class="fas fa-calendar-alt"></i> {{ freelancer.experience_years }} yrs exp</span>
+          {% endif %}
+        </div>
+
+        <!-- CONNECT / FOLLOW BUTTON (friend-like concept) + View Profile -->
+        <div class="action-buttons">
+          <button class="connect-btn" data-username="{{ freelancer.username }}" data-id="{{ freelancer.id }}">
+            <i class="fas fa-user-plus"></i>
+            <span>Follow</span>
+          </button>
+          <a href="{% url 'freelancer:freelancer_profile' freelancer.id %}" class="profile-btn">
+            <i class="fas fa-user-astronaut"></i> View full profile
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state-modern">
+      <i class="fas fa-user-slash"></i>
+      <p>No freelancers available at the moment.</p>
+      <p style="font-size: 0.8rem; margin-top: 0.5rem;">Check back later or adjust your filters.</p>
+    </div>
+    {% endfor %}
+  </div>
+</main>
+
+
+<script>
+  (function() {
+    // Follow/Connect functionality (frontend state + localStorage simulation)
+    // In real implementation you'd send POST to Django endpoint, but this provides full UX with persistence
+    // Key: "followed_freelancers" stores array of IDs
+
+    function getFollowedList() {
+      const stored = localStorage.getItem('freelancehub_followed');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch(e) { return []; }
+      }
+      return [];
+    }
+
+    function saveFollowedList(list) {
+      localStorage.setItem('freelancehub_followed', JSON.stringify(list));
+    }
+
+    function isFollowed(freelancerId) {
+      const list = getFollowedList();
+      return list.includes(freelancerId);
+    }
+
+    function addFollow(freelancerId) {
+      let list = getFollowedList();
+      if (!list.includes(freelancerId)) {
+        list.push(freelancerId);
+        saveFollowedList(list);
+      }
+    }
+
+    function removeFollow(freelancerId) {
+      let list = getFollowedList();
+      const newList = list.filter(id => id !== freelancerId);
+      saveFollowedList(newList);
+    }
+
+    function updateButtonUI(btn, isFollowing, freelancerName) {
+      const span = btn.querySelector('span');
+      const icon = btn.querySelector('i');
+      if (isFollowing) {
+        btn.classList.add('connected');
+        span.innerText = 'Following';
+        if (icon) icon.className = 'fas fa-user-check';
+        btn.setAttribute('data-follow-state', 'following');
+      } else {
+        btn.classList.remove('connected');
+        span.innerText = 'Follow';
+        if (icon) icon.className = 'fas fa-user-plus';
+        btn.setAttribute('data-follow-state', 'follow');
+      }
+    }
+
+    function showToast(message, isSuccess = true) {
+      // Remove existing toast if any
+      const oldToast = document.querySelector('.toast-notification');
+      if (oldToast) oldToast.remove();
+
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      toast.innerHTML = `
+        <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-info-circle'}" style="color: #a3e635;"></i>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    // Initialize all connect buttons
+    const connectBtns = document.querySelectorAll('.connect-btn');
+    
+    connectBtns.forEach(btn => {
+      const freelancerId = parseInt(btn.getAttribute('data-id'));
+      const freelancerName = btn.getAttribute('data-username') || 'Freelancer';
+      
+      // Set initial UI based on localStorage
+      const following = isFollowed(freelancerId);
+      updateButtonUI(btn, following, freelancerName);
+      
+      // Attach click handler
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentState = btn.getAttribute('data-follow-state');
+        const freelancerIdNum = parseInt(btn.getAttribute('data-id'));
+        const name = btn.getAttribute('data-username') || 'talent';
+        
+        if (currentState === 'following') {
+          // Unfollow
+          removeFollow(freelancerIdNum);
+          updateButtonUI(btn, false, name);
+          showToast(`👋 You unfollowed ${name}`, false);
+          console.log(`[Connect] Unfollowed freelancer ID: ${freelancerIdNum}`);
+        } else {
+          // Follow / Add connection
+          addFollow(freelancerIdNum);
+          updateButtonUI(btn, true, name);
+          showToast(`✨ You are now following ${name}!`, true);
+          console.log(`[Connect] Followed freelancer ID: ${freelancerIdNum}`);
+        }
+        
+        // Optional: you could also dispatch an AJAX request to server to persist follow relation
+        // Example: fetch('/api/follow/', { method: 'POST', body: JSON.stringify({ freelancer_id: freelancerIdNum, action: currentState === 'following' ? 'unfollow' : 'follow' }) })
+      });
+    });
+
+    // Additional: keep track of total connections count? (optional)
+    function updateGlobalConnectionHint() {
+      const followedCount = getFollowedList().length;
+      const statsBadge = document.querySelector('.stats-badge');
+      if (statsBadge && followedCount > 0) {
+        // Optionally show followed count near stats, but not intrusive
+        const existingHint = document.querySelector('.follow-hint');
+        if (!existingHint && followedCount > 0) {
+          // subtle addition: we might add small indicator near header
+        }
+      }
+    }
+    updateGlobalConnectionHint();
+
+    console.log("All Freelancers page ready — Follow/Connect (friend-like) feature active with localStorage.");
+  })();
+</script>
+</body>
+</html>

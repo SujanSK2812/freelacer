@@ -10,12 +10,31 @@ User = get_user_model()
 @login_required
 def chat_home(request):
 
-    users = User.objects.exclude(id=request.user.id)
+    # ADMIN
+    if request.user.is_staff:
+
+        users = User.objects.exclude(id=request.user.id)
+
+    # CLIENT -> only freelancers
+    elif request.user.role == "client":
+
+        users = User.objects.filter(
+            role="freelancer"
+        )
+
+    # FREELANCER -> only clients
+    elif request.user.role == "freelancer":
+
+        users = User.objects.filter(
+            role="client"
+        )
+
+    else:
+        users = User.objects.none()
 
     return render(request, 'messages/chat_home.html', {
         'users': users
     })
-
 
 @login_required
 def chat_detail(request, user_id):

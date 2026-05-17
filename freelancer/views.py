@@ -108,3 +108,23 @@ def edit_profile(request):
     return render(request, "freelancer/edit_profile.html", {
         "user": user
     })
+
+
+
+@login_required
+def freelancer_profile(request, freelancer_id):
+
+    freelancer = User.objects.get(id=freelancer_id)
+
+    profile = FreelancerProfile.objects.filter(
+        user=freelancer
+    ).first()
+
+    return render(
+        request,
+        "freelancer/freelancer_profile.html",
+        {
+            "freelancer": freelancer,
+            "profile": profile
+        }
+    )

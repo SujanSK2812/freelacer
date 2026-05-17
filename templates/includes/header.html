@@ -85,13 +85,7 @@
     {% endif %}
 
     <!-- COMMON -->
-    {% if not request.user.is_superuser %}
-    <a
-      href="{% url 'how_it_works' %}"
-      class="{% if request.resolver_match.url_name == 'how_it_works' %}active{% endif %}">
-      How it Works
-    </a>
-    {% endif %}
+  
 
     <!-- PROFILE -->
     <div class="profile-section">
@@ -108,7 +102,7 @@
 
     <a href="{% url 'login' %}">Login</a>
     <a href="{% url 'select_role' %}">Register</a>
-    <a href="{% url 'how_it_works' %}">How it Works</a>
+   
 
     {% endif %}
   </div>
