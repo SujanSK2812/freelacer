@@ -13,8 +13,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from freelancer.models import Project
 from .models import EmailOTP
+from freelancer.models import FreelancerProfile
 
 User = get_user_model()
+
 def register(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -278,7 +280,7 @@ def user_login(request):
                 return redirect("client:client_home")
 
             elif user.role == "freelancer":
-                return redirect("freelancer_home")
+                return redirect("freelancer:freelancer_home")
 
         else:
             messages.error(request, "Invalid email or password")
@@ -289,7 +291,7 @@ def user_login(request):
 # ==========================
 def logout_view(request):
     logout(request)
-    return redirect("login")
+    return redirect("accounts:login")
 
 
 
@@ -395,3 +397,173 @@ def redirect_dashboard(request):
 
 
 
+
+
+
+from django.shortcuts import get_object_or_404, redirect
+
+from .models import Connection
+
+
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from .models import ConnectionRequest
+
+User = get_user_model()
+
+
+@login_required
+def send_connection_request(request, user_id):
+
+    receiver = get_object_or_404(User, id=user_id)
+
+    # Prevent self follow
+    if request.user == receiver:
+        return redirect(request.META.get("HTTP_REFERER"))
+
+    # Create follow request if not exists
+    ConnectionRequest.objects.get_or_create(
+        sender=request.user,
+        receiver=receiver
+    )
+
+    return redirect(request.META.get("HTTP_REFERER"))
+
+
+@login_required
+def remove_connection(request, user_id):
+
+    receiver = get_object_or_404(User, id=user_id)
+
+    ConnectionRequest.objects.filter(
+        sender=request.user,
+        receiver=receiver
+    ).delete()
+
+    return redirect(request.META.get("HTTP_REFERER"))
+
+
+@login_required
+def accept_connection_request(request, request_id):
+
+    connection_request = get_object_or_404(
+        ConnectionRequest,
+        id=request_id,
+        receiver=request.user
+    )
+
+    # create real connection
+    Connection.objects.get_or_create(
+        sender=connection_request.sender,
+        receiver=connection_request.receiver
+    )
+
+    # delete request
+    connection_request.delete()
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def remove_connection(request, user_id):
+
+    Connection.objects.filter(
+        sender=request.user,
+        receiver_id=user_id
+    ).delete()
+
+    Connection.objects.filter(
+        sender_id=user_id,
+        receiver=request.user
+    ).delete()
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+@login_required
+def reject_connection_request(request, request_id):
+
+    connection_request = get_object_or_404(
+        ConnectionRequest,
+        id=request_id,
+        receiver=request.user
+    )
+
+    connection_request.delete()
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+
+@login_required
+def followers_list(request):
+    followers = request.user.followers.all()
+    return render(request, "accounts/followers.html", {
+        "followers": followers
+    })
+
+@login_required
+def following_list(request):
+    following = request.user.following.all()
+    return render(request, "accounts/following.html", {
+        "following": following
+    })
+
+
+@login_required
+def pending_requests(request):
+    requests = ConnectionRequest.objects.filter(
+        receiver=request.user
+    )
+
+    return render(request, "accounts/pending_requests.html", {
+        "requests": requests
+    })
+
+
+@login_required
+def find_connections(request):
+    users = User.objects.exclude(id=request.user.id)
+
+    return render(request, "accounts/find_connections.html", {
+        "users": users
+    })
+
+
+
+
+@login_required
+def my_profile(request):
+    return render(request, "accounts/my_profile.html")
+
+
+def view_profile(request, user_id):
+
+    user = get_object_or_404(User, id=user_id)
+
+    profile = FreelancerProfile.objects.filter(
+        user=user
+    ).first()
+
+    return render(request, "accounts/view_profile.html", {
+        "profile_user": user,
+        "profile": profile,
+    })
+
+
+
+@login_required
+def remove_follower(request, follower_id):
+
+    follower = get_object_or_404(User, id=follower_id)
+
+    Connection.objects.filter(
+        sender=follower,
+        receiver=request.user,
+        status='accepted'
+    ).delete()
+
+    return redirect('accounts:followers')

@@ -7,7 +7,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ---------- GLOBAL RESET & ADMIN THEME (consistent with manage users design) ---------- */
+        /* ===== GLOBAL RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -21,18 +21,189 @@
             line-height: 1.5;
         }
 
-        /* ---------- CHAT USERS LIST (refined, matching admin cards & design system) ---------- */
-        .chat-users-container {
+        /* ===== MAIN CONTAINER ===== */
+        .chat-container {
             max-width: 1100px;
             margin: 2rem auto;
             padding: 0 1.5rem;
         }
 
-        /* Main card style for users list */
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #eef2f6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: #e8f5e8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #108a00;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h4 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .stat-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* ===== CONNECTION REQUESTS PANEL ===== */
+        .requests-panel {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #eef2f6;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .requests-header {
+            background: linear-gradient(135deg, #108a00, #0b6d00);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .requests-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .request-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .requests-list {
+            padding: 1rem;
+        }
+
+        .request-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f2f5;
+            transition: all 0.2s;
+        }
+
+        .request-item:last-child {
+            border-bottom: none;
+        }
+
+        .request-item:hover {
+            background: #fafcff;
+        }
+
+        .request-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .request-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #108a00, #0b6d00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .request-details h4 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+        }
+
+        .request-details p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-accept, .btn-reject {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-accept {
+            background: #108a00;
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: #0b6d00;
+            transform: translateY(-1px);
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        /* ===== MESSAGES SECTION ===== */
         .users-card {
             background: white;
             border-radius: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid #eef2ff;
             overflow: hidden;
             margin-bottom: 2rem;
@@ -71,7 +242,6 @@
             gap: 12px;
         }
 
-        /* modern user card (matching design system, clickable) */
         .user-card {
             display: flex;
             align-items: center;
@@ -83,28 +253,26 @@
             color: #1e293b;
             transition: all 0.2s ease;
             border: 1px solid #edf2f7;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
         .user-card:hover {
             background: #fafcff;
-            border-color: #d9e6f5;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transform: translateY(-1px);
+            border-color: #108a00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .avatar {
             width: 52px;
             height: 52px;
-            background: #108a00;
-            color: white;
+            background: linear-gradient(135deg, #108a00, #1fa800);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
             flex-shrink: 0;
-            background: linear-gradient(135deg, #108a00, #1fa800);
+            color: white;
             box-shadow: 0 2px 8px rgba(16, 138, 0, 0.2);
         }
 
@@ -128,7 +296,7 @@
             color: #108a00;
         }
 
-        /* ---------- CHAT INTERFACE (refined, same style as second design) ---------- */
+        /* ===== CHAT INTERFACE ===== */
         .chat-wrapper {
             max-width: 1100px;
             margin: 2rem auto;
@@ -138,10 +306,9 @@
         .chat-card {
             background: white;
             border-radius: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             border: 1px solid #eef2ff;
-            transition: all 0.2s;
         }
 
         .chat-header-custom {
@@ -164,14 +331,6 @@
             gap: 10px;
         }
 
-        .chat-header-custom i {
-            font-size: 1.3rem;
-            background: #e6f7e6;
-            padding: 6px;
-            border-radius: 50%;
-            color: #108a00;
-        }
-
         .status-badge {
             background: #e6f7e6;
             color: #108a00;
@@ -192,7 +351,6 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            scroll-behavior: smooth;
         }
 
         .message {
@@ -202,8 +360,6 @@
             word-wrap: break-word;
             line-height: 1.45;
             font-size: 0.95rem;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
-            transition: transform 0.1s ease;
         }
 
         .sent {
@@ -278,16 +434,14 @@
             text-align: center;
             padding: 3rem;
             color: #94a3b8;
-            font-style: italic;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
         }
 
-        /* back to user list link */
         .back-to-users {
-            margin-bottom: 1rem;
+            margin-top: 1rem;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -306,33 +460,22 @@
             color: #108a00;
         }
 
-        /* scrollbar */
-        .chat-box::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .chat-box::-webkit-scrollbar-track {
-            background: #eef2ff;
-            border-radius: 10px;
-        }
-
-        .chat-box::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        /* responsive */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .chat-users-container, .chat-wrapper {
+            .chat-container, .chat-wrapper {
                 padding: 0 1rem;
                 margin: 1rem auto;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
             }
             .message {
                 max-width: 85%;
             }
             .chat-box {
                 height: 420px;
-                padding: 1.2rem;
+                padding: 1rem;
             }
             .chat-form {
                 padding: 0.8rem 1rem 1.2rem;
@@ -348,22 +491,25 @@
                 height: 46px;
                 font-size: 1.2rem;
             }
-        }
-
-        @media (max-width: 380px) {
-            .user-card {
-                padding: 12px;
+            .requests-header, .users-header, .chat-header-custom {
+                padding: 0.8rem 1.2rem;
             }
         }
 
-        /* animations */
-        .message.sent {
-            animation: fadeSlideRight 0.2s ease;
+        /* ===== SCROLLBAR ===== */
+        .chat-box::-webkit-scrollbar {
+            width: 6px;
         }
-        .message.received {
-            animation: fadeSlideLeft 0.2s ease;
+        .chat-box::-webkit-scrollbar-track {
+            background: #eef2ff;
+            border-radius: 10px;
+        }
+        .chat-box::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
         }
 
+        /* ===== ANIMATIONS ===== */
         @keyframes fadeSlideRight {
             from {
                 opacity: 0;
@@ -374,7 +520,6 @@
                 transform: translateX(0);
             }
         }
-
         @keyframes fadeSlideLeft {
             from {
                 opacity: 0;
@@ -385,20 +530,98 @@
                 transform: translateX(0);
             }
         }
+        .message.sent {
+            animation: fadeSlideRight 0.2s ease;
+        }
+        .message.received {
+            animation: fadeSlideLeft 0.2s ease;
+        }
     </style>
 </head>
 <body>
-    <!-- include header (consistent navigation) -->
     {% include 'includes/header.html' %}
 
-    <!-- MAIN LAYOUT: Users list first with exact same styling but refined card design to match chat aesthetics -->
-    <div class="chat-users-container">
+    <div class="chat-container">
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>{{ followers.count }}</h4>
+                    <a href="{% url 'accounts:followers' %}" class="user-card">Followers</a>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>{{ following.count }}</h4>
+                    <a href="{% url 'accounts:following' %}" class="user-card">Following</a>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>{{ pending_requests_count }}</h4>
+                    <a href="{% url 'accounts:pending_requests' %}" class="user-card">Pending Request</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Requests Panel -->
+        {% if received_requests %}
+        <div class="requests-panel">
+            <div class="requests-header">
+                <h3>
+                    <i class="fas fa-user-plus"></i>
+                    Connection Requests
+                </h3>
+                <span class="request-badge">{{ received_requests.count }} pending</span>
+            </div>
+            <div class="requests-list">
+                {% for request in received_requests %}
+                <div class="request-item">
+                    <div class="request-info">
+                        <div class="request-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="request-details">
+                            <h4>{{ request.sender.username }}</h4>
+                            <p><i class="fas fa-envelope"></i> {{ request.sender.email }}</p>
+                        </div>
+                    </div>
+                    <div class="request-actions">
+                        <form method="POST" action="{% url 'accept_connection_request' request.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-accept">
+                                <i class="fas fa-check"></i> Accept
+                            </button>
+                        </form>
+                        <form method="POST" action="{% url 'reject_connection_request' request.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-reject">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Messages Section -->
         <div class="users-card">
             <div class="users-header">
                 <h2><i class="fas fa-envelope"></i> Messages</h2>
                 <span class="status-badge"><i class="fas fa-users"></i> Active conversations</span>
             </div>
-            <div class="user-list" id="userListContainer">
+            <div class="user-list">
                 {% for user in users %}
                 <a href="{% url 'chat_detail' user.id %}" class="user-card">
                     <div class="avatar">
@@ -410,24 +633,25 @@
                     </div>
                 </a>
                 {% empty %}
-                <div style="text-align: center; padding: 2rem; color: #94a3b8;">
-                    <i class="fas fa-comment-slash"></i> No users available
+                <div class="empty-chat-state">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>No conversations yet</p>
                 </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 
-    <!-- CHAT SECTION: exactly the same refined chat interface from second design but integrated with context -->
-    <div class="chat-wrapper" id="chatSection" style="display: {% if selected_user %}block{% else %}none{% endif %};">
+    <!-- Chat Section -->
+    <div class="chat-wrapper" id="chatSection" style="display: {% if other_user %}block{% else %}none{% endif %};">
         <div class="chat-card">
             <div class="chat-header-custom">
                 <h3>
                     <i class="fas fa-comment-dots"></i>
-                    Chat with <span id="otherUsernameDisplay">{% if other_user %}{{ other_user.username }}{% else %}Select user{% endif %}</span>
+                    Chat with <span id="otherUsernameDisplay">{{ other_user.username|default:'Select user' }}</span>
                 </h3>
                 <div class="status-badge">
-                    <i class="fas fa-circle" style="font-size: 0.55rem;"></i> Active now
+                    <i class="fas fa-circle" style="font-size: 0.55rem;"></i> Connected
                 </div>
             </div>
 
@@ -442,284 +666,53 @@
                 {% else %}
                     <div class="empty-chat-state" id="emptyChatPlaceholder">
                         <i class="fas fa-comments"></i>
-                        <span>No messages yet. Start the conversation!</span>
+                        <p>No messages yet. Start the conversation!</p>
                     </div>
                 {% endif %}
             </div>
 
-            <form class="chat-form" id="chatForm">
-                <input type="text" name="message" id="messageInput" placeholder="Type your message..." autocomplete="off">
-                <button type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+            <form class="chat-form" id="chatForm" method="POST" action="{% if other_user %}{% url 'chat_detail' other_user.id %}{% endif %}">
+                {% csrf_token %}
+                <input type="text" name="message" id="messageInput" placeholder="Type your message..." autocomplete="off" {% if not other_user %}disabled{% endif %}>
+                <button type="submit" {% if not other_user %}disabled{% endif %}>
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
             </form>
         </div>
-        {% if selected_user %}
-        <a href="{% url 'chat_user_list' %}" class="back-to-users" style="margin-top: 1rem; display: inline-flex;">
-            <i class="fas fa-arrow-left"></i> Back to all conversations
+        {% if other_user %}
+        <a href="{% url 'chat_home' %}" class="back-to-users">
+            <i class="fas fa-arrow-left"></i> Back to conversations
         </a>
         {% endif %}
     </div>
 
-    <script>
-        /* --------------------------------------------------------------
-        This script integrates the exact same WebSocket chat behaviour 
-        as the provided template, while respecting Django variables:
-        - request.user.id, other_user.id, other_user.username, messages list.
-        It also handles dynamic switching between users (since Django generates per page).
-        If no selected user, chat section is hidden. The styles perfectly unify the user list
-        and chat design — consistency with manage users admin theme.
-        ---------------------------------------------------------------- */
-        
-        // Primary variables derived from Django template context
-        const currentUserId = "{{ request.user.id|default:'0' }}";
-        const otherUserId = "{{ other_user.id|default:'' }}";
-        const otherUsername = "{{ other_user.username|default:'' }}";
-        const hasSelectedUser = "{{ selected_user|default:'False' }}" === "True" || otherUserId !== "";
-        
-        // Update chat header if user selected
-        const otherUsernameSpan = document.getElementById("otherUsernameDisplay");
-        if (otherUsernameSpan && otherUsername) {
-            otherUsernameSpan.innerText = otherUsername;
-        }
-        
-        const chatBox = document.getElementById("chatBox");
-        const emptyPlaceholder = document.getElementById("emptyChatPlaceholder");
-        
-        // Function to update empty placeholder visibility
-        function updateEmptyPlaceholder() {
-            if (chatBox && emptyPlaceholder) {
-                const messagesExist = chatBox.querySelectorAll('.message').length > 0;
-                if (messagesExist) {
-                    emptyPlaceholder.style.display = "none";
-                } else {
-                    emptyPlaceholder.style.display = "flex";
-                }
-            }
-        }
-        
-        // Initial call
-        updateEmptyPlaceholder();
-        
-        // Helper: escape HTML
-        function escapeHtml(str) {
-            if (!str) return "";
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-        
-        // WEBSOCKET INTEGRATION (same pattern as original template)
-        let chatSocket = null;
-        let useWebSocket = false;
-        
-        function initWebSocket() {
-            if (!hasSelectedUser || !currentUserId || !otherUserId) {
-                console.log("No chat selected or missing user IDs, WebSocket not initialized.");
-                return;
-            }
-            // Sort IDs to generate consistent room name
-            const ids = [String(currentUserId), String(otherUserId)].sort();
-            const roomName = ids[0] + "_" + ids[1];
-            let wsScheme = window.location.protocol === "https:" ? "wss://" : "ws://";
-            const wsUrl = wsScheme + window.location.host + "/ws/chat/" + roomName + "/";
-            
-            try {
-                chatSocket = new WebSocket(wsUrl);
-                chatSocket.onopen = function(e) {
-                    console.log("WebSocket connected for room:", roomName);
-                    useWebSocket = true;
-                };
-                chatSocket.onmessage = function(e) {
-                    const data = JSON.parse(e.data);
-                    // Add message dynamically to chat box
-                    const messageDiv = document.createElement('div');
-                    const isSent = String(data.sender_id) === String(currentUserId);
-                    messageDiv.className = isSent ? 'message sent' : 'message received';
-                    messageDiv.innerHTML = `
-                        <div class="message-text">${escapeHtml(data.message)}</div>
-                        <div class="message-time">Just now</div>
-                    `;
-                    chatBox.appendChild(messageDiv);
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                    updateEmptyPlaceholder();
-                };
-                chatSocket.onerror = function(e) {
-                    console.warn("WebSocket error, messages will not broadcast real-time.");
-                    useWebSocket = false;
-                };
-                chatSocket.onclose = function(e) {
-                    console.log("WebSocket closed.");
-                    useWebSocket = false;
-                };
-            } catch(err) {
-                console.warn("WebSocket unavailable, using simulated mode (only local).");
-                useWebSocket = false;
-            }
-        }
-        
-        // Send message: either via WebSocket or local demo
-        function sendMessageViaSocket(messageText) {
-            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
-                chatSocket.send(JSON.stringify({
-                    'message': messageText,
-                    'sender_id': currentUserId
-                }));
-                return true;
-            } else {
-                // Fallback: simulate locally - but in a real Django environment with backend, it won't persist.
-                // This matches the original template’s fallback behaviour.
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message sent';
-                messageDiv.innerHTML = `
-                    <div class="message-text">${escapeHtml(messageText)}</div>
-                    <div class="message-time">Just now</div>
-                `;
-                chatBox.appendChild(messageDiv);
-                chatBox.scrollTop = chatBox.scrollHeight;
-                updateEmptyPlaceholder();
-                console.log("Fallback mode: message added locally only, WebSocket unavailable.");
-                return false;
-            }
-        }
-        
-        // Submit handler
-        const chatForm = document.getElementById("chatForm");
-        const messageInput = document.getElementById("messageInput");
-        if (chatForm && hasSelectedUser) {
-            chatForm.addEventListener("submit", function(e) {
-                e.preventDefault();
-                const rawMessage = messageInput.value.trim();
-                if (rawMessage === "") return;
-                sendMessageViaSocket(rawMessage);
-                messageInput.value = "";
-                messageInput.focus();
-            });
-        } else if (chatForm && !hasSelectedUser) {
-            chatForm.addEventListener("submit", function(e) {
-                e.preventDefault();
-                alert("Please select a user from the list to start chatting.");
-            });
-        }
-        
-        // Scroll to bottom observer
-        const observer = new MutationObserver(function() {
-            chatBox && chatBox.scrollTop = chatBox.scrollHeight;
-            updateEmptyPlaceholder();
-        });
-        if (chatBox) {
-            observer.observe(chatBox, { childList: true, subtree: true });
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-        
-        // Initialize websocket only if a chat partner exists
-        if (hasSelectedUser && currentUserId && otherUserId && currentUserId !== "0" && otherUserId !== "") {
-            initWebSocket();
-        } else {
-            console.log("No chat currently selected or invalid user ids, websocket pending selection.");
-            // If chat section visible but no such user, disable input
-            const chatFormElem = document.getElementById("chatForm");
-            if (chatFormElem && !hasSelectedUser) {
-                const inputElem = document.getElementById("messageInput");
-                const btnElem = chatFormElem.querySelector("button");
-                if (inputElem) inputElem.disabled = true;
-                if (btnElem) btnElem.disabled = true;
-            }
-        }
-        
-        // ------------------------------------------------------------
-        // PROFILE MENU & MOBILE NAV (same as admin theme for consistency)
-        // ------------------------------------------------------------
-        function toggleProfileMenu() {
-            const menu = document.getElementById("profileMenu");
-            if (menu) {
-                menu.style.display = menu.style.display === "block" ? "none" : "block";
-            }
-        }
-        
-        document.addEventListener("click", function(e) {
-            const profileSection = document.querySelector(".profile-section");
-            const menu = document.getElementById("profileMenu");
-            if (profileSection && menu && !profileSection.contains(e.target)) {
-                menu.style.display = "none";
-            }
-            const mobileMenuBtn = document.querySelector(".mobile-menu");
-            const navLinks = document.querySelector(".nav-links");
-            if (mobileMenuBtn && navLinks && !mobileMenuBtn.contains(e.target) && !navLinks.contains(e.target)) {
-                navLinks.classList.remove("show");
-            }
-        });
-        
-        const mobileBtn = document.querySelector(".mobile-menu");
-        if (mobileBtn) {
-            mobileBtn.addEventListener("click", function(e) {
-                e.stopPropagation();
-                const nav = document.querySelector(".nav-links");
-                if (nav) nav.classList.toggle("show");
-            });
-        }
-        
-        const profileIcon = document.getElementById("profileIcon");
-        if (profileIcon) {
-            profileIcon.addEventListener("click", function(e) {
-                e.stopPropagation();
-                toggleProfileMenu();
-            });
-        }
-        
-        const logoutLink = document.getElementById("logoutSimulate");
-        if (logoutLink) {
-            logoutLink.addEventListener("click", function(e) {
-                e.preventDefault();
-                alert("🚪 Logout simulation. Session ended.");
-            });
-        }
-        
-        // highlight active Messages nav item
-        document.querySelectorAll(".nav-links a").forEach((link) => {
-            if (link.innerText.includes("Messages") || (link.href && link.href.includes("Messages"))) {
-                link.classList.add("active");
-            }
-            if (link.innerText.includes("Dashboard")) {
-                link.classList.remove("active");
-            }
-        });
-        
-        // final visibility: ensure chatBox presence and adjust placeholder
-        window.addEventListener("load", () => {
-            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-            updateEmptyPlaceholder();
-            // if chat section is visible but not selected user, show selecting state
-            const chatSection = document.getElementById("chatSection");
-            if (chatSection && !hasSelectedUser && chatSection.style.display !== "none") {
-                chatSection.style.display = "none";
-            } else if (chatSection && hasSelectedUser) {
-                chatSection.style.display = "block";
-            }
-        });
-        
-        // In case there are messages originally, placeholder hides
-        if (chatBox && emptyPlaceholder) {
-            setTimeout(() => {
-                if (chatBox.querySelectorAll('.message').length > 0) {
-                    emptyPlaceholder.style.display = "none";
-                }
-            }, 50);
-        }
-        
-        // extra: handle unload to close websocket gracefully
-        window.addEventListener("beforeunload", function() {
-            if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
-                chatSocket.close();
-            }
-        });
-    </script>
-    
-    <!-- optional footer (matching manage users theme) -->
     <div style="text-align: center; margin: 2rem auto 1rem; font-size: 0.75rem; color: #94a3b8;">
         <i class="fas fa-lock"></i> Secure end-to-end chat · Freelancer Portal
     </div>
+    
     {% include 'includes/footer.html' %}
+
+    <script>
+        // Chat functionality
+        const chatBox = document.getElementById('chatBox');
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+
+        // Scroll to bottom of chat
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Auto-scroll when new messages are added
+        const observer = new MutationObserver(function() {
+            if (chatBox) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        });
+
+        if (chatBox) {
+            observer.observe(chatBox, { childList: true, subtree: true });
+        }
+    </script>
 </body>
 </html>

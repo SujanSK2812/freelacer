@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Connection Requests | FreelanceHub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus text-success"></i>
+                        Connection Requests
+                        {% if pending_requests %}
+                        <span class="badge bg-success ms-2">{{ pending_requests.count }}</span>
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if pending_requests %}
+                        {% for request in pending_requests %}
+                        <div class="request-item d-flex justify-content-between align-items-center p-3 border-bottom">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar-placeholder">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">{{ request.sender.username }}</h5>
+                                    <p class="text-muted mb-0">{{ request.sender.email }}</p>
+                                    <small class="text-muted">Requested {{ request.created_at|timesince }} ago</small>
+                                </div>
+                            </div>
+                            <div class="btn-group">
+                                <form method="POST" action="{% url 'accept_connection_request' request.id %}" class="d-inline me-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="fas fa-check"></i> Accept
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'reject_connection_request' request.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-plus fa-3x text-muted mb-3"></i>
+                            <h5>No pending requests</h5>
+                            <p class="text-muted">When someone sends you a connection request, it will appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-placeholder {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #108a00, #0b6d00);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .request-item:last-child {
+        border-bottom: none !important;
+    }
+</style>
+{% endblock %}

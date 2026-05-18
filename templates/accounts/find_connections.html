@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Find Connections</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #2d3a2d;
+        }
+
+        /* Header Styles - Matching Previous Pages */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: #14a800;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #404145;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: #14a800;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #14a800;
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+        }
+
+        .how-it-works {
+            background: #f0f5f0;
+            padding: 0.5rem 1rem !important;
+            border-radius: 40px;
+        }
+
+        .how-it-works:hover {
+            background: #14a800 !important;
+            color: white !important;
+        }
+
+        .how-it-works:hover::after {
+            display: none;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .connections-container {
+            background: white;
+            max-width: 900px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section */
+        .connections-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .connections-icon {
+            font-size: 2.5rem;
+            color: #14a800;
+            background: #f0f7f0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .connections-header h2 {
+            color: #1a2b1a;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .connections-count {
+            color: #14a800;
+            background: #f0f7f0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            display: inline-block;
+        }
+
+        .connections-header p {
+            color: #5e6b7e;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Search and Filter Section */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9aa6b5;
+            font-size: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e0e6e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            outline: none;
+            background: #f8f9fc;
+            font-family: inherit;
+        }
+
+        .search-input:focus {
+            border-color: #14a800;
+            box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #9aa6b5;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #5e6b7e;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .filter-tab:hover {
+            color: #14a800;
+            background: #f0f7f0;
+        }
+
+        .filter-tab.active {
+            color: #14a800;
+            background: #f0f7f0;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e6e0;
+            border-radius: 8px;
+            background: white;
+            color: #2d3a2d;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #14a800;
+        }
+
+        /* Users List */
+        .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .users-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .users-list::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .users-list::-webkit-scrollbar-thumb {
+            background: #14a800;
+            border-radius: 10px;
+        }
+
+        /* User Card */
+        .user-card {
+            background: #f8f9fc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            animation: slideIn 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: #14a80020;
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #14a800 0%, #0d8f00 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(20, 168, 0, 0.2);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-details h3 {
+            color: #2d3a2d;
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            color: #5e6b7e;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.25rem;
+        }
+
+        .user-details p i {
+            color: #14a800;
+            font-size: 0.85rem;
+        }
+
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            background: #f0f7f0;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: #14a800;
+            font-weight: 500;
+        }
+
+        .user-badge i {
+            font-size: 0.7rem;
+        }
+
+        /* Mutual Connections */
+        .mutual-connections {
+            font-size: 0.8rem;
+            color: #9aa6b5;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .mutual-connections i {
+            color: #14a800;
+            font-size: 0.7rem;
+        }
+
+        /* Connect Button */
+        .connect-btn {
+            background: #14a800;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: inherit;
+            text-decoration: none;
+            min-width: 130px;
+            justify-content: center;
+        }
+
+        .connect-btn i {
+            transition: transform 0.2s ease;
+        }
+
+        .connect-btn:hover {
+            background: #108700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(20, 168, 0, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+
+        .connect-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        .connect-btn:active {
+            transform: translateY(0);
+        }
+
+        .connect-btn.pending {
+            background: #f0ad4e;
+            cursor: not-allowed;
+        }
+
+        .connect-btn.pending:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .connect-btn.connected {
+            background: #9aa6b5;
+            cursor: default;
+        }
+
+        .connect-btn.connected:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #d0d7de;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #5e6b7e;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state small {
+            color: #9aa6b5;
+            font-size: 0.9rem;
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f0f7f0;
+            border-top-color: #14a800;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Message Styles */
+        .message {
+            background: #f0f7f0;
+            border-left: 4px solid #14a800;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .message.error {
+            background: #fee9e7;
+            border-left-color: #bc1c1e;
+        }
+
+        .message i {
+            color: #14a800;
+        }
+
+        .message.error i {
+            color: #bc1c1e;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: #14a800;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h4 {
+            color: #2d3a2d;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .footer-section p {
+            color: #5e6b7e;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            text-decoration: none;
+            color: #5e6b7e;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #14a800;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #5e6b7e;
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #14a800;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-bottom p {
+            color: #5e6b7e;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .connections-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .connections-header h2 {
+                font-size: 1.75rem;
+            }
+            
+            .user-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .user-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .connect-btn {
+                width: 100%;
+            }
+            
+            .filter-options {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-tabs {
+                justify-content: center;
+            }
+            
+            .sort-select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .connections-container {
+                padding: 1rem;
+            }
+            
+            .connections-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .connections-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-details p {
+                justify-content: center;
+            }
+            
+            .mutual-connections {
+                justify-content: center;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        /* Selection Color */
+        ::selection {
+            background: #14a800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header - Include your header template -->
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="connections-container">
+        <div class="connections-header">
+            <div class="connections-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h2>
+                Find Connections 
+                {% if users %}
+                    <span class="connections-count">{{ users|length }}</span>
+                {% endif %}
+            </h2>
+            <p>Discover and connect with other professionals</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    <i class="fas fa-info-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="search-section">
+           
+            <div class="filter-options">
+                
+                <select class="sort-select" id="sortSelect">
+                    <option value="name">Sort by Name</option>
+                    <option value="recent">Sort by Recent</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="users-list" id="usersList">
+            {% for user in users %}
+                <div class="user-card" data-name="{{ user.username|lower }}" data-email="{{ user.email|lower }}" data-id="{{ user.id }}">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {{ user.username|make_list|first|upper }}
+                        </div>
+                        <div class="user-details">
+                            <h3>{{ user.username }}</h3>
+                            <p>
+                                <i class="fas fa-envelope"></i>
+                                {{ user.email }}
+                                {% if user.is_verified %}
+                                    <span class="user-badge">
+                                        <i class="fas fa-check-circle"></i> Verified
+                                    </span>
+                                {% endif %}
+                            </p>
+                            {% if user.mutual_connections > 0 %}
+                                <div class="mutual-connections">
+                                    <i class="fas fa-users"></i>
+                                    {{ user.mutual_connections }} mutual connection{{ user.mutual_connections|pluralize }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if user.connection_status == 'pending' %}
+                        <button class="connect-btn pending" disabled>
+                            <i class="fas fa-clock"></i>
+                            <span>Request Pending</span>
+                        </button>
+                    {% elif user.connection_status == 'connected' %}
+                        <button class="connect-btn connected" disabled>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Connected</span>
+                        </button>
+                    {% else %}
+                        <a href="{% url 'accounts:send_connection_request' user.id %}" class="connect-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Connect</span>
+                        </a>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <p>No users found</p>
+                    <small>Try adjusting your search or check back later for new connections</small>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<!-- Footer - Include your footer template -->
+{% include 'includes/footer.html' %}
+
+<script>
+// Mobile menu toggle
+document.querySelector('.mobile-menu')?.addEventListener('click', function() {
+    document.querySelector('.nav-links').classList.toggle('show');
+});
+
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+const userCards = document.querySelectorAll('.user-card');
+
+if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        userCards.forEach(card => {
+            const name = card.getAttribute('data-name') || '';
+            const email = card.getAttribute('data-email') || '';
+            
+            if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        updateVisibleCount();
+    });
+}
+
+// Filter tabs functionality
+const filterTabs = document.querySelectorAll('.filter-tab');
+let currentFilter = 'all';
+
+filterTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+        // Remove active class from all tabs
+        filterTabs.forEach(t => t.classList.remove('active'));
+        // Add active class to clicked tab
+        this.classList.add('active');
+        
+        currentFilter = this.getAttribute('data-filter');
+        
+        // Apply filter logic
+        userCards.forEach((card, index) => {
+            if (currentFilter === 'all') {
+                card.style.display = 'flex';
+            } else if (currentFilter === 'suggested') {
+                // Show only first 5 as "suggested" (you can customize this logic)
+                card.style.display = index < 5 ? 'flex' : 'none';
+            } else if (currentFilter === 'recent') {
+                // Show only first 3 as "recent" (you can customize this logic)
+                card.style.display = index < 3 ? 'flex' : 'none';
+            }
+        });
+        
+        updateVisibleCount();
+    });
+});
+
+// Sort functionality
+const sortSelect = document.getElementById('sortSelect');
+if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+        const sortValue = this.value;
+        const usersList = document.getElementById('usersList');
+        const cards = Array.from(userCards);
+        
+        if (sortValue === 'name') {
+            cards.sort((a, b) => {
+                const nameA = a.getAttribute('data-name') || '';
+                const nameB = b.getAttribute('data-name') || '';
+                return nameA.localeCompare(nameB);
+            });
+        } else if (sortValue === 'recent') {
+            // For recent, keep original order or reverse
+            cards.reverse();
+        }
+        
+        // Re-append sorted cards
+        cards.forEach(card => usersList.appendChild(card));
+    });
+}
+
+// Update visible count
+function updateVisibleCount() {
+    const visibleCards = Array.from(userCards).filter(card => card.style.display !== 'none');
+    const countSpan = document.querySelector('.connections-count');
+    if (countSpan && visibleCards.length !== undefined) {
+        countSpan.textContent = visibleCards.length;
+    }
+}
+
+// Add animation delay to cards
+userCards.forEach((card, index) => {
+    card.style.animationDelay = `${index * 0.05}s`;
+});
+
+// Confirmation for connect action (optional)
+document.querySelectorAll('.connect-btn:not(.pending):not(.connected)').forEach(button => {
+    button.addEventListener('click', function(e) {
+        if (!confirm('Send connection request to this user?')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+
+</body>
+</html>

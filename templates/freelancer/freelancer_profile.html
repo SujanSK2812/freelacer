@@ -1,0 +1,704 @@
+<!-- freelancer/freelancer_profile.html - Clean & Clear Version -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ freelancer.username }}'s Profile | FreelanceHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== RESET & BASE ===== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f5f7fb;
+        color: #1e293b;
+        line-height: 1.5;
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .profile-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* ===== HEADER SECTION ===== */
+    .profile-header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .profile-header-actions h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .profile-header-actions h1 i {
+        color: #108a00;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 50px;
+        padding: 0.5rem 1.25rem;
+        text-decoration: none;
+        color: #475569;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+        background: #f8fafc;
+        border-color: #108a00;
+        color: #108a00;
+    }
+
+    /* ===== PROFILE CARD ===== */
+    .profile-card {
+        background: white;
+        border-radius: 24px;
+        border: 1px solid #eef2f6;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    .profile-card-body {
+        padding: 2rem;
+    }
+
+    /* Avatar */
+    .avatar-wrapper {
+        text-align: center;
+    }
+
+    .avatar-img {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #108a00;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .avatar-placeholder {
+        width: 140px;
+        height: 140px;
+        background: linear-gradient(135deg, #108a00, #0b6d00);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .avatar-placeholder i {
+        font-size: 3.5rem;
+        color: white;
+    }
+
+    /* Profile Info */
+    .profile-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-email {
+        color: #64748b;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .profile-title {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #108a00;
+        margin-bottom: 1rem;
+    }
+
+    /* Badges */
+    .badge-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .badge-primary {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .badge-success {
+        background: linear-gradient(135deg, #108a00, #0b6d00);
+        color: white;
+    }
+
+    .location-info {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 1rem;
+        background: #f8fafc;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        color: #475569;
+    }
+
+    /* Edit Button */
+    .btn-edit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        border: 2px solid #108a00;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        text-decoration: none;
+        color: #108a00;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-edit:hover {
+        background: #108a00;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 138, 0, 0.2);
+    }
+
+    /* Follow/Connect Button */
+    .btn-follow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        border: 2px solid #108a00;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        text-decoration: none;
+        color: #108a00;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-follow:hover {
+        background: #108a00;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 138, 0, 0.2);
+    }
+
+    .btn-following {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #108a00;
+        border: 2px solid #108a00;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-following:hover {
+        background: #0b6d00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 138, 0, 0.2);
+        color: white;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        margin-top: 0;
+    }
+
+    /* ===== TABS ===== */
+    .tabs-wrapper {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #eef2f6;
+        padding: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .nav-tabs-custom {
+        border: none;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .nav-tabs-custom .nav-link {
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 12px;
+        color: #64748b;
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .nav-tabs-custom .nav-link i {
+        margin-right: 0.5rem;
+    }
+
+    .nav-tabs-custom .nav-link:hover {
+        color: #108a00;
+        background: #f1f5f9;
+    }
+
+    .nav-tabs-custom .nav-link.active {
+        background: linear-gradient(135deg, #108a00, #0b6d00);
+        color: white;
+    }
+
+    /* ===== CONTENT CARDS ===== */
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #eef2f6;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+
+    .card-title {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f0f2f5;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-title i {
+        color: #108a00;
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    /* Skills */
+    .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .skill-item {
+        background: #f1f5f9;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    .skill-item i {
+        margin-right: 0.5rem;
+        color: #108a00;
+    }
+
+    /* Links */
+    .links-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .link-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #1e293b;
+        border: 1px solid #eef2f6;
+        transition: all 0.2s;
+    }
+
+    .link-card i:first-child {
+        width: 24px;
+        color: #108a00;
+        font-size: 1.1rem;
+    }
+
+    .link-card:hover {
+        background: #f1f5f9;
+        border-color: #108a00;
+        transform: translateX(5px);
+    }
+
+    .link-arrow {
+        margin-left: auto;
+        color: #108a00;
+        font-size: 0.8rem;
+    }
+
+    /* Empty State */
+    .empty-message {
+        color: #94a3b8;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    /* Alert */
+    .alert-warning {
+        background: #fef3c7;
+        border: 1px solid #fbbf24;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .alert-warning i {
+        font-size: 2.5rem;
+        color: #f59e0b;
+        margin-bottom: 1rem;
+    }
+
+    .btn-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #108a00, #0b6d00);
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: all 0.2s;
+    }
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 138, 0, 0.3);
+        color: white;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 0 1rem;
+        }
+        .profile-card-body {
+            padding: 1.5rem;
+        }
+        .profile-name {
+            font-size: 1.5rem;
+        }
+        .avatar-img, .avatar-placeholder {
+            width: 100px;
+            height: 100px;
+        }
+        .nav-tabs-custom .nav-link {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+        .text-md-end {
+            text-align: left !important;
+            margin-top: 1rem;
+        }
+        .action-buttons {
+            margin-top: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Header with Actions -->
+    <div class="profile-header-actions">
+        <h1>
+            <i class="fas fa-user-circle"></i>
+            Freelancer Profile
+        </h1>
+        <a href="{% url 'freelancer:freelancer_home' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Jobs
+        </a>
+    </div>
+
+    <!-- Profile Information Card -->
+    <div class="profile-card">
+        <div class="profile-card-body">
+            <div class="row align-items-center">
+                <!-- Avatar Column -->
+                <div class="col-md-3 text-center mb-4 mb-md-0">
+                    {% if profile and profile.profile_picture %}
+                        <img src="{{ profile.profile_picture }}" alt="{{ freelancer.username }}" class="avatar-img">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Info Column -->
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h2 class="profile-name">{{ freelancer.username }}</h2>
+                    <div class="profile-email">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ freelancer.email }}</span>
+                    </div>
+
+                    {% if profile %}
+                        {% if profile.title %}
+                            <div class="profile-title">
+                                <i class="fas fa-briefcase"></i> {{ profile.title }}
+                            </div>
+                        {% endif %}
+
+                        <div class="badge-group">
+                            {% if profile.hourly_rate %}
+                                <span class="badge badge-success">
+                                    <i class="fas fa-dollar-sign"></i> ${{ profile.hourly_rate }}/hour
+                                </span>
+                            {% endif %}
+                            {% if profile.experience_level %}
+                                <span class="badge badge-primary">
+                                    <i class="fas fa-chart-line"></i> {{ profile.get_experience_level_display }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        {% if profile.country or profile.city %}
+                            <div class="location-info">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ profile.city|default:"" }}{% if profile.city and profile.country %}, {% endif %}{{ profile.country|default:"" }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <!-- Action Column -->
+                <div class="col-md-3 text-md-end">
+                    <div class="action-buttons">
+                        {% if user == freelancer %}
+                            <a href="{% url 'create_profile' %}" class="btn-edit">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </a>
+                        {% else %}
+                            {% if freelancer.id in connected_ids %}
+    <a href="{% url 'accounts:remove_connection' freelancer.id %}" class="btn-following">
+        <i class="fas fa-user-check"></i> Requested
+    </a>
+{% else %}
+    <a href="{% url 'accounts:send_connection_request' freelancer.id %}" class="btn-follow">
+        <i class="fas fa-user-plus"></i> Follow
+    </a>
+{% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Content with Tabs -->
+    {% if profile %}
+        <!-- Tab Navigation -->
+        <div class="tabs-wrapper">
+            <div class="nav-tabs-custom" id="profileTab" role="tablist">
+                <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab">
+                    <i class="fas fa-user"></i> About
+                </button>
+                <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab">
+                    <i class="fas fa-briefcase"></i> Experience
+                </button>
+                <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">
+                    <i class="fas fa-graduation-cap"></i> Education
+                </button>
+                <button class="nav-link" id="links-tab" data-bs-toggle="tab" data-bs-target="#links" type="button" role="tab">
+                    <i class="fas fa-link"></i> Links
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="profileTabContent">
+            <!-- About Tab -->
+            <div class="tab-pane fade show active" id="about" role="tabpanel">
+                <!-- Bio Section -->
+                <div class="info-card">
+                    <div class="card-title">
+                        <i class="fas fa-align-left"></i>
+                        <span>Biography</span>
+                    </div>
+                    <div class="card-content">
+                        {% if profile.bio %}
+                            <p>{{ profile.bio|linebreaks }}</p>
+                        {% else %}
+                            <p class="empty-message">No bio provided yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="info-card">
+                    <div class="card-title">
+                        <i class="fas fa-code"></i>
+                        <span>Skills & Expertise</span>
+                    </div>
+                    <div class="card-content">
+                        {% if profile.skills %}
+                            <div class="skills-list">
+                                {% for skill in profile.skills.split %}
+                                    <span class="skill-item">
+                                        <i class="fas fa-check-circle"></i> {{ skill|title }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="empty-message">No skills listed.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experience Tab -->
+            <div class="tab-pane fade" id="experience" role="tabpanel">
+                <div class="info-card">
+                    <div class="card-title">
+                        <i class="fas fa-history"></i>
+                        <span>Work Experience</span>
+                    </div>
+                    <div class="card-content">
+                        {% if profile.work_experience %}
+                            <div>{{ profile.work_experience|linebreaks }}</div>
+                        {% else %}
+                            <p class="empty-message">No work experience listed.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education Tab -->
+            <div class="tab-pane fade" id="education" role="tabpanel">
+                <div class="info-card">
+                    <div class="card-title">
+                        <i class="fas fa-university"></i>
+                        <span>Education</span>
+                    </div>
+                    <div class="card-content">
+                        {% if profile.education %}
+                            <div>{{ profile.education|linebreaks }}</div>
+                        {% else %}
+                            <p class="empty-message">No education information listed.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Links Tab -->
+            <div class="tab-pane fade" id="links" role="tabpanel">
+                <div class="info-card">
+                    <div class="card-title">
+                        <i class="fas fa-share-alt"></i>
+                        <span>Professional Links</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="links-list">
+                            {% if profile.portfolio_link %}
+                                <a href="{{ profile.portfolio_link }}" target="_blank" class="link-card">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Portfolio Website</span>
+                                    <i class="fas fa-external-link-alt link-arrow"></i>
+                                </a>
+                            {% endif %}
+                            {% if profile.github_link %}
+                                <a href="{{ profile.github_link }}" target="_blank" class="link-card">
+                                    <i class="fab fa-github"></i>
+                                    <span>GitHub Profile</span>
+                                    <i class="fas fa-external-link-alt link-arrow"></i>
+                                </a>
+                            {% endif %}
+                            {% if profile.linkedin %}
+                                <a href="{{ profile.linkedin }}" target="_blank" class="link-card">
+                                    <i class="fab fa-linkedin"></i>
+                                    <span>LinkedIn Profile</span>
+                                    <i class="fas fa-external-link-alt link-arrow"></i>
+                                </a>
+                            {% endif %}
+                            {% if not profile.portfolio_link and not profile.github_link and not profile.linkedin %}
+                                <p class="empty-message">No links provided.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- No Profile Found -->
+        <div class="alert-warning">
+            <i class="fas fa-user-slash"></i>
+            <h5 style="margin-bottom: 0.5rem;">Profile Not Found</h5>
+            <p>{{ freelancer.username }} hasn't created their profile yet.</p>
+            {% if user == freelancer %}
+                <a href="{% url 'create_profile' %}" class="btn-create">
+                    <i class="fas fa-plus-circle"></i> Create Your Profile
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap 5 tabs
+        const triggerTabList = [].slice.call(document.querySelectorAll('#profileTab button'));
+        triggerTabList.forEach(function(triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl);
+            triggerEl.addEventListener('click', function(e) {
+                e.preventDefault();
+                tabTrigger.show();
+            });
+        });
+    });
+</script>
+{% endblock %}

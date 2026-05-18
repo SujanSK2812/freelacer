@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pending Requests</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #2d3a2d;
+        }
+
+        /* Header Styles - Matching Registration Page */
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: #14a800;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #404145;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover {
+            color: #14a800;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #14a800;
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+        }
+
+        .how-it-works {
+            background: #f0f5f0;
+            padding: 0.5rem 1rem !important;
+            border-radius: 40px;
+        }
+
+        .how-it-works:hover {
+            background: #14a800 !important;
+            color: white !important;
+        }
+
+        .how-it-works:hover::after {
+            display: none;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .requests-container {
+            background: white;
+            max-width: 800px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section */
+        .requests-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .requests-icon {
+            font-size: 2.5rem;
+            color: #14a800;
+            background: #f0f7f0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .requests-header h2 {
+            color: #1a2b1a;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .requests-count {
+            color: #14a800;
+            background: #f0f7f0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            display: inline-block;
+        }
+
+        .requests-header p {
+            color: #5e6b7e;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Request Cards */
+        .request-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .request-card {
+            background: #f8f9fc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .request-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: #14a80020;
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e6e0;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #14a800 0%, #0d8f00 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(20, 168, 0, 0.2);
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-details h4 {
+            color: #2d3a2d;
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            color: #5e6b7e;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-details p i {
+            color: #14a800;
+            font-size: 0.85rem;
+        }
+
+        /* Request Meta Info */
+        .request-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: #9aa6b5;
+        }
+
+        .request-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .request-meta i {
+            color: #14a800;
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Button Styles - Matching Registration Page */
+        .btn {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-family: inherit;
+        }
+
+        .btn-accept {
+            background: #14a800;
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: #108700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(20, 168, 0, 0.3);
+        }
+
+        .btn-accept i {
+            transition: transform 0.2s ease;
+        }
+
+        .btn-accept:hover i {
+            transform: translateX(5px);
+        }
+
+        .btn-reject {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .btn-reject i {
+            transition: transform 0.2s ease;
+        }
+
+        .btn-reject:hover i {
+            transform: translateX(-5px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #d0d7de;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #5e6b7e;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state small {
+            color: #9aa6b5;
+            font-size: 0.9rem;
+        }
+
+        /* Message Styles (if any messages to display) */
+        .message {
+            background: #f0f7f0;
+            border-left: 4px solid #14a800;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .message.error {
+            background: #fee9e7;
+            border-left-color: #bc1c1e;
+        }
+
+        .message i {
+            color: #14a800;
+        }
+
+        .message.error i {
+            color: #bc1c1e;
+        }
+
+        /* Footer Styles - Matching Registration Page */
+        footer {
+            background: white;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: #14a800;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section h4 {
+            color: #2d3a2d;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .footer-section p {
+            color: #5e6b7e;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            text-decoration: none;
+            color: #5e6b7e;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #14a800;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #5e6b7e;
+            font-size: 1.2rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover {
+            color: #14a800;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e6e0;
+        }
+
+        .footer-bottom p {
+            color: #5e6b7e;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .requests-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .requests-header h2 {
+                font-size: 1.75rem;
+            }
+            
+            .user-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .user-details h4 {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .requests-container {
+                padding: 1rem;
+            }
+            
+            .requests-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .requests-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .request-card {
+                padding: 1rem;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-details p {
+                justify-content: center;
+            }
+            
+            .request-meta {
+                justify-content: center;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        /* Selection Color */
+        ::selection {
+            background: #14a800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header - Include your header template -->
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="requests-container">
+        <div class="requests-header">
+            <div class="requests-icon">
+                <i class="fas fa-user-friends"></i>
+            </div>
+            <h2>
+                Pending Requests 
+                {% if requests %}
+                    <span class="requests-count">{{ requests|length }}</span>
+                {% endif %}
+            </h2>
+            <p>Review and manage connection requests from other users</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    <i class="fas fa-info-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="request-list">
+            {% for request in requests %}
+                <div class="request-card">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {{ request.sender.username|make_list|first|upper }}
+                        </div>
+                        <div class="user-details">
+                            <h4>{{ request.sender.username }}</h4>
+                            <p>
+                                <i class="fas fa-envelope"></i>
+                                {{ request.sender.email }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="request-meta">
+                        <span>
+                            <i class="fas fa-calendar-alt"></i>
+                            Request pending
+                        </span>
+                        <span>
+                            <i class="fas fa-clock"></i>
+                            Awaiting response
+                        </span>
+                    </div>
+
+                    <div class="button-group">
+                        <form method="POST" action="{% url 'accounts:accept_connection_request' request.id %}" style="flex: 1;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-accept">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Accept Request</span>
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{% url 'accounts:reject_connection_request' request.id %}" style="flex: 1;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-reject">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Reject Request</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <p>No pending requests</p>
+                    <small>When you receive connection requests, they'll appear here</small>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<!-- Footer - Include your footer template -->
+{% include 'includes/footer.html' %}
+
+<script>
+// Mobile menu toggle
+document.querySelector('.mobile-menu')?.addEventListener('click', function() {
+    document.querySelector('.nav-links').classList.toggle('show');
+});
+
+// Add confirmation for reject action
+document.querySelectorAll('.btn-reject').forEach(button => {
+    button.addEventListener('click', function(e) {
+        if (!confirm('Are you sure you want to reject this connection request?')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+
+</body>
+</html>

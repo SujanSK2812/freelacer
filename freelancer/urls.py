@@ -12,4 +12,5 @@ urlpatterns = [
     path('my-proposals/', views.my_proposals, name='my_proposals'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path( "profile/<int:freelancer_id>/", views.freelancer_profile, name="freelancer_profile"),
+    path('connections/',views.freelancer_connections,name='freelancer_connections'),
 ]

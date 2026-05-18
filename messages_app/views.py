@@ -36,6 +36,7 @@ def chat_home(request):
         'users': users
     })
 
+
 @login_required
 def chat_detail(request, user_id):
 
@@ -46,8 +47,9 @@ def chat_detail(request, user_id):
         receiver__in=[request.user, other_user]
     ).order_by('timestamp')
 
-    if request.method == 'POST':
-        text = request.POST.get('message')
+    if request.method == "POST":
+
+        text = request.POST.get("message")
 
         if text:
             Message.objects.create(
@@ -58,7 +60,49 @@ def chat_detail(request, user_id):
 
         return redirect('chat_detail', user_id=other_user.id)
 
-    return render(request, 'messages/chat_detail.html', {
+    users = User.objects.exclude(id=request.user.id)
+
+    return render(request, 'messages/chat_home.html', {
         'other_user': other_user,
-        'messages': messages
+        'messages': messages,
+        'users': users,
     })
+
+
+
+from accounts.models import ConnectionRequest
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+@login_required
+def chat_user_list(request):
+
+    # users who FOLLOWED current user (followers)
+    followers_requests = ConnectionRequest.objects.filter(
+        receiver=request.user
+    )
+
+    followers = [req.sender for req in followers_requests]
+
+    # users current user follows
+    following_requests = ConnectionRequest.objects.filter(
+        sender=request.user
+    )
+
+    following = [req.receiver for req in following_requests]
+
+    # pending requests
+    received_requests = ConnectionRequest.objects.filter(
+        receiver=request.user
+    )
+
+    context = {
+        "users": followers,   # ONLY followers shown in message section
+        "followers": followers,
+        "following": following,
+        "received_requests": received_requests,
+        "pending_requests_count": received_requests.count(),
+    }
+
+    return render(request, "messages/chat.html", context)
