@@ -17,7 +17,7 @@ from freelancer.models import FreelancerProfile
 
 User = get_user_model()
 
-def register(request):
+def register(request, role=None):
     if request.method == "POST":
         email = request.POST.get("email")
         username = request.POST.get("username")
@@ -39,7 +39,7 @@ def register(request):
         token = default_token_generator.make_token(user)
 
         current_site = get_current_site(request)
-        activation_link = f"http://{current_site.domain}{reverse('activate', args=[uid, token])}"
+        activation_link = f"http://{current_site.domain}{reverse('accounts:activate', args=[uid, token])}"
 
         send_mail(
             "Activate Your Freelancer Portal Account",
@@ -58,7 +58,7 @@ def register(request):
     return render(request, "accounts/register.html")
 def verify_otp(request, user_id):
 
-    user = User.objects.get(id=user_id)
+    user = get_object_or_404(User, id=user_id)
 
     if request.method == "POST":
         entered_otp = request.POST.get("otp")
@@ -69,10 +69,10 @@ def verify_otp(request, user_id):
             user.save()
             otp_obj.delete()
 
-            if user.profile.role == "client":
-                return redirect("/client/dashboard/")
+            if getattr(user, 'role', None) == "client":
+                return redirect("client:client_dashboard")
             else:
-                return redirect("/freelancer/dashboard/")
+                return redirect("freelancer:freelancer_dashboard")
 
     return render(request, "accounts/verify_otp.html")
 
@@ -158,9 +158,9 @@ def password_reset_request(request):
 # ==========================
 # REGISTER (ROLE BASED)
 # ==========================
-def select_role(request):
+def select_role(request, role=None):
 
-    role = request.GET.get("role")
+    role = role or request.GET.get("role")
 
     # If role not selected → show role selection page
     if not role:
@@ -201,7 +201,7 @@ def select_role(request):
         token = default_token_generator.make_token(user)
 
         current_site = get_current_site(request)
-        activation_link = f"http://{current_site.domain}{reverse('activate', args=[uid, token])}"
+        activation_link = f"http://{current_site.domain}{reverse('accounts:activate', args=[uid, token])}"
 
         send_mail(
             "Activate Your Freelancer Portal Account",
@@ -238,7 +238,7 @@ def activate_account(request, uidb64, token):
     else:
         messages.error(request, "Activation link is invalid.")
 
-    return redirect("login")
+    return redirect("accounts:login")
 
 
 # ==========================
@@ -269,12 +269,12 @@ def user_login(request):
 
             if not user.is_active:
                 messages.error(request, "Activate your account first.")
-                return redirect("login")
+                return redirect("accounts:login")
 
             login(request, user)
 
             if user.is_superuser:
-                return redirect("admin_home")
+                return redirect("accounts:admin_home")
 
             elif user.role == "client":
                 return redirect("client:client_home")
@@ -300,15 +300,15 @@ def role_redirect(request, role):
 
     if role == "client":
         if request.user.role == "client":
-            return redirect("client_dashboard")
+            return redirect("client:client_dashboard")
         else:
-            return redirect("select_role")
+            return redirect("accounts:select_role")
 
     elif role == "freelancer":
         if request.user.role == "freelancer":
-            return redirect("freelancer_dashboard")
+            return redirect("freelancer:freelancer_dashboard")
         else:
-            return redirect("select_role")
+            return redirect("accounts:select_role")
 
 
 
@@ -317,7 +317,7 @@ def role_redirect(request, role):
 def admin_home(request):
 
     if not request.user.is_superuser:
-        return redirect("login")
+        return redirect("accounts:login")
 
     clients = User.objects.filter(role="client")
     freelancers = User.objects.filter(role="freelancer")
@@ -340,7 +340,7 @@ def admin_home(request):
 def admin_users(request):
 
     if not request.user.is_superuser:
-        return redirect("login")
+        return redirect("accounts:login")
 
     clients = User.objects.filter(role="client")
     freelancers = User.objects.filter(role="freelancer")
@@ -380,16 +380,17 @@ def manage_users(request):
 # accounts/views.py
 from django.shortcuts import redirect
 
+@login_required
 def redirect_dashboard(request):
     user = request.user
 
     if user.is_superuser:
         return redirect('/admin/')
 
-    elif user.role == "client":
+    elif getattr(user, 'role', None) == "client":
         return redirect('client:client_home')
 
-    elif user.role == "freelancer":
+    elif getattr(user, 'role', None) == "freelancer":
         return redirect('freelancer:freelancer_home')
 
     return redirect('/')
@@ -413,23 +414,35 @@ from .models import ConnectionRequest
 
 User = get_user_model()
 
-
 @login_required
 def send_connection_request(request, user_id):
 
     receiver = get_object_or_404(User, id=user_id)
 
-    # Prevent self follow
+    # prevent self follow
     if request.user == receiver:
-        return redirect(request.META.get("HTTP_REFERER"))
+        return redirect(request.META.get("HTTP_REFERER") or "/")
 
-    # Create follow request if not exists
-    ConnectionRequest.objects.get_or_create(
+    # already requested
+    already_requested = ConnectionRequest.objects.filter(
         sender=request.user,
         receiver=receiver
-    )
+    ).exists()
 
-    return redirect(request.META.get("HTTP_REFERER"))
+    # already following
+    already_connected = Connection.objects.filter(
+        sender=request.user,
+        receiver=receiver
+    ).exists()
+
+    if not already_requested and not already_connected:
+
+        ConnectionRequest.objects.create(
+            sender=request.user,
+            receiver=receiver
+        )
+
+    return redirect(request.META.get("HTTP_REFERER") or "/")
 
 
 @login_required
@@ -442,7 +455,7 @@ def remove_connection(request, user_id):
         receiver=receiver
     ).delete()
 
-    return redirect(request.META.get("HTTP_REFERER"))
+    return redirect(request.META.get("HTTP_REFERER") or "/")
 
 
 @login_required
@@ -463,7 +476,7 @@ def accept_connection_request(request, request_id):
     # delete request
     connection_request.delete()
 
-    return redirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER') or '/')
 
 @login_required
 def remove_connection(request, user_id):
@@ -478,7 +491,7 @@ def remove_connection(request, user_id):
         receiver=request.user
     ).delete()
 
-    return redirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER') or '/')
 
 
 
@@ -493,25 +506,56 @@ def reject_connection_request(request, request_id):
 
     connection_request.delete()
 
-    return redirect(request.META.get('HTTP_REFERER'))
-
+    return redirect(request.META.get('HTTP_REFERER') or '/')
 
 
 
 @login_required
 def followers_list(request):
-    followers = request.user.followers.all()
+
+    connections = Connection.objects.filter(
+        receiver=request.user
+    )
+
+    followers = []
+
+    for connection in connections:
+
+        follower = connection.sender
+
+        # check if current user follows back
+        is_following_back = Connection.objects.filter(
+            sender=request.user,
+            receiver=follower
+        ).exists()
+
+        follower.is_following_back = is_following_back
+
+        followers.append(follower)
+
     return render(request, "accounts/followers.html", {
         "followers": followers
     })
-
 @login_required
 def following_list(request):
-    following = request.user.following.all()
-    return render(request, "accounts/following.html", {
-        "following": following
-    })
 
+    connections = Connection.objects.filter(
+        sender=request.user
+    ).select_related('receiver')
+
+    following_users = []
+
+    for connection in connections:
+        user = connection.receiver
+
+        # attach followed date dynamically
+        user.followed_date = connection.created_at   # use your actual field name
+
+        following_users.append(user)
+
+    return render(request, "accounts/following.html", {
+        "following": following_users
+    })
 
 @login_required
 def pending_requests(request):
@@ -562,8 +606,7 @@ def remove_follower(request, follower_id):
 
     Connection.objects.filter(
         sender=follower,
-        receiver=request.user,
-        status='accepted'
+        receiver=request.user
     ).delete()
 
     return redirect('accounts:followers')

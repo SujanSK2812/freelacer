@@ -1,0 +1,401 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{{ job.title }} | Job Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #2d3a2d;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .job-container {
+            background: white;
+            max-width: 900px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .job-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .job-icon {
+            font-size: 2.5rem;
+            color: #14a800;
+            background: #f0f7f0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .job-container h1 {
+            color: #1a2b1a;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .company-name {
+            text-align: center;
+            color: #5e6b7e;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .company-name i {
+            color: #14a800;
+        }
+
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1rem 0 1.5rem 0;
+            padding: 1rem 0;
+            border-top: 1px solid #e0e6e0;
+            border-bottom: 1px solid #e0e6e0;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #5e6b7e;
+            font-size: 0.9rem;
+        }
+
+        .meta-item i {
+            color: #14a800;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .btn-primary {
+            background: #14a800;
+            color: white;
+            padding: 0.75rem 1.8rem;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: #108700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(20, 168, 0, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #14a800;
+            color: #14a800;
+            padding: 0.75rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline:hover {
+            background: #f0f7f0;
+            transform: translateY(-2px);
+        }
+
+        .job-description-section {
+            margin-top: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3a2d;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: #14a800;
+        }
+
+        .job-description {
+            color: #3a4a3a;
+            line-height: 1.7;
+            font-size: 1rem;
+            white-space: pre-wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .job-image-wrapper {
+            margin: 1.5rem 0;
+            text-align: center;
+            background: #f8f9fc;
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        .job-image-wrapper img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .job-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fc;
+            border-radius: 16px;
+        }
+
+        .info-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .info-card i {
+            font-size: 1.2rem;
+            color: #14a800;
+            width: 30px;
+        }
+
+        .info-card span {
+            font-size: 0.85rem;
+            color: #5e6b7e;
+        }
+
+        .info-card strong {
+            color: #2d3a2d;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .job-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .job-container h1 {
+                font-size: 1.5rem;
+            }
+            .job-meta {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .job-container {
+                padding: 1.2rem;
+            }
+            .job-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            .job-container h1 {
+                font-size: 1.3rem;
+            }
+            .job-actions {
+                flex-direction: column;
+            }
+            .btn-primary, .btn-outline {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        ::selection {
+            background: #14a800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="job-container">
+        <div class="job-header">
+            <div class="job-icon">
+                <i class="fas fa-building"></i>
+            </div>
+        </div>
+
+        <h1>{{ job.title }}</h1>
+
+        <div class="company-name">
+            <i class="fas fa-check-circle"></i> {{ job.client.username }}
+        </div>
+
+        <div class="job-meta">
+            {% if job.location %}
+            <div class="meta-item"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</div>
+            {% endif %}
+            {% if job.job_type %}
+            <div class="meta-item"><i class="fas fa-clock"></i> {{ job.job_type }}</div>
+            {% endif %}
+            {% if job.budget %}
+            <div class="meta-item"><i class="fas fa-dollar-sign"></i> ₹{{ job.budget }}</div>
+            {% endif %}
+            <div class="meta-item"><i class="fas fa-calendar-alt"></i> Posted {{ job.created_at|timesince }} ago</div>
+        </div>
+
+        <div class="job-actions">
+            <button class="btn-primary" id="applyBtn"><i class="fas fa-paper-plane"></i> Apply Now</button>
+            <button class="btn-outline" id="saveBtn"><i class="far fa-bookmark"></i> Save Job</button>
+        </div>
+
+        <div class="job-description-section">
+            <div class="section-title">
+                <i class="fas fa-align-left"></i> Job Description
+            </div>
+            <div class="job-description">{{ job.description }}</div>
+        </div>
+
+        {% if job.image %}
+        <div class="job-image-wrapper">
+            <img src="{{ job.image.url }}" alt="{{ job.title }}">
+        </div>
+        {% endif %}
+
+        <div class="job-info-grid">
+            {% if job.experience_required %}
+            <div class="info-card">
+                <i class="fas fa-graduation-cap"></i>
+                <span><strong>Experience</strong> {{ job.experience_required }}</span>
+            </div>
+            {% endif %}
+            {% if job.category %}
+            <div class="info-card">
+                <i class="fas fa-tag"></i>
+                <span><strong>Category</strong> {{ job.category }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</main>
+
+{% include 'includes/footer.html' %}
+
+<script>
+    function showToastMessage(message, isError = false) {
+        let toast = document.getElementById('dynamicToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'dynamicToast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${isError ? '#dc2626' : '#14a800'};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+    }
+
+    document.getElementById('applyBtn')?.addEventListener('click', () => {
+        showToastMessage('✨ Application started! Please upload your resume.', false);
+    });
+
+    let isSaved = false;
+    document.getElementById('saveBtn')?.addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const icon = btn.querySelector('i');
+        if (!isSaved) {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            btn.style.background = '#f0f7f0';
+            showToastMessage('📌 Job saved to your dashboard', false);
+            isSaved = true;
+        } else {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            btn.style.background = 'transparent';
+            showToastMessage('🗑️ Job removed from saved', false);
+            isSaved = false;
+        }
+    });
+</script>
+</body>
+</html>

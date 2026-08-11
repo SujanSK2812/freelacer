@@ -36,6 +36,8 @@ urlpatterns = [
     path("how_to_find_work/", views.how_to_find_work, name="how_to_find_work"),
     path("freelancer_tips/", views.freelancer_tips, name="freelancer_tips"),
     path('messages/', include('messages_app.urls')),
+    path('proposals/', include('proposals.urls')),
+    path('payments/', include('payments.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -24,6 +24,9 @@ class JobPost(models.Model):
     def total_reactions(self):
         return self.reactions.count()
 
+    def total_likes(self):
+        return self.reactions.filter(reaction_type="like").count()
+
     def __str__(self):
         return self.title
 

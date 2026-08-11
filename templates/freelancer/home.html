@@ -445,24 +445,134 @@
             .job-tabs {
                 gap: 1rem;
             }
+        /* Additional styling for skills and actions */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .skill-tag {
+            background: #f1f3f6;
+            color: #495464;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f2f5;
+        }
+
+        .apply-btn-card {
+            background: #108a00;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .apply-btn-card:hover {
+            background: #0f7a00;
+        }
+
+        .user-profile-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .user-avatar-lg {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #108a00, #004182);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1d2c3c;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role-title {
+            color: #5e6b7c;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-progress-bar {
+            background: #e4e6eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .profile-progress-fill {
+            background: #108a00;
+            height: 100%;
+            width: 85%;
         }
     </style>
 </head>
 <body>
 {% include 'includes/header.html' %}
 
-
 <div class="container">
     <!-- Page Header -->
+    <div class="page-header">
+        <h1>Welcome back, {{ request.user.username }} 👋</h1>
+    </div>
 
-
-    
+    <!-- To-Do Section -->
+    <div class="todo-section">
+        <i class="fas fa-tasks todo-icon"></i>
+        <div class="todo-content">
+            <p><strong>Complete your profile:</strong> Add your verified skills, past projects, and hourly rate to attract high-paying clients.</p>
+        </div>
+        <a href="{% url 'freelancer:create_profile' %}" class="learn-link">Complete Profile →</a>
+        <i class="fas fa-times todo-close"></i>
+    </div>
 
     <!-- Get Hired Faster Section -->
-    
+    <div class="hired-section">
+        <div class="hired-content">
+            <h3>Get hired faster with a verified portfolio</h3>
+            <p>Clients are 3x more likely to invite freelancers who maintain an active portfolio and clear experience details.</p>
+            <a href="{% url 'freelancer:create_profile' %}" class="learn-link">Update Your Skills & Experience →</a>
+        </div>
+        <i class="fas fa-rocket hired-icon"></i>
+    </div>
 
     <!-- Search Section -->
-
+    <div class="search-section">
+        <div class="search-label">Search for job opportunities</div>
+        <form class="search-bar" action="{% url 'freelancer:search_results' %}" method="GET">
+            <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" placeholder="Search by title, technology, or skills (e.g. Python, React, Mobile)..." required />
+            </div>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
 
     <!-- Jobs Section -->
     <div class="jobs-header">
@@ -474,53 +584,93 @@
         </div>
     </div>
     <div class="jobs-subtitle">
-        Browse jobs that match your experience to a client's hiring preferences. Ordered by most relevant.
+        Browse jobs tailored to your experience and skills. Ordered by most relevant opportunities.
     </div>
 
     <!-- Jobs Grid -->
     <div class="jobs-grid">
         <!-- Left Column - Job Listings -->
         <div>
-            <!-- Job Card -->
-            
+            {% for job in jobs %}
+            <div class="job-card">
+                <div class="job-header">
+                    <span class="job-time">
+                        <i class="far fa-clock"></i> Posted {{ job.created_at|timesince }} ago
+                    </span>
+                    {% if job.client.username %}
+                    <span style="font-size: 0.85rem; color: #5e6b7c;">
+                        <i class="fas fa-user-check" style="color: #108a00;"></i> {{ job.client.username }}
+                    </span>
+                    {% endif %}
+                </div>
 
-            <!-- Add more job cards as needed -->
-           <div>
-{% for job in jobs %}
+                <h3 class="job-title">{{ job.title }}</h3>
 
-<div class="job-card">
+                <div class="job-meta">
+                    <span><i class="fas fa-tag"></i> Fixed-price</span>
+                    <span><i class="fas fa-chart-line"></i> {{ job.experience_level|default:"Intermediate" }}</span>
+                    <span><i class="fas fa-money-bill-wave"></i> Est. Budget: ₹{{ job.budget }}</span>
+                </div>
 
-    <div class="job-header">
-        <span class="job-time">
-            Posted {{ job.created_at|timesince }} ago
-        </span>
-    </div>
+                <p class="job-description">
+                    {{ job.description|truncatewords:40 }}
+                </p>
 
-    <h3 class="job-title">{{ job.title }}</h3>
+                {% if job.skills_list %}
+                <div class="skills-container">
+                    {% for skill in job.skills_list %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-    <div class="job-meta">
-        <span><i class="fas fa-tag"></i> Fixed-price</span>
-        <span><i class="fas fa-chart-line"></i> Intermediate</span>
-        <span><i class="fas fa-money-bill"></i> Est. Budget: {{ job.budget }}</span>
-    </div>
-
-    <p class="job-description">
-        {{ job.description|truncatewords:30 }}
-        <a href="{% url 'job_detail' job.id %}" class="read-more">more</a>
-    </p>
-
-</div>
-
-{% empty %}
-
-<p>No jobs available right now.</p>
-
-{% endfor %}
-</div>
+                <div class="card-actions">
+                    <a href="{% url 'submit_proposal' job.id %}" class="apply-btn-card">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </a>
+                    <a href="{% url 'client:job_detail' job.id %}" class="read-more">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="job-card" style="text-align: center; padding: 3rem 1rem;">
+                <i class="fas fa-folder-open" style="font-size: 3rem; color: #b0b8c4; margin-bottom: 1rem;"></i>
+                <h3>No jobs available right now</h3>
+                <p style="color: #5e6b7c; margin-top: 0.5rem;">Check back later or refine your search query.</p>
+            </div>
+            {% endfor %}
         </div>
 
         <!-- Right Column - Sidebar -->
         <div class="sidebar">
+            <!-- Freelancer Profile Summary Card -->
+            <div class="sidebar-card user-profile-card">
+                <div class="user-avatar-lg">
+                    {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture }}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    <i class="fas fa-user"></i>
+                    {% endif %}
+                </div>
+                <div class="user-name">{{ request.user.username }}</div>
+                <div class="user-role-title">{{ profile.title|default:"Freelancer" }}</div>
+
+                <div style="text-align: left; margin: 1rem 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #5e6b7c;">
+                        <span>Profile Completeness</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="profile-progress-bar">
+                        <div class="profile-progress-fill"></div>
+                    </div>
+                </div>
+
+                <a href="{% url 'freelancer:edit_profile' %}" class="learn-link" style="display: inline-block; margin-top: 0.5rem;">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            </div>
+
             <!-- Identity Verification Card -->
             <div class="sidebar-card verification-card">
                 <div class="verification-title">
@@ -535,14 +685,16 @@
 
             <!-- Promote with Ads Card -->
             <div class="sidebar-card">
-                <h4 style="margin-bottom: 1rem;">Promote with ads</h4>
-                
+                <h4 style="margin-bottom: 1rem; font-weight: 600;">Promote with ads</h4>
+
                 <div class="promote-item">
                     <div class="promote-info">
-                        <i class="fas fa-circle"></i>
+                        <i class="fas fa-circle" style="color: #108a00;"></i>
                         <span>Availability badge</span>
                     </div>
-                    <div class="promote-status">Off</div>
+                    <div class="toggle active">
+                        <div class="toggle-slider"></div>
+                    </div>
                 </div>
 
                 <div class="promote-item">
@@ -550,37 +702,40 @@
                         <i class="fas fa-chart-line"></i>
                         <span>Boost your profile</span>
                     </div>
-                    <div class="promote-status">Off</div>
+                    <div class="toggle">
+                        <div class="toggle-slider"></div>
+                    </div>
                 </div>
 
                 <div class="promote-item">
                     <div class="promote-info">
                         <i class="fas fa-chart-bar"></i>
-                        <span>Stats and trends</span>
+                        <span>Stats & Trends</span>
                     </div>
-                    <div class="promote-status">Stats and trends</div>
+                    <a href="#" class="learn-link" style="font-size: 0.85rem;">View</a>
                 </div>
             </div>
 
             <!-- Stats Card -->
             <div class="sidebar-card stats-card">
+                <h4 style="margin-bottom: 1rem; font-weight: 600;">Activity Summary</h4>
                 <div class="stats-item">
                     <span>Profile views</span>
                     <span class="stats-value">24</span>
                 </div>
                 <div class="stats-item">
                     <span>Proposals sent</span>
-                    <span class="stats-value">12</span>
+                    <span class="stats-value">{{ proposals_count|default:"0" }}</span>
                 </div>
                 <div class="stats-item">
                     <span>Interviews</span>
                     <span class="stats-value">3</span>
                 </div>
-                <a href="#" class="stats-link">Stats and trends →</a>
+                <a href="{% url 'freelancer:my_proposals' %}" class="stats-link">My Proposals →</a>
 
                 <div class="connects">
-                    <span>Connects</span>
-                    <span class="stats-value">0</span>
+                    <span>Available Connects</span>
+                    <span class="stats-value" style="color: #108a00; font-weight: 600;">50</span>
                 </div>
             </div>
         </div>
@@ -593,7 +748,7 @@
         this.closest('.todo-section').style.display = 'none';
     });
 
-    // Toggle functionality (example)
+    // Toggle functionality
     document.querySelectorAll('.toggle').forEach(toggle => {
         toggle.addEventListener('click', function() {
             this.classList.toggle('active');

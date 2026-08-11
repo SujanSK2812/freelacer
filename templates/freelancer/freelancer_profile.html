@@ -457,9 +457,15 @@
             <i class="fas fa-user-circle"></i>
             Freelancer Profile
         </h1>
-        <a href="{% url 'freelancer:freelancer_home' %}" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Back to Jobs
-        </a>
+       {% if request.user.role == "client" %}
+<a href="{% url 'client:client_home' %}" class="btn-back">
+    <i class="fas fa-arrow-left"></i> Back to Home
+</a>
+{% else %}
+<a href="{% url 'freelancer:freelancer_home' %}" class="btn-back">
+    <i class="fas fa-arrow-left"></i> Back to Jobs
+</a>
+{% endif %}
     </div>
 
     <!-- Profile Information Card -->
@@ -523,13 +529,23 @@
                             </a>
                         {% else %}
                             {% if freelancer.id in connected_ids %}
+
     <a href="{% url 'accounts:remove_connection' freelancer.id %}" class="btn-following">
-        <i class="fas fa-user-check"></i> Requested
+        <i class="fas fa-user-check"></i> Following
     </a>
+
+{% elif freelancer.id in requested_ids %}
+
+    <a href="#" class="btn-following">
+        <i class="fas fa-clock"></i> Requested
+    </a>
+
 {% else %}
+
     <a href="{% url 'accounts:send_connection_request' freelancer.id %}" class="btn-follow">
         <i class="fas fa-user-plus"></i> Follow
     </a>
+
 {% endif %}
                         {% endif %}
                     </div>
@@ -541,22 +557,7 @@
     <!-- Profile Content with Tabs -->
     {% if profile %}
         <!-- Tab Navigation -->
-        <div class="tabs-wrapper">
-            <div class="nav-tabs-custom" id="profileTab" role="tablist">
-                <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab">
-                    <i class="fas fa-user"></i> About
-                </button>
-                <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab">
-                    <i class="fas fa-briefcase"></i> Experience
-                </button>
-                <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button" role="tab">
-                    <i class="fas fa-graduation-cap"></i> Education
-                </button>
-                <button class="nav-link" id="links-tab" data-bs-toggle="tab" data-bs-target="#links" type="button" role="tab">
-                    <i class="fas fa-link"></i> Links
-                </button>
-            </div>
-        </div>
+        
 
         <!-- Tab Content -->
         <div class="tab-content" id="profileTabContent">

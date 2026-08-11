@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Proposal</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background:#f1f5f9;
+            padding:20px;
+        }
+
+        .container{
+            max-width:700px;
+            margin:auto;
+            background:white;
+            padding:25px;
+            border-radius:12px;
+        }
+
+        input,
+        textarea{
+            width:100%;
+            padding:12px;
+            margin-top:10px;
+            margin-bottom:20px;
+        }
+
+        button{
+            background:#2563eb;
+            color:white;
+            border:none;
+            padding:12px 20px;
+            border-radius:8px;
+            cursor:pointer;
+        }
+
+        @media(max-width:380px){
+
+            .container{
+                padding:15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>{{ job.title }}</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <textarea
+            name="proposal_text"
+            placeholder="Write your proposal"
+            required
+        ></textarea>
+
+        <input
+            type="number"
+            name="bid_amount"
+            placeholder="Bid Amount"
+            required
+        >
+
+        <input
+            type="number"
+            name="delivery_days"
+            placeholder="Delivery Days"
+            required
+        >
+
+        <button type="submit">
+            Submit Proposal
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

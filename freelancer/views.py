@@ -9,19 +9,50 @@ from django.http import HttpResponse
 User = get_user_model()
 from accounts.models import Connection, ConnectionRequest
 from django.shortcuts import get_object_or_404
+from proposals.models import Proposal
+
 @login_required
 def freelancer_home(request):
     jobs = Job.objects.all().order_by("-created_at")
 
     for job in jobs:
-        job.skills_list = job.skills.split(",")
+        if hasattr(job, 'skills') and job.skills:
+            job.skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
+        else:
+            job.skills_list = []
 
-    return render(request, "freelancer/home.html", {"jobs": jobs})
+    profile = FreelancerProfile.objects.filter(user=request.user).first()
+    proposals_count = Proposal.objects.filter(freelancer=request.user).count()
 
+    context = {
+        "jobs": jobs,
+        "profile": profile,
+        "proposals_count": proposals_count,
+    }
+
+    return render(request, "freelancer/home.html", context)
 
 @login_required
 def freelancer_dashboard(request):
-    return render(request, "freelancer/dashboard.html")
+
+    recent_proposals = Proposal.objects.filter(
+        freelancer=request.user
+    ).order_by("-created_at")[:5]
+
+    freelancer_profile = FreelancerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    context = {
+        "recent_proposals": recent_proposals,
+        "freelancer": freelancer_profile,
+    }
+
+    return render(
+        request,
+        "freelancer/dashboard.html",
+        context
+    )
 
 
 @login_required
@@ -116,12 +147,11 @@ def edit_profile(request):
     if request.method == "POST":
         user.username = request.POST.get("username")
         user.save()
-        return redirect("freelancer_dashboard")
+        return redirect("freelancer:freelancer_dashboard")
 
     return render(request, "freelancer/edit_profile.html", {
         "user": user
     })
-
 
 
 
@@ -130,16 +160,24 @@ def freelancer_profile(request, freelancer_id):
 
     freelancer = get_object_or_404(User, id=freelancer_id)
 
-    profile = FreelancerProfile.objects.filter(user=freelancer).first()
+    profile = FreelancerProfile.objects.filter(
+        user=freelancer
+    ).first()
 
-    # users already followed/requested
-    connected_ids = ConnectionRequest.objects.filter(
+    # pending requests
+    requested_ids = ConnectionRequest.objects.filter(
+        sender=request.user
+    ).values_list("receiver_id", flat=True)
+
+    # accepted/following
+    connected_ids = Connection.objects.filter(
         sender=request.user
     ).values_list("receiver_id", flat=True)
 
     context = {
         "freelancer": freelancer,
         "profile": profile,
+        "requested_ids": requested_ids,
         "connected_ids": connected_ids,
     }
 
@@ -155,13 +193,11 @@ def freelancer_profile(request, freelancer_id):
 def freelancer_connections(request):
 
     sent_connections = Connection.objects.filter(
-        sender=request.user,
-        status='accepted'
+        sender=request.user
     )
 
     received_connections = Connection.objects.filter(
-        receiver=request.user,
-        status='accepted'
+        receiver=request.user
     )
 
     connected_users = []

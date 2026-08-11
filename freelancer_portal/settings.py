@@ -31,7 +31,7 @@ cloudinary.config(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 ASGI_APPLICATION = 'freelancer_portal.asgi.application'
 
@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'freelancer',
     'projects',
     'messages_app',
-   
+    'proposals',
+    'payments',
 ]
 
 MIDDLEWARE = [

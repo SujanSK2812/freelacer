@@ -640,13 +640,13 @@
         <h2>Join as a Client or Freelancer</h2>
 
         <div class="role-options">
-            <a href="{% url 'role_redirect' 'client' %}" class="role-card">
+            <a href="{% url 'accounts:role_redirect' 'client' %}" class="role-card">
                 <i class="fas fa-user-tie"></i>
                 <h3>I'm a Client</h3>
                 <p>Hire talent for a project</p>
             </a>
 
-            <a href="{% url 'role_redirect' 'freelancer' %}" class="role-card">
+            <a href="{% url 'accounts:role_redirect' 'freelancer' %}" class="role-card">
                 <i class="fas fa-laptop-code"></i>
                 <h3>I'm a Freelancer</h3>
                 <p>Find work and grow your career</p>
@@ -843,8 +843,8 @@
         <h2>Ready to Get Started?</h2>
         <p>Join thousands of satisfied users on our platform</p>
         <div class="cta-buttons">
-            <a href="{% url 'select_role' %}?role=client" class="btn btn-primary">Hire Talent</a>
-            <a href="{% url 'select_role' %}?role=freelancer" class="btn btn-secondary">Start Working</a>
+            <a href="{% url 'accounts:select_role' %}?role=client" class="btn btn-primary">Hire Talent</a>
+            <a href="{% url 'accounts:select_role' %}?role=freelancer" class="btn btn-secondary">Start Working</a>
         </div>
     </div>
 </div>

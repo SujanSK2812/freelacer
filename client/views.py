@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from projects.models import JobPost
 from django.contrib.auth import get_user_model
@@ -42,7 +42,9 @@ def create_job(request):
             image=image
         )
 
-    return redirect("client:home")
+        return redirect("client:client_home")
+
+    return render(request, "client/create_job.html")
 
 
 @login_required
@@ -52,4 +54,14 @@ def all_freelancers(request):
 
     return render(request, "client/all_freelancers.html", {
         "freelancers": freelancers
+    })
+
+
+@login_required
+def job_detail(request, job_id):
+
+    job = get_object_or_404(JobPost, id=job_id)
+
+    return render(request, "client/job_detail.html", {
+        "job": job
     })

@@ -131,7 +131,7 @@ margin-bottom:10px;
 
 <div class="skills">
 
-{% for skill in job.skills.split "," %}
+{% for skill in job.skills_list %}
 
 <span class="skill">{{ skill }}</span>
 
@@ -139,7 +139,7 @@ margin-bottom:10px;
 
 </div>
 
-<a href="{% url 'apply_job' job.id %}" class="apply-btn">
+<a href="{% url 'submit_proposal' job.id %}" class="apply-btn">
 Apply for this Job
 </a>
 

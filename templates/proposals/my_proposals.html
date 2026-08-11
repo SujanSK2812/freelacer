@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Proposals</title>
+</head>
+<body>
+
+<h1>My Proposals</h1>
+
+{% for proposal in proposals %}
+
+    <div>
+
+        <h3>{{ proposal.job.title }}</h3>
+
+        <p>{{ proposal.proposal_text }}</p>
+
+        <p>₹{{ proposal.bid_amount }}</p>
+
+        <p>{{ proposal.status }}</p>
+
+    </div>
+
+{% empty %}
+
+    <p>No proposals yet</p>
+
+{% endfor %}
+
+</body>
+</html>
