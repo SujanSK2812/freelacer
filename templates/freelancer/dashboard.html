@@ -685,9 +685,9 @@
         <div class="welcome-user-info">
             <div class="hero-avatar">
                 {% if freelancer and freelancer.profile_picture %}
-                    <img src="{{ freelancer.profile_picture }}" alt="Profile Avatar">
+                    <img src="{{ freelancer.profile_picture }}" alt="{{ request.user.username }}">
                 {% else %}
-                    <i class="fas fa-user"></i>
+                    {{ request.user.username|slice:":1"|upper }}
                 {% endif %}
             </div>
             <div class="hero-text">
@@ -901,11 +901,11 @@
         <aside class="sidebar-right">
             <!-- Profile Summary Card -->
             <div class="sidebar-box profile-summary-mini">
-                <div class="mini-avatar-box">
+                <div class="mini-avatar-box" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; background: #108a00; color: white;">
                     {% if freelancer and freelancer.profile_picture %}
-                        <img src="{{ freelancer.profile_picture }}" alt="Profile Avatar">
+                        <img src="{{ freelancer.profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
                     {% else %}
-                        <i class="fas fa-user"></i>
+                        {{ request.user.username|slice:":1"|upper }}
                     {% endif %}
                 </div>
                 <div class="mini-user-name">{{ request.user.username }}</div>

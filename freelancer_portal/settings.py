@@ -159,4 +159,4 @@ EMAIL_HOST_USER = 'sujanshettybangari28@gmail.com'
 EMAIL_HOST_PASSWORD = 'rsyr qjqn crnp puiz'  
 EMAIL_USE_TLS = True
 
-
+LOGOUT_REDIRECT_URL = 'home'

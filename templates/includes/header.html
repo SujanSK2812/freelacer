@@ -4,7 +4,17 @@
   <div class="upwork-header-container">
     <!-- LEFT: Logo & Nav Links -->
     <div class="upwork-header-left">
-      <a href="{% url 'freelancer:freelancer_home' %}" class="upwork-logo">
+      {% if request.user.is_authenticated %}
+        {% if request.user.is_superuser %}
+          <a href="{% url 'accounts:admin_home' %}" class="upwork-logo">
+        {% elif request.user.role == 'client' %}
+          <a href="{% url 'client:client_home' %}" class="upwork-logo">
+        {% else %}
+          <a href="{% url 'freelancer:freelancer_home' %}" class="upwork-logo">
+        {% endif %}
+      {% else %}
+        <a href="{% url 'home' %}" class="upwork-logo">
+      {% endif %}
         <span class="logo-icon"><i class="fas fa-briefcase"></i></span>
         <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
       </a>
@@ -184,11 +194,11 @@
 
       <!-- PROFILE MENU TOGGLE -->
       <div class="upwork-user-menu" onclick="toggleUpworkMenu(event)">
-        <div class="user-avatar-circle">
-          {% if profile and profile.profile_picture %}
-          <img src="{{ profile.profile_picture }}" alt="User">
+        <div class="user-avatar-circle" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; background: #108a00; color: white;">
+          {% if request.user.get_profile_picture %}
+          <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
           {% else %}
-          <i class="fas fa-user"></i>
+          {{ request.user.username|slice:":1"|upper }}
           {% endif %}
         </div>
         <span class="online-status-dot"></span>
@@ -196,11 +206,11 @@
         <!-- PROFILE DROPDOWN MENU -->
         <div class="upwork-dropdown" id="upworkMenu">
           <div class="upwork-menu-header">
-            <div class="menu-avatar">
-              {% if profile and profile.profile_picture %}
-              <img src="{{ profile.profile_picture }}" alt="User">
+            <div class="menu-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; background: #108a00; color: white;">
+              {% if request.user.get_profile_picture %}
+              <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
               {% else %}
-              <i class="fas fa-user"></i>
+              {{ request.user.username|slice:":1"|upper }}
               {% endif %}
             </div>
             <div>

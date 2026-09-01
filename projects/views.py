@@ -55,11 +55,14 @@ def comment_job(request, job_id):
             )
 
             comments_count = Comment.objects.filter(job=job).count()
+            prof = getattr(request.user, 'freelancerprofile', None)
+            user_dp = prof.profile_picture if (prof and prof.profile_picture) else None
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == 'true':
                 return JsonResponse({
                     'success': True,
                     'username': request.user.username,
+                    'user_dp': user_dp,
                     'text': comment.text,
                     'created_at': 'Just now',
                     'comments_count': comments_count,

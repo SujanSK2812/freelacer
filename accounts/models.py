@@ -26,6 +26,15 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+    @property
+    def get_profile_picture(self):
+        try:
+            if hasattr(self, 'freelancerprofile') and self.freelancerprofile.profile_picture:
+                return self.freelancerprofile.profile_picture
+        except Exception:
+            pass
+        return None
+
 class EmailOTP(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

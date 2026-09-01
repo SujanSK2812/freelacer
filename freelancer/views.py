@@ -12,12 +12,18 @@ from django.shortcuts import get_object_or_404
 from proposals.models import Proposal
 
 def freelancer_home(request):
-    if request.user.is_authenticated and request.user.is_superuser:
+    if not request.user.is_authenticated:
+        return redirect("home")
+    if request.user.is_superuser:
         return redirect("accounts:admin_home")
+    if getattr(request.user, "role", None) == "client":
+        return redirect("client:client_home")
 
     # Client Job Postings (Work available)
     client_jobs = Job.objects.select_related('client').all().order_by("-created_at")
     for job in client_jobs:
+        prof = getattr(job.client, 'freelancerprofile', None)
+        job.author_dp = prof.profile_picture if (prof and prof.profile_picture) else None
         if hasattr(job, 'skills') and job.skills:
             job.skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
         else:
@@ -28,12 +34,17 @@ def freelancer_home(request):
     freelancer_posts = JobPost.objects.select_related('client').prefetch_related('comments__user', 'reactions').all().order_by("-created_at")
 
     for post in freelancer_posts:
+        prof = getattr(post.client, 'freelancerprofile', None)
+        post.author_dp = prof.profile_picture if (prof and prof.profile_picture) else None
         if request.user.is_authenticated:
             post.liked_by_user = post.reactions.filter(user=request.user, reaction_type='like').exists()
         else:
             post.liked_by_user = False
         post.likes_count = post.reactions.filter(reaction_type='like').count()
         post.comments_all = post.comments.all()
+        for comment in post.comments_all:
+            c_prof = getattr(comment.user, 'freelancerprofile', None)
+            comment.author_dp = c_prof.profile_picture if (c_prof and c_prof.profile_picture) else None
         post.comments_count = post.comments_all.count()
 
     profile = None

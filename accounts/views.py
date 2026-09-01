@@ -357,7 +357,7 @@ def user_login(request):
 # ==========================
 def logout_view(request):
     logout(request)
-    return redirect("accounts:login")
+    return redirect("home")
 
 
 
