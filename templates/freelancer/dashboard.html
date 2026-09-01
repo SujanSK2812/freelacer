@@ -1,604 +1,995 @@
 {% load static %}
-<!doctype html>
-<html>
-  <head>
-    <title>Freelancer Dashboard - Freelancer Portal</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelancer Work Dashboard | Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #f3f2ef;
-        color: #1d2c3c;
-        line-height: 1.5;
-      }
-
-      /* Layout - sidebar + main content */
-      .layout {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1.5rem;
-        display: flex;
-        gap: 2rem;
-        align-items: flex-start;
-      }
-
-      /* Main Content */
-      .main-content {
-        flex: 3;
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e4e6eb;
-      }
-
-      .main-content h2 {
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        color: #1d2c3c;
-        font-weight: 500;
-      }
-
-      /* Stats Cards */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-      }
-
-      .stat-card {
-        background: #f9fafb;
-        border-radius: 12px;
-        padding: 1.25rem;
-        border: 1px solid #e4e6eb;
-        text-align: center;
-      }
-
-      .stat-card i {
-        font-size: 2rem;
-        color: #108a00;
-        margin-bottom: 0.5rem;
-      }
-
-      .stat-card .stat-value {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #1d2c3c;
-      }
-
-      .stat-card .stat-label {
-        color: #5e6b7c;
-        font-size: 0.9rem;
-      }
-
-      /* Section Headers */
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 1.5rem 0 1rem;
-      }
-
-      .section-header h3 {
-        font-size: 1.2rem;
-        font-weight: 500;
-        color: #1d2c3c;
-      }
-
-      .btn-link {
-        color: #108a00;
-        text-decoration: none;
-        font-size: 0.9rem;
-      }
-
-      .btn-link:hover {
-        text-decoration: underline;
-      }
-
-      /* Project Cards */
-      .project-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .project-card {
-        background: #f9fafb;
-        border-radius: 12px;
-        padding: 1rem 1.25rem;
-        border: 1px solid #e4e6eb;
-        transition: all 0.2s ease;
-      }
-
-      .project-card:hover {
-        border-color: #108a00;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      }
-
-      .project-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-
-      .project-header h4 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #1d2c3c;
-      }
-
-      .project-badge {
-        background: #e8f5e9;
-        color: #108a00;
-        padding: 0.2rem 0.6rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-
-      .project-badge.pending {
-        background: #fff3e0;
-        color: #ed6c02;
-      }
-
-      .project-badge.completed {
-        background: #e3f2fd;
-        color: #1976d2;
-      }
-
-      .project-details {
-        color: #5e6b7c;
-        font-size: 0.85rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .project-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.8rem;
-        color: #5e6b7c;
-      }
-
-      .project-price {
-        font-weight: 600;
-        color: #108a00;
-      }
-
-      /* Proposal Cards */
-      .proposal-card {
-        background: #f9fafb;
-        border-radius: 12px;
-        padding: 1rem 1.25rem;
-        border: 1px solid #e4e6eb;
-        margin-bottom: 0.75rem;
-      }
-
-      .proposal-card:last-child {
-        margin-bottom: 0;
-      }
-
-      .proposal-title {
-        font-weight: 600;
-        color: #1d2c3c;
-        margin-bottom: 0.25rem;
-      }
-
-      .proposal-meta {
-        font-size: 0.8rem;
-        color: #5e6b7c;
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-
-      .proposal-status {
-        color: #ed6c02;
-        font-weight: 500;
-      }
-
-      .proposal-status.accepted {
-        color: #108a00;
-      }
-
-      /* Sidebar */
-      .sidebar {
-        flex: 1;
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e4e6eb;
-      }
-
-      .profile-card {
-        text-align: center;
-        margin-bottom: 1.5rem;
-      }
-
-      .profile-avatar {
-        width: 80px;
-        height: 80px;
-        background: #108a00;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-      }
-
-      .profile-avatar i {
-        font-size: 2.5rem;
-        color: white;
-      }
-
-      .profile-card h3 {
-        font-size: 1.1rem;
-        margin-bottom: 0.25rem;
-      }
-
-      .profile-card p {
-        color: #5e6b7c;
-        font-size: 0.85rem;
-      }
-
-      .edit-profile {
-        display: inline-block;
-        margin-top: 0.5rem;
-        color: #108a00;
-        font-size: 0.85rem;
-        text-decoration: none;
-      }
-
-      .sidebar-section {
-        margin-top: 1.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid #e4e6eb;
-      }
-
-      .sidebar-section h4 {
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-        color: #1d2c3c;
-      }
-
-      .skill-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-
-      .skill-tag {
-        background: #e8f5e9;
-        color: #108a00;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-      }
-
-      .earnings-summary {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-      }
-
-      .earnings-total {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #108a00;
-        margin-top: 0.5rem;
-        text-align: center;
-      }
-
-      /* Empty state */
-      .empty-state {
-        text-align: center;
-        padding: 2rem;
-        color: #5e6b7c;
-      }
-
-      /* Footer */
-      footer {
-        background: white;
-        padding: 3rem 5% 1.5rem;
-        margin-top: 3rem;
-        border-top: 1px solid #e4e6eb;
-      }
-
-      .footer-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 3rem;
-      }
-
-      .footer-section h3 {
-        color: #108a00;
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-      }
-
-      .footer-section h4 {
-        color: #1d2c3c;
-        font-size: 1rem;
-        margin-bottom: 1rem;
-      }
-
-      .footer-section p {
-        color: #5e6b7c;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-      }
-
-      .footer-section ul {
-        list-style: none;
-      }
-
-      .footer-section ul li {
-        margin-bottom: 0.75rem;
-      }
-
-      .footer-section ul li a {
-        color: #5e6b7c;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: color 0.2s;
-      }
-
-      .footer-section ul li a:hover {
-        color: #108a00;
-      }
-
-      .social-links {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-
-      .social-links a {
-        color: #5e6b7c;
-        font-size: 1.2rem;
-        transition: color 0.2s;
-      }
-
-      .social-links a:hover {
-        color: #108a00;
-      }
-
-      .footer-bottom {
-        max-width: 1200px;
-        margin: 2rem auto 0;
-        padding-top: 2rem;
-        border-top: 1px solid #e4e6eb;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: #5e6b7c;
-        font-size: 0.9rem;
-      }
-
-      .footer-links {
-        display: flex;
-        gap: 2rem;
-      }
-
-      .footer-links a {
-        color: #5e6b7c;
-        text-decoration: none;
-        font-size: 0.9rem;
-      }
-
-      .footer-links a:hover {
-        color: #108a00;
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        .layout {
-          flex-direction: column;
-          gap: 1.5rem;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .stats-grid {
-          grid-template-columns: 1fr 1fr;
+        body {
+            background-color: #f9fafb;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            color: #001e00;
+            line-height: 1.5;
         }
 
-        .footer-content {
-          grid-template-columns: 1fr;
-          gap: 2rem;
+        .dashboard-container {
+            max-width: 1280px;
+            margin: 24px auto;
+            padding: 0 24px;
         }
 
-        .footer-bottom {
-          flex-direction: column;
-          gap: 1rem;
-          text-align: center;
+        /* Hero Welcome Banner */
+        .welcome-hero-card {
+            background: #ffffff;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .footer-links {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .layout {
-          padding: 0 1rem;
+        .welcome-user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
-        .main-content, .sidebar {
-          padding: 1rem;
+        .hero-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #108a00;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 0 1px #e4e6eb;
         }
 
-        .stats-grid {
-          grid-template-columns: 1fr;
+        .hero-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .project-header {
-          flex-direction: column;
-          align-items: flex-start;
+        .hero-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #001e00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-      }
+
+        .top-rated-tag {
+            background: #fdf6ea;
+            color: #c57f1e;
+            border: 1px solid #f6e0b5;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hero-headline {
+            font-size: 14px;
+            color: #5e6b7c;
+            margin-top: 4px;
+        }
+
+        .hero-stats-quick {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .quick-stat-box {
+            text-align: right;
+        }
+
+        .quick-stat-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: #108a00;
+        }
+
+        .quick-stat-lbl {
+            font-size: 12px;
+            color: #5e6b7c;
+        }
+
+        .buy-connects-pill {
+            background: #108a00;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s ease;
+        }
+
+        .buy-connects-pill:hover {
+            background: #0f7a00;
+        }
+
+        /* 5 Metric Performance Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            border: 1px solid #e4e6eb;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-color: #108a00;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .metric-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            color: #108a00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .metric-trend {
+            font-size: 12px;
+            font-weight: 600;
+            color: #108a00;
+        }
+
+        .metric-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #001e00;
+            letter-spacing: -0.5px;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: #5e6b7c;
+            margin-top: 2px;
+        }
+
+        /* Dashboard Layout (Main Column + Right Sidebar) */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+        }
+
+        /* Main Workspace Section */
+        .workspace-main {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Custom Tabs */
+        .tabs-header-bar {
+            display: flex;
+            gap: 24px;
+            border-bottom: 2px solid #e4e6eb;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #5e6b7c;
+            padding: 12px 4px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.15s ease;
+        }
+
+        .tab-btn.active {
+            color: #108a00;
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0; right: 0;
+            height: 3px;
+            background: #108a00;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .card-container {
+            background: #ffffff;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title-row h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #001e00;
+        }
+
+        .view-all-link {
+            color: #108a00;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Contract Card Item */
+        .contract-item {
+            border: 1px solid #e4e6eb;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: #ffffff;
+            transition: border-color 0.15s ease;
+        }
+
+        .contract-item:hover {
+            border-color: #108a00;
+        }
+
+        .contract-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .contract-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #001e00;
+            text-decoration: none;
+        }
+
+        .contract-title:hover {
+            color: #108a00;
+        }
+
+        .status-badge {
+            background: #e8f5e9;
+            color: #108a00;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #fff3e0;
+            color: #ed6c02;
+        }
+
+        .contract-client-info {
+            font-size: 13px;
+            color: #5e6b7c;
+            margin-bottom: 12px;
+        }
+
+        .contract-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+            font-size: 13px;
+        }
+
+        .contract-budget {
+            font-weight: 700;
+            color: #108a00;
+            font-size: 15px;
+        }
+
+        .contract-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-sm-primary {
+            background: #108a00;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-sm-secondary {
+            background: transparent;
+            border: 1px solid #108a00;
+            color: #108a00;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Proposal Item */
+        .proposal-item {
+            border: 1px solid #e4e6eb;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .proposal-info h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #001e00;
+            margin-bottom: 4px;
+        }
+
+        .proposal-meta-tags {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #5e6b7c;
+        }
+
+        /* Recommended Jobs (Upwork Style) */
+        .upwork-job-card {
+            border: 1px solid #e4e6eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .upwork-job-card:hover {
+            border-color: #108a00;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .job-posted-time {
+            font-size: 12px;
+            color: #5e6b7c;
+            margin-bottom: 6px;
+        }
+
+        .job-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #001e00;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .job-card-title:hover {
+            color: #108a00;
+        }
+
+        .job-meta-row {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #5e6b7c;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .job-meta-row span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .job-desc-text {
+            font-size: 14px;
+            color: #001e00;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .job-trust-bar {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #5e6b7c;
+            margin-bottom: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .verified-ic { color: #108a00; font-weight: bold; }
+        .rating-stars { color: #108a00; }
+
+        .job-skills-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .job-skill-badge {
+            background: #f4f9f4;
+            color: #108a00;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Right Sidebar Cards */
+        .sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-box {
+            background: #ffffff;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #001e00;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Profile Summary Mini Card */
+        .profile-summary-mini {
+            text-align: center;
+        }
+
+        .mini-avatar-box {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #108a00;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 12px;
+            overflow: hidden;
+        }
+
+        .mini-avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mini-user-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #001e00;
+        }
+
+        .mini-user-role {
+            font-size: 13px;
+            color: #5e6b7c;
+            margin-top: 2px;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar-bg {
+            background: #e4e6eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill-bar {
+            background: #108a00;
+            height: 100%;
+            width: 90%;
+        }
+
+        /* Connects Balance Box */
+        .connects-balance-box {
+            background: #f4f9f4;
+            border: 1px solid #d5e0d5;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .connects-num {
+            font-size: 32px;
+            font-weight: 800;
+            color: #108a00;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .connects-lbl {
+            font-size: 13px;
+            color: #5e6b7c;
+            margin-bottom: 12px;
+        }
+
+        .btn-full-green {
+            background: #108a00;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-full-green:hover {
+            background: #0f7a00;
+        }
+
+        /* Badges List */
+        .badge-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .badge-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge-ic-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fdf6ea;
+            color: #c57f1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .badge-text-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #001e00;
+        }
+
+        .badge-text-sub {
+            font-size: 11px;
+            color: #5e6b7c;
+        }
+
+        /* Testimonial Quote Box */
+        .testimonial-box {
+            background: #f9fafb;
+            border-left: 3px solid #108a00;
+            padding: 12px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #5e6b7c;
+            font-style: italic;
+        }
+
+        /* Empty State */
+        .empty-box {
+            text-align: center;
+            padding: 32px 16px;
+            color: #5e6b7c;
+        }
+
+        .empty-box i {
+            font-size: 36px;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <!-- Header -->
-    {% include 'includes/header.html' %}
+</head>
+<body>
 
-    <div class="layout">
-      <!-- MAIN CONTENT -->
-      <div class="main-content">
-        <h2>Freelancer Dashboard</h2>
+{% include 'includes/header.html' %}
 
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <i class="fas fa-briefcase"></i>
-            <div class="stat-value">{{ active_projects_count|default:"0" }}</div>
-            <div class="stat-label">Active Projects</div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-hourglass-half"></i>
-            <div class="stat-value">{{ pending_proposals_count|default:"0" }}</div>
-            <div class="stat-label">Pending Proposals</div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-check-circle"></i>
-            <div class="stat-value">{{ completed_projects_count|default:"0" }}</div>
-            <div class="stat-label">Completed</div>
-          </div>
-          <div class="stat-card">
-            <i class="fas fa-star"></i>
-            <div class="stat-value">{{ rating|default:"4.8" }}</div>
-            <div class="stat-label">Rating</div>
-          </div>
-        </div>
-
-        <!-- Active Projects Section -->
-        <div class="section-header">
-          <h3>Active Projects</h3>
-          <a href="{% url 'project_list' %}" class="btn-link">View All →</a>
-        </div>
-
-        <div class="project-list">
-          {% for project in active_projects %}
-            <div class="project-card">
-              <div class="project-header">
-                <h4>{{ project.title }}</h4>
-                <span class="project-badge">{{ project.status|default:"In Progress" }}</span>
-              </div>
-              <div class="project-details">
-                {{ project.client_name }} • Posted {{ project.posted_date|date:"M d, Y" }}
-              </div>
-              <div class="project-footer">
-                <span class="project-price">${{ project.budget }}</span>
-                <span>Due: {{ project.deadline|date:"M d, Y" }}</span>
-              </div>
+<div class="dashboard-container">
+    <!-- WELCOME HERO BANNER -->
+    <div class="welcome-hero-card">
+        <div class="welcome-user-info">
+            <div class="hero-avatar">
+                {% if freelancer and freelancer.profile_picture %}
+                    <img src="{{ freelancer.profile_picture }}" alt="Profile Avatar">
+                {% else %}
+                    <i class="fas fa-user"></i>
+                {% endif %}
             </div>
-          {% empty %}
-            <div class="empty-state">
-              <i class="fas fa-briefcase" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
-              No active projects yet. Start bidding on projects!
+            <div class="hero-text">
+                <h1>
+                    Welcome back, {{ request.user.username }}!
+                    {% if accepted_proposals_count >= 3 %}
+                        <span class="top-rated-tag"><i class="fas fa-trophy"></i> Top Rated</span>
+                    {% else %}
+                        <span class="top-rated-tag" style="background:#e8f5e9; color:#108a00; border-color:#c8e6c9;"><i class="fas fa-user-check"></i> Verified Freelancer</span>
+                    {% endif %}
+                </h1>
+                <div class="hero-headline">
+                    {{ freelancer.title|default:"Independent Freelancer • Profile Incomplete (Click Edit Profile)" }}
+                </div>
             </div>
-          {% endfor %}
         </div>
 
-        <!-- Recent Proposals Section -->
-        <div class="section-header">
-          <h3>Recent Proposals</h3>
-          <a href="{% url 'my_proposals' %}" class="btn-link">View All →</a>
-        </div>
-
-        <div class="project-list">
-          {% for proposal in recent_proposals %}
-            <div class="proposal-card">
-              <div class="proposal-title">{{ proposal.project_title }}</div>
-              <div class="proposal-meta">
-                <span>Bid: ${{ proposal.bid_amount }}</span>
-                <span>Submitted: {{ proposal.submitted_date|date:"M d, Y" }}</span>
-                <span class="proposal-status {% if proposal.status == 'accepted' %}accepted{% endif %}">
-                  Status: {{ proposal.status|title }}
-                </span>
-              </div>
+        <div class="hero-stats-quick">
+            <div class="quick-stat-box">
+                <div class="quick-stat-val">
+                    {% if freelancer and freelancer.hourly_rate %}
+                        ${{ freelancer.hourly_rate }}/hr
+                    {% else %}
+                        $0.00/hr
+                    {% endif %}
+                </div>
+                <div class="quick-stat-lbl">Hourly Rate</div>
             </div>
-          {% empty %}
-            <div class="empty-state">
-              <i class="fas fa-paper-plane" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
-              No proposals submitted yet. Browse projects to get started!
-            </div>
-          {% endfor %}
+            <a href="{% url 'freelancer:create_profile' %}" class="buy-connects-pill">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
         </div>
-      </div>
-
-      <!-- SIDEBAR - Profile & Info -->
-      <aside class="sidebar">
-        <div class="profile-card">
-          <div class="profile-avatar">
-            <i class="fas fa-user"></i>
-          </div>
-          <h3>{{ freelancer.username|default:"John Doe" }}</h3>
-          <p>{{ freelancer.title|default:"Freelance Developer" }}</p>
-          <a href="{% url 'freelancer:edit_profile' %}" class="edit-profile">Edit Profile →</a>
-        </div>
-
-        <div class="sidebar-section">
-          <h4><i class="fas fa-code"></i> Skills</h4>
-          <div class="skill-tags">
-            {% for skill in freelancer.skills %}
-              <span class="skill-tag">{{ skill }}</span>
-            {% empty %}
-              <span class="skill-tag">Python</span>
-              <span class="skill-tag">Django</span>
-              <span class="skill-tag">JavaScript</span>
-              <span class="skill-tag">React</span>
-            {% endfor %}
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <h4><i class="fas fa-dollar-sign"></i> Earnings</h4>
-          <div class="earnings-summary">
-            <span>This Month</span>
-            <span>${{ monthly_earnings|default:"0" }}</span>
-          </div>
-          <div class="earnings-summary">
-            <span>All Time</span>
-            <span>${{ total_earnings|default:"0" }}</span>
-          </div>
-          <div class="earnings-total">
-            ${{ total_earnings|default:"0" }}
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <h4><i class="fas fa-clock"></i> Availability</h4>
-          <div class="earnings-summary">
-            <span>Hours/Week</span>
-            <span>{{ availability_hours|default:"20" }} hrs</span>
-          </div>
-          <div class="earnings-summary">
-            <span>Response Rate</span>
-            <span>{{ response_rate|default:"95" }}%</span>
-          </div>
-        </div>
-      </aside>
     </div>
 
-    <!-- Footer -->
-    {% include 'includes/footer.html' %}
-  </body>
+    <!-- 5 METRIC PERFORMANCE CARDS -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon-box"><i class="fas fa-dollar-sign"></i></div>
+                <span class="metric-trend">Verified Payments</span>
+            </div>
+            <div class="metric-value">${{ total_earnings|default:"0.00" }}</div>
+            <div class="metric-label">Total Earnings</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon-box" style="background:#e8f4fd; color:#0071dc;"><i class="fas fa-file-signature"></i></div>
+                <span class="metric-trend" style="color:#0071dc;">Accepted Bids</span>
+            </div>
+            <div class="metric-value">{{ accepted_proposals_count|default:"0" }}</div>
+            <div class="metric-label">Active Contracts</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon-box" style="background:#fff3e0; color:#ed6c02;"><i class="fas fa-paper-plane"></i></div>
+                <span class="metric-trend" style="color:#ed6c02;">{{ pending_proposals_count|default:"0" }} Pending</span>
+            </div>
+            <div class="metric-value">{{ proposals_count|default:"0" }}</div>
+            <div class="metric-label">Submitted Proposals</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon-box" style="background:#fdf6ea; color:#c57f1e;"><i class="fas fa-star"></i></div>
+                <span class="metric-trend" style="color:#c57f1e;">Performance</span>
+            </div>
+            <div class="metric-value">
+                {% if accepted_proposals_count > 0 %}100%{% else %}N/A{% endif %}
+            </div>
+            <div class="metric-label">Job Success Score</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <div class="metric-icon-box"><i class="fas fa-clock"></i></div>
+                <span class="metric-trend">Status</span>
+            </div>
+            <div class="metric-value">
+                {% if freelancer and freelancer.is_available %}Available{% else %}Busy{% endif %}
+            </div>
+            <div class="metric-label">Work Availability</div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD WORKSPACE GRID -->
+    <div class="dashboard-layout">
+        <!-- LEFT WORKSPACE -->
+        <div class="workspace-main">
+            <!-- TABBED WORKSPACE CARD -->
+            <div class="card-container">
+                <div class="tabs-header-bar">
+                    <button class="tab-btn active" onclick="switchTab('contracts-tab', this)">
+                        <i class="fas fa-briefcase"></i> Active Contracts ({{ accepted_proposals_count|default:"0" }})
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('proposals-tab', this)">
+                        <i class="fas fa-file-alt"></i> My Proposals ({{ proposals_count|default:"0" }})
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('jobs-tab', this)">
+                        <i class="fas fa-compass"></i> Recommended Jobs
+                    </button>
+                </div>
+
+                <!-- TAB 1: ACTIVE CONTRACTS -->
+                <div id="contracts-tab" class="tab-content">
+                    <div class="card-title-row">
+                        <h3>Contracts in Progress</h3>
+                        <a href="{% url 'project_list' %}" class="view-all-link">All Contracts →</a>
+                    </div>
+
+                    {% for proposal in accepted_proposals %}
+                    <div class="contract-item">
+                        <div class="contract-top">
+                            <a href="{% url 'client:job_detail' proposal.job.id %}" class="contract-title">{{ proposal.job.title }}</a>
+                            <span class="status-badge">Active Contract</span>
+                        </div>
+                        <div class="contract-client-info">
+                            <i class="fas fa-user"></i> Client: {{ proposal.job.client.username }} • Delivery Target: {{ proposal.delivery_days }} days
+                        </div>
+                        <div class="contract-footer">
+                            <span class="contract-budget">Agreed Bid: ${{ proposal.bid_amount }}</span>
+                            <div class="contract-actions">
+                                <a href="{% url 'chat_detail' proposal.job.client.id %}" class="btn-sm-secondary"><i class="fas fa-comment"></i> Message Client</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-box">
+                        <i class="fas fa-file-contract"></i>
+                        <p style="font-size: 14px; margin-top: 8px;">No active contracts in progress. Browse open jobs and submit proposals to get hired!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- TAB 2: PROPOSALS -->
+                <div id="proposals-tab" class="tab-content" style="display: none;">
+                    <div class="card-title-row">
+                        <h3>Submitted Bids & Proposals</h3>
+                        <a href="{% url 'freelancer:my_proposals' %}" class="view-all-link">Manage Proposals →</a>
+                    </div>
+
+                    {% for proposal in recent_proposals %}
+                    <div class="proposal-item">
+                        <div class="proposal-info">
+                            <h4>{{ proposal.job.title }}</h4>
+                            <div class="proposal-meta-tags">
+                                <span><i class="fas fa-dollar-sign"></i> Proposed Bid: ${{ proposal.bid_amount }}</span>
+                                <span><i class="fas fa-clock"></i> {{ proposal.delivery_days }} days delivery</span>
+                                <span>Submitted {{ proposal.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                        <span class="status-badge {% if proposal.status == 'pending' %}pending{% endif %}">
+                            {{ proposal.status|title }}
+                        </span>
+                    </div>
+                    {% empty %}
+                    <div class="empty-box">
+                        <i class="fas fa-paper-plane"></i>
+                        <p style="font-size: 14px; margin-top: 8px;">You haven't submitted any proposals yet. Check recommended jobs to apply!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- TAB 3: RECOMMENDED JOBS -->
+                <div id="jobs-tab" class="tab-content" style="display: none;">
+                    <div class="card-title-row">
+                        <h3>Jobs Recommended for Your Skillset</h3>
+                        <a href="{% url 'freelancer:freelancer_home' %}" class="view-all-link">Search Feed →</a>
+                    </div>
+
+                    {% for job in jobs %}
+                    <div class="upwork-job-card">
+                        <div class="job-posted-time">Posted {{ job.created_at|timesince }} ago</div>
+                        <a href="{% url 'client:job_detail' job.id %}" class="job-card-title">{{ job.title }}</a>
+                        <div class="job-meta-row">
+                            <span><i class="fas fa-tag" style="color:#108a00;"></i> Fixed-price</span>
+                            <span><i class="fas fa-signal" style="color:#108a00;"></i> {{ job.experience_level|default:"Intermediate" }}</span>
+                            <span><i class="fas fa-money-bill-wave" style="color:#108a00;"></i> Est. Budget: ₹{{ job.budget }}</span>
+                        </div>
+                        <div class="job-desc-text">
+                            {{ job.description|truncatewords:45 }}
+                        </div>
+                        <div class="job-trust-bar">
+                            <span class="trust-item"><i class="fas fa-check-circle verified-ic"></i> Payment verified</span>
+                            <span class="trust-item"><i class="fas fa-user"></i> Client: {{ job.client.username }}</span>
+                        </div>
+                        {% if job.skills_list %}
+                        <div class="job-skills-flex">
+                            {% for skill in job.skills_list %}
+                            <span class="job-skill-badge">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                            <span style="font-size: 12px; color: #5e6b7c;"><i class="fas fa-bolt" style="color:#108a00;"></i> Open for bidding</span>
+                            <a href="{% url 'submit_proposal' job.id %}" class="btn-sm-primary">Apply Now</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-box">
+                        <i class="fas fa-search"></i>
+                        <p style="font-size: 14px; margin-top: 8px;">No recommended jobs found right now.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR (UPWORK STYLE) -->
+        <aside class="sidebar-right">
+            <!-- Profile Summary Card -->
+            <div class="sidebar-box profile-summary-mini">
+                <div class="mini-avatar-box">
+                    {% if freelancer and freelancer.profile_picture %}
+                        <img src="{{ freelancer.profile_picture }}" alt="Profile Avatar">
+                    {% else %}
+                        <i class="fas fa-user"></i>
+                    {% endif %}
+                </div>
+                <div class="mini-user-name">{{ request.user.username }}</div>
+                {% if request.user.is_superuser %}
+                <div class="mini-user-role">System Administrator</div>
+                <a href="{% url 'accounts:admin_home' %}" class="view-all-link" style="font-size: 13px; margin-top: 10px; display: inline-block;">Go to Admin Dashboard →</a>
+                {% else %}
+                <div class="mini-user-role">{{ freelancer.title|default:"Freelancer Profile Incomplete" }}</div>
+
+                <div style="text-align: left; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5e6b7c;">
+                        <span>Profile Completeness</span>
+                        <span>{{ profile_completeness|default:"20" }}%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-fill-bar" style="width: {{ profile_completeness|default:'20' }}%;"></div>
+                    </div>
+                </div>
+
+                <a href="{% url 'freelancer:create_profile' %}" class="view-all-link" style="font-size: 13px;">Edit Profile Details →</a>
+                {% endif %}
+            </div>
+
+            <!-- Connects Balance Box -->
+            <div class="sidebar-box">
+                <div class="sidebar-title"><i class="fas fa-bolt" style="color:#108a00;"></i> Bidding Status</div>
+                <div class="connects-balance-box">
+                    <div class="connects-num">{{ pending_proposals_count|default:"0" }}</div>
+                    <div class="connects-lbl">Active Pending Bids</div>
+                    <a href="{% url 'freelancer:freelancer_home' %}" class="btn-full-green"><i class="fas fa-search"></i> Browse Jobs</a>
+                </div>
+            </div>
+
+            <!-- Talent Badges & Verification -->
+            <div class="sidebar-box">
+                <div class="sidebar-title"><i class="fas fa-shield-alt" style="color:#108a00;"></i> Account Verification</div>
+
+                <div class="badge-list-item">
+                    <div class="badge-ic-icon" style="background:#e8f5e9; color:#108a00;"><i class="fas fa-user-check"></i></div>
+                    <div>
+                        <div class="badge-text-title">User Account Active</div>
+                        <div class="badge-text-sub">Registered as {{ request.user.role|default:"Freelancer" }}</div>
+                    </div>
+                </div>
+
+                <div class="badge-list-item">
+                    <div class="badge-ic-icon" style="background:#e8f4fd; color:#0071dc;"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <div class="badge-text-title">Email Verified</div>
+                        <div class="badge-text-sub">{{ request.user.email }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills List Card -->
+            <div class="sidebar-box">
+                <div class="sidebar-title"><i class="fas fa-code" style="color:#108a00;"></i> Your Skills</div>
+                {% if skills_list %}
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                    {% for skill in skills_list %}
+                    <span style="background:#f4f9f4; color:#108a00; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:600;">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="font-size:12px; color:#5e6b7c;">No skills added yet. Add skills in your profile!</p>
+                {% endif %}
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = 'none';
+        });
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        document.getElementById(tabId).style.display = 'block';
+        btn.classList.add('active');
+    }
+</script>
+
+{% include 'includes/footer.html' %}
+</body>
 </html>

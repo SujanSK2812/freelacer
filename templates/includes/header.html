@@ -1,310 +1,899 @@
-{% load static %} {% load static %}
+{% load static %}
 
-<nav>
-  <!-- ================= LOGO ================= -->
+<header class="upwork-header">
+  <div class="upwork-header-container">
+    <!-- LEFT: Logo & Nav Links -->
+    <div class="upwork-header-left">
+      <a href="{% url 'freelancer:freelancer_home' %}" class="upwork-logo">
+        <span class="logo-icon"><i class="fas fa-briefcase"></i></span>
+        <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
+      </a>
 
-  <div class="logo">
-    {% if request.user.is_authenticated %} {% if request.user.is_superuser %}
-    <a href="{% url 'accounts:admin_home' %}">
-      <h2>Freelancer Portal</h2>
-    </a>
+      {% if request.user.is_authenticated and not request.user.is_superuser %}
+      <div class="upwork-nav-menu">
+        <div class="nav-dropdown-item">
+          <a href="{% url 'freelancer:freelancer_home' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'freelancer_home' %}active{% endif %}">
+            Find Work <i class="fas fa-chevron-down nav-arrow"></i>
+          </a>
+          <div class="dropdown-popover">
+            <a href="{% url 'freelancer:freelancer_home' %}"><i class="fas fa-search"></i> Search for Jobs</a>
+            <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-contract"></i> Saved Jobs &
+              Proposals</a>
+            <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-user-circle"></i> Profile & Skills</a>
+          </div>
+        </div>
 
-    {% elif request.user.role == "client" %}
-    <a href="{% url 'client:client_home' %}">
-      <h2>Freelancer Portal</h2>
-    </a>
+        <div class="nav-dropdown-item">
+          <a href="{% url 'freelancer:freelancer_dashboard' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
+            My Jobs <i class="fas fa-chevron-down nav-arrow"></i>
+          </a>
+          <div class="dropdown-popover">
+            <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Freelancer
+              Dashboard</a>
+            <a href="{% url 'freelancer:freelancer_dashboard' %}#active-contracts"><i class="fas fa-tasks"></i> Active
+              Contracts</a>
+            <a href="{% url 'freelancer:freelancer_connections' %}"><i class="fas fa-users"></i> Client Network</a>
+          </div>
+        </div>
 
-    {% elif request.user.role == "freelancer" %}
-    <a href="{% url 'freelancer:freelancer_home' %}">
-      <h2>Freelancer Portal</h2>
-    </a>
+        <a href="{% url 'projects:reports' %}"
+          class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}">Reports</a>
 
-    {% endif %} {% else %}
-    <a href="/">
-      <h2>Freelancer Portal</h2>
-    </a>
-    {% endif %}
-  </div>
-
-  <!-- ================= SEARCH BAR ================= -->
-
-  {% if request.user.is_authenticated and request.user.role == "freelancer" %}
-  <div class="search-box">
-    <form action="{% url 'freelancer:search_results' %}" method="GET">
-      <input type="text" name="q" placeholder="Search..." required />
-      <button type="submit">
-        <i class="fas fa-search"></i>
-      </button>
-    </form>
-  </div>
-  {% endif %}
-
-  <!-- ================= NAV LINKS ================= -->
-
-  <div class="nav-links">
-    {% if request.user.is_authenticated %}
-
-    <!-- ✅ ADMIN NAV -->
-    {% if request.user.is_superuser %}
-
-    <a href="/admin/">Django Admin</a>
-    <a href="{% url 'accounts:admin_users' %}">Users</a>
-    <a href="{% url 'project_list' %}">Projects</a>
-
-    <!-- ✅ CLIENT NAV -->
-    {% elif request.user.role == "client" %}
-
-    <a
-      href="{% url 'client:client_dashboard' %}"
-      class="{% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
-      Dashboard
-    </a>
-
-    <a href="#">Jobs</a>
-    <a href="{% url 'chat_home' %}">Messages</a>
-    <a href="#">Freelancers</a>
-
-    <!-- ✅ FREELANCER NAV -->
-    {% elif request.user.role == "freelancer" %}
-
-    <a
-      href="{% url 'freelancer:freelancer_dashboard' %}"
-      class="{% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
-      Dashboard
-    </a>
-
-    <a href="{% url 'freelancer:create_profile' %}">Create Profile</a>
-
-    <a href="#">My Bids</a>
-    <a href="{% url 'chat_home' %}">Messages</a>
-
-    {% endif %}
-
-    <!-- COMMON -->
-  
-
-    <!-- PROFILE -->
-    <div class="profile-section">
-      <div class="profile-icon" onclick="toggleProfileMenu()">
-        <i class="fas fa-user"></i>
+        <a href="{% url 'chat_home' %}"
+          class="nav-link {% if request.resolver_match.url_name == 'chat_home' %}active{% endif %}">
+          Messages <span class="nav-unread-dot"></span>
+        </a>
       </div>
-
-      <div class="profile-menu" id="profileMenu">
-        <a href="{% url 'accounts:logout' %}">Logout</a>
-      </div>
+      {% endif %}
     </div>
 
-    {% else %}
+    <!-- RIGHT: Search, Connects, Notifications & Profile -->
+    <div class="upwork-header-right">
+      {% if request.user.is_authenticated %}
+      {% if not request.user.is_superuser %}
+      <div class="upwork-search-box">
+        <form action="{% url 'freelancer:search_results' %}" method="GET">
+          <i class="fas fa-search search-ic"></i>
+          <input type="text" name="q" placeholder="Search for jobs..." required />
+        </form>
+      </div>
 
-    <a href="{% url 'accounts:login' %}">Login</a>
-    <a href="{% url 'accounts:select_role' %}">Register</a>
-   
+      <!-- CONNECTS BADGE -->
+      <a href="{% url 'freelancer:freelancer_dashboard' %}" class="connects-pill" title="Available Bidding Connects">
+        <i class="fas fa-bolt"></i> Connects
+      </a>
 
-    {% endif %}
+      <!-- POST WORK / POST TALENT BUTTON BASED ON ROLE -->
+      {% if request.user.role == 'client' %}
+      <a href="{% url 'client:create_job' %}" class="upwork-btn-primary"
+        style="background: #108a00; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        <i class="fas fa-plus"></i> Post Work
+      </a>
+      {% else %}
+      <a href="{% url 'client:create_job' %}" class="upwork-btn-primary"
+        style="background: #108a00; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        <i class="fas fa-star"></i> Post
+      </a>
+      {% endif %}
+
+      <!-- NOTIFICATION BELL WITH ROLE-BASED DROPDOWN -->
+      <div class="notif-wrapper" style="position: relative;">
+        <div class="notif-bell-icon" title="Notifications" onclick="toggleNotifMenu(event)">
+          <i class="fas fa-bell"></i>
+          <span class="bell-badge" id="notifBadge">3</span>
+        </div>
+
+        <!-- NOTIFICATIONS DROPDOWN MENU -->
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-header">
+            <div class="notif-title">
+              <i class="fas fa-bell" style="color: #108a00;"></i> Notifications
+            </div>
+            <button type="button" class="mark-read-btn" onclick="clearNotifBadge(event)">Mark all read</button>
+          </div>
+
+          <div class="notif-list">
+            {% if request.user.role == 'client' %}
+              <!-- Client Role Notifications -->
+              <a href="{% url 'client:client_home' %}" class="notif-item unread">
+                <div class="notif-icon-box client-bg">
+                  <i class="fas fa-file-signature"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">New proposal submitted on your job post <strong>Full Stack Developer</strong>.</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 5 minutes ago</div>
+                </div>
+              </a>
+              <a href="{% url 'client:client_home' %}" class="notif-item unread">
+                <div class="notif-icon-box client-bg">
+                  <i class="fas fa-comments"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">Freelancer sent a message regarding project scope & milestone deliverables.</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 1 hour ago</div>
+                </div>
+              </a>
+              <a href="{% url 'client:create_job' %}" class="notif-item">
+                <div class="notif-icon-box client-bg">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">Your job posting <strong>Senior Django Engineer</strong> is live and receiving bids.</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 3 hours ago</div>
+                </div>
+              </a>
+            {% elif request.user.role == 'freelancer' %}
+              <!-- Freelancer Role Notifications -->
+              <a href="{% url 'freelancer:my_proposals' %}" class="notif-item unread">
+                <div class="notif-icon-box freelancer-bg">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">Your proposal for <strong>Full Stack Django & React Developer Needed</strong> was viewed by client.</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 10 minutes ago</div>
+                </div>
+              </a>
+              <a href="{% url 'freelancer:freelancer_dashboard' %}" class="notif-item unread">
+                <div class="notif-icon-box freelancer-bg">
+                  <i class="fas fa-bolt"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">You received <strong>50 Free Bidding Connects</strong> credited to your account!</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 2 hours ago</div>
+                </div>
+              </a>
+              <a href="/" class="notif-item">
+                <div class="notif-icon-box freelancer-bg">
+                  <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">New high-matching client project <strong>Python Web Scraping Project</strong> just posted.</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 5 hours ago</div>
+                </div>
+              </a>
+            {% else %}
+              <!-- Admin / Default Notifications -->
+              <a href="{% url 'accounts:admin_home' %}" class="notif-item unread">
+                <div class="notif-icon-box admin-bg">
+                  <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">System alert: New user account registered and OTP verified successfully.</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 15 minutes ago</div>
+                </div>
+              </a>
+              <a href="{% url 'accounts:admin_home' %}" class="notif-item">
+                <div class="notif-icon-box admin-bg">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">Daily summary: 5 proposals and 2 talent posts submitted today.</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> 4 hours ago</div>
+                </div>
+              </a>
+            {% endif %}
+          </div>
+          <div class="notif-footer">
+            <span style="font-size: 12px; color: #64748b;">Role: <strong>{{ request.user.role|default:"User"|title }}</strong> Notifications</span>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- PROFILE MENU TOGGLE -->
+      <div class="upwork-user-menu" onclick="toggleUpworkMenu(event)">
+        <div class="user-avatar-circle">
+          {% if profile and profile.profile_picture %}
+          <img src="{{ profile.profile_picture }}" alt="User">
+          {% else %}
+          <i class="fas fa-user"></i>
+          {% endif %}
+        </div>
+        <span class="online-status-dot"></span>
+
+        <!-- PROFILE DROPDOWN MENU -->
+        <div class="upwork-dropdown" id="upworkMenu">
+          <div class="upwork-menu-header">
+            <div class="menu-avatar">
+              {% if profile and profile.profile_picture %}
+              <img src="{{ profile.profile_picture }}" alt="User">
+              {% else %}
+              <i class="fas fa-user"></i>
+              {% endif %}
+            </div>
+            <div>
+              <div class="menu-name">{{ request.user.username }}</div>
+              {% if request.user.is_superuser %}
+              <div class="menu-badge"><i class="fas fa-user-shield"></i> Admin</div>
+              {% else %}
+              <div class="menu-badge"><i class="fas fa-award"></i> Top Rated</div>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if not request.user.is_superuser %}
+          <div class="availability-toggle-box">
+            <span class="avail-label"><i class="fas fa-circle avail-dot"></i> Available for work</span>
+            <label class="switch-toggle">
+              <input type="checkbox" checked>
+              <span class="slider-round"></span>
+            </label>
+          </div>
+          {% endif %}
+
+          <hr class="upwork-hr">
+
+          {% if request.user.is_superuser %}
+          <a href="{% url 'accounts:admin_home' %}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+          <a href="/admin/"><i class="fas fa-user-shield"></i> Django Admin</a>
+          {% else %}
+          <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+          <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-id-badge"></i> Profile & Skills</a>
+          <a href="{% url 'freelancer:edit_profile' %}"><i class="fas fa-cog"></i> Account Settings</a>
+          <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-invoice"></i> Bids & Proposals</a>
+          {% endif %}
+
+          <hr class="upwork-hr">
+
+          <a href="{% url 'accounts:logout' %}" class="upwork-logout-btn"><i class="fas fa-sign-out-alt"></i> Log
+            Out</a>
+        </div>
+      </div>
+
+      {% else %}
+      <a href="{% url 'accounts:login' %}" class="upwork-btn-link">Log In</a>
+      <a href="{% url 'accounts:select_role' %}" class="upwork-btn-primary">Sign Up</a>
+      {% endif %}
+    </div>
   </div>
+</header>
 
-  <!-- ================= MOBILE MENU ================= -->
-
-  <div class="mobile-menu">
-    <i class="fas fa-bars"></i>
-  </div>
-</nav>
-
-<!-- ================= CSS ================= -->
-
+<!-- ================= UPWORK HEADER STYLES ================= -->
 <style>
-  nav {
-    background: white;
-    padding: 0.8rem 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #f9fafb;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #001e00;
+  }
+
+  .upwork-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e4e6eb;
     position: sticky;
     top: 0;
     z-index: 1000;
-  }
-
-  .logo h2 {
-    color: #108a00;
-    font-size: 1.3rem;
-  }
-
-  .logo a {
-    text-decoration: none;
-  }
-
-  .nav-links {
+    height: 64px;
     display: flex;
-    gap: 2rem;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .upwork-header-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
   }
 
-  .nav-links a {
+  .upwork-header-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .upwork-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
-    color: #5e6b7c;
-    font-weight: 500;
   }
 
-  .nav-links a:hover {
+  .logo-icon {
+    background: #108a00;
+    color: #ffffff;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #001e00;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-accent {
     color: #108a00;
   }
 
-  .nav-links a.active {
-    color: #108a00;
+  .upwork-nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    position: static !important;
   }
 
-  .how-it-works {
-    background: #f3f2ef;
-    padding: 6px 15px;
-    border-radius: 20px;
-  }
-
-  /* Profile */
-
-  .profile-section {
+  .nav-dropdown-item {
     position: relative;
   }
 
-  .profile-icon {
-    width: 38px;
+  .nav-link {
+    text-decoration: none;
+    color: #001e00;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #108a00;
+  }
+
+  .nav-arrow {
+    font-size: 10px;
+    color: #656565;
+    transition: transform 0.2s ease;
+  }
+
+  .dropdown-popover {
+    position: absolute;
+    top: 36px;
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #e4e6eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    min-width: 220px;
+    padding: 8px 0;
+    display: none;
+    z-index: 1002;
+  }
+
+  .nav-dropdown-item:hover .dropdown-popover {
+    display: block;
+  }
+
+  .dropdown-popover a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: #001e00;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .dropdown-popover a:hover {
+    background: #f4f9f4;
+    color: #108a00;
+  }
+
+  .dropdown-popover a i {
+    color: #108a00;
+    width: 16px;
+  }
+
+  .nav-unread-dot {
+    width: 8px;
+    height: 8px;
+    background: #108a00;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .upwork-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .upwork-search-box form {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .upwork-search-box .search-ic {
+    position: absolute;
+    left: 12px;
+    color: #656565;
+    font-size: 14px;
+  }
+
+  .upwork-search-box input {
+    background-color: #f9fafb;
+    border: 1px solid #e4e6eb;
+    border-radius: 20px;
+    padding: 8px 16px 8px 36px;
     height: 38px;
-    background: #f3f2ef;
+    width: 240px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s ease, width 0.2s ease;
+  }
+
+  .upwork-search-box input:focus {
+    border-color: #108a00;
+    background-color: #ffffff;
+    width: 280px;
+  }
+
+  .connects-pill {
+    background: #e8f5e9;
+    color: #108a00;
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease;
+  }
+
+  .connects-pill:hover {
+    background: #d4edda;
+  }
+
+  .notif-bell-icon {
+    position: relative;
+    font-size: 18px;
+    color: #001e00;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+
+  }
+
+  .notif-bell-icon:hover {
+    background: #f4f9f4;
+    color: #108a00;
+  }
+
+  .bell-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #108a00;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .upwork-user-menu {
+    position: relative;
     cursor: pointer;
   }
 
-  .profile-menu {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: none;
-  }
-
-  .profile-menu a {
-    color: #dc3545;
-    text-decoration: none;
-  }
-
-  /* Mobile */
-
-  .mobile-menu {
-    display: none;
-    font-size: 22px;
-    cursor: pointer;
-  }
-  /* Search Bar */
-
-  .search-box {
-    flex: 1;
+  .user-avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #108a00;
+    color: white;
     display: flex;
+    align-items: center;
     justify-content: center;
-    margin: 0 20px;
+    font-size: 16px;
+    font-weight: 600;
+    overflow: hidden;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px #e4e6eb;
   }
 
-  .search-box form {
-    display: flex;
+  .user-avatar-circle img {
     width: 100%;
-    max-width: 400px;
-    background: #f3f2ef;
-    border-radius: 25px;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .online-status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: #108a00;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+  }
+
+  .upwork-dropdown {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e4e6eb;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    width: 260px;
+    padding: 16px;
+    display: none;
+    z-index: 1003;
+  }
+
+  .upwork-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .menu-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #108a00;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
     overflow: hidden;
   }
 
-  .search-box input {
-    flex: 1;
-    padding: 8px 15px;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 14px;
+  .menu-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .search-box button {
-    background: #108a00;
-    border: none;
-    padding: 0 15px;
-    color: white;
+  .menu-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #001e00;
+  }
+
+  .menu-badge {
+    font-size: 11px;
+    color: #108a00;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+
+  .availability-toggle-box {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .avail-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #001e00;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .avail-dot {
+    color: #108a00;
+    font-size: 8px;
+  }
+
+  .switch-toggle {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 18px;
+  }
+
+  .switch-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider-round {
+    position: absolute;
     cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .3s;
+    border-radius: 18px;
   }
 
-  /* Mobile */
-
-  @media (max-width: 768px) {
-    .search-box {
-      order: 3;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .search-box form {
-      max-width: 100%;
-    }
+  .slider-round:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
   }
-  @media (max-width: 768px) {
-    .nav-links {
+
+  input:checked+.slider-round {
+    background-color: #108a00;
+  }
+
+  input:checked+.slider-round:before {
+    transform: translateX(16px);
+  }
+
+  .upwork-hr {
+    border: none;
+    border-top: 1px solid #e4e6eb;
+    margin: 8px 0;
+  }
+
+  .upwork-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 4px;
+    font-size: 13px;
+    color: #001e00;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 6px;
+  }
+
+  .upwork-dropdown a:hover {
+    background: #f4f9f4;
+    color: #108a00;
+  }
+
+  .upwork-logout-btn {
+    color: #dc3545 !important;
+  }
+
+  .upwork-btn-link {
+    color: #108a00;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 8px 16px;
+  }
+
+  .upwork-btn-primary {
+    background: #108a00;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    transition: background 0.15s ease;
+  }
+
+  .upwork-btn-primary:hover {
+    background: #0f7a00;
+  }
+
+  /* NOTIFICATION DROPDOWN STYLING */
+  .notif-dropdown {
+    display: none;
+    position: absolute;
+    right: -10px;
+    top: calc(100% + 14px);
+    width: 360px;
+    background: #ffffff;
+    border: 1px solid #e4e6eb;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    z-index: 1100;
+    overflow: hidden;
+    animation: notifFadeIn 0.18s ease-out;
+  }
+
+  @keyframes notifFadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .notif-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+  }
+
+  .notif-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #001e00;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mark-read-btn {
+    background: none;
+    border: none;
+    color: #108a00;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+
+  .mark-read-btn:hover {
+    background: #e8f5e9;
+  }
+
+  .notif-list {
+    max-height: 340px;
+    overflow-y: auto;
+  }
+
+  .notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    text-decoration: none;
+    border-bottom: 1px solid #f8fafc;
+    transition: background 0.15s ease;
+  }
+
+  .notif-item:hover {
+    background: #f8fafc;
+  }
+
+  .notif-item.unread {
+    background: #f4fbf4;
+  }
+
+  .notif-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .client-bg { background: #e8f5e9; color: #108a00; }
+  .freelancer-bg { background: #e8f5e9; color: #108a00; }
+  .admin-bg { background: #fef3c7; color: #b45309; }
+
+  .notif-content {
+    flex: 1;
+  }
+
+  .notif-text {
+    font-size: 13px;
+    color: #1e293b;
+    line-height: 1.45;
+  }
+
+  .notif-time {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .notif-footer {
+    padding: 10px 18px;
+    background: #fafafa;
+    border-top: 1px solid #f1f5f9;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .upwork-nav-menu {
       display: none;
-      flex-direction: column;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      padding: 20px;
     }
 
-    .nav-links.show {
-      display: flex;
+    .upwork-search-box input {
+      width: 160px;
     }
 
-    .mobile-menu {
-      display: block;
+    .notif-dropdown {
+      right: -60px;
+      width: 310px;
     }
   }
 </style>
 
-<!-- ================= JS ================= -->
-
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const mobileMenu = document.querySelector(".mobile-menu");
-    const navLinks = document.querySelector(".nav-links");
+  const currentUserId = "{{ request.user.id|default:'guest' }}";
+  const notifKey = "notif_read_user_" + currentUserId;
 
-    mobileMenu.addEventListener("click", function (e) {
-      e.stopPropagation();
-      navLinks.classList.toggle("show");
-    });
-
-    document.addEventListener("click", function (e) {
-      if (!navLinks.contains(e.target) && !mobileMenu.contains(e.target)) {
-        navLinks.classList.remove("show");
-      }
-    });
-  });
-
-  function toggleProfileMenu() {
-    const menu = document.getElementById("profileMenu");
-
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  function applyNotifReadState() {
+    if (localStorage.getItem(notifKey) === "true") {
+      const badge = document.getElementById("notifBadge");
+      if (badge) badge.style.display = "none";
+      document.querySelectorAll(".notif-item.unread").forEach(item => {
+        item.classList.remove("unread");
+      });
+    }
   }
 
-  document.addEventListener("click", function (e) {
-    const profile = document.querySelector(".profile-section");
-    const menu = document.getElementById("profileMenu");
+  function toggleUpworkMenu(e) {
+    e.stopPropagation();
+    const notif = document.getElementById("notifDropdown");
+    if (notif) notif.style.display = "none";
+    const menu = document.getElementById("upworkMenu");
+    if (menu) menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
 
-    if (profile && !profile.contains(e.target)) {
+  function toggleNotifMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById("upworkMenu");
+    if (menu) menu.style.display = "none";
+    const notif = document.getElementById("notifDropdown");
+    if (notif) notif.style.display = notif.style.display === "block" ? "none" : "block";
+  }
+
+  function clearNotifBadge(e) {
+    if (e) e.stopPropagation();
+    localStorage.setItem(notifKey, "true");
+    const badge = document.getElementById("notifBadge");
+    if (badge) badge.style.display = "none";
+    document.querySelectorAll(".notif-item.unread").forEach(item => {
+      item.classList.remove("unread");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", applyNotifReadState);
+
+  document.addEventListener("click", function (e) {
+    const menu = document.getElementById("upworkMenu");
+    if (menu && !e.target.closest(".upwork-user-menu")) {
       menu.style.display = "none";
+    }
+    const notif = document.getElementById("notifDropdown");
+    if (notif && !e.target.closest(".notif-wrapper")) {
+      notif.style.display = "none";
     }
   });
 </script>
-
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />

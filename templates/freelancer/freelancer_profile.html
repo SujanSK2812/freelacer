@@ -524,7 +524,7 @@
                 <div class="col-md-3 text-md-end">
                     <div class="action-buttons">
                         {% if user == freelancer %}
-                            <a href="{% url 'create_profile' %}" class="btn-edit">
+                            <a href="{% url 'freelancer:create_profile' %}" class="btn-edit">
                                 <i class="fas fa-edit"></i> Edit Profile
                             </a>
                         {% else %}
@@ -679,7 +679,7 @@
             <h5 style="margin-bottom: 0.5rem;">Profile Not Found</h5>
             <p>{{ freelancer.username }} hasn't created their profile yet.</p>
             {% if user == freelancer %}
-                <a href="{% url 'create_profile' %}" class="btn-create">
+                <a href="{% url 'freelancer:create_profile' %}" class="btn-create">
                     <i class="fas fa-plus-circle"></i> Create Your Profile
                 </a>
             {% endif %}

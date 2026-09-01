@@ -84,6 +84,7 @@ form {
 }
 
 input {
+    width: 100%;
     padding: 1rem 1.25rem;
     border: 2px solid #e0e6e0;
     border-radius: 40px;
@@ -92,6 +93,41 @@ input {
     outline: none;
     background: #f8f9fc;
     color: #404145;
+}
+
+.password-field-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-field-wrapper input {
+    width: 100%;
+    padding: 1rem 3.2rem 1rem 1.25rem;
+    box-sizing: border-box;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9aa6b5;
+    cursor: pointer;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    transition: color 0.2s ease, background 0.2s ease;
+    user-select: none;
+    z-index: 5;
+}
+
+.password-toggle-icon:hover {
+    color: #14a800;
+    background: #f0f7f0;
 }
 
 input::placeholder {

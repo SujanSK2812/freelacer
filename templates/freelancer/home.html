@@ -1,760 +1,731 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Freelancer Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Work | Freelancer Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f9f9f9;
-            color: #1d2c3c;
-        }
-
-        /* Header */
-       
-
-
-        .profile-icon {
-            width: 32px;
-            height: 32px;
-            background: #3a4b5c;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 2rem 5%;
-        }
-
-        /* Page Header */
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
-        .page-header h1 {
-            font-size: 1.8rem;
-            color: #1d2c3c;
-            font-weight: 500;
-        }
-
-        /* To Do Section */
-        .todo-section {
-            background: #f2f7ff;
-            border: 1px solid #c8e0ff;
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .todo-icon {
-            color: #1d2c3c;
-            font-size: 1.2rem;
-        }
-
-        .todo-content {
-            flex: 1;
-        }
-
-        .todo-content p {
-            color: #1d2c3c;
-            font-size: 0.95rem;
-        }
-
-        .todo-close {
-            color: #5e6b7c;
-            cursor: pointer;
-        }
-
-        /* Get Hired Section */
-        .hired-section {
-            background: #e8f0fe;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .hired-content h3 {
-            color: #1d2c3c;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .hired-content p {
-            color: #5e6b7c;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-
-        .learn-link {
-            color: #108a00;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .hired-icon {
-            font-size: 2.5rem;
-            color: #108a00;
-        }
-
-        /* Search Bar */
-        .search-section {
-            margin-bottom: 2rem;
-        }
-
-        .search-label {
-            color: #5e6b7c;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .search-input {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            background: white;
-            border: 1px solid #d0d9e2;
-            border-radius: 4px;
-            padding: 0.5rem 1rem;
-        }
-
-        .search-input i {
-            color: #5e6b7c;
-            margin-right: 0.75rem;
-        }
-
-        .search-input input {
-            width: 100%;
-            border: none;
-            outline: none;
-            font-size: 0.95rem;
-        }
-
-        .search-btn {
-            background: #108a00;
-            color: white;
-            border: none;
-            padding: 0.5rem 2rem;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .search-btn:hover {
-            background: #0f7a00;
-        }
-
-        /* Jobs Header */
-        .jobs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .jobs-header h2 {
-            font-size: 1.4rem;
-            font-weight: 500;
-        }
-
-        .job-tabs {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .job-tab {
-            color: #5e6b7c;
-            text-decoration: none;
-            font-size: 0.95rem;
-            padding-bottom: 0.5rem;
-        }
-
-        .job-tab.active {
-            color: #108a00;
-            border-bottom: 2px solid #108a00;
-        }
-
-        .jobs-subtitle {
-            color: #5e6b7c;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Job Cards */
-        .jobs-grid {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 2rem;
-        }
-
-        .job-card {
-            background: white;
-            border: 1px solid #e4e6eb;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .job-time {
-            color: #5e6b7c;
-            font-size: 0.9rem;
-        }
-
-        .job-title {
-            font-size: 1.2rem;
-            color: #1d2c3c;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .job-meta {
-            display: flex;
-            gap: 1rem;
-            color: #5e6b7c;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .job-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .job-description {
-            color: #5e6b7c;
-            font-size: 0.95rem;
+            background-color: #f9fafb;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #001e00;
             line-height: 1.5;
-            margin-bottom: 1rem;
         }
 
-        .read-more {
-            color: #108a00;
-            text-decoration: none;
-            font-size: 0.9rem;
+        .upwork-home-container {
+            max-width: 1280px;
+            margin: 24px auto;
+            padding: 0 24px;
         }
 
-        /* Sidebar */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .sidebar-card {
-            background: white;
+        /* Search & Hero Banner */
+        .job-search-hero {
+            background: #ffffff;
             border: 1px solid #e4e6eb;
-            border-radius: 8px;
-            padding: 1.5rem;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
         }
 
-        .verification-card {
-            background: #f7f9fc;
-            border: 1px solid #d0d9e2;
+        .search-hero-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #001e00;
+            margin-bottom: 16px;
         }
 
-        .verification-title {
+        .search-form-flex {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
         }
 
-        .verification-title i {
-            color: #108a00;
+        .search-input-wrapper i {
+            position: absolute;
+            left: 16px;
+            color: #656565;
+            font-size: 16px;
         }
 
-        .verification-title h4 {
-            font-size: 1rem;
-            font-weight: 500;
+        .search-hero-input {
+            width: 100%;
+            height: 48px;
+            background: #f9fafb;
+            border: 1px solid #e4e6eb;
+            border-radius: 24px;
+            padding: 0 16px 0 44px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
 
-        .verification-text {
-            color: #5e6b7c;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+        .search-hero-input:focus {
+            border-color: #108a00;
+            background: #ffffff;
         }
 
-        .verify-btn {
+        .search-submit-btn {
             background: #108a00;
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
+            padding: 0 28px;
+            height: 48px;
+            border-radius: 24px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            width: 100%;
+            transition: background 0.15s ease;
         }
 
-        .verify-btn:hover {
+        .search-submit-btn:hover {
             background: #0f7a00;
         }
 
-        /* Promote Section */
-        .promote-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #e4e6eb;
+        /* 2 Column Layout */
+        .upwork-home-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
         }
 
-        .promote-item:last-child {
+        .feed-card-box {
+            background: #ffffff;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        /* Job Tabs */
+        .feed-tabs-header {
+            display: flex;
+            gap: 24px;
+            border-bottom: 2px solid #e4e6eb;
+            margin-bottom: 20px;
+        }
+
+        .feed-tab {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            color: #5e6b7c;
+            padding: 12px 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .feed-tab.active {
+            color: #108a00;
+        }
+
+        .feed-tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0; right: 0;
+            height: 3px;
+            background: #108a00;
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Upwork Job Post Item */
+        .job-feed-item {
+            border-bottom: 1px solid #e4e6eb;
+            padding: 20px 0;
+            transition: background 0.15s ease;
+        }
+
+        .job-feed-item:last-child {
             border-bottom: none;
         }
 
-        .promote-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .promote-info i {
+        .post-time-text {
+            font-size: 12px;
             color: #5e6b7c;
-            width: 20px;
+            margin-bottom: 6px;
         }
 
-        .promote-info span {
-            font-size: 0.95rem;
-        }
-
-        .promote-status {
-            color: #5e6b7c;
-            font-size: 0.9rem;
-        }
-
-        .toggle {
-            width: 40px;
-            height: 20px;
-            background: #e4e6eb;
-            border-radius: 20px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .toggle.active {
-            background: #108a00;
-        }
-
-        .toggle-slider {
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: left 0.2s;
-        }
-
-        .toggle.active .toggle-slider {
-            left: 22px;
-        }
-
-        /* Stats Card */
-        .stats-card {
-            margin-top: 1rem;
-        }
-
-        .stats-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            color: #5e6b7c;
-            font-size: 0.95rem;
-        }
-
-        .stats-value {
-            font-weight: 500;
-            color: #1d2c3c;
-        }
-
-        .stats-link {
-            color: #108a00;
+        .job-item-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #001e00;
             text-decoration: none;
-            font-size: 0.9rem;
             display: block;
-            margin-top: 0.5rem;
+            margin-bottom: 8px;
         }
 
-        .connects {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e4e6eb;
-            display: flex;
-            justify-content: space-between;
+        .job-item-title:hover {
+            color: #108a00;
+        }
+
+        .job-spec-meta {
+            font-size: 13px;
             color: #5e6b7c;
-            font-size: 0.95rem;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .jobs-grid {
-                grid-template-columns: 1fr;
-            }
+        .job-desc-snippet {
+            font-size: 14px;
+            color: #001e00;
+            line-height: 1.5;
+            margin-bottom: 14px;
         }
 
-        @media (max-width: 768px) {
-            .hired-section {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .search-bar {
-                flex-direction: column;
-            }
-            
-            .job-header {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .job-tabs {
-                gap: 1rem;
-            }
-        /* Additional styling for skills and actions */
-        .skills-container {
+        .skills-tag-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0;
+            gap: 8px;
+            margin-bottom: 14px;
         }
 
-        .skill-tag {
-            background: #f1f3f6;
-            color: #495464;
+        .skill-pill-item {
+            background: #f4f9f4;
+            color: #108a00;
             padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        .card-actions {
+        .client-trust-details {
             display: flex;
-            gap: 1rem;
+            gap: 16px;
+            font-size: 12px;
+            color: #5e6b7c;
             align-items: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #f0f2f5;
+            flex-wrap: wrap;
         }
 
-        .apply-btn-card {
+        .trust-verified { color: #108a00; font-weight: 600; }
+        .rating-gold { color: #108a00; }
+
+        .job-item-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .connects-req-label {
+            font-size: 12px;
+            color: #5e6b7c;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-apply-green {
             background: #108a00;
             color: white;
-            padding: 0.5rem 1.2rem;
+            padding: 8px 24px;
             border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
             text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: background 0.2s;
+            transition: background 0.15s ease;
         }
 
-        .apply-btn-card:hover {
+        .btn-apply-green:hover {
             background: #0f7a00;
         }
 
-        .user-profile-card {
-            text-align: center;
-            padding: 1.5rem;
+        /* Sidebar Cards */
+        .home-sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .user-avatar-lg {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #108a00, #004182);
-            color: white;
+        .sidebar-card-upwork {
+            background: #ffffff;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .profile-widget-user {
+            text-align: center;
+        }
+
+        .widget-user-avatar {
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
+            background: #108a00;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            margin: 0 auto 1rem;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 auto 12px;
             overflow: hidden;
         }
 
-        .user-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1d2c3c;
-            margin-bottom: 0.25rem;
+        .widget-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .user-role-title {
+        .widget-user-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #001e00;
+        }
+
+        .widget-user-title {
+            font-size: 13px;
             color: #5e6b7c;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            margin-top: 2px;
+            margin-bottom: 12px;
         }
 
-        .profile-progress-bar {
+        .progress-bar-wrap {
             background: #e4e6eb;
             height: 8px;
             border-radius: 4px;
             overflow: hidden;
-            margin: 0.5rem 0;
+            margin: 8px 0;
         }
 
-        .profile-progress-fill {
+        .progress-bar-fill {
             background: #108a00;
             height: 100%;
             width: 85%;
         }
+
+        .availability-badge-card {
+            background: #f4f9f4;
+            border: 1px solid #d5e0d5;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .avail-badge-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #001e00;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats-list-box {
+            margin-top: 12px;
+        }
+
+        .stat-list-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+            color: #5e6b7c;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .stat-list-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-val-bold {
+            font-weight: 700;
+            color: #001e00;
+        }
+
+        @media (max-width: 992px) {
+            .upwork-home-layout {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
+
 {% include 'includes/header.html' %}
 
-<div class="container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h1>Welcome back, {{ request.user.username }} 👋</h1>
-    </div>
-
-    <!-- To-Do Section -->
-    <div class="todo-section">
-        <i class="fas fa-tasks todo-icon"></i>
-        <div class="todo-content">
-            <p><strong>Complete your profile:</strong> Add your verified skills, past projects, and hourly rate to attract high-paying clients.</p>
-        </div>
-        <a href="{% url 'freelancer:create_profile' %}" class="learn-link">Complete Profile →</a>
-        <i class="fas fa-times todo-close"></i>
-    </div>
-
-    <!-- Get Hired Faster Section -->
-    <div class="hired-section">
-        <div class="hired-content">
-            <h3>Get hired faster with a verified portfolio</h3>
-            <p>Clients are 3x more likely to invite freelancers who maintain an active portfolio and clear experience details.</p>
-            <a href="{% url 'freelancer:create_profile' %}" class="learn-link">Update Your Skills & Experience →</a>
-        </div>
-        <i class="fas fa-rocket hired-icon"></i>
-    </div>
-
-    <!-- Search Section -->
-    <div class="search-section">
-        <div class="search-label">Search for job opportunities</div>
-        <form class="search-bar" action="{% url 'freelancer:search_results' %}" method="GET">
-            <div class="search-input">
+<div class="upwork-home-container">
+    <!-- SEARCH HERO BANNER -->
+    <div class="job-search-hero">
+        <h2 class="search-hero-title">Find your next client project on Freelancer Portal</h2>
+        <form class="search-form-flex" action="{% url 'freelancer:search_results' %}" method="GET">
+            <div class="search-input-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" name="q" placeholder="Search by title, technology, or skills (e.g. Python, React, Mobile)..." required />
+                <input type="text" name="q" class="search-hero-input" placeholder="Search by title, technology, or skills (e.g. Python, Django, React, Mobile)..." required>
             </div>
-            <button type="submit" class="search-btn">Search</button>
+            <button type="submit" class="search-submit-btn">Search Jobs</button>
         </form>
     </div>
 
-    <!-- Jobs Section -->
-    <div class="jobs-header">
-        <h2>Jobs you might like</h2>
-        <div class="job-tabs">
-            <a href="#" class="job-tab active">Best Matches</a>
-            <a href="#" class="job-tab">Most Recent</a>
-            <a href="#" class="job-tab">Saved Jobs</a>
-        </div>
-    </div>
-    <div class="jobs-subtitle">
-        Browse jobs tailored to your experience and skills. Ordered by most relevant opportunities.
-    </div>
-
-    <!-- Jobs Grid -->
-    <div class="jobs-grid">
-        <!-- Left Column - Job Listings -->
-        <div>
-            {% for job in jobs %}
-            <div class="job-card">
-                <div class="job-header">
-                    <span class="job-time">
-                        <i class="far fa-clock"></i> Posted {{ job.created_at|timesince }} ago
-                    </span>
-                    {% if job.client.username %}
-                    <span style="font-size: 0.85rem; color: #5e6b7c;">
-                        <i class="fas fa-user-check" style="color: #108a00;"></i> {{ job.client.username }}
-                    </span>
-                    {% endif %}
+    <!-- MAIN 2-COLUMN LAYOUT -->
+    <div class="upwork-home-layout">
+        <!-- LEFT: JOB FEED -->
+        <main>
+            <div class="feed-card-box">
+                <div class="feed-tabs-header">
+                    <button class="feed-tab active" onclick="switchHomeTab('client-posts', this)">
+                        <i class="fas fa-user-tie" style="margin-right:6px;"></i> Client Posts
+                    </button>
+                    <button class="feed-tab" onclick="switchHomeTab('freelancer-posts', this)">
+                        <i class="fas fa-star" style="margin-right:6px;"></i> Freelancer Posts
+                    </button>
                 </div>
 
-                <h3 class="job-title">{{ job.title }}</h3>
+                <!-- CLIENT POSTS TAB -->
+                <div id="client-posts" class="tab-content-pane" style="display: block;">
+                    {% for job in jobs %}
+                    <article class="job-feed-item">
+                        <!-- Author Name & Role Banner -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2);">
+                                    {{ job.client.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px;">
+                                        {{ job.client.username }}
+                                        <span style="background: #e8f5e9; color: #108a00; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fas fa-user-tie"></i> Client
+                                        </span>
+                                    </div>
+                                    <div class="post-time-text" style="margin-bottom: 0; font-size: 12px; color: #5e6b7c;">Posted {{ job.created_at|timesince }} ago</div>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="job-meta">
-                    <span><i class="fas fa-tag"></i> Fixed-price</span>
-                    <span><i class="fas fa-chart-line"></i> {{ job.experience_level|default:"Intermediate" }}</span>
-                    <span><i class="fas fa-money-bill-wave"></i> Est. Budget: ₹{{ job.budget }}</span>
-                </div>
-
-                <p class="job-description">
-                    {{ job.description|truncatewords:40 }}
-                </p>
-
-                {% if job.skills_list %}
-                <div class="skills-container">
-                    {% for skill in job.skills_list %}
-                    <span class="skill-tag">{{ skill }}</span>
+                        <a href="{% url 'client:job_detail' job.id %}" class="job-item-title" style="font-size: 20px; font-weight: 700; color: #001e00;">{{ job.title }}</a>
+                        <div class="job-spec-meta" style="margin: 10px 0 12px;">
+                            <span><i class="fas fa-tag" style="color:#108a00;"></i> Fixed-price</span>
+                            <span><i class="fas fa-layer-group" style="color:#108a00;"></i> {{ job.experience_level|default:"Intermediate" }}</span>
+                            <span><i class="fas fa-money-bill-wave" style="color:#108a00;"></i> Est. Budget: ₹{{ job.budget }}</span>
+                        </div>
+                        <div class="job-desc-snippet" style="font-size: 15px; color: #1e293b; line-height: 1.6; margin-bottom: 14px;">
+                            {{ job.description|truncatewords:45 }}
+                        </div>
+                        {% if job.skills_list %}
+                        <div class="skills-tag-row" style="margin-bottom: 14px;">
+                            {% for skill in job.skills_list %}
+                            <span class="skill-pill-item" style="background: #e8f5e9; color: #108a00; font-weight: 600; padding: 5px 14px; border-radius: 16px; font-size: 12px;">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="client-trust-details" style="font-size: 13px; color: #5e6b7c; display: flex; gap: 16px; align-items: center;">
+                            <span class="trust-verified" style="color: #108a00; font-weight: 600;"><i class="fas fa-check-circle"></i> Payment verified</span>
+                            <span class="rating-gold" style="color: #108a00;"><i class="fas fa-star"></i> 4.95 rating</span>
+                            <span><i class="fas fa-map-marker-alt" style="color: #108a00;"></i> India</span>
+                        </div>
+                        <div class="job-item-actions" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
+                            <span class="connects-req-label" style="font-size: 13px; color: #5e6b7c;"><i class="fas fa-bolt" style="color:#108a00;"></i> 6 Connects required</span>
+                            <a href="{% url 'submit_proposal' job.id %}" class="btn-apply-green" style="background: #108a00; color: white; padding: 9px 26px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.15s ease;">Apply Now</a>
+                        </div>
+                    </article>
+                    {% empty %}
+                    <div style="text-align: center; padding: 40px 16px; color: #5e6b7c;">
+                        <i class="fas fa-briefcase" style="font-size: 36px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+                        <p style="font-size: 14px;">No client job postings available right now. Client work listings will appear here.</p>
+                    </div>
                     {% endfor %}
                 </div>
-                {% endif %}
 
-                <div class="card-actions">
-                    <a href="{% url 'submit_proposal' job.id %}" class="apply-btn-card">
-                        <i class="fas fa-paper-plane"></i> Apply Now
-                    </a>
-                    <a href="{% url 'client:job_detail' job.id %}" class="read-more">
-                        View Details →
-                    </a>
+                <!-- FREELANCER POSTS TAB -->
+                <div id="freelancer-posts" class="tab-content-pane" style="display: none;">
+                    {% for post in freelancer_posts %}
+                    <article class="job-feed-item">
+                        <!-- Author Name & Role Banner -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2);">
+                                    {{ post.client.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px;">
+                                        {{ post.client.username }}
+                                        <span style="background: #e8f5e9; color: #108a00; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fas fa-star"></i> Freelancer
+                                        </span>
+                                    </div>
+                                    <div class="post-time-text" style="margin-bottom: 0; font-size: 12px; color: #5e6b7c;">Posted {{ post.created_at|timesince }} ago</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="job-item-title" style="font-size: 20px; font-weight: 700; color: #001e00; cursor: default; margin-bottom: 8px;">{{ post.title }}</div>
+                        <div class="job-desc-snippet" style="font-size: 15px; color: #1e293b; line-height: 1.6; margin-bottom: 16px; white-space: pre-line;">
+                            {{ post.description }}
+                        </div>
+                        {% if post.image %}
+                        <div style="margin-bottom: 16px; border-radius: 14px; overflow: hidden; background: #0f172a; border: 1px solid #e2e8f0; max-height: 420px; display: flex; align-items: center; justify-content: center;">
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; max-height: 420px; object-fit: contain; display: block;">
+                        </div>
+                        {% endif %}
+
+                        <!-- SOCIAL STATS ROW (LIKES & COMMENTS COUNT) -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 10px; font-size: 13px; color: #64748b; border-bottom: 1px solid #f1f5f9;">
+                            <span id="likes-count-{{ post.id }}"><i class="fas fa-thumbs-up" style="color: #108a00; margin-right: 4px;"></i> {{ post.likes_count }} {{ post.likes_count|pluralize:"Like,Likes" }}</span>
+                            <span id="comments-count-{{ post.id }}"><i class="far fa-comment-alt" style="margin-right: 4px;"></i> {{ post.comments_count }} {{ post.comments_count|pluralize:"Comment,Comments" }}</span>
+                        </div>
+
+                        <!-- SOCIAL ACTION BAR -->
+                        <div class="job-item-actions" style="margin-top: 10px; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 12px;">
+                                <!-- LIKE BUTTON (AJAX) -->
+                                <button type="button" onclick="toggleLikePost(this, {{ post.id }})" class="social-action-btn {% if post.liked_by_user %}liked{% endif %}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; color: {% if post.liked_by_user %}#108a00{% else %}#475569{% endif %}; background: {% if post.liked_by_user %}#e8f5e9{% else %}#f8fafc{% endif %}; transition: all 0.15s ease;">
+                                    <i class="{% if post.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                    <span>{% if post.liked_by_user %}Liked{% else %}Like{% endif %}</span>
+                                </button>
+
+                                <!-- COMMENT BUTTON -->
+                                <button type="button" onclick="toggleComments('comments-box-{{ post.id }}')" class="social-action-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; border: none; font-size: 14px; font-weight: 600; color: #475569; background: #f8fafc; cursor: pointer; transition: all 0.15s ease;">
+                                    <i class="far fa-comment-alt"></i>
+                                    <span>Comment</span>
+                                </button>
+                            </div>
+
+                            <a href="{% url 'freelancer:freelancer_profile' post.client.id %}" class="btn-apply-green" style="background: #108a00; color: white; padding: 9px 24px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none;">View Profile</a>
+                        </div>
+
+                        <!-- EXPANDABLE COMMENTS DRAWER -->
+                        <div id="comments-box-{{ post.id }}" class="comments-container-box" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+                            <!-- COMMENTS LIST -->
+                            <div class="comments-list" id="comments-list-{{ post.id }}" style="margin-bottom: 14px;">
+                                {% for comment in post.comments_all %}
+                                <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
+                                        {{ comment.user.username|slice:":1"|upper }}
+                                    </div>
+                                    <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; flex: 1;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                            <span style="font-weight: 700; font-size: 13px; color: #001e00;">{{ comment.user.username }}</span>
+                                            <span style="font-size: 11px; color: #94a3b8;">{{ comment.created_at|timesince }} ago</span>
+                                        </div>
+                                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">{{ comment.text }}</p>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="empty-comment-msg" style="font-size: 13px; color: #94a3b8; text-align: center; padding: 8px 0;">No comments yet. Be the first to comment!</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- ADD COMMENT FORM (AJAX) -->
+                            <form action="{% url 'projects:comment_job' post.id %}" method="POST" onsubmit="submitCommentAjax(event, {{ post.id }})" style="display: flex; gap: 10px; align-items: center;">
+                                {% csrf_token %}
+                                <input type="text" name="comment" placeholder="Write a comment..." required style="flex: 1; padding: 10px 16px; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 13px; outline: none; background: #f8fafc;">
+                                <button type="submit" style="background: #108a00; color: white; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fas fa-paper-plane"></i> Post
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                    {% empty %}
+                    <div style="text-align: center; padding: 40px 16px; color: #5e6b7c;">
+                        <i class="fas fa-star" style="font-size: 36px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+                        <p style="font-size: 14px;">No freelancer talent showcases posted yet. Freelancers can post their talents using the Post Talent button!</p>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-            {% empty %}
-            <div class="job-card" style="text-align: center; padding: 3rem 1rem;">
-                <i class="fas fa-folder-open" style="font-size: 3rem; color: #b0b8c4; margin-bottom: 1rem;"></i>
-                <h3>No jobs available right now</h3>
-                <p style="color: #5e6b7c; margin-top: 0.5rem;">Check back later or refine your search query.</p>
-            </div>
-            {% endfor %}
-        </div>
+        </main>
 
-        <!-- Right Column - Sidebar -->
-        <div class="sidebar">
-            <!-- Freelancer Profile Summary Card -->
-            <div class="sidebar-card user-profile-card">
-                <div class="user-avatar-lg">
-                    {% if profile.profile_picture %}
-                    <img src="{{ profile.profile_picture }}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+        <!-- RIGHT SIDEBAR -->
+        <aside class="home-sidebar-right">
+            <!-- Profile Card Widget -->
+            <div class="sidebar-card-upwork profile-widget-user">
+                <div class="widget-user-avatar">
+                    {% if profile and profile.profile_picture %}
+                        <img src="{{ profile.profile_picture }}" alt="User">
                     {% else %}
-                    <i class="fas fa-user"></i>
+                        <i class="fas fa-user-shield" style="font-size:24px; color:#108a00;"></i>
                     {% endif %}
                 </div>
-                <div class="user-name">{{ request.user.username }}</div>
-                <div class="user-role-title">{{ profile.title|default:"Freelancer" }}</div>
+                <div class="widget-user-name">{{ request.user.username }}</div>
+                {% if request.user.is_superuser %}
+                <div class="widget-user-title">System Administrator</div>
+                <div style="margin: 12px 0;">
+                    <span style="background:#e8f5e9; color:#108a00; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600;">Superuser Account</span>
+                </div>
+                <a href="{% url 'accounts:admin_home' %}" style="color: #108a00; text-decoration: none; font-size: 13px; font-weight: 600;">Admin Dashboard →</a>
+                {% else %}
+                <div class="widget-user-title">{{ profile.title|default:"Freelance Software Engineer" }}</div>
 
-                <div style="text-align: left; margin: 1rem 0;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #5e6b7c;">
+                <div style="text-align: left; margin: 12px 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5e6b7c;">
                         <span>Profile Completeness</span>
                         <span>85%</span>
                     </div>
-                    <div class="profile-progress-bar">
-                        <div class="profile-progress-fill"></div>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill"></div>
                     </div>
                 </div>
 
-                <a href="{% url 'freelancer:edit_profile' %}" class="learn-link" style="display: inline-block; margin-top: 0.5rem;">
-                    <i class="fas fa-edit"></i> Edit Profile
-                </a>
+                <a href="{% url 'freelancer:create_profile' %}" style="color: #108a00; text-decoration: none; font-size: 13px; font-weight: 600;">Edit Profile →</a>
+                {% endif %}
             </div>
 
-            <!-- Identity Verification Card -->
-            <div class="sidebar-card verification-card">
-                <div class="verification-title">
-                    <i class="fas fa-id-card"></i>
-                    <h4>Identity verification</h4>
-                </div>
-                <p class="verification-text">
-                    Increase your profile visibility in search results and win more work with an IDV Badge.
-                </p>
-                <button class="verify-btn">Get an IDV Badge</button>
-            </div>
-
-            <!-- Promote with Ads Card -->
-            <div class="sidebar-card">
-                <h4 style="margin-bottom: 1rem; font-weight: 600;">Promote with ads</h4>
-
-                <div class="promote-item">
-                    <div class="promote-info">
-                        <i class="fas fa-circle" style="color: #108a00;"></i>
-                        <span>Availability badge</span>
-                    </div>
-                    <div class="toggle active">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-
-                <div class="promote-item">
-                    <div class="promote-info">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Boost your profile</span>
-                    </div>
-                    <div class="toggle">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-
-                <div class="promote-item">
-                    <div class="promote-info">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Stats & Trends</span>
-                    </div>
-                    <a href="#" class="learn-link" style="font-size: 0.85rem;">View</a>
+            {% if not request.user.is_superuser %}
+            <!-- Availability Badge Box -->
+            <div class="sidebar-card-upwork">
+                <h4 style="font-size: 15px; font-weight: 700; color: #001e00; margin-bottom: 12px;">Availability Status</h4>
+                <div class="availability-badge-card">
+                    <span class="avail-badge-text"><i class="fas fa-circle" style="color:#108a00; font-size:9px;"></i> Available now</span>
+                    <span style="font-size: 12px; color: #108a00; font-weight: 600;">On</span>
                 </div>
             </div>
 
-            <!-- Stats Card -->
-            <div class="sidebar-card stats-card">
-                <h4 style="margin-bottom: 1rem; font-weight: 600;">Activity Summary</h4>
-                <div class="stats-item">
-                    <span>Profile views</span>
-                    <span class="stats-value">24</span>
-                </div>
-                <div class="stats-item">
-                    <span>Proposals sent</span>
-                    <span class="stats-value">{{ proposals_count|default:"0" }}</span>
-                </div>
-                <div class="stats-item">
-                    <span>Interviews</span>
-                    <span class="stats-value">3</span>
-                </div>
-                <a href="{% url 'freelancer:my_proposals' %}" class="stats-link">My Proposals →</a>
+            <!-- Connects Widget -->
+            <div class="sidebar-card-upwork" style="text-align: center;">
+                <h4 style="font-size: 15px; font-weight: 700; color: #001e00; margin-bottom: 8px;">Bidding Connects</h4>
+                <div style="font-size: 32px; font-weight: 800; color: #108a00; line-height: 1; margin-bottom: 4px;">50</div>
+                <div style="font-size: 13px; color: #5e6b7c; margin-bottom: 12px;">Available Connects</div>
+                <a href="{% url 'freelancer:freelancer_dashboard' %}" class="btn-apply-green" style="display: block; text-align: center;">Manage Connects</a>
+            </div>
+            {% endif %}
 
-                <div class="connects">
-                    <span>Available Connects</span>
-                    <span class="stats-value" style="color: #108a00; font-weight: 600;">50</span>
+            <!-- Activity Summary Stats -->
+            <div class="sidebar-card-upwork">
+                <h4 style="font-size: 15px; font-weight: 700; color: #001e00; margin-bottom: 12px;">Activity Summary</h4>
+                <div class="stats-list-box">
+                    <div class="stat-list-row">
+                        <span>Proposals Sent</span>
+                        <span class="stat-val-bold">{{ proposals_count|default:"5" }}</span>
+                    </div>
+                    <div class="stat-list-row">
+                        <span>Active Interviews</span>
+                        <span class="stat-val-bold">2</span>
+                    </div>
+                    <div class="stat-list-row">
+                        <span>Profile Views</span>
+                        <span class="stat-val-bold">45</span>
+                    </div>
                 </div>
             </div>
-        </div>
+        </aside>
     </div>
 </div>
 
 <script>
-    // Close todo section
-    document.querySelector('.todo-close')?.addEventListener('click', function() {
-        this.closest('.todo-section').style.display = 'none';
-    });
+    function switchHomeTab(tabId, btn) {
+        document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-content-pane').forEach(pane => pane.style.display = 'none');
+        const activePane = document.getElementById(tabId);
+        if (activePane) activePane.style.display = 'block';
+    }
 
-    // Toggle functionality
-    document.querySelectorAll('.toggle').forEach(toggle => {
-        toggle.addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-    });
+    function toggleComments(boxId) {
+        const box = document.getElementById(boxId);
+        if (box) {
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+        }
+    }
+
+    function toggleLikePost(btn, postId) {
+        fetch('/projects/like/' + postId + '/?ajax=true', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('span');
+            const likesCountElem = document.getElementById('likes-count-' + postId);
+
+            if (data.liked) {
+                btn.style.color = '#108a00';
+                btn.style.background = '#e8f5e9';
+                icon.className = 'fas fa-thumbs-up';
+                label.innerText = 'Liked';
+            } else {
+                btn.style.color = '#475569';
+                btn.style.background = '#f8fafc';
+                icon.className = 'far fa-thumbs-up';
+                label.innerText = 'Like';
+            }
+
+            if (likesCountElem) {
+                likesCountElem.innerHTML = `<i class="fas fa-thumbs-up" style="color: #108a00; margin-right: 4px;"></i> ${data.likes_count} ${data.likes_count === 1 ? 'Like' : 'Likes'}`;
+            }
+        })
+        .catch(err => console.error('Error liking post:', err));
+    }
+
+    function submitCommentAjax(e, postId) {
+        e.preventDefault();
+        const form = e.target;
+        const input = form.querySelector('input[name="comment"]');
+        const text = input.value.trim();
+        if (!text) return;
+
+        const formData = new FormData(form);
+        formData.append('ajax', 'true');
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                input.value = '';
+                const list = document.getElementById('comments-list-' + postId);
+                const commentsCountElem = document.getElementById('comments-count-' + postId);
+
+                const newCommentHtml = `
+                    <div style="display: flex; gap: 10px; margin-bottom: 12px; animation: fadeIn 0.2s ease;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
+                            ${data.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-weight: 700; font-size: 13px; color: #001e00;">${data.username}</span>
+                                <span style="font-size: 11px; color: #94a3b8;">Just now</span>
+                            </div>
+                            <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">${data.text}</p>
+                        </div>
+                    </div>
+                `;
+
+                const emptyMsg = list.querySelector('.empty-comment-msg');
+                if (emptyMsg) emptyMsg.remove();
+
+                list.insertAdjacentHTML('beforeend', newCommentHtml);
+
+                if (commentsCountElem) {
+                    commentsCountElem.innerHTML = `<i class="far fa-comment-alt" style="margin-right: 4px;"></i> ${data.comments_count} ${data.comments_count === 1 ? 'Comment' : 'Comments'}`;
+                }
+            }
+        })
+        .catch(err => console.error('Error submitting comment:', err));
+    }
 </script>
+
 {% include 'includes/footer.html' %}
 </body>
 </html>

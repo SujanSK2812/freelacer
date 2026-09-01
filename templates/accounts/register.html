@@ -254,6 +254,41 @@
             color: #9aa6b5;
         }
 
+        .password-field-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-field-wrapper input {
+            width: 100%;
+            padding-right: 48px;
+            box-sizing: border-box;
+        }
+
+        .password-toggle-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9aa6b5;
+            cursor: pointer;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            transition: color 0.2s ease, background 0.2s ease;
+            user-select: none;
+            z-index: 5;
+        }
+
+        .password-toggle-icon:hover {
+            color: #14a800;
+            background: #f0f7f0;
+        }
+
         /* Password Strength */
         .password-strength {
             display: flex;
@@ -565,11 +600,16 @@
                     <i class="fas fa-lock"></i>
                     <span>Password</span>
                 </label>
-                <input type="password" 
-                       name="password" 
-                       id="password" 
-                       placeholder="Create a password" 
-                       required>
+                <div class="password-field-wrapper">
+                    <input type="password" 
+                           name="password" 
+                           id="password" 
+                           placeholder="Create a password" 
+                           required>
+                    <span class="password-toggle-icon" onclick="togglePasswordVisibility('password', this)" title="Toggle password visibility">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
                 <div class="password-strength">
                     <div class="strength-bar"></div>
                     <div class="strength-bar"></div>
@@ -596,6 +636,20 @@
 
 {% include 'includes/footer.html' %}
 <script>
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
 // Mobile menu toggle
 document.querySelector('.mobile-menu')?.addEventListener('click', function() {
     document.querySelector('.nav-links').classList.toggle('show');

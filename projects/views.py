@@ -15,6 +15,8 @@ def project_list(request):
     })
 
 
+from django.http import JsonResponse
+
 @login_required
 def like_job(request, job_id):
     job = get_object_or_404(JobPost, id=job_id)
@@ -25,6 +27,18 @@ def like_job(request, job_id):
     )
     if not created:
         reaction.delete()
+        is_liked = False
+    else:
+        is_liked = True
+
+    likes_count = Reaction.objects.filter(job=job, reaction_type='like').count()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == 'true':
+        return JsonResponse({
+            'liked': is_liked,
+            'likes_count': likes_count,
+        })
+
     return redirect(request.META.get('HTTP_REFERER') or '/')
 
 
@@ -34,11 +48,23 @@ def comment_job(request, job_id):
         job = get_object_or_404(JobPost, id=job_id)
         text = request.POST.get("comment")
         if text:
-            Comment.objects.create(
+            comment = Comment.objects.create(
                 user=request.user,
                 job=job,
                 text=text
             )
+
+            comments_count = Comment.objects.filter(job=job).count()
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == 'true':
+                return JsonResponse({
+                    'success': True,
+                    'username': request.user.username,
+                    'text': comment.text,
+                    'created_at': 'Just now',
+                    'comments_count': comments_count,
+                })
+
     return redirect(request.META.get('HTTP_REFERER') or '/')
 
 

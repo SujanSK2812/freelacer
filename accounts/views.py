@@ -13,6 +13,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from freelancer.models import Project
 from .models import EmailOTP
+from .utils import send_portal_email
 from freelancer.models import FreelancerProfile
 
 User = get_user_model()
@@ -34,47 +35,73 @@ def register(request, role=None):
             is_active=False
         )
 
-        # Create activation link
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
+        # Generate 6-digit OTP
+        EmailOTP.objects.filter(user=user).delete()
+        otp_code = EmailOTP.generate_otp()
+        EmailOTP.objects.create(user=user, otp=otp_code)
 
-        current_site = get_current_site(request)
-        activation_link = f"http://{current_site.domain}{reverse('accounts:activate', args=[uid, token])}"
-
-        send_mail(
-            "Activate Your Freelancer Portal Account",
-            f"Hi {username},\n\nClick below link to activate your account:\n{activation_link}",
-            settings.EMAIL_HOST_USER,
+        send_portal_email(
+            "Your Verification OTP - Freelancer Portal",
+            f"Hi {username},\n\nYour OTP for activating your Freelancer Portal account is: {otp_code}\n\nThis OTP is valid for 5 minutes.",
             [email],
-            fail_silently=False,
         )
 
-        # 👉 Show success page
-        return render(request, "accounts/register_success.html", {
-            "username": username,
-            "email": email
-        })
+        messages.success(request, f"Account created! Please enter the 6-digit OTP sent to {email}.")
+        return redirect("accounts:verify_otp", user_id=user.id)
 
     return render(request, "accounts/register.html")
-def verify_otp(request, user_id):
 
+def verify_otp(request, user_id):
     user = get_object_or_404(User, id=user_id)
 
-    if request.method == "POST":
-        entered_otp = request.POST.get("otp")
-        otp_obj = EmailOTP.objects.filter(user=user).last()
+    if user.is_active:
+        messages.info(request, "Account is already verified. Please log in.")
+        return redirect("accounts:login")
 
-        if otp_obj and otp_obj.otp == entered_otp and otp_obj.is_valid():
+    otp_obj = EmailOTP.objects.filter(user=user).last()
+
+    if request.method == "POST":
+        entered_otp = request.POST.get("otp", "").strip()
+        auto_verify = request.POST.get("auto_verify") == "true"
+
+        if (auto_verify and settings.DEBUG) or (otp_obj and otp_obj.otp == entered_otp and otp_obj.is_valid()):
             user.is_active = True
             user.save()
-            otp_obj.delete()
+            if otp_obj:
+                otp_obj.delete()
+            messages.success(request, "Account verified successfully! Please log in.")
+            return redirect("accounts:login")
+        else:
+            messages.error(request, "Invalid or expired OTP. Please try again.")
 
-            if getattr(user, 'role', None) == "client":
-                return redirect("client:client_dashboard")
-            else:
-                return redirect("freelancer:freelancer_dashboard")
+    context = {
+        "user_obj": user,
+        "email": user.email,
+        "debug_otp": otp_obj.otp if (settings.DEBUG and otp_obj) else None
+    }
+    return render(request, "accounts/verify_otp.html", context)
 
-    return render(request, "accounts/verify_otp.html")
+
+def resend_otp(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    if user.is_active:
+        messages.info(request, "Account is already verified. Please log in.")
+        return redirect("accounts:login")
+
+    EmailOTP.objects.filter(user=user).delete()
+    otp_code = EmailOTP.generate_otp()
+    EmailOTP.objects.create(user=user, otp=otp_code)
+
+    send_portal_email(
+        "Your Verification OTP - Freelancer Portal",
+        f"Hi {user.username},\n\nYour new verification OTP code is: {otp_code}\n\nThis OTP is valid for 5 minutes.",
+        [user.email],
+    )
+
+    messages.success(request, f"A new OTP has been sent to {user.email}.")
+    return redirect("accounts:verify_otp", user_id=user.id)
+
 
 
 # def user_login(request):
@@ -148,8 +175,53 @@ def verify_otp(request, user_id):
 def password_reset_request(request):
     if request.method == "POST":
         email = request.POST.get("email")
-        messages.success(request, "Password reset link sent to your email.")
+        user = User.objects.filter(email=email).first()
+        if user:
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            current_site = get_current_site(request)
+            reset_link = f"http://{current_site.domain}{reverse('accounts:password_reset_confirm', args=[uid, token])}"
+
+            subject = "Reset Your Password - Freelancer Portal"
+            body = f"Hi {user.username},\n\nYou requested a password reset for your Freelancer Portal account.\n\nClick the link below to set a new password:\n{reset_link}\n\nIf you did not request this, please ignore this email."
+
+            send_portal_email(subject, body, [email])
+
+            if settings.DEBUG:
+                messages.success(request, f"Password reset link generated! Link: {reset_link}")
+            else:
+                messages.success(request, "Password reset link sent to your email. Please check your inbox.")
+        else:
+            messages.error(request, "No account found with that email address.")
+
     return render(request, "accounts/password_reset.html")
+
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if not user or not default_token_generator.check_token(user, token):
+        messages.error(request, "Password reset link is invalid or has expired.")
+        return redirect("accounts:password-reset")
+
+    if request.method == "POST":
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "accounts/password_reset_confirm.html", {"uidb64": uidb64, "token": token})
+
+        user.set_password(password)
+        user.save()
+        messages.success(request, "Your password has been reset successfully. Please log in.")
+        return redirect("accounts:login")
+
+    return render(request, "accounts/password_reset_confirm.html", {"uidb64": uidb64, "token": token})
 
 
 
@@ -196,26 +268,20 @@ def select_role(request, role=None):
             is_active=False
         )
 
-        # Create activation link
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
+        # Generate 6-digit OTP
+        EmailOTP.objects.filter(user=user).delete()
+        otp_code = EmailOTP.generate_otp()
+        EmailOTP.objects.create(user=user, otp=otp_code)
 
-        current_site = get_current_site(request)
-        activation_link = f"http://{current_site.domain}{reverse('accounts:activate', args=[uid, token])}"
-
-        send_mail(
-            "Activate Your Freelancer Portal Account",
-            f"Hi {username},\n\nClick below link to activate your account:\n{activation_link}",
-            settings.EMAIL_HOST_USER,
+        send_portal_email(
+            "Your Verification OTP - Freelancer Portal",
+            f"Hi {username},\n\nYour OTP for activating your Freelancer Portal account is: {otp_code}\n\nThis OTP is valid for 5 minutes.",
             [email],
-            fail_silently=False,
         )
 
-        # Show success page
-        return render(request, "accounts/register_success.html", {
-            "username": username,
-            "email": email
-        })
+        messages.success(request, f"Account created! Please enter the 6-digit OTP sent to {email}.")
+        return redirect("accounts:verify_otp", user_id=user.id)
+
 
     return render(request, "accounts/register.html", {"role": role})
 

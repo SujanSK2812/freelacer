@@ -1,31 +1,179 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Proposals</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Proposals | Freelancer Portal</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #001e00;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-container {
+            flex: 1;
+            max-width: 980px;
+            width: 100%;
+            margin: 32px auto;
+            padding: 0 20px;
+        }
+
+        .page-header-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #001e00;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header-title i {
+            color: #108a00;
+        }
+
+        .proposal-card-item {
+            background: white;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+        }
+
+        .proposal-card-item:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            border-color: #cbd5e1;
+        }
+
+        .proposal-job-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #001e00;
+            margin-bottom: 8px;
+        }
+
+        .proposal-meta-row {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #5e6b7c;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .proposal-text-box {
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.6;
+            background: #f8fafc;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            border-left: 3px solid #108a00;
+        }
+
+        .proposal-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            text-transform: capitalize;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .status-accepted {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .empty-proposals-box {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            color: #64748b;
+        }
+
+        .empty-proposals-box i {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+        }
+    </style>
 </head>
 <body>
 
-<h1>My Proposals</h1>
+{% include 'includes/header.html' %}
 
-{% for proposal in proposals %}
+<div class="page-container">
+    <h1 class="page-header-title">
+        <i class="fas fa-file-contract"></i> My Submitted Proposals
+    </h1>
 
-    <div>
+    {% for proposal in proposals %}
+    <div class="proposal-card-item">
+        <div class="proposal-job-title">{{ proposal.job.title }}</div>
+        <div class="proposal-meta-row">
+            <span><i class="fas fa-rupee-sign" style="color:#108a00;"></i> Bid Amount: <strong>₹{{ proposal.bid_amount }}</strong></span>
+            <span><i class="fas fa-clock" style="color:#108a00;"></i> Delivery: {{ proposal.delivery_days }} Days</span>
+            <span><i class="fas fa-calendar" style="color:#108a00;"></i> Submitted {{ proposal.created_at|timesince }} ago</span>
+        </div>
 
-        <h3>{{ proposal.job.title }}</h3>
+        <div class="proposal-text-box">
+            {{ proposal.proposal_text }}
+        </div>
 
-        <p>{{ proposal.proposal_text }}</p>
-
-        <p>₹{{ proposal.bid_amount }}</p>
-
-        <p>{{ proposal.status }}</p>
-
+        <div>
+            <span class="proposal-status-badge status-{{ proposal.status|lower|default:'pending' }}">
+                <i class="fas fa-info-circle"></i> Status: {{ proposal.status|default:"Pending Review" }}
+            </span>
+        </div>
     </div>
+    {% empty %}
+    <div class="empty-proposals-box">
+        <i class="fas fa-folder-open"></i>
+        <h3>No proposals submitted yet</h3>
+        <p style="margin-top: 8px; font-size: 14px;">Browse active client jobs on the home feed and click "Apply Now" to submit your first proposal!</p>
+        <a href="/" style="display: inline-block; margin-top: 16px; background: #108a00; color: white; padding: 10px 24px; border-radius: 20px; text-decoration: none; font-weight: 700;">Browse Jobs</a>
+    </div>
+    {% endfor %}
+</div>
 
-{% empty %}
-
-    <p>No proposals yet</p>
-
-{% endfor %}
+{% include 'includes/footer.html' %}
 
 </body>
 </html>

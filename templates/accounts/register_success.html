@@ -108,13 +108,13 @@
 
         .success-container {
             background: white;
-            max-width: 550px;
-            width: 100%;
-            padding: 3rem;
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 750px;
+            width: 92%;
+            padding: 3rem 3.5rem;
+            border-radius: 24px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
             animation: fadeInUp 0.6s ease-out;
-            margin: 2rem auto;
+            margin: 2.5rem auto;
             text-align: center;
         }
 
@@ -488,11 +488,21 @@
         <div class="email-notice">
             <i class="fas fa-envelope-open-text"></i>
             <p>
-                <strong>📩 Please check your Gmail</strong><br>
+                <strong>Please check your Gmail</strong><br>
                 We've sent an activation link to <strong>{{ email }}</strong><br>
                 Click the link in the email to activate your account.
             </p>
         </div>
+
+        {% if activation_link %}
+        <div class="info-box" style="border-left: 4px solid #14a800; background: #eef9ee;">
+            <i class="fas fa-link" style="color: #14a800;"></i>
+            <p>
+                <strong>Development Activation Link:</strong><br>
+                <a href="{{ activation_link }}" style="color: #14a800; word-break: break-all; font-weight: bold;">{{ activation_link }}</a>
+            </p>
+        </div>
+        {% endif %}
 
         <div class="info-box">
             <i class="fas fa-info-circle"></i>
@@ -502,7 +512,7 @@
         </div>
 
         <div class="action-buttons">
-            <a href="{% url 'login'%}" class="btn btn-primary">
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary">
                 Go to Login <i class="fas fa-arrow-right"></i>
             </a>
             <a href="/" class="btn btn-secondary">

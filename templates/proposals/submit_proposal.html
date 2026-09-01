@@ -1,91 +1,315 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Proposal</title>
-
+    <title>Submit Proposal | {{ job.title }}</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-
-        body{
-            font-family: Arial;
-            background:#f1f5f9;
-            padding:20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .container{
-            max-width:700px;
-            margin:auto;
-            background:white;
-            padding:25px;
-            border-radius:12px;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #001e00;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        input,
-        textarea{
-            width:100%;
-            padding:12px;
-            margin-top:10px;
-            margin-bottom:20px;
+        .page-container {
+            flex: 1;
+            max-width: 860px;
+            width: 100%;
+            margin: 32px auto;
+            padding: 0 20px;
         }
 
-        button{
-            background:#2563eb;
-            color:white;
-            border:none;
-            padding:12px 20px;
-            border-radius:8px;
-            cursor:pointer;
+        /* Job Info Summary Header */
+        .job-summary-card {
+            background: white;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         }
 
-        @media(max-width:380px){
+        .summary-badge {
+            background: #e8f5e9;
+            color: #108a00;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
 
-            .container{
-                padding:15px;
+        .job-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #001e00;
+            margin-bottom: 12px;
+        }
+
+        .job-meta-row {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #5e6b7c;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .job-meta-row span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .job-meta-row i {
+            color: #108a00;
+        }
+
+        .job-desc-text {
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.6;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 4px solid #108a00;
+        }
+
+        /* Main Proposal Form Card */
+        .proposal-card {
+            background: white;
+            border: 1px solid #e4e6eb;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .proposal-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .proposal-card-header i {
+            font-size: 24px;
+            color: #108a00;
+        }
+
+        .proposal-card-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #001e00;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #001e00;
+            margin-bottom: 8px;
+        }
+
+        .form-group label i {
+            color: #108a00;
+            margin-right: 6px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #001e00;
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: #108a00;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(16, 138, 0, 0.12);
+        }
+
+        .form-textarea {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-submit-proposal {
+            background: #108a00;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit-proposal:hover {
+            background: #0f7a00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(16, 138, 0, 0.3);
+        }
+
+        .btn-cancel-link {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 14px 24px;
+            transition: color 0.2s;
+        }
+
+        .btn-cancel-link:hover {
+            color: #001e00;
+        }
+
+        .form-actions-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .form-row-grid {
+                grid-template-columns: 1fr;
             }
-
+            .job-summary-card, .proposal-card {
+                padding: 20px;
+            }
         }
-
     </style>
-
 </head>
 <body>
 
-<div class="container">
+{% include 'includes/header.html' %}
 
-    <h2>{{ job.title }}</h2>
+<div class="page-container">
+    <!-- JOB SUMMARY CARD -->
+    <div class="job-summary-card">
+        <div class="summary-badge">
+            <i class="fas fa-briefcase"></i> Job Details
+        </div>
+        <h1 class="job-title">{{ job.title }}</h1>
+        <div class="job-meta-row">
+            <span><i class="fas fa-user-tie"></i> Posted by: {{ job.client.username }}</span>
+            <span><i class="fas fa-money-bill-wave"></i> Budget: ₹{{ job.budget }}</span>
+            <span><i class="fas fa-layer-group"></i> {{ job.experience_level|default:"Intermediate" }}</span>
+        </div>
+        <div class="job-desc-text">
+            {{ job.description }}
+        </div>
+    </div>
 
-    <form method="POST">
+    <!-- PROPOSAL SUBMISSION FORM CARD -->
+    <div class="proposal-card">
+        <div class="proposal-card-header">
+            <i class="fas fa-paper-plane"></i>
+            <h3>Submit Your Proposal</h3>
+        </div>
 
-        {% csrf_token %}
+        <form method="POST">
+            {% csrf_token %}
 
-        <textarea
-            name="proposal_text"
-            placeholder="Write your proposal"
-            required
-        ></textarea>
+            <div class="form-group">
+                <label for="proposal_text">
+                    <i class="fas fa-align-left"></i> Cover Letter / Proposal Details
+                </label>
+                <textarea 
+                    id="proposal_text"
+                    name="proposal_text" 
+                    class="form-textarea"
+                    placeholder="Introduce yourself, explain your approach to this project, relevant skills, and why you are the best fit..."
+                    required
+                ></textarea>
+            </div>
 
-        <input
-            type="number"
-            name="bid_amount"
-            placeholder="Bid Amount"
-            required
-        >
+            <div class="form-row-grid">
+                <div class="form-group">
+                    <label for="bid_amount">
+                        <i class="fas fa-rupee-sign"></i> Your Bid Amount (₹)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="bid_amount"
+                        name="bid_amount" 
+                        class="form-input"
+                        placeholder="e.g. {{ job.budget }}"
+                        required
+                    >
+                </div>
 
-        <input
-            type="number"
-            name="delivery_days"
-            placeholder="Delivery Days"
-            required
-        >
+                <div class="form-group">
+                    <label for="delivery_days">
+                        <i class="fas fa-clock"></i> Estimated Delivery (Days)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="delivery_days"
+                        name="delivery_days" 
+                        class="form-input"
+                        placeholder="e.g. 7"
+                        required
+                    >
+                </div>
+            </div>
 
-        <button type="submit">
-            Submit Proposal
-        </button>
-
-    </form>
-
+            <div class="form-actions-flex">
+                <a href="/" class="btn-cancel-link"><i class="fas fa-arrow-left"></i> Back to Jobs</a>
+                <button type="submit" class="btn-submit-proposal">
+                    <i class="fas fa-check-circle"></i> Submit Proposal
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+{% include 'includes/footer.html' %}
 
 </body>
 </html>

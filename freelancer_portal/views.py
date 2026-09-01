@@ -3,9 +3,9 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from accounts.models import Testimonial
 from accounts.models import ContactMessage 
+from accounts.utils import send_portal_email
 from django.contrib.auth import get_user_model
 from freelancer.models import Project
 User = get_user_model()
@@ -75,36 +75,20 @@ Message:
 {message}
 """
 
-        send_mail(
+        user_message = f"Hi {first_name},\n\nThank you for contacting Freelancer Portal. We have received your message regarding '{subject}' and will get back to you shortly.\n\nBest regards,\nFreelancer Portal Team"
+
+        send_portal_email(
             f"New Contact Form: {subject}",
             admin_message,
-            settings.EMAIL_HOST_USER,
             ["sujanshettySK28@gmail.com"],
-            fail_silently=False,
         )
 
-        # ✅ Email to USER
-        user_message = f"""
-Hello {first_name},
-
-Thank you for contacting Freelancer Portal.
-
-We received your message and our team will respond soon.
-
-Your Message:
-{message}
-
-Regards,
-Freelancer Portal Team
-"""
-
-        send_mail(
+        send_portal_email(
             "Message Received - Freelancer Portal",
             user_message,
-            settings.EMAIL_HOST_USER,
             [email],
-            fail_silently=False,
         )
+
 
         messages.success(request, "Your message has been sent successfully!")
 

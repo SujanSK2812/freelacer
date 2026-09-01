@@ -32,13 +32,13 @@
                                 </div>
                             </div>
                             <div class="btn-group">
-                                <form method="POST" action="{% url 'accept_connection_request' request.id %}" class="d-inline me-2">
+                                <form method="POST" action="{% url 'accounts:accept_connection_request' request.id %}" class="d-inline me-2">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-success btn-sm">
                                         <i class="fas fa-check"></i> Accept
                                     </button>
                                 </form>
-                                <form method="POST" action="{% url 'reject_connection_request' request.id %}" class="d-inline">
+                                <form method="POST" action="{% url 'accounts:reject_connection_request' request.id %}" class="d-inline">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fas fa-times"></i> Reject

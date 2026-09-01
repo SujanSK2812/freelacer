@@ -261,17 +261,6 @@
             border-top: 1px solid #e2e8f0;
         }
 
-        /* footer minimal (matching idea) */
-        footer {
-            background: white;
-            border-top: 1px solid #e9ecef;
-            text-align: center;
-            padding: 1.5rem;
-            color: #6c757d;
-            font-size: 0.85rem;
-            margin-top: 2rem;
-        }
-
         /* responsive overrides */
         @media (max-width: 768px) {
             .search-box {
@@ -371,7 +360,7 @@
             <div class="card-icon"><i class="fas fa-chart-line"></i></div>
             <h3>Reports & Analytics</h3>
             <p>Platform insights, revenue reports and activity logs.</p>
-            <a href="{% url 'reports' %}" class="btn btn-outline">View Reports →</a>
+            <a href="{% url 'projects:reports' %}" class="btn btn-outline">View Reports →</a>
         </div>
        
     </div>
@@ -380,9 +369,7 @@
     
 
     <hr>
-
-
-
+</div>
 
 <!-- ==================== JAVASCRIPT for mobile & profile menu (exactly same behavior) ==================== -->
 

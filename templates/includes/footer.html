@@ -1,141 +1,273 @@
 {% load static %}
-<!-- Footer Section -->
-<footer>
-  <div class="footer-content">
-    <div class="footer-section">
-      <h3>Freelancer Portal</h3>
-      <p>
-        Your trusted platform for connecting clients with top freelance talent
-        worldwide.
-      </p>
-      
-    </div>
-
- {% if request.user.is_authenticated %}
-
-    <!-- ================= ADMIN ================= -->
-
-    {% if request.user.is_superuser %}
-
-    <div class="footer-section">
-      <h4>Admin Panel</h4>
-      <ul>
-        <li><a href="/admin/">Django Admin</a></li>
-        <li><a href="{% url 'accounts:admin_users' %}">Manage Users</a></li>
-        <li><a href="{% url 'project_list' %}">Manage Projects</a></li>
-        <li><a href="{% url 'reports' %}">Reports</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-section">
-      <h4>Company</h4>
-      <ul>
-        <li><a href="{% url 'about_us' %}">About Us</a></li>
-        <li><a href="{% url 'contact' %}">Contact</a></li>
-        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
-        <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
-      </ul>
-    </div>
-
-    <!-- ================= CLIENT ================= -->
-
-    {% elif request.user.role == "client" %}
-
-    <div class="footer-section">
-      <h4>For Clients</h4>
-      <ul>
-        <li><a href="/how-to-hire/">How to Hire</a></li>
-        <li><a href="/post-project/">Post a Project</a></li>
-        <li><a href="/find-freelancers/">Find Freelancers</a></li>
-        <li><a href="/success-stories/">Success Stories</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-section">
-      <h4>Company</h4>
-      <ul>
-        <li><a href="{% url 'about_us' %}">About Us</a></li>
-        <li><a href="{% url 'contact' %}">Contact</a></li>
-        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
-        <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
-      </ul>
-    </div>
-
-    <!-- ================= FREELANCER ================= -->
-
-    {% elif request.user.role == "freelancer" %}
-
-    <div class="footer-section">
-      <h4>For Freelancers</h4>
-      <ul>
-        <li><a href="{% url 'how_to_find_work' %}">How to Find Work</a></li>
-        <li><a href="{% url 'freelancer:search_results' %}">Browse Projects</a></li>
-        <li><a href="{% url 'freelancer:create_profile' %}">Create Profile</a></li>
-        <li><a href="{% url 'freelancer_tips' %}">Freelancer Tips</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-section">
-      <h4>Company</h4>
-      <ul>
-        <li><a href="{% url 'about_us' %}">About Us</a></li>
-        <li><a href="{% url 'contact' %}">Contact</a></li>
-        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
-        <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
-      </ul>
-    </div>
-
-    {% endif %}
-
-{% else %}
-
-<!-- ================= GUEST USERS ================= -->
-
-<div class="footer-section">
-  <h4>For Clients</h4>
-  <ul>
-    <li><a href="/how-to-hire/">How to Hire</a></li>
-    <li><a href="/post-project/">Post a Project</a></li>
-    <li><a href="/find-freelancers/">Find Freelancers</a></li>
-  </ul>
-</div>
-
-<div class="footer-section">
-  <h4>For Freelancers</h4>
-  <ul>
-    <li><a href="{% url 'how_to_find_work' %}">How to Find Work</a></li>
-    <li><a href="{% url 'freelancer:search_results' %}">Browse Projects</a></li>
-    <li><a href="{% url 'freelancer:create_profile' %}">Create Profile</a></li>
-  </ul>
-</div>
-
-<div class="footer-section">
-  <h4>Company</h4>
-  <ul>
-    <li><a href="{% url 'about_us' %}">About Us</a></li>
-    <li><a href="{% url 'contact' %}">Contact</a></li>
-    <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
-    <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
-  </ul>
-</div>
-
-{% endif %}
-    
-  </div>
-
-  <div class="footer-bottom">
-    <p>&copy; 2024 Freelancer Portal. All rights reserved.</p>
-    <div class="footer-links">
-      <a href="https://django-blog-8esp.onrender.com">Blog</a>
-    </div>
-    <div class="social-links">
-        <a href="#"><i class="fab fa-facebook"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="www.linkedin.com/in/freelancer-hiring-portal-a60a69408"><i class="fab fa-linkedin"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
+<!-- Upwork Inspired Platform Footer -->
+<footer class="upwork-footer">
+  <div class="upwork-footer-container">
+    <div class="footer-grid">
+      <!-- Column 1: Brand Info -->
+      <div class="footer-col brand-col">
+        <a href="{% if request.user.is_superuser %}{% url 'accounts:admin_home' %}{% else %}{% url 'freelancer:freelancer_home' %}{% endif %}" class="footer-logo">
+          <span class="logo-icon"><i class="fas fa-briefcase"></i></span>
+          <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
+        </a>
+        <p class="brand-desc">
+          Connecting top independent talent with businesses worldwide to accomplish extraordinary work together.
+        </p>
+        <div class="footer-social-icons">
+          <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="https://linkedin.com" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+        </div>
       </div>
+
+      {% if not request.user.is_superuser %}
+      <!-- Column 2: For Clients -->
+      <div class="footer-col">
+        <h4 class="footer-heading">For Clients</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'how_it_works' %}">How to Hire Talent</a></li>
+          <li><a href="{% url 'client:create_job' %}">Post a Project / Job</a></li>
+          <li><a href="{% url 'client:all_freelancers' %}">Talent Marketplace</a></li>
+          <li><a href="{% url 'about_us' %}">Client Case Studies</a></li>
+          <li><a href="{% url 'freelancer:freelancer_dashboard' %}">Direct Contracts</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: For Talent -->
+      <div class="footer-col">
+        <h4 class="footer-heading">For Freelancers</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'how_to_find_work' %}">How to Find Work</a></li>
+          <li><a href="{% url 'freelancer:search_results' %}">Direct Job Feed</a></li>
+          <li><a href="{% url 'freelancer:create_profile' %}">Build Your Profile</a></li>
+          <li><a href="{% url 'freelancer_tips' %}">Freelancer Success Tips</a></li>
+          <li><a href="{% url 'freelancer:my_proposals' %}">Bidding & Proposals</a></li>
+        </ul>
+      </div>
+      {% else %}
+      <!-- Column 2: Administration -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Administration</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'accounts:admin_home' %}">Admin Dashboard</a></li>
+          <li><a href="{% url 'accounts:admin_users' %}">Manage Users</a></li>
+          <li><a href="/admin/">Django Admin</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Platform Overview -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Platform Overview</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'how_it_works' %}">Platform Guide</a></li>
+          <li><a href="{% url 'projects:reports' %}">System Reports</a></li>
+          <li><a href="{% url 'about_us' %}">Case Studies</a></li>
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Column 4: Company & Legal -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Company</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'about_us' %}">About Us</a></li>
+          <li><a href="{% url 'contact' %}">Contact Support</a></li>
+          <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+          <li><a href="{% url 'Terms' %}">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom-bar">
+      <div class="copyright-text">
+        &copy; 2026 Freelancer Portal, Inc. All rights reserved. Powered by Django & Upwork Design Tokens.
+      </div>
+      <div class="footer-bottom-links">
+        <a href="https://django-blog-8esp.onrender.com">Blog</a>
+      </div>
+    </div>
   </div>
 </footer>
 
-<!-- Link footer CSS -->
-<link rel="stylesheet" href="{% static 'includes/footer.css' %}" />
+<style>
+  .upwork-footer {
+    background-color: #ffffff;
+    color: #001e00;
+    padding: 60px 0 30px;
+    margin-top: 60px;
+    border-top: 1px solid #e4e6eb;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .upwork-footer-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 32px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .brand-col .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    margin-bottom: 16px;
+  }
+
+  .brand-col .logo-icon {
+    background: #108a00;
+    color: #ffffff;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .brand-col .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #001e00;
+  }
+
+  .brand-col .logo-accent {
+    color: #108a00;
+  }
+
+  .brand-desc {
+    font-size: 14px;
+    color: #5e6b7c;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 320px;
+  }
+
+  .footer-social-icons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .footer-social-icons a {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f4f9f4;
+    color: #108a00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease, color 0.2s ease;
+    border: 1px solid #d5e0d5;
+  }
+
+  .footer-social-icons a:hover {
+    background: #108a00;
+    color: #ffffff;
+    border-color: #108a00;
+  }
+
+  .footer-heading {
+    font-size: 16px;
+    font-weight: 700;
+    color: #001e00;
+    margin-bottom: 16px;
+  }
+
+  .footer-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-menu li {
+    margin-bottom: 10px;
+  }
+
+  .footer-menu li a {
+    color: #5e6b7c;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+  }
+
+  .footer-menu li a:hover {
+    color: #108a00;
+  }
+
+  .footer-bottom-bar {
+    border-top: 1px solid #e4e6eb;
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #5e6b7c;
+  }
+
+  .footer-bottom-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-bottom-links a {
+    color: #5e6b7c;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer-bottom-links a:hover {
+    color: #108a00;
+  }
+
+  @media (max-width: 900px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+    .footer-bottom-bar {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+  }
+</style>
+
+<!-- Auto-dismiss alerts & message banners after 3 seconds -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const messages = document.querySelectorAll('.error, .success-msg, .alert, .alert-danger, .alert-success, .message, .errornote, p.error, div.error, .messagelist li');
+    messages.forEach(function (msg) {
+      if (msg.closest('.chat-messages-box') || msg.closest('#messagesBox')) {
+        return;
+      }
+      setTimeout(function () {
+        msg.style.transition = "opacity 0.6s ease, transform 0.6s ease, max-height 0.6s ease, margin 0.6s ease, padding 0.6s ease";
+        msg.style.opacity = "0";
+        msg.style.transform = "translateY(-10px)";
+        setTimeout(function () {
+          msg.style.display = "none";
+        }, 600);
+      }, 3000);
+    });
+  });
+</script>
+

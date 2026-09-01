@@ -11,41 +11,99 @@ from accounts.models import Connection, ConnectionRequest
 from django.shortcuts import get_object_or_404
 from proposals.models import Proposal
 
-@login_required
 def freelancer_home(request):
-    jobs = Job.objects.all().order_by("-created_at")
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect("accounts:admin_home")
 
-    for job in jobs:
+    # Client Job Postings (Work available)
+    client_jobs = Job.objects.select_related('client').all().order_by("-created_at")
+    for job in client_jobs:
         if hasattr(job, 'skills') and job.skills:
             job.skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
         else:
             job.skills_list = []
 
-    profile = FreelancerProfile.objects.filter(user=request.user).first()
-    proposals_count = Proposal.objects.filter(freelancer=request.user).count()
+    # Freelancer Posts / Talent Showcases
+    from projects.models import JobPost
+    freelancer_posts = JobPost.objects.select_related('client').prefetch_related('comments__user', 'reactions').all().order_by("-created_at")
+
+    for post in freelancer_posts:
+        if request.user.is_authenticated:
+            post.liked_by_user = post.reactions.filter(user=request.user, reaction_type='like').exists()
+        else:
+            post.liked_by_user = False
+        post.likes_count = post.reactions.filter(reaction_type='like').count()
+        post.comments_all = post.comments.all()
+        post.comments_count = post.comments_all.count()
+
+    profile = None
+    proposals_count = 0
+    if request.user.is_authenticated:
+        profile = FreelancerProfile.objects.filter(user=request.user).first()
+        proposals_count = Proposal.objects.filter(freelancer=request.user).count()
 
     context = {
-        "jobs": jobs,
+        "jobs": client_jobs,
+        "freelancer_posts": freelancer_posts,
         "profile": profile,
         "proposals_count": proposals_count,
     }
 
     return render(request, "freelancer/home.html", context)
 
+from django.db.models import Sum
+from payments.models import Payment
+
 @login_required
 def freelancer_dashboard(request):
+    if request.user.is_superuser:
+        return redirect("accounts:admin_home")
 
-    recent_proposals = Proposal.objects.filter(
-        freelancer=request.user
-    ).order_by("-created_at")[:5]
+    freelancer_profile = FreelancerProfile.objects.filter(user=request.user).first()
 
-    freelancer_profile = FreelancerProfile.objects.filter(
-        user=request.user
-    ).first()
+    recent_proposals = Proposal.objects.filter(freelancer=request.user).order_by("-created_at")[:10]
+    all_proposals = Proposal.objects.filter(freelancer=request.user)
+
+    accepted_proposals = all_proposals.filter(status="accepted")
+    pending_proposals = all_proposals.filter(status="pending")
+
+    jobs = Job.objects.all().order_by("-created_at")[:6]
+    for job in jobs:
+        if hasattr(job, 'skills') and job.skills:
+            job.skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
+        else:
+            job.skills_list = []
+
+    skills_list = []
+    if freelancer_profile and freelancer_profile.skills:
+        skills_list = [s.strip() for s in freelancer_profile.skills.split(",") if s.strip()]
+
+    # Calculate real total earnings from payments database table
+    paid_payments = Payment.objects.filter(freelancer=request.user, paid=True)
+    total_earnings = paid_payments.aggregate(total=Sum('amount'))['total'] or 0
+
+    # Real profile completeness calculation
+    profile_completeness = 20
+    if freelancer_profile:
+        if freelancer_profile.title: profile_completeness += 20
+        if freelancer_profile.bio: profile_completeness += 20
+        if freelancer_profile.skills: profile_completeness += 20
+        if freelancer_profile.hourly_rate: profile_completeness += 20
+
+    active_projects = Project.objects.filter(status='in_progress')
 
     context = {
         "recent_proposals": recent_proposals,
+        "proposals_count": all_proposals.count(),
+        "pending_proposals_count": pending_proposals.count(),
+        "accepted_proposals_count": accepted_proposals.count(),
+        "accepted_proposals": accepted_proposals,
+        "total_earnings": total_earnings,
+        "profile_completeness": profile_completeness,
         "freelancer": freelancer_profile,
+        "skills_list": skills_list,
+        "jobs": jobs,
+        "active_projects": active_projects,
     }
 
     return render(
@@ -53,6 +111,7 @@ def freelancer_dashboard(request):
         "freelancer/dashboard.html",
         context
     )
+
 
 
 @login_required
@@ -80,6 +139,9 @@ from decimal import Decimal
 
 @login_required
 def create_profile(request):
+    if request.user.is_superuser:
+        return redirect("accounts:admin_home")
+
     print("METHOD:", request.method)
 
     profile, created = FreelancerProfile.objects.get_or_create(
