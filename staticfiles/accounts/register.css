@@ -25,7 +25,7 @@ nav {
 }
 
 nav h2 {
-    color: #14a800;
+    color: #0a66c2;
     font-size: 1.5rem;
     font-weight: 700;
 }
@@ -42,7 +42,7 @@ nav h2 {
 }
 
 .nav-links a:hover {
-    color: #14a800;
+    color: #0a66c2;
 }
 
 /* Main Content */
@@ -116,7 +116,7 @@ main {
 }
 
 .form-group input:focus {
-    border-color: #14a800;
+    border-color: #0a66c2;
     box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
 }
 
@@ -133,7 +133,7 @@ main {
 
 /* Register Button */
 .register-btn {
-    background: #14a800;
+    background: #0a66c2;
     color: white;
     padding: 1rem 1.5rem;
     border: none;
@@ -171,7 +171,7 @@ main {
 }
 
 .login-link a {
-    color: #14a800;
+    color: #0a66c2;
     text-decoration: none;
     font-weight: 600;
     margin-left: 0.25rem;
@@ -198,7 +198,7 @@ main {
 }
 
 .terms a:hover {
-    color: #14a800;
+    color: #0a66c2;
     text-decoration: underline;
 }
 
@@ -219,7 +219,7 @@ footer {
 }
 
 .footer-section h3 {
-    color: #14a800;
+    color: #0a66c2;
     font-size: 1.2rem;
     margin-bottom: 1rem;
 }
@@ -253,7 +253,7 @@ footer {
 }
 
 .footer-section ul li a:hover {
-    color: #14a800;
+    color: #0a66c2;
 }
 
 .social-links {
@@ -268,7 +268,7 @@ footer {
 }
 
 .social-links a:hover {
-    color: #14a800;
+    color: #0a66c2;
 }
 
 .footer-bottom {

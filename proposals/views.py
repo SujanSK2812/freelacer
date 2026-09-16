@@ -1,14 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import freelancer_required
+from django.contrib import messages
 
 from .models import Proposal
 from projects.models import Job
 
 
-@login_required
+@freelancer_required
 def submit_proposal(request, job_id):
 
     job = get_object_or_404(Job, id=job_id)
+
+    # Prevent duplicate applications
+    if Proposal.objects.filter(freelancer=request.user, job=job).exists():
+        messages.error(request, "You have already applied for this job.")
+        return redirect("freelancer:freelancer_dashboard")
 
     if request.method == "POST":
 
@@ -19,8 +26,18 @@ def submit_proposal(request, job_id):
             bid_amount=request.POST.get("bid_amount"),
             delivery_days=request.POST.get("delivery_days"),
         )
+        
+        from accounts.models import Notification
+        from django.urls import reverse
+        
+        Notification.objects.create(
+            user=job.client,
+            notification_type='proposal_status',
+            message=f"New proposal submitted by {request.user.username} on your job post <strong>{job.title}</strong>.",
+            link=reverse("client:job_detail", args=[job.id])
+        )
 
-        return redirect("my_proposals")
+        return redirect("freelancer:my_proposals")
 
     return render(
         request,
@@ -29,7 +46,7 @@ def submit_proposal(request, job_id):
     )
 
 
-@login_required
+@freelancer_required
 def my_proposals(request):
 
     proposals = Proposal.objects.filter(

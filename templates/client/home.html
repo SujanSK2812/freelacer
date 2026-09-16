@@ -77,7 +77,7 @@
     }
 
     .card-header h2 i {
-      color: #108a00;
+      color: #0a66c2;
       font-size: 1.4rem;
     }
 
@@ -127,7 +127,7 @@
     }
 
     .freelancer-info h4 i {
-      color: #108a00;
+      color: #0a66c2;
       font-size: 0.9rem;
     }
 
@@ -178,8 +178,8 @@
     }
 
     .action-btn:hover {
-      background: #108a00;
-      border-color: #108a00;
+      background: #0a66c2;
+      border-color: #0a66c2;
       color: white;
       transform: translateY(-1px);
     }
@@ -220,8 +220,8 @@
       font-size: 0.9rem;
     }
     .view-all-btn:hover {
-      background: #108a00;
-      border-color: #108a00;
+      background: #0a66c2;
+      border-color: #0a66c2;
       color: white;
       transform: translateY(-2px);
     }
@@ -250,7 +250,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      border-left: 3px solid #108a00;
+      border-left: 3px solid #0a66c2;
       padding-left: 0.75rem;
     }
 
@@ -270,7 +270,7 @@
     }
 
     .role-list li i {
-      color: #108a00;
+      color: #0a66c2;
       width: 1.2rem;
       font-size: 0.85rem;
     }
@@ -331,7 +331,7 @@
     }
 
     .footer-brand h3 {
-      color: #108a00;
+      color: #0a66c2;
       font-size: 1.4rem;
       font-weight: 700;
       margin-bottom: 0.75rem;
@@ -371,7 +371,7 @@
     }
 
     .footer-links-col ul li a:hover {
-      color: #108a00;
+      color: #0a66c2;
     }
 
     .social-icons {
@@ -387,11 +387,11 @@
     }
 
     .social-icons a:hover {
-      color: #108a00;
+      color: #0a66c2;
       transform: translateY(-2px);
     }
     .post-job-btn {
-      background: #108a00;
+      background: #0a66c2;
       color: white;
       text-decoration: none;
       padding: 0.7rem 1.2rem;
@@ -436,7 +436,7 @@
     }
 
     .footer-links-bottom a:hover {
-      color: #108a00;
+      color: #0a66c2;
     }
 
     /* invitation modal simple (optional small enhancement) */
@@ -584,7 +584,7 @@
       <!-- JOB SECTION -->
       <div style="border-top: 1px solid #edf2f7; padding: 1.5rem 1.75rem">
         <h2 style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-          <i class="fas fa-briefcase" style="color: #108a00"></i>
+          <i class="fas fa-briefcase" style="color: #0a66c2"></i>
           Your Posted Jobs
         </h2>
         {% for job in jobs %}
@@ -605,6 +605,34 @@
         <div class="empty-state">
           <i class="fas fa-folder-open"></i>
           <p>You haven't posted any jobs yet.</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- FREELANCER POSTS SECTION -->
+      <div style="border-top: 1px solid #edf2f7; padding: 1.5rem 1.75rem">
+        <h2 style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas fa-star" style="color: #0a66c2"></i>
+          Freelancer Talent Showcases
+        </h2>
+        {% for post in freelancer_posts %}
+        <div class="freelancer-item" style="border-bottom: 1px solid #f0f2f5;">
+          <div class="freelancer-info">
+            <h4>{{ post.title }}</h4>
+            <p>
+              <span><i class="fas fa-user"></i> {{ post.client.username }}</span>
+              <span><i class="fas fa-clock"></i> {{ post.created_at|timesince }} ago</span>
+            </p>
+            <p style="margin-top: 0.5rem;">{{ post.description|truncatewords:20 }}</p>
+          </div>
+          <a href="{% url 'freelancer:freelancer_profile' post.client.id %}" class="action-btn">
+            <i class="fas fa-user-circle"></i> View Profile
+          </a>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+          <i class="fas fa-star"></i>
+          <p>No freelancer showcases posted yet.</p>
         </div>
         {% endfor %}
       </div>

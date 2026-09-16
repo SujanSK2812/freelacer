@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Freelancer Tips | FreelanceHub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f3f2ef;
+      color: #191919;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .page-container {
+      flex: 1;
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    .main-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 2.5rem 3rem;
+      border-bottom: 1px solid #eef3f8;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .card-header-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: #eef3f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid #d0e1f9;
+    }
+
+    .card-header-icon i {
+      color: #0a66c2;
+      font-size: 1.8rem;
+    }
+
+    .card-header h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #000000;
+      letter-spacing: -0.02em;
+    }
+
+    .card-header p {
+      color: #5e5e5e;
+      font-size: 1rem;
+      margin-top: 0.35rem;
+      font-weight: 400;
+    }
+
+    .content-body {
+      padding: 3rem;
+    }
+
+    .tip-item {
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    
+    .tip-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .tip-item h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #191919;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tip-item h3 span.num {
+      background: #0a66c2;
+      color: white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .tip-item p {
+      font-size: 1.05rem;
+      color: #4b5563;
+      padding-left: 2.5rem;
+    }
+
+  </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="page-container">
+  <div class="main-card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <i class="fas fa-lightbulb"></i>
+      </div>
+      <div>
+        <h1>Freelancer Tips</h1>
+        <p>Expert advice to help you succeed and build a thriving freelance career.</p>
+      </div>
+    </div>
+    
+    <div class="content-body">
+      
+      <div class="tip-item">
+        <h3><span class="num">1</span> Build a Strong Profile</h3>
+        <p>Showcase your skills, experience, projects, and achievements clearly. A professional profile helps clients understand what you can offer.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">2</span> Create a Good Portfolio</h3>
+        <p>Add your best projects with a short description of the problem, your solution, and the technologies you used. Focus on quality rather than quantity.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">3</span> Communicate Clearly</h3>
+        <p>Understand the client's requirements before starting. Keep clients updated about progress and communicate professionally.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">4</span> Meet Your Deadlines</h3>
+        <p>Set realistic deadlines and deliver work on time. Consistent delivery helps build trust and long-term relationships.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">5</span> Set Fair Pricing</h3>
+        <p>Consider the project scope, complexity, required skills, and time when deciding your price. Avoid accepting work without clearly understanding the requirements.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">6</span> Build Your Reputation</h3>
+        <p>Complete projects professionally and maintain good relationships with clients. Positive feedback and successful projects can help you attract more opportunities.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">7</span> Keep Learning</h3>
+        <p>Technology changes quickly. Continue improving your skills and learn tools and technologies that are relevant to your field.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">8</span> Protect Your Work</h3>
+        <p>Keep project files, credentials, personal information, and client data secure. Share sensitive information only when necessary.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">9</span> Define the Project Clearly</h3>
+        <p>Before beginning, confirm the scope, deliverables, timeline, revisions, payment terms, and responsibilities with the client.</p>
+      </div>
+
+      <div class="tip-item">
+        <h3><span class="num">10</span> Be Professional</h3>
+        <p>Be reliable, respectful, organized, and honest. Professionalism is just as important as technical skills when building a successful freelance career.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

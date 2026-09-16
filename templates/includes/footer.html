@@ -5,7 +5,7 @@
     <div class="footer-grid">
       <!-- Column 1: Brand Info -->
       <div class="footer-col brand-col">
-        <a href="{% if request.user.is_superuser %}{% url 'accounts:admin_home' %}{% else %}{% url 'freelancer:freelancer_home' %}{% endif %}" class="footer-logo">
+        <a href="{% if request.user.is_superuser %}{% url 'accounts:admin_home' %}{% elif request.user.role == 'client' %}{% url 'client:client_home' %}{% else %}{% url 'freelancer:freelancer_home' %}{% endif %}" class="footer-logo">
           <span class="logo-icon"><i class="fas fa-briefcase"></i></span>
           <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
         </a>
@@ -21,31 +21,7 @@
         </div>
       </div>
 
-      {% if not request.user.is_superuser %}
-      <!-- Column 2: For Clients -->
-      <div class="footer-col">
-        <h4 class="footer-heading">For Clients</h4>
-        <ul class="footer-menu">
-          <li><a href="{% url 'how_it_works' %}">How to Hire Talent</a></li>
-          <li><a href="{% url 'client:create_job' %}">Post a Project / Job</a></li>
-          <li><a href="{% url 'client:all_freelancers' %}">Talent Marketplace</a></li>
-          <li><a href="{% url 'about_us' %}">Client Case Studies</a></li>
-          <li><a href="{% url 'freelancer:freelancer_dashboard' %}">Direct Contracts</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 3: For Talent -->
-      <div class="footer-col">
-        <h4 class="footer-heading">For Freelancers</h4>
-        <ul class="footer-menu">
-          <li><a href="{% url 'how_to_find_work' %}">How to Find Work</a></li>
-          <li><a href="{% url 'freelancer:search_results' %}">Direct Job Feed</a></li>
-          <li><a href="{% url 'freelancer:create_profile' %}">Build Your Profile</a></li>
-          <li><a href="{% url 'freelancer_tips' %}">Freelancer Success Tips</a></li>
-          <li><a href="{% url 'freelancer:my_proposals' %}">Bidding & Proposals</a></li>
-        </ul>
-      </div>
-      {% else %}
+      {% if request.user.is_superuser %}
       <!-- Column 2: Administration -->
       <div class="footer-col">
         <h4 class="footer-heading">Administration</h4>
@@ -65,9 +41,56 @@
           <li><a href="{% url 'about_us' %}">Case Studies</a></li>
         </ul>
       </div>
+      {% elif request.user.is_authenticated and request.user.role == 'freelancer' %}
+      <!-- Column 3: For Freelancers -->
+      <div class="footer-col">
+        <h4 class="footer-heading">For Freelancers</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'how_to_find_work' %}">How to Find Work</a></li>
+          <li><a href="{% url 'freelancer:search_results' %}">Direct Job Feed</a></li>
+          <li><a href="{% url 'freelancer:create_profile' %}">Build Your Profile</a></li>
+          <li><a href="{% url 'freelancer_tips' %}">Freelancer Success Tips</a></li>
+          <li><a href="{% url 'freelancer:my_proposals' %}">Bidding & Proposals</a></li>
+        </ul>
+      </div>
+      {% elif request.user.is_authenticated and request.user.role == 'client' %}
+      <!-- Column 3: For Clients -->
+      <div class="footer-col">
+        <h4 class="footer-heading">For Clients</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'how_it_works' %}">How to Hire Talent</a></li>
+          <li><a href="{% url 'client:create_job' %}">Post a Project / Job</a></li>
+          <li><a href="{% url 'client:all_freelancers' %}">Talent Marketplace</a></li>
+          <li><a href="{% url 'about_us' %}">Client Case Studies</a></li>
+          <li><a href="{% url 'client:client_dashboard' %}">Direct Contracts</a></li>
+        </ul>
+      </div>
+      {% else %}
+      <!-- Logged Out / Guests: Show both For Clients and For Freelancers -->
+      <div class="footer-col">
+        <h4 class="footer-heading">For Clients</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'how_it_works' %}">How to Hire Talent</a></li>
+          <li><a href="{% url 'client:create_job' %}">Post a Project / Job</a></li>
+          <li><a href="{% url 'client:all_freelancers' %}">Talent Marketplace</a></li>
+          <li><a href="{% url 'about_us' %}">Client Case Studies</a></li>
+          <li><a href="{% url 'client:client_dashboard' %}">Direct Contracts</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-heading">For Freelancers</h4>
+        <ul class="footer-menu">
+          <li><a href="{% url 'how_to_find_work' %}">How to Find Work</a></li>
+          <li><a href="{% url 'freelancer:search_results' %}">Direct Job Feed</a></li>
+          <li><a href="{% url 'freelancer:create_profile' %}">Build Your Profile</a></li>
+          <li><a href="{% url 'freelancer_tips' %}">Freelancer Success Tips</a></li>
+          <li><a href="{% url 'freelancer:my_proposals' %}">Bidding & Proposals</a></li>
+        </ul>
+      </div>
       {% endif %}
 
-      <!-- Column 4: Company & Legal -->
+      <!-- Column: Company & Legal (About Us for everyone) -->
       <div class="footer-col">
         <h4 class="footer-heading">Company</h4>
         <ul class="footer-menu">
@@ -95,8 +118,8 @@
   .upwork-footer {
     background-color: #ffffff;
     color: #001e00;
-    padding: 60px 0 30px;
-    margin-top: 60px;
+    padding: 30px 0 20px;
+    margin-top: 40px;
     border-top: 1px solid #e4e6eb;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
@@ -109,10 +132,21 @@
   }
 
   .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 60px;
+    margin-bottom: 20px;
+  }
+
+  .footer-col {
+    min-width: 180px;
+  }
+
+  .brand-col {
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
   }
 
   .brand-col .footer-logo {
@@ -120,11 +154,11 @@
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .brand-col .logo-icon {
-    background: #108a00;
+    background: #0a66c2;
     color: #ffffff;
     width: 34px;
     height: 34px;
@@ -142,14 +176,14 @@
   }
 
   .brand-col .logo-accent {
-    color: #108a00;
+    color: #0a66c2;
   }
 
   .brand-desc {
     font-size: 14px;
     color: #5e6b7c;
     line-height: 1.6;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     max-width: 320px;
   }
 
@@ -162,28 +196,28 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #f4f9f4;
-    color: #108a00;
+    background: #eef3f8;
+    color: #0a66c2;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     font-size: 14px;
     transition: background 0.2s ease, color 0.2s ease;
-    border: 1px solid #d5e0d5;
+    border: 1px solid #c9d8e8;
   }
 
   .footer-social-icons a:hover {
-    background: #108a00;
+    background: #0a66c2;
     color: #ffffff;
-    border-color: #108a00;
+    border-color: #0a66c2;
   }
 
   .footer-heading {
     font-size: 16px;
     font-weight: 700;
     color: #001e00;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .footer-menu {
@@ -204,12 +238,12 @@
   }
 
   .footer-menu li a:hover {
-    color: #108a00;
+    color: #0a66c2;
   }
 
   .footer-bottom-bar {
     border-top: 1px solid #e4e6eb;
-    padding-top: 24px;
+    padding-top: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -229,19 +263,19 @@
   }
 
   .footer-bottom-links a:hover {
-    color: #108a00;
+    color: #0a66c2;
   }
 
   @media (max-width: 900px) {
     .footer-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
+      gap: 40px;
     }
   }
 
   @media (max-width: 600px) {
     .footer-grid {
-      grid-template-columns: 1fr;
+      flex-direction: column;
+      gap: 30px;
     }
     .footer-bottom-bar {
       flex-direction: column;

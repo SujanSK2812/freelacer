@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Connection Requests | Freelancer Portal</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ---------- GLOBAL RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem 3rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0a66c2, #2b9348);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .badge-role {
+            background: #eef2ff;
+            color: #1e3a8a;
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .request-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #edf2f7;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .request-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0a66c2, #0b6d00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .user-details h3 {
+            margin: 0 0 0.2rem 0;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+
+        .user-details p {
+            margin: 0;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            color: white;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-accept {
+            background: #10b981;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .status-accepted {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0a66c2;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="container">
+    <a href="{% url 'accounts:admin_home' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    
+    <div class="dashboard-header">
+        <h1><i class="fas fa-users" style="color: #0a66c2; margin-right: 10px;"></i> Connection Requests</h1>
+        <span class="badge-role"><i class="fas fa-shield-alt"></i> Admin Action Required</span>
+    </div>
+
+    {% if requests %}
+        {% for req in requests %}
+        <div class="request-card">
+            <div class="request-info">
+                <div class="avatar">
+                    {{ req.sender.username|make_list|first|upper }}
+                </div>
+                <div class="user-details">
+                    <h3>{{ req.sender.username }} <span style="font-size: 0.8rem; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">{{ req.sender.role|title }}</span></h3>
+                    <p><i class="fas fa-envelope"></i> {{ req.sender.email }}</p>
+                    <p style="font-size: 0.8rem; margin-top: 4px;"><i class="fas fa-clock"></i> Requested {{ req.created_at|timesince }} ago</p>
+                </div>
+            </div>
+
+            <div class="request-actions">
+                {% if req.status == 'pending' %}
+                    <span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i> Pending</span>
+                    <form method="POST" action="{% url 'accounts:admin_accept_request' req.id %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-accept"><i class="fas fa-check"></i> Accept</button>
+                    </form>
+                    <form method="POST" action="{% url 'accounts:admin_reject_request' req.id %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-reject"><i class="fas fa-times"></i> Reject</button>
+                    </form>
+                {% elif req.status == 'accepted' %}
+                    <span class="status-badge status-accepted"><i class="fas fa-check-circle"></i> Accepted</span>
+                {% elif req.status == 'rejected' %}
+                    <span class="status-badge status-rejected"><i class="fas fa-times-circle"></i> Rejected</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No Connection Requests</h3>
+            <p>You don't have any connection requests at the moment.</p>
+        </div>
+    {% endif %}
+
+</div>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

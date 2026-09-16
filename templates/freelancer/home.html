@@ -75,12 +75,12 @@
         }
 
         .search-hero-input:focus {
-            border-color: #108a00;
+            border-color: #0a66c2;
             background: #ffffff;
         }
 
         .search-submit-btn {
-            background: #108a00;
+            background: #0a66c2;
             color: white;
             border: none;
             padding: 0 28px;
@@ -111,6 +111,26 @@
         }
 
         /* Job Tabs */
+        .tab-content-pane {
+            max-height: calc(100vh - 280px);
+            min-height: 500px;
+            overflow-y: auto;
+            padding-right: 12px;
+        }
+        .tab-content-pane::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tab-content-pane::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        .tab-content-pane::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .tab-content-pane::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
         .feed-tabs-header {
             display: flex;
             gap: 24px;
@@ -130,7 +150,7 @@
         }
 
         .feed-tab.active {
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .feed-tab.active::after {
@@ -139,7 +159,7 @@
             bottom: -2px;
             left: 0; right: 0;
             height: 3px;
-            background: #108a00;
+            background: #0a66c2;
             border-radius: 3px 3px 0 0;
         }
 
@@ -170,7 +190,7 @@
         }
 
         .job-item-title:hover {
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .job-spec-meta {
@@ -198,7 +218,7 @@
 
         .skill-pill-item {
             background: #f4f9f4;
-            color: #108a00;
+            color: #0a66c2;
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 12px;
@@ -214,8 +234,8 @@
             flex-wrap: wrap;
         }
 
-        .trust-verified { color: #108a00; font-weight: 600; }
-        .rating-gold { color: #108a00; }
+        .trust-verified { color: #0a66c2; font-weight: 600; }
+        .rating-gold { color: #0a66c2; }
 
         .job-item-actions {
             display: flex;
@@ -235,7 +255,7 @@
         }
 
         .btn-apply-green {
-            background: #108a00;
+            background: #0a66c2;
             color: white;
             padding: 8px 24px;
             border-radius: 20px;
@@ -271,7 +291,7 @@
             width: 72px;
             height: 72px;
             border-radius: 50%;
-            background: #108a00;
+            background: #0a66c2;
             color: white;
             display: flex;
             align-items: center;
@@ -310,7 +330,7 @@
         }
 
         .progress-bar-fill {
-            background: #108a00;
+            background: #0a66c2;
             height: 100%;
             width: 85%;
         }
@@ -402,9 +422,11 @@
                         <!-- Author Name & Role Banner -->
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
                             <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="width: 44px; height: 44px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2); overflow: hidden; flex-shrink: 0;">
-                                    {% if job.author_dp or job.client.freelancerprofile.profile_picture %}
-                                        <img src="{{ job.author_dp|default:job.client.freelancerprofile.profile_picture }}" alt="{{ job.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2); overflow: hidden; flex-shrink: 0;">
+                                    {% if job.author_dp %}
+                                        <img src="{{ job.author_dp }}" alt="{{ job.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% elif job.client.freelancerprofile.profile_picture %}
+                                        <img src="{{ job.client.freelancerprofile.profile_picture }}" alt="{{ job.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
                                     {% else %}
                                         {{ job.client.username|slice:":1"|upper }}
                                     {% endif %}
@@ -412,7 +434,7 @@
                                 <div>
                                     <div style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px;">
                                         {{ job.client.username }}
-                                        <span style="background: #e8f5e9; color: #108a00; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                        <span style="background: #e8f5e9; color: #0a66c2; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
                                             <i class="fas fa-user-tie"></i> Client
                                         </span>
                                     </div>
@@ -423,28 +445,39 @@
 
                         <a href="{% url 'client:job_detail' job.id %}" class="job-item-title" style="font-size: 20px; font-weight: 700; color: #001e00;">{{ job.title }}</a>
                         <div class="job-spec-meta" style="margin: 10px 0 12px;">
-                            <span><i class="fas fa-tag" style="color:#108a00;"></i> Fixed-price</span>
-                            <span><i class="fas fa-layer-group" style="color:#108a00;"></i> {{ job.experience_level|default:"Intermediate" }}</span>
-                            <span><i class="fas fa-money-bill-wave" style="color:#108a00;"></i> Est. Budget: ₹{{ job.budget }}</span>
+                            <span><i class="fas fa-tag" style="color:#0a66c2;"></i> Fixed-price</span>
+                            <span><i class="fas fa-layer-group" style="color:#0a66c2;"></i> {{ job.experience_level|default:"Intermediate" }}</span>
+                            <span><i class="fas fa-money-bill-wave" style="color:#0a66c2;"></i> Est. Budget: ₹{{ job.budget }}</span>
                         </div>
                         <div class="job-desc-snippet" style="font-size: 15px; color: #1e293b; line-height: 1.6; margin-bottom: 14px;">
                             {{ job.description|truncatewords:45 }}
                         </div>
+                        
+                        {% if job.image %}
+                        <div class="job-feed-media" style="margin-bottom: 14px;">
+                            <img src="{{ job.image.url }}" alt="Job Image" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; border: 1px solid #e4e6eb;">
+                        </div>
+                        {% endif %}
+
                         {% if job.skills_list %}
                         <div class="skills-tag-row" style="margin-bottom: 14px;">
                             {% for skill in job.skills_list %}
-                            <span class="skill-pill-item" style="background: #e8f5e9; color: #108a00; font-weight: 600; padding: 5px 14px; border-radius: 16px; font-size: 12px;">{{ skill }}</span>
+                            <span class="skill-pill-item" style="background: #e8f5e9; color: #0a66c2; font-weight: 600; padding: 5px 14px; border-radius: 16px; font-size: 12px;">{{ skill }}</span>
                             {% endfor %}
                         </div>
                         {% endif %}
                         <div class="client-trust-details" style="font-size: 13px; color: #5e6b7c; display: flex; gap: 16px; align-items: center;">
-                            <span class="trust-verified" style="color: #108a00; font-weight: 600;"><i class="fas fa-check-circle"></i> Payment verified</span>
-                            <span class="rating-gold" style="color: #108a00;"><i class="fas fa-star"></i> 4.95 rating</span>
-                            <span><i class="fas fa-map-marker-alt" style="color: #108a00;"></i> India</span>
+                            <span class="trust-verified" style="color: #0a66c2; font-weight: 600;"><i class="fas fa-check-circle"></i> Payment verified</span>
+                            <span class="rating-gold" style="color: #0a66c2;"><i class="fas fa-star"></i> 4.95 rating</span>
+                            <span><i class="fas fa-map-marker-alt" style="color: #0a66c2;"></i> India</span>
                         </div>
                         <div class="job-item-actions" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
-                            <span class="connects-req-label" style="font-size: 13px; color: #5e6b7c;"><i class="fas fa-bolt" style="color:#108a00;"></i> 6 Connects required</span>
-                            <a href="{% url 'submit_proposal' job.id %}" class="btn-apply-green" style="background: #108a00; color: white; padding: 9px 26px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.15s ease;">Apply Now</a>
+                            <span class="connects-req-label" style="font-size: 13px; color: #5e6b7c;"><i class="fas fa-bolt" style="color:#0a66c2;"></i> 6 Connects required</span>
+                            {% if job.has_applied %}
+                                <span class="btn-apply-green" style="background: #e8f5e9; color: #001e00; padding: 9px 26px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; cursor: not-allowed; border: 1px solid #c8e6c9;">Applied <i class="fas fa-check" style="margin-left: 4px; color: #0a66c2;"></i></span>
+                            {% else %}
+                                <a href="{% url 'submit_proposal' job.id %}" class="btn-apply-green" style="background: #0a66c2; color: white; padding: 9px 26px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.15s ease;">Apply Now</a>
+                            {% endif %}
                         </div>
                     </article>
                     {% empty %}
@@ -462,7 +495,7 @@
                         <!-- Author Name & Role Banner -->
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
                             <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="width: 44px; height: 44px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2); overflow: hidden; flex-shrink: 0;">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2); overflow: hidden; flex-shrink: 0;">
                                     {% if post.author_dp or post.client.freelancerprofile.profile_picture %}
                                         <img src="{{ post.author_dp|default:post.client.freelancerprofile.profile_picture }}" alt="{{ post.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
                                     {% else %}
@@ -472,7 +505,7 @@
                                 <div>
                                     <div style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px;">
                                         {{ post.client.username }}
-                                        <span style="background: #e8f5e9; color: #108a00; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                        <span style="background: #e8f5e9; color: #0a66c2; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
                                             <i class="fas fa-star"></i> Freelancer
                                         </span>
                                     </div>
@@ -493,7 +526,7 @@
 
                         <!-- SOCIAL STATS ROW (LIKES & COMMENTS COUNT) -->
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 10px; font-size: 13px; color: #64748b; border-bottom: 1px solid #f1f5f9;">
-                            <span id="likes-count-{{ post.id }}"><i class="fas fa-thumbs-up" style="color: #108a00; margin-right: 4px;"></i> {{ post.likes_count }} {{ post.likes_count|pluralize:"Like,Likes" }}</span>
+                            <span id="likes-count-{{ post.id }}"><i class="fas fa-thumbs-up" style="color: #0a66c2; margin-right: 4px;"></i> {{ post.likes_count }} {{ post.likes_count|pluralize:"Like,Likes" }}</span>
                             <span id="comments-count-{{ post.id }}"><i class="far fa-comment-alt" style="margin-right: 4px;"></i> {{ post.comments_count }} {{ post.comments_count|pluralize:"Comment,Comments" }}</span>
                         </div>
 
@@ -501,7 +534,7 @@
                         <div class="job-item-actions" style="margin-top: 10px; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
                             <div style="display: flex; gap: 12px;">
                                 <!-- LIKE BUTTON (AJAX) -->
-                                <button type="button" onclick="toggleLikePost(this, {{ post.id }})" class="social-action-btn {% if post.liked_by_user %}liked{% endif %}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; color: {% if post.liked_by_user %}#108a00{% else %}#475569{% endif %}; background: {% if post.liked_by_user %}#e8f5e9{% else %}#f8fafc{% endif %}; transition: all 0.15s ease;">
+                                <button type="button" onclick="toggleLikePost(this, {{ post.id }})" class="social-action-btn {% if post.liked_by_user %}liked{% endif %}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; color: {% if post.liked_by_user %}#0a66c2{% else %}#475569{% endif %}; background: {% if post.liked_by_user %}#e8f5e9{% else %}#f8fafc{% endif %}; transition: all 0.15s ease;">
                                     <i class="{% if post.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
                                     <span>{% if post.liked_by_user %}Liked{% else %}Like{% endif %}</span>
                                 </button>
@@ -509,11 +542,11 @@
                                 <!-- COMMENT BUTTON -->
                                 <button type="button" onclick="toggleComments('comments-box-{{ post.id }}')" class="social-action-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; border: none; font-size: 14px; font-weight: 600; color: #475569; background: #f8fafc; cursor: pointer; transition: all 0.15s ease;">
                                     <i class="far fa-comment-alt"></i>
-                                    <span>Comment</span>
+                                    <span id="btn-comment-count-{{ post.id }}">Comment{% if post.comments_count > 0 %} ({{ post.comments_count }}){% endif %}</span>
                                 </button>
                             </div>
 
-                            <a href="{% url 'freelancer:freelancer_profile' post.client.id %}" class="btn-apply-green" style="background: #108a00; color: white; padding: 9px 24px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none;">View Profile</a>
+                            <a href="{% url 'freelancer:freelancer_profile' post.client.id %}" class="btn-apply-green" style="background: #0a66c2; color: white; padding: 9px 24px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none;">View Profile</a>
                         </div>
 
                         <!-- EXPANDABLE COMMENTS DRAWER -->
@@ -521,20 +554,69 @@
                             <!-- COMMENTS LIST -->
                             <div class="comments-list" id="comments-list-{{ post.id }}" style="margin-bottom: 14px;">
                                 {% for comment in post.comments_all %}
-                                <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; overflow: hidden;">
+                                <div style="display: flex; gap: 10px; margin-bottom: 12px; width: 100%;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; overflow: hidden;">
                                         {% if comment.author_dp or comment.user.freelancerprofile.profile_picture %}
                                             <img src="{{ comment.author_dp|default:comment.user.freelancerprofile.profile_picture }}" alt="{{ comment.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
                                         {% else %}
                                             {{ comment.user.username|slice:":1"|upper }}
                                         {% endif %}
                                     </div>
-                                    <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; flex: 1;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                            <span style="font-weight: 700; font-size: 13px; color: #001e00;">{{ comment.user.username }}</span>
-                                            <span style="font-size: 11px; color: #94a3b8;">{{ comment.created_at|timesince }} ago</span>
+                                    <div style="flex: 1;">
+                                        <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; margin-bottom: 4px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                                <span style="font-weight: 700; font-size: 13px; color: #001e00;">{{ comment.user.username }}</span>
+                                                <span style="font-size: 11px; color: #94a3b8;">{{ comment.created_at|timesince }} ago</span>
+                                            </div>
+                                            <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">{{ comment.text }}</p>
                                         </div>
-                                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">{{ comment.text }}</p>
+                                        <div style="font-size: 12px; color: #64748b; display: flex; gap: 12px; padding-left: 6px; margin-bottom: 8px;">
+                                            <button type="button" onclick="toggleCommentReaction(this, {{ comment.id }})" style="background:none; border:none; color: {% if comment.liked_by_user %}#0a66c2{% else %}#64748b{% endif %}; font-weight: 600; font-size: 12px; cursor: pointer;">
+                                                <i class="{% if comment.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                                <span>{% if comment.likes_count > 0 %}{{ comment.likes_count }}{% endif %}</span>
+                                            </button>
+                                            <button type="button" onclick="toggleReplyBox('reply-box-{{ comment.id }}')" style="background:none; border:none; color: #64748b; font-weight: 600; font-size: 12px; cursor: pointer;">Reply</button>
+                                        </div>
+
+                                        <!-- REPLY FORM -->
+                                        <div id="reply-box-{{ comment.id }}" style="display: none; margin-bottom: 12px; padding-left: 6px;">
+                                            <form action="{% url 'projects:comment_job' post.id %}" method="POST" onsubmit="submitCommentAjax(event, {{ post.id }}, {{ comment.id }})" style="display: flex; gap: 8px; align-items: center;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                <input type="text" name="comment" placeholder="Reply to {{ comment.user.username }}..." required style="flex: 1; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 16px; font-size: 12px; outline: none; background: #ffffff;">
+                                                <button type="submit" style="background: #0a66c2; color: white; border: none; padding: 6px 12px; border-radius: 16px; font-weight: 700; font-size: 12px; cursor: pointer;"><i class="fas fa-paper-plane"></i></button>
+                                            </form>
+                                        </div>
+
+                                        <!-- NESTED REPLIES -->
+                                        <div id="replies-list-{{ comment.id }}">
+                                            {% for reply in comment.replies.all %}
+                                            <div style="display: flex; gap: 8px; margin-bottom: 8px; padding-left: 6px;">
+                                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; overflow: hidden;">
+                                                    {% if reply.author_dp or reply.user.freelancerprofile.profile_picture %}
+                                                        <img src="{{ reply.author_dp|default:reply.user.freelancerprofile.profile_picture }}" alt="{{ reply.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% else %}
+                                                        {{ reply.user.username|slice:":1"|upper }}
+                                                    {% endif %}
+                                                </div>
+                                                <div style="flex: 1;">
+                                                    <div style="background: #f1f5f9; border-radius: 12px; padding: 8px 12px; margin-bottom: 4px;">
+                                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                                            <span style="font-weight: 700; font-size: 12px; color: #001e00;">{{ reply.user.username }}</span>
+                                                            <span style="font-size: 10px; color: #94a3b8;">{{ reply.created_at|timesince }}</span>
+                                                        </div>
+                                                        <p style="font-size: 12px; color: #334155; margin: 0; line-height: 1.4;">{{ reply.text }}</p>
+                                                    </div>
+                                                    <div style="font-size: 11px; color: #64748b; padding-left: 6px;">
+                                                        <button type="button" onclick="toggleCommentReaction(this, {{ reply.id }})" style="background:none; border:none; color: {% if reply.liked_by_user %}#0a66c2{% else %}#64748b{% endif %}; font-weight: 600; font-size: 11px; cursor: pointer;">
+                                                            <i class="{% if reply.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                                            <span>{% if reply.likes_count > 0 %}{{ reply.likes_count }}{% endif %}</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                                 {% empty %}
@@ -546,7 +628,7 @@
                             <form action="{% url 'projects:comment_job' post.id %}" method="POST" onsubmit="submitCommentAjax(event, {{ post.id }})" style="display: flex; gap: 10px; align-items: center;">
                                 {% csrf_token %}
                                 <input type="text" name="comment" placeholder="Write a comment..." required style="flex: 1; padding: 10px 16px; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 13px; outline: none; background: #f8fafc;">
-                                <button type="submit" style="background: #108a00; color: white; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                <button type="submit" style="background: #0a66c2; color: white; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                                     <i class="fas fa-paper-plane"></i> Post
                                 </button>
                             </form>
@@ -570,30 +652,30 @@
                     {% if profile and profile.profile_picture %}
                         <img src="{{ profile.profile_picture }}" alt="User">
                     {% else %}
-                        <i class="fas fa-user-shield" style="font-size:24px; color:#108a00;"></i>
+                        <i class="fas fa-user-shield" style="font-size:24px; color:#0a66c2;"></i>
                     {% endif %}
                 </div>
                 <div class="widget-user-name">{{ request.user.username }}</div>
                 {% if request.user.is_superuser %}
                 <div class="widget-user-title">System Administrator</div>
                 <div style="margin: 12px 0;">
-                    <span style="background:#e8f5e9; color:#108a00; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600;">Superuser Account</span>
+                    <span style="background:#e8f5e9; color:#0a66c2; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600;">Superuser Account</span>
                 </div>
-                <a href="{% url 'accounts:admin_home' %}" style="color: #108a00; text-decoration: none; font-size: 13px; font-weight: 600;">Admin Dashboard →</a>
+                <a href="{% url 'accounts:admin_home' %}" style="color: #0a66c2; text-decoration: none; font-size: 13px; font-weight: 600;">Admin Dashboard →</a>
                 {% else %}
                 <div class="widget-user-title">{{ profile.title|default:"Freelance Software Engineer" }}</div>
 
                 <div style="text-align: left; margin: 12px 0;">
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5e6b7c;">
                         <span>Profile Completeness</span>
-                        <span>85%</span>
+                        <span>{% if profile %}{{ profile.profile_completeness }}{% else %}0{% endif %}%</span>
                     </div>
                     <div class="progress-bar-wrap">
-                        <div class="progress-bar-fill"></div>
+                        <div class="progress-bar-fill" style="width: {% if profile %}{{ profile.profile_completeness }}{% else %}0{% endif %}%;"></div>
                     </div>
                 </div>
 
-                <a href="{% url 'freelancer:create_profile' %}" style="color: #108a00; text-decoration: none; font-size: 13px; font-weight: 600;">Edit Profile →</a>
+                <a href="{% url 'freelancer:create_profile' %}" style="color: #0a66c2; text-decoration: none; font-size: 13px; font-weight: 600;">Edit Profile →</a>
                 {% endif %}
             </div>
 
@@ -602,18 +684,20 @@
             <div class="sidebar-card-upwork">
                 <h4 style="font-size: 15px; font-weight: 700; color: #001e00; margin-bottom: 12px;">Availability Status</h4>
                 <div class="availability-badge-card">
-                    <span class="avail-badge-text"><i class="fas fa-circle" style="color:#108a00; font-size:9px;"></i> Available now</span>
-                    <span style="font-size: 12px; color: #108a00; font-weight: 600;">On</span>
+                    <span class="avail-badge-text" id="home-avail-badge-text">
+                        {% if profile and profile.is_available %}
+                        <i class="fas fa-circle" id="home-avail-badge-dot" style="color:#0a66c2; font-size:9px;"></i> Available now
+                        {% else %}
+                        <i class="fas fa-circle" id="home-avail-badge-dot" style="color:#cbd5e1; font-size:9px;"></i> Not available
+                        {% endif %}
+                    </span>
+                    <span id="home-avail-badge-status" style="font-size: 12px; color: #0a66c2; font-weight: 600;">
+                        {% if profile and profile.is_available %}On{% else %}Off{% endif %}
+                    </span>
                 </div>
             </div>
 
-            <!-- Connects Widget -->
-            <div class="sidebar-card-upwork" style="text-align: center;">
-                <h4 style="font-size: 15px; font-weight: 700; color: #001e00; margin-bottom: 8px;">Bidding Connects</h4>
-                <div style="font-size: 32px; font-weight: 800; color: #108a00; line-height: 1; margin-bottom: 4px;">50</div>
-                <div style="font-size: 13px; color: #5e6b7c; margin-bottom: 12px;">Available Connects</div>
-                <a href="{% url 'freelancer:freelancer_dashboard' %}" class="btn-apply-green" style="display: block; text-align: center;">Manage Connects</a>
-            </div>
+
             {% endif %}
 
             <!-- Activity Summary Stats -->
@@ -622,15 +706,12 @@
                 <div class="stats-list-box">
                     <div class="stat-list-row">
                         <span>Proposals Sent</span>
-                        <span class="stat-val-bold">{{ proposals_count|default:"5" }}</span>
+                        <span class="stat-val-bold">{{ proposals_count|default:"0" }}</span>
                     </div>
-                    <div class="stat-list-row">
-                        <span>Active Interviews</span>
-                        <span class="stat-val-bold">2</span>
-                    </div>
+
                     <div class="stat-list-row">
                         <span>Profile Views</span>
-                        <span class="stat-val-bold">45</span>
+                        <span class="stat-val-bold">{{ profile_views|default:"0" }}</span>
                     </div>
                 </div>
             </div>
@@ -667,7 +748,7 @@
             const likesCountElem = document.getElementById('likes-count-' + postId);
 
             if (data.liked) {
-                btn.style.color = '#108a00';
+                btn.style.color = '#0a66c2';
                 btn.style.background = '#e8f5e9';
                 icon.className = 'fas fa-thumbs-up';
                 label.innerText = 'Liked';
@@ -679,13 +760,47 @@
             }
 
             if (likesCountElem) {
-                likesCountElem.innerHTML = `<i class="fas fa-thumbs-up" style="color: #108a00; margin-right: 4px;"></i> ${data.likes_count} ${data.likes_count === 1 ? 'Like' : 'Likes'}`;
+                likesCountElem.innerHTML = `<i class="fas fa-thumbs-up" style="color: #0a66c2; margin-right: 4px;"></i> ${data.likes_count} ${data.likes_count === 1 ? 'Like' : 'Likes'}`;
             }
         })
         .catch(err => console.error('Error liking post:', err));
     }
 
-    function submitCommentAjax(e, postId) {
+    function toggleReplyBox(boxId) {
+        const box = document.getElementById(boxId);
+        if (box) {
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+        }
+    }
+
+    function toggleCommentReaction(btn, commentId) {
+        fetch('/projects/comment-reaction/' + commentId + '/?ajax=true', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('span');
+
+            if (data.liked) {
+                btn.style.color = '#0a66c2';
+                icon.className = 'fas fa-thumbs-up';
+            } else {
+                btn.style.color = '#64748b';
+                icon.className = 'far fa-thumbs-up';
+            }
+            if (data.likes_count > 0) {
+                label.innerText = data.likes_count;
+            } else {
+                label.innerText = '';
+            }
+        })
+        .catch(err => console.error('Error liking comment:', err));
+    }
+
+    function submitCommentAjax(e, postId, parentId = null) {
         e.preventDefault();
         const form = e.target;
         const input = form.querySelector('input[name="comment"]');
@@ -694,6 +809,9 @@
 
         const formData = new FormData(form);
         formData.append('ajax', 'true');
+        if (parentId) {
+            formData.append('parent_id', parentId);
+        }
 
         fetch(form.action, {
             method: 'POST',
@@ -706,31 +824,64 @@
         .then(data => {
             if (data.success) {
                 input.value = '';
-                const list = document.getElementById('comments-list-' + postId);
-                const commentsCountElem = document.getElementById('comments-count-' + postId);
-
-                const newCommentHtml = `
-                    <div style="display: flex; gap: 10px; margin-bottom: 12px; animation: fadeIn 0.2s ease;">
-                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #108a00; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
-                            ${data.username.charAt(0).toUpperCase()}
-                        </div>
-                        <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; flex: 1;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <span style="font-weight: 700; font-size: 13px; color: #001e00;">${data.username}</span>
-                                <span style="font-size: 11px; color: #94a3b8;">Just now</span>
+                
+                if (data.parent_id) {
+                    // It's a reply
+                    const repliesList = document.getElementById('replies-list-' + data.parent_id);
+                    if (repliesList) {
+                        const newReplyHtml = `
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px; padding-left: 6px;">
+                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; overflow: hidden;">
+                                    ${data.username.charAt(0).toUpperCase()}
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="background: #f1f5f9; border-radius: 12px; padding: 8px 12px; margin-bottom: 4px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                            <span style="font-weight: 700; font-size: 12px; color: #001e00;">${data.username}</span>
+                                            <span style="font-size: 10px; color: #94a3b8;">Just now</span>
+                                        </div>
+                                        <p style="font-size: 12px; color: #334155; margin: 0; line-height: 1.4;">${data.text}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">${data.text}</p>
+                        `;
+                        repliesList.insertAdjacentHTML('beforeend', newReplyHtml);
+                        const replyBox = document.getElementById('reply-box-' + data.parent_id);
+                        if (replyBox) replyBox.style.display = 'none';
+                    }
+                } else {
+                    // It's a top-level comment
+                    const list = document.getElementById('comments-list-' + postId);
+                    const newCommentHtml = `
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px; width: 100%;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
+                                ${data.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; margin-bottom: 4px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <span style="font-weight: 700; font-size: 13px; color: #001e00;">${data.username}</span>
+                                        <span style="font-size: 11px; color: #94a3b8;">Just now</span>
+                                    </div>
+                                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">${data.text}</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
 
-                const emptyMsg = list.querySelector('.empty-comment-msg');
-                if (emptyMsg) emptyMsg.remove();
+                    const emptyMsg = list.querySelector('.empty-comment-msg');
+                    if (emptyMsg) emptyMsg.remove();
 
-                list.insertAdjacentHTML('beforeend', newCommentHtml);
+                    list.insertAdjacentHTML('beforeend', newCommentHtml);
+                }
 
                 if (commentsCountElem) {
                     commentsCountElem.innerHTML = `<i class="far fa-comment-alt" style="margin-right: 4px;"></i> ${data.comments_count} ${data.comments_count === 1 ? 'Comment' : 'Comments'}`;
+                }
+
+                const btnCommentCountElem = document.getElementById('btn-comment-count-' + postId);
+                if (btnCommentCountElem) {
+                    btnCommentCountElem.innerText = `Comment (${data.comments_count})`;
                 }
             }
         })

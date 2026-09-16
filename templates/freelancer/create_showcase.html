@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Post a Showcase | FreelanceHub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f2ef; color: #191919; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; }
+    .dashboard-container { flex: 1; max-width: 800px; margin: 2.5rem auto; padding: 0 1.5rem; width: 100%; }
+    .main-card { background: #ffffff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04); border: 1px solid #e0e0e0; overflow: hidden; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+    .main-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09); border-color: #cbd5e1; }
+    .card-header { padding: 2rem 2.25rem; border-bottom: 1px solid #eef3f8; display: flex; align-items: center; gap: 1.25rem; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); }
+    .card-header-icon { width: 52px; height: 52px; border-radius: 14px; background: #eef3f8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid #d0e1f9; }
+    .card-header-icon i { color: #0a66c2; font-size: 1.4rem; }
+    .card-header h2 { font-size: 1.45rem; font-weight: 700; color: #000000; letter-spacing: -0.015em; }
+    .card-header p { color: #5e5e5e; font-size: 0.88rem; margin-top: 0.25rem; font-weight: 400; }
+    .job-form { padding: 2.25rem; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: flex; align-items: center; color: #191919; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.6rem; }
+    .form-group label i { color: #0a66c2; margin-right: 0.5rem; font-size: 0.95rem; width: 1.2rem; text-align: center; }
+    .job-form input[type="text"], .job-form input[type="number"], .job-form textarea, .job-form select { width: 100%; padding: 0.8rem 1.1rem; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 0.92rem; font-family: inherit; color: #191919; background: #ffffff; transition: all 0.2s ease; resize: vertical; appearance: none; }
+    .job-form input[type="text"]:focus, .job-form input[type="number"]:focus, .job-form textarea:focus, .job-form select:focus { outline: none; border-color: #0a66c2; box-shadow: 0 0 0 3.5px rgba(10, 102, 194, 0.15); background: #ffffff; }
+    .job-form textarea { min-height: 160px; line-height: 1.6; }
+    .select-wrapper { position: relative; }
+    .select-wrapper::after { content: "\f078"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 0.75rem; color: #0a66c2; position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); pointer-events: none; }
+    .file-upload-wrapper { position: relative; }
+    .file-upload-wrapper input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; top: 0; left: 0; z-index: 2; }
+    .file-upload-label { display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 1.25rem; border: 2px dashed #cbd5e1; border-radius: 12px; background: #f8fafc; color: #475569; font-size: 0.88rem; font-weight: 500; transition: all 0.2s ease; }
+    .file-upload-label i { color: #0a66c2; font-size: 1.25rem; }
+    .job-form input[type="file"]:hover + .file-upload-label, .job-form input[type="file"]:focus + .file-upload-label { border-color: #0a66c2; background: #eef3f8; color: #0a66c2; }
+    .image-preview-wrapper { position: relative; margin-top: 1rem; text-align: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1rem; }
+    .image-preview-wrapper img { max-width: 100%; max-height: 220px; border-radius: 10px; }
+    .remove-image-btn { position: absolute; top: 0.6rem; right: 0.6rem; background: #1e293b; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: background 0.2s; }
+    .remove-image-btn:hover { background: #dc2626; }
+    .form-actions { display: flex; justify-content: flex-end; align-items: center; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid #eef3f8; margin-top: 1rem; }
+    .btn-cancel { background: transparent; border: 1.5px solid #666666; padding: 0.65rem 1.4rem; border-radius: 24px; font-size: 0.88rem; font-weight: 600; color: #666666; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-cancel:hover { background: rgba(0, 0, 0, 0.04); color: #191919; border-color: #191919; }
+    .post-job-btn { background: #0a66c2; color: #ffffff; border: none; padding: 0.7rem 1.75rem; border-radius: 24px; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(10, 102, 194, 0.2); }
+    .post-job-btn:hover { background: #004182; box-shadow: 0 4px 8px rgba(0, 65, 130, 0.3); transform: translateY(-1px); }
+    @media (max-width: 640px) { .dashboard-container { padding: 0 1rem; margin: 1.5rem auto; } .card-header { flex-direction: column; align-items: flex-start; padding: 1.5rem; } .job-form { padding: 1.5rem; } .form-actions { flex-direction: column-reverse; } .form-actions .btn-cancel, .form-actions .post-job-btn { width: 100%; justify-content: center; } }
+  </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<div class="dashboard-container">
+  <div class="main-card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <i class="fas fa-star"></i>
+      </div>
+      <div>
+        <h2>Post Your Talent / Showcase Work</h2>
+        <p>Showcase your skills, portfolio projects, and talents to attract clients</p>
+      </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="job-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="title"><i class="fas fa-heading"></i>Talent Title / Specialty</label>
+        <input type="text" id="title" name="title" placeholder="e.g. Full Stack Python & Django Developer Available for Hire" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description"><i class="fas fa-align-left"></i>Talent Details / Services Offered</label>
+        <textarea id="description" name="description" placeholder="Describe your expertise, past projects, tools you master, and services..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="image"><i class="fas fa-image"></i>Attach Portfolio Image / Screenshot (optional)</label>
+        <div class="file-upload-wrapper">
+          <input type="file" id="image" name="image" accept="image/*">
+          <label for="image" class="file-upload-label">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span id="fileLabelText">Choose an image or drag it here</span>
+          </label>
+        </div>
+        <div class="image-preview-wrapper" id="imagePreviewWrapper" style="display:none;">
+          <img id="imagePreview" src="" alt="Preview">
+          <button type="button" id="removeImageBtn" class="remove-image-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a href="/" class="btn-cancel">Cancel</a>
+        <button type="submit" class="post-job-btn">
+          <i class="fas fa-paper-plane"></i> Post Talent
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+<script>
+  const imageInput = document.getElementById('image');
+  const previewWrapper = document.getElementById('imagePreviewWrapper');
+  const previewImg = document.getElementById('imagePreview');
+  const fileLabelText = document.getElementById('fileLabelText');
+  const removeImageBtn = document.getElementById('removeImageBtn');
+
+  imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        previewWrapper.style.display = 'block';
+        fileLabelText.textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  removeImageBtn.addEventListener('click', () => {
+    imageInput.value = '';
+    previewWrapper.style.display = 'none';
+    fileLabelText.textContent = 'Choose an image or drag it here';
+  });
+</script>
+
+</body>
+</html>

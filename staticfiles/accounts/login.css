@@ -8,7 +8,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #f8f9fc 0%, #f1f4f9 100%);
+    background: #f3f2ef;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -27,23 +27,24 @@ main {
     max-width: 420px;
     width: 100%;
     padding: 2.5rem;
-    border-radius: 24px;
+    border-radius: 20px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
     animation: fadeIn 0.5s ease-out;
     transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
 }
 
 .login-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(20, 168, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px rgba(10, 102, 194, 0.12);
 }
 
 .login-container h2 {
-    color: #003912;
+    color: #004182;
     font-size: 2rem;
     margin-bottom: 2rem;
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
     position: relative;
     padding-bottom: 0.75rem;
 }
@@ -56,7 +57,7 @@ main {
     transform: translateX(-50%);
     width: 60px;
     height: 3px;
-    background: #14a800;
+    background: #0a66c2;
     border-radius: 2px;
     transition: width 0.3s ease;
 }
@@ -86,19 +87,18 @@ form {
 input {
     width: 100%;
     padding: 1rem 1.25rem;
-    border: 2px solid #e0e6e0;
+    border: 1.5px solid #cbd5e1;
     border-radius: 40px;
     font-size: 1rem;
     transition: all 0.3s ease;
     outline: none;
-    background: #f8f9fc;
-    color: #404145;
+    background: #f8fafc;
+    color: #191919;
 }
 
 .password-field-wrapper {
     position: relative;
     width: 100%;
-    display: block;
 }
 
 .password-field-wrapper input {
@@ -123,12 +123,12 @@ input {
     border-radius: 50%;
     transition: color 0.2s ease, background 0.2s ease;
     user-select: none;
-    z-index: 10;
+    z-index: 5;
 }
 
 .password-toggle-icon:hover {
-    color: #108a00;
-    background: #f0f7f0;
+    color: #0a66c2;
+    background: #eef3f8;
 }
 
 input::placeholder {
@@ -137,18 +137,18 @@ input::placeholder {
 }
 
 input:hover {
-    border-color: #b3c7b3;
+    border-color: #0a66c2;
     background: white;
 }
 
 input:focus {
-    border-color: #14a800;
+    border-color: #0a66c2;
     background: white;
-    box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
+    box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.15);
 }
 
 button {
-    background: #14a800;
+    background: #0a66c2;
     color: white;
     padding: 1rem 1.5rem;
     border: none;
@@ -181,9 +181,9 @@ button:hover::before {
 }
 
 button:hover {
-    background: #108700;
+    background: #004182;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(20, 168, 0, 0.3);
+    box-shadow: 0 8px 20px rgba(10, 102, 194, 0.3);
 }
 
 .forgot-password {
@@ -206,14 +206,14 @@ button:hover {
     left: 0;
     width: 100%;
     height: 1px;
-    background: #14a800;
+    background: #0a66c2;
     transform: scaleX(0);
     transition: transform 0.3s ease;
     transform-origin: right;
 }
 
 .forgot-password a:hover {
-    color: #14a800;
+    color: #0a66c2;
 }
 
 .forgot-password a:hover::after {
@@ -234,7 +234,7 @@ button:hover {
 }
 
 .signup-link a {
-    color: #14a800;
+    color: #0a66c2;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
@@ -242,7 +242,7 @@ button:hover {
 }
 
 .signup-link a:hover {
-    color: #108700;
+    color: #004182;
     text-decoration: underline;
 }
 
@@ -283,6 +283,6 @@ button:hover {
 }
 
 ::selection {
-    background: #14a800;
+    background: #0a66c2;
     color: white;
 }

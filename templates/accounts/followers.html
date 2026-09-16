@@ -63,7 +63,7 @@
 
       .followers-icon {
         font-size: 2.5rem;
-        color: #14a800;
+        color: #0a66c2;
         background: #f0f7f0;
         width: 80px;
         height: 80px;
@@ -82,7 +82,7 @@
       }
 
       .followers-count {
-        color: #14a800;
+        color: #0a66c2;
         background: #f0f7f0;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
@@ -129,7 +129,7 @@
       }
 
       .search-input:focus {
-        border-color: #14a800;
+        border-color: #0a66c2;
         box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
       }
 
@@ -153,7 +153,7 @@
       }
 
       .followers-list::-webkit-scrollbar-thumb {
-        background: #14a800;
+        background: #0a66c2;
         border-radius: 10px;
       }
 
@@ -186,7 +186,7 @@
       .follower-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        border-color: #14a80020;
+        border-color: #0a66c220;
       }
 
       /* User Info */
@@ -201,7 +201,7 @@
       .user-avatar {
         width: 60px;
         height: 60px;
-        background: linear-gradient(135deg, #14a800 0%, #0d8f00 100%);
+        background: linear-gradient(135deg, #0a66c2 0%, #0d8f00 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -251,7 +251,7 @@
       }
 
       .user-details p i {
-        color: #14a800;
+        color: #0a66c2;
         font-size: 0.85rem;
       }
 
@@ -263,7 +263,7 @@
         background: #f0f7f0;
         border-radius: 12px;
         font-size: 0.7rem;
-        color: #14a800;
+        color: #0a66c2;
         font-weight: 500;
       }
 
@@ -282,7 +282,7 @@
       }
 
       .follower-stats i {
-        color: #14a800;
+        color: #0a66c2;
         font-size: 0.7rem;
       }
 
@@ -303,7 +303,7 @@
       }
 
       .follow-date i {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       /* Action Buttons */
@@ -329,7 +329,7 @@
       }
 
       .btn-message {
-        background: #14a800;
+        background: #0a66c2;
         color: white;
       }
 
@@ -354,7 +354,7 @@
       }
 
       .btn-following {
-        background: #14a800;
+        background: #0a66c2;
         color: white;
         cursor: default;
         opacity: 0.7;
@@ -418,7 +418,7 @@
       /* Messages */
       .message {
         background: #f0f7f0;
-        border-left: 4px solid #14a800;
+        border-left: 4px solid #0a66c2;
         padding: 1rem;
         border-radius: 8px;
         margin-bottom: 1.5rem;
@@ -433,7 +433,7 @@
       }
 
       .message i {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .message.error i {
@@ -457,7 +457,7 @@
       }
 
       .footer-section h3 {
-        color: #14a800;
+        color: #0a66c2;
         font-size: 1.2rem;
         margin-bottom: 1rem;
       }
@@ -491,7 +491,7 @@
       }
 
       .footer-section ul li a:hover {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .social-links {
@@ -506,7 +506,7 @@
       }
 
       .social-links a:hover {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .footer-bottom {
@@ -613,7 +613,7 @@
       }
 
       ::selection {
-        background: #14a800;
+        background: #0a66c2;
         color: white;
       }
     </style>
@@ -701,6 +701,11 @@
               <button class="btn btn-following" disabled>
                 <i class="fas fa-check-circle"></i>
                 <span>Following</span>
+              </button>
+              {% elif follower.is_requested_back %}
+              <button class="btn btn-following" style="background: #eef2ff; color: #1e293b; border: 1px solid #cbd5e1;" disabled>
+                <i class="fas fa-clock"></i>
+                <span>Requested</span>
               </button>
               {% else %}
               <a

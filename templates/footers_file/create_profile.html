@@ -24,9 +24,10 @@
 
       /* Main Container */
       .container {
-        max-width: 1000px;
+        max-width: 1400px;
+        width: 100%;
         margin: 0 auto;
-        padding: 2rem 1.5rem;
+        padding: 2.5rem 2rem;
       }
 
       /* Page Header */
@@ -68,17 +69,17 @@
       }
 
       .badge i {
-        color: #14a800;
+        color: #0a66c2;
       }
 
-      /* Content Cards - matching privacy policy style */
+      /* Content Cards */
       .content-card {
         background: white;
-        border-radius: 24px;
-        padding: 2rem;
-        margin-bottom: 1.8rem;
+        border-radius: 20px;
+        padding: 2.25rem 2.5rem;
+        margin-bottom: 2rem;
         border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
         transition: all 0.2s ease;
       }
 
@@ -91,14 +92,14 @@
         color: #0f172a;
         margin-bottom: 1.2rem;
         padding-bottom: 0.6rem;
-        border-bottom: 2px solid #14a800;
+        border-bottom: 2px solid #0a66c2;
         display: flex;
         align-items: center;
         gap: 0.7rem;
       }
 
       .content-card h2 i {
-        color: #14a800;
+        color: #0a66c2;
         font-size: 1.4rem;
       }
 
@@ -123,7 +124,7 @@
       }
 
       label i {
-        color: #14a800;
+        color: #0a66c2;
         width: 1.4rem;
       }
 
@@ -144,7 +145,7 @@
       textarea:focus,
       select:focus {
         outline: none;
-        border-color: #14a800;
+        border-color: #0a66c2;
         box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
       }
 
@@ -160,11 +161,17 @@
         margin-top: 0.3rem;
       }
 
-      /* Two column layout for some sections */
+      /* Multi-column layout */
       .two-columns {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        gap: 1.5rem;
+      }
+
+      .three-columns {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
       }
 
       /* Button styling consistent with privacy policy */
@@ -189,7 +196,7 @@
       }
 
       .btn-primary {
-        background: #14a800;
+        background: #0a66c2;
         color: white;
         box-shadow: 0 2px 8px rgba(20, 168, 0, 0.2);
       }
@@ -223,7 +230,7 @@
         height: 80px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid #14a800;
+        border: 2px solid #0a66c2;
       }
 
       .remove-img {
@@ -237,6 +244,13 @@
       }
 
       /* Responsive */
+      @media (max-width: 992px) {
+        .three-columns {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+
       @media (max-width: 768px) {
         .container {
           padding: 1.5rem 1rem;
@@ -247,7 +261,8 @@
         .content-card {
           padding: 1.5rem;
         }
-        .two-columns {
+        .two-columns,
+        .three-columns {
           grid-template-columns: 1fr;
           gap: 0;
         }
@@ -309,24 +324,30 @@
         <div class="content-card">
           <h2><i class="fas fa-user-circle"></i> Basic Information</h2>
 
-          <div class="form-group">
-            <label><i class="fas fa-camera"></i> Profile Picture</label>
-            <input type="file" name="profile_picture" id="profilePicture" accept="image/jpeg,image/png,image/jpg" />
-            <div class="field-hint">
-              Upload a professional photo (JPEG, PNG, max 5MB)
+          <div class="two-columns">
+            <div class="form-group">
+              <label><i class="fas fa-camera"></i> Profile Picture</label>
+              <input type="file" name="profile_picture" id="profilePicture" accept="image/jpeg,image/png,image/jpg" />
+              <div class="field-hint">
+                Upload a professional photo (JPEG, PNG, max 5MB)
+              </div>
+              <div class="image-preview" id="imagePreview">
+                {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture }}" alt="Profile" class="preview-img">
+                {% endif %}
+              </div>
             </div>
-            <div class="image-preview" id="imagePreview"></div>
-          </div>
 
-          <div class="form-group">
-            <label><i class="fas fa-heading"></i> Professional Title</label>
-            <input
-              type="text"
-              name="title"
-              placeholder="e.g. Senior Full Stack Developer | UI/UX Expert"
-              value="" />
-            <div class="field-hint">
-              This appears at the top of your profile — make it catchy!
+            <div class="form-group">
+              <label><i class="fas fa-heading"></i> Professional Title</label>
+              <input
+                type="text"
+                name="title"
+                placeholder="e.g. Senior Full Stack Developer | UI/UX Expert"
+                value="{{ profile.title|default:'' }}" />
+              <div class="field-hint">
+                This appears at the top of your profile — make it catchy!
+              </div>
             </div>
           </div>
 
@@ -334,7 +355,7 @@
             <label><i class="fas fa-align-left"></i> Bio / Summary</label>
             <textarea
               name="bio"
-              placeholder="Tell clients about your background, strengths, and why they should hire you..."></textarea>
+              placeholder="Tell clients about your background, strengths, and why they should hire you...">{{ profile.bio|default:'' }}</textarea>
             <div class="field-hint">
               Highlight your unique value and experience (200-500 characters
               recommended).
@@ -353,22 +374,22 @@
               >
               <select name="experience_level">
                 <option value="">Select your level</option>
-                <option value="beginner">Entry Level (0-2 years)</option>
-                <option value="intermediate">Intermediate (2-5 years)</option>
-                <option value="expert">Expert (5+ years)</option>
+                <option value="beginner" {% if profile.experience_level == 'beginner' %}selected{% endif %}>Entry Level (0-2 years)</option>
+                <option value="intermediate" {% if profile.experience_level == 'intermediate' %}selected{% endif %}>Intermediate (2-5 years)</option>
+                <option value="expert" {% if profile.experience_level == 'expert' %}selected{% endif %}>Expert (5+ years)</option>
               </select>
             </div>
 
             <div class="form-group">
               <label
-                ><i class="fas fa-dollar-sign"></i> Hourly Rate (USD)</label
+                ><i class="fas fa-rupee-sign"></i> Hourly Rate (₹)</label
               >
               <input
                 type="number"
                 name="hourly_rate"
-                step="5"
+                step="1"
                 placeholder="e.g. 45"
-                value="" />
+                value="{{ profile.hourly_rate|default:'' }}" />
               <div class="field-hint">
                 Set competitive rate based on your skills
               </div>
@@ -381,7 +402,7 @@
               type="text"
               name="skills"
               placeholder="e.g. Python, Django, React, Node.js, Figma"
-              value="" />
+              value="{{ profile.skills|default:'' }}" />
             <div class="field-hint">
               Add at least 5 relevant skills to improve discoverability
             </div>
@@ -392,23 +413,25 @@
         <div class="content-card">
           <h2><i class="fas fa-graduation-cap"></i> Education & Experience</h2>
 
-          <div class="form-group">
-            <label><i class="fas fa-university"></i> Education</label>
-            <textarea
-              name="education"
-              placeholder="Degree, institution, year of graduation&#10;e.g. B.Tech in Computer Science, XYZ University, 2022"></textarea>
-            <div class="field-hint">
-              List your highest degree or relevant certifications
+          <div class="two-columns">
+            <div class="form-group">
+              <label><i class="fas fa-university"></i> Education</label>
+              <textarea
+                name="education"
+                placeholder="Degree, institution, year of graduation&#10;e.g. B.Tech in Computer Science, XYZ University, 2022">{{ profile.education|default:'' }}</textarea>
+              <div class="field-hint">
+                List your highest degree or relevant certifications
+              </div>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label><i class="fas fa-history"></i> Work Experience</label>
-            <textarea
-              name="work_experience"
-              placeholder="Describe your previous roles and achievements&#10;e.g. Backend Developer at TechCorp (2022-2024) - Built REST APIs used by 10k+ users"></textarea>
-            <div class="field-hint">
-              Highlight quantifiable achievements and technologies used
+            <div class="form-group">
+              <label><i class="fas fa-history"></i> Work Experience</label>
+              <textarea
+                name="work_experience"
+                placeholder="Describe your previous roles and achievements&#10;e.g. Backend Developer at TechCorp (2022-2024) - Built REST APIs used by 10k+ users">{{ profile.work_experience|default:'' }}</textarea>
+              <div class="field-hint">
+                Highlight quantifiable achievements and technologies used
+              </div>
             </div>
           </div>
         </div>
@@ -417,21 +440,23 @@
         <div class="content-card">
           <h2><i class="fas fa-link"></i> Portfolio & Social Links</h2>
 
-          <div class="form-group">
-            <label><i class="fas fa-globe"></i> Portfolio Website</label>
-            <input
-              type="url"
-              name="portfolio_link"
-              placeholder="https://yourportfolio.com" />
-          </div>
+          <div class="three-columns">
+            <div class="form-group">
+              <label><i class="fas fa-globe"></i> Portfolio Website</label>
+              <input
+                type="url"
+                name="portfolio_link"
+                placeholder="https://yourportfolio.com"
+                value="{{ profile.portfolio_link|default:'' }}" />
+            </div>
 
-          <div class="two-columns">
             <div class="form-group">
               <label><i class="fab fa-github"></i> GitHub</label>
               <input
                 type="url"
                 name="github_link"
-                placeholder="https://github.com/username" />
+                placeholder="https://github.com/username"
+                value="{{ profile.github_link|default:'' }}" />
             </div>
 
             <div class="form-group">
@@ -439,7 +464,8 @@
               <input
                 type="url"
                 name="linkedin"
-                placeholder="https://linkedin.com/in/username" />
+                placeholder="https://linkedin.com/in/username"
+                value="{{ profile.linkedin|default:'' }}" />
             </div>
           </div>
           <div class="field-hint">
@@ -457,7 +483,8 @@
               <input
                 type="text"
                 name="country"
-                placeholder="e.g. United States, India, UK" />
+                placeholder="e.g. United States, India, UK"
+                value="{{ profile.country|default:'' }}" />
             </div>
 
             <div class="form-group">
@@ -465,7 +492,8 @@
               <input
                 type="text"
                 name="city"
-                placeholder="e.g. New York, Bangalore" />
+                placeholder="e.g. New York, Bangalore"
+                value="{{ profile.city|default:'' }}" />
             </div>
           </div>
           <div class="field-hint">

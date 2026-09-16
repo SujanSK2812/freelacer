@@ -70,7 +70,7 @@ def chat_detail(request, user_id):
 
 
 
-from accounts.models import ConnectionRequest
+from accounts.models import ConnectionRequest, Connection
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -79,26 +79,37 @@ User = get_user_model()
 def chat_user_list(request):
 
     # users who FOLLOWED current user (followers)
-    followers_requests = ConnectionRequest.objects.filter(
+    followers_connections = Connection.objects.filter(
         receiver=request.user
     )
 
-    followers = [req.sender for req in followers_requests]
+    followers = [conn.sender for conn in followers_connections]
 
     # users current user follows
-    following_requests = ConnectionRequest.objects.filter(
+    following_connections = Connection.objects.filter(
         sender=request.user
     )
 
-    following = [req.receiver for req in following_requests]
+    following = [conn.receiver for conn in following_connections]
+    
+    # Also include pending outgoing requests so client can message them immediately if desired
+    pending_outgoing = ConnectionRequest.objects.filter(sender=request.user, status='pending')
+    pending_following = [req.receiver for req in pending_outgoing]
+    
+    # users who sent pending requests to current user
+    pending_incoming = ConnectionRequest.objects.filter(receiver=request.user, status='pending')
+    pending_followers = [req.sender for req in pending_incoming]
 
-    # pending requests
+    all_chat_users = list(set(followers + following + pending_following + pending_followers))
+
+    # pending requests (incoming only for display in UI)
     received_requests = ConnectionRequest.objects.filter(
-        receiver=request.user
+        receiver=request.user,
+        status='pending'
     )
 
     context = {
-        "users": followers,   # ONLY followers shown in message section
+        "users": all_chat_users,   # Include everyone connected or pending
         "followers": followers,
         "following": following,
         "received_requests": received_requests,

@@ -313,6 +313,15 @@ def activate_account(request, uidb64, token):
 
 def user_login(request):
 
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect("accounts:admin_home")
+        elif getattr(request.user, "role", None) == "client":
+            return redirect("client:client_dashboard")
+        elif getattr(request.user, "role", None) == "freelancer":
+            return redirect("freelancer:freelancer_dashboard")
+        return redirect("home")
+
     if request.method == "POST":
 
         email = request.POST.get("email")
@@ -343,10 +352,10 @@ def user_login(request):
                 return redirect("accounts:admin_home")
 
             elif user.role == "client":
-                return redirect("client:client_home")
+                return redirect("client:client_dashboard")
 
             elif user.role == "freelancer":
-                return redirect("freelancer:freelancer_home")
+                return redirect("freelancer:freelancer_dashboard")
 
         else:
             messages.error(request, "Invalid email or password")
@@ -473,7 +482,8 @@ from .models import Connection
 
 
 
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
+from .views_notifications import mark_notifications_read
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import ConnectionRequest
@@ -594,8 +604,14 @@ def followers_list(request):
             sender=request.user,
             receiver=follower
         ).exists()
+        
+        is_requested_back = ConnectionRequest.objects.filter(
+            sender=request.user,
+            receiver=follower
+        ).exists()
 
         follower.is_following_back = is_following_back
+        follower.is_requested_back = is_requested_back
 
         followers.append(follower)
 
@@ -632,16 +648,55 @@ def pending_requests(request):
     return render(request, "accounts/pending_requests.html", {
         "requests": requests
     })
-
-
 @login_required
 def find_connections(request):
     users = User.objects.exclude(id=request.user.id)
+    
+    for user in users:
+        is_connected = Connection.objects.filter(
+            sender=request.user, receiver=user
+        ).exists()
+        
+        if is_connected:
+            user.connection_status = 'connected'
+        else:
+            req = ConnectionRequest.objects.filter(
+                sender=request.user, receiver=user
+            ).order_by('-created_at').first()
+            if req:
+                user.connection_status = req.status
+            else:
+                user.connection_status = 'none'
 
     return render(request, "accounts/find_connections.html", {
         "users": users
     })
 
+from accounts.decorators import admin_required
+
+@admin_required
+def admin_connection_requests(request):
+    requests = ConnectionRequest.objects.filter(receiver=request.user).order_by('-created_at')
+    return render(request, "admin/connection_requests.html", {"requests": requests})
+
+@admin_required
+def admin_accept_request(request, request_id):
+    connection_request = get_object_or_404(ConnectionRequest, id=request_id, receiver=request.user)
+    connection_request.status = 'accepted'
+    connection_request.save()
+    
+    Connection.objects.get_or_create(
+        sender=connection_request.sender,
+        receiver=connection_request.receiver
+    )
+    return redirect('accounts:admin_connection_requests')
+
+@admin_required
+def admin_reject_request(request, request_id):
+    connection_request = get_object_or_404(ConnectionRequest, id=request_id, receiver=request.user)
+    connection_request.status = 'rejected'
+    connection_request.save()
+    return redirect('accounts:admin_connection_requests')
 
 
 

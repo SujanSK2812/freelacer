@@ -6,7 +6,7 @@
 }
 
 body{
-    background: linear-gradient(135deg, #14a800, #0e7c00);
+    background: linear-gradient(135deg, #0a66c2, #004182);
     height:100vh;
     display:flex;
     justify-content:center;
@@ -17,40 +17,49 @@ body{
     background:white;
     padding:40px;
     width:380px;
-    border-radius:10px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.2);
+    border-radius:16px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.15);
     text-align:center;
 }
 
 .otp-container h2{
     margin-bottom:20px;
-    color:#333;
+    color:#004182;
+    font-weight:700;
 }
 
 .otp-container input{
     width:100%;
     padding:12px;
     margin:15px 0;
-    border:1px solid #ccc;
-    border-radius:6px;
+    border:1.5px solid #cbd5e1;
+    border-radius:8px;
     font-size:16px;
     text-align:center;
     letter-spacing:3px;
+    outline:none;
+}
+
+.otp-container input:focus{
+    border-color:#0a66c2;
+    box-shadow:0 0 0 3.5px rgba(10,102,194,0.15);
 }
 
 .otp-container button{
     width:100%;
     padding:12px;
-    background:#14a800;
+    background:#0a66c2;
     color:white;
     border:none;
-    border-radius:6px;
+    border-radius:24px;
     font-size:16px;
+    font-weight:600;
     cursor:pointer;
+    transition:background 0.2s ease;
 }
 
 .otp-container button:hover{
-    background:#0e7c00;
+    background:#004182;
 }
 
 /* Mobile Responsive */

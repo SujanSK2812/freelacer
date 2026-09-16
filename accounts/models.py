@@ -107,6 +107,11 @@ User = get_user_model()
 
 
 class ConnectionRequest(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    )
 
     sender = models.ForeignKey(
         User,
@@ -120,10 +125,11 @@ class ConnectionRequest(models.Model):
         related_name="received_requests"
     )
 
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.sender} -> {self.receiver}"
+        return f"{self.sender} -> {self.receiver} ({self.status})"
 
 
 class Connection(models.Model):
@@ -144,3 +150,23 @@ class Connection(models.Model):
 
     def __str__(self):
         return f"{self.sender} follows {self.receiver}"
+class Notification(models.Model):
+    NOTIFICATION_TYPES = (
+        ('proposal_view', 'Proposal View'),
+        ('proposal_status', 'Proposal Status'),
+        ('new_project', 'New Project'),
+        ('message', 'Message'),
+        ('system', 'System'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    link = models.CharField(max_length=255, blank=True, null=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.notification_type} - {self.is_read}"

@@ -72,8 +72,40 @@ class Comment(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+
+    def total_likes(self):
+        return self.reactions.filter(reaction_type="like").count()
+
     def __str__(self):
         return f"Comment by {self.user}"
+
+
+class CommentReaction(models.Model):
+
+    REACTION_CHOICES = [
+        ("like", "Like"),
+        ("love", "Love"),
+        ("clap", "Clap"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    comment = models.ForeignKey(
+        Comment,
+        related_name="reactions",
+        on_delete=models.CASCADE
+    )
+
+    reaction_type = models.CharField(
+        max_length=10,
+        choices=REACTION_CHOICES
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} reacted {self.reaction_type} on comment"
 
 
 # ===============================
@@ -93,6 +125,8 @@ class Job(models.Model):
     skills = models.CharField(max_length=200)
 
     experience_level = models.CharField(max_length=50)
+
+    image = models.ImageField(upload_to="job_images/", blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

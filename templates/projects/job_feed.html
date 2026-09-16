@@ -16,15 +16,19 @@
 <img src="{{ job.image.url }}" class="post-img">
 {% endif %}
 
-<div class="post-actions">
+<div class="post-actions" style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
 
-<a href="{% url 'like_job' job.id %}">
+<a href="{% url 'projects:like_job' job.id %}" style="text-decoration: none; color: #333;">
 👍 Like ({{ job.total_likes }})
 </a>
 
+<button onclick="document.getElementById('comments-{{ job.id }}').style.display = document.getElementById('comments-{{ job.id }}').style.display === 'none' ? 'block' : 'none';" style="background: none; border: none; cursor: pointer; color: #333; font-size: 16px; padding: 0;">
+💬 Comments ({{ job.comments.count }})
+</button>
+
 </div>
 
-<div class="comments">
+<div id="comments-{{ job.id }}" class="comments" style="display: none;">
 
 {% for c in job.comments.all %}
 
@@ -32,7 +36,7 @@
 
 {% endfor %}
 
-<form method="POST" action="{% url 'comment_job' job.id %}">
+<form method="POST" action="{% url 'projects:comment_job' job.id %}">
 
 {% csrf_token %}
 

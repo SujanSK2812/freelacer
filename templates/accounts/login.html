@@ -43,7 +43,7 @@
         }
 
         .password-toggle-icon:hover {
-            color: #108a00 !important;
+            color: #0a66c2 !important;
             background: #f0f7f0 !important;
         }
     </style>
@@ -58,7 +58,7 @@
 
         {% if messages %}
             {% for message in messages %}
-                <p class="error">{{ message }}</p>
+                <p class="{% if message.tags %}{{ message.tags }}{% else %}error{% endif %}">{{ message }}</p>
             {% endfor %}
         {% endif %}
 

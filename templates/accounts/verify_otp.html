@@ -17,10 +17,16 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
+            color: #2d3a2d;
+        }
+
+        .main-container {
+            flex-grow: 1;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
-            color: #2d3a2d;
+            padding: 2rem 1.5rem;
         }
 
         .otp-card {
@@ -52,7 +58,7 @@
 
         .icon-box i {
             font-size: 2.5rem;
-            color: #14a800;
+            color: #0a66c2;
         }
 
         h2 {
@@ -104,7 +110,7 @@
 
         .debug-otp-box {
             background: #eef9ee;
-            border: 2px dashed #14a800;
+            border: 2px dashed #0a66c2;
             padding: 1rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
@@ -113,7 +119,7 @@
         }
 
         .debug-otp-box strong {
-            color: #14a800;
+            color: #0a66c2;
             font-size: 1.6rem;
             letter-spacing: 4px;
             display: block;
@@ -146,12 +152,12 @@
         }
 
         .otp-input:focus {
-            border-color: #14a800;
+            border-color: #0a66c2;
             box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.15);
         }
 
         .btn-verify {
-            background: #14a800;
+            background: #0a66c2;
             color: white;
             border: none;
             padding: 1rem;
@@ -181,7 +187,7 @@
         }
 
         .footer-links a {
-            color: #14a800;
+            color: #0a66c2;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
@@ -195,7 +201,7 @@
         .resend-btn {
             background: none;
             border: none;
-            color: #14a800;
+            color: #0a66c2;
             font-weight: 600;
             cursor: pointer;
             font-size: 0.9rem;
@@ -209,9 +215,11 @@
     </style>
 </head>
 <body>
+{% include 'includes/header.html' %}
 
-<div class="otp-card">
-    <div class="icon-box">
+<div class="main-container">
+    <div class="otp-card">
+        <div class="icon-box">
         <i class="fas fa-shield-alt"></i>
     </div>
 
@@ -264,6 +272,8 @@
         </a>
     </div>
 </div>
+</div>
 
+{% include 'includes/footer.html' %}
 </body>
 </html>

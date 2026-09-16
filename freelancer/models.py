@@ -75,7 +75,40 @@ class FreelancerProfile(models.Model):
     is_professional_completed = models.BooleanField(default=False)
     is_portfolio_completed = models.BooleanField(default=False)
 
+    profile_views = models.IntegerField(default=0)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username
+
+    @property
+    def profile_completeness(self):
+        fields_to_check = [
+            self.profile_picture,
+            self.title,
+            self.bio,
+            self.experience_level,
+            self.hourly_rate,
+            self.skills,
+            self.education,
+            self.work_experience,
+            self.portfolio_link,
+            self.github_link,
+            self.linkedin,
+            self.country,
+            self.city
+        ]
+        
+        filled_count = 0
+        total_fields = len(fields_to_check)
+        
+        for field in fields_to_check:
+            if field is not None:
+                if isinstance(field, str):
+                    if field.strip() != "":
+                        filled_count += 1
+                else:
+                    filled_count += 1
+                    
+        return int((filled_count / total_fields) * 100)

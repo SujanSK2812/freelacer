@@ -83,7 +83,7 @@
 
         .nav-links a:hover, .nav-links a.active {
             color: white;
-            border-bottom-color: #108a00;
+            border-bottom-color: #0a66c2;
         }
 
         .nav-links a i {
@@ -104,7 +104,7 @@
         }
 
         .profile-icon:hover {
-            border-color: #108a00;
+            border-color: #0a66c2;
         }
 
         .profile-icon i {
@@ -142,7 +142,7 @@
         .profile-avatar {
             width: 100px;
             height: 100px;
-            background: linear-gradient(135deg, #108a00, #0a5c00);
+            background: linear-gradient(135deg, #0a66c2, #0a5c00);
             border-radius: 50%;
             margin: 0 auto 1rem;
             display: flex;
@@ -223,12 +223,12 @@
 
         .quick-link:hover {
             background: #f3f2ef;
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .quick-link i {
             width: 20px;
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .connects-card {
@@ -253,11 +253,11 @@
         .connects-count {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .get-connects {
-            color: #108a00;
+            color: #0a66c2;
             text-decoration: none;
             font-size: 0.9rem;
             display: block;
@@ -273,7 +273,7 @@
 
         /* Welcome Banner */
         .welcome-banner {
-            background: linear-gradient(135deg, #108a00, #0a5c00);
+            background: linear-gradient(135deg, #0a66c2, #0a5c00);
             border-radius: 16px;
             padding: 2rem;
             color: white;
@@ -294,7 +294,7 @@
 
         .post-job-btn {
             background: white;
-            color: #108a00;
+            color: #0a66c2;
             border: none;
             padding: 0.8rem 2rem;
             border-radius: 40px;
@@ -345,7 +345,7 @@
         }
 
         .view-all {
-            color: #108a00;
+            color: #0a66c2;
             text-decoration: none;
             font-size: 0.9rem;
         }
@@ -365,7 +365,7 @@
         }
 
         .project-card:hover {
-            border-color: #108a00;
+            border-color: #0a66c2;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
@@ -428,7 +428,7 @@
         }
 
         .proposals-count {
-            color: #108a00;
+            color: #0a66c2;
             font-weight: 500;
         }
 
@@ -465,7 +465,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .activity-content p {
@@ -518,7 +518,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .tip-content h4 {
@@ -576,7 +576,7 @@
         }
 
         .hire-btn {
-            background: #108a00;
+            background: #0a66c2;
             color: white;
             border: none;
             padding: 0.4rem 1rem;
@@ -629,8 +629,7 @@
     </style>
 </head>
 <body>
-
-
+{% include 'includes/header.html' %}
 
 <div class="dashboard-container">
     <!-- Left Sidebar - Profile -->
@@ -643,29 +642,29 @@
             <div class="profile-title">Client</div>
             <div class="profile-stats">
                 <div class="stat">
-                    <div class="stat-value">12</div>
+                    <div class="stat-value">{{ active_jobs_count }}</div>
                     <div class="stat-label">Projects</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">8</div>
+                    <div class="stat-value">0</div>
                     <div class="stat-label">Hired</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">4.9</div>
+                    <div class="stat-value">0.0</div>
                     <div class="stat-label">Rating</div>
                 </div>
             </div>
-            <button class="edit-profile-btn">
+            <a href="{% url 'accounts:my_profile' %}" class="edit-profile-btn" style="display: block; text-decoration: none;">
                 <i class="fas fa-edit"></i> Edit Profile
-            </button>
+            </a>
         </div>
 
         <div class="quick-links">
-            <a href="#" class="quick-link">
+            <a href="{% url 'client:create_job' %}" class="quick-link">
                 <i class="fas fa-file-alt"></i>
                 <span>Post a Project</span>
             </a>
-            <a href="#" class="quick-link">
+            <a href="{% url 'client:all_freelancers' %}" class="quick-link">
                 <i class="fas fa-search"></i>
                 <span>Find Freelancers</span>
             </a>
@@ -673,7 +672,7 @@
                 <i class="fas fa-credit-card"></i>
                 <span>Payment Methods</span>
             </a>
-            <a href="#" class="quick-link">
+            <a href="{% url 'accounts:my_profile' %}" class="quick-link">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </a>
@@ -696,22 +695,18 @@
             <div class="welcome-text">
                 <h1>Welcome back, {{ request.user.username }}!</h1>
                 <p>Ready to find your next great freelancer?</p>
-                <button class="post-job-btn">
+                <a href="{% url 'client:create_job' %}" class="post-job-btn" style="text-decoration: none; display: inline-block;">
                     <i class="fas fa-plus-circle"></i> Post a Job
-                </button>
+                </a>
             </div>
             <div class="stats-cards">
                 <div class="stat-card">
-                    <div class="number">3</div>
+                    <div class="number">{{ active_jobs_count }}</div>
                     <div class="label">Active Jobs</div>
                 </div>
                 <div class="stat-card">
-                    <div class="number">12</div>
+                    <div class="number">{{ proposals_count }}</div>
                     <div class="label">Proposals</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number">8</div>
-                    <div class="label">Interviews</div>
                 </div>
             </div>
         </div>
@@ -724,89 +719,32 @@
             </div>
 
             <div class="projects-grid">
-                <!-- Project Card 1 -->
+                {% if client_jobs %}
+                {% for job in client_jobs %}
                 <div class="project-card">
                     <div class="project-header">
                         <div class="project-title">
-                            <h4>E-Commerce Website Development</h4>
-                            <span class="project-status status-open">Open</span>
+                            <h4>{{ job.title }}</h4>
+                            <span class="project-status status-open">{{ job.status }}</span>
                         </div>
                     </div>
                     <div class="project-meta">
-                        <span><i class="fas fa-tag"></i> Fixed-price</span>
-                        <span><i class="fas fa-clock"></i> Posted 2 days ago</span>
+                        <span><i class="fas fa-tag"></i> {{ job.budget }}</span>
+                        <span><i class="fas fa-clock"></i> Posted {{ job.created_at|timesince }} ago</span>
                     </div>
                     <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
-                        Need a full-stack developer for an e-commerce platform...
+                        {{ job.description|truncatechars:100 }}
                     </p>
                     <div class="proposals">
-                        <span class="proposals-count">8 proposals</span>
-                        <a href="#" class="view-proposals">View →</a>
+                        <span class="proposals-count">{{ job.proposal_count }} proposals</span>
+                        <a href="{% url 'client:job_detail' job.id %}" class="view-proposals">View →</a>
                     </div>
                 </div>
+                {% endfor %}
+                {% else %}
+                <p style="color: #5e6b7c;">You haven't posted any projects yet.</p>
+                {% endif %}
 
-                <!-- Project Card 2 -->
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-title">
-                            <h4>Mobile App UI/UX Design</h4>
-                            <span class="project-status status-in-progress">In Progress</span>
-                        </div>
-                    </div>
-                    <div class="project-meta">
-                        <span><i class="fas fa-tag"></i> Fixed-price</span>
-                        <span><i class="fas fa-clock"></i> Posted 5 days ago</span>
-                    </div>
-                    <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
-                        Looking for a UI/UX designer for a fitness tracking app...
-                    </p>
-                    <div class="proposals">
-                        <span class="proposals-count">5 proposals</span>
-                        <a href="#" class="view-proposals">View →</a>
-                    </div>
-                </div>
-
-                <!-- Project Card 3 -->
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-title">
-                            <h4>Content Writing for Blog</h4>
-                            <span class="project-status status-open">Open</span>
-                        </div>
-                    </div>
-                    <div class="project-meta">
-                        <span><i class="fas fa-tag"></i> Hourly</span>
-                        <span><i class="fas fa-clock"></i> Posted 1 day ago</span>
-                    </div>
-                    <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
-                        Need SEO-optimized content for tech blog...
-                    </p>
-                    <div class="proposals">
-                        <span class="proposals-count">12 proposals</span>
-                        <a href="#" class="view-proposals">View →</a>
-                    </div>
-                </div>
-
-                <!-- Project Card 4 -->
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-title">
-                            <h4>WordPress Website Fixes</h4>
-                            <span class="project-status status-completed">Completed</span>
-                        </div>
-                    </div>
-                    <div class="project-meta">
-                        <span><i class="fas fa-tag"></i> Fixed-price</span>
-                        <span><i class="fas fa-clock"></i> Completed 3 days ago</span>
-                    </div>
-                    <p style="color: #5e6b7c; font-size: 0.9rem; margin-bottom: 1rem;">
-                        Various fixes and optimizations for WordPress site...
-                    </p>
-                    <div class="proposals">
-                        <span class="proposals-count">4 proposals</span>
-                        <a href="#" class="view-proposals">Review →</a>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -887,42 +825,26 @@
         <div class="recommended-freelancers">
             <h3><i class="fas fa-users"></i> Recommended Freelancers</h3>
             
+            {% for freelancer in recommended_freelancers %}
             <div class="freelancer-card">
-                <div class="freelancer-avatar">JS</div>
+                <div class="freelancer-avatar">{{ freelancer.username|make_list|first|upper }}</div>
                 <div class="freelancer-info">
-                    <h4>John Smith</h4>
-                    <div class="freelancer-skill">Full Stack Developer</div>
-                    <div class="freelancer-rating">★★★★★ 5.0</div>
+                    <h4>{{ freelancer.username }}</h4>
+                    <div class="freelancer-skill">{{ freelancer.freelancerprofile.title|default:"Freelancer" }}</div>
                 </div>
-                <button class="hire-btn">Hire</button>
+                <a href="{% url 'accounts:view_profile' freelancer.id %}" class="hire-btn" style="text-decoration: none; text-align: center;">View</a>
             </div>
+            {% empty %}
+            <p style="color: #5e6b7c; font-size: 0.9rem;">No recommendations available.</p>
+            {% endfor %}
 
-            <div class="freelancer-card">
-                <div class="freelancer-avatar">SD</div>
-                <div class="freelancer-info">
-                    <h4>Sarah Davis</h4>
-                    <div class="freelancer-skill">UI/UX Designer</div>
-                    <div class="freelancer-rating">★★★★☆ 4.8</div>
-                </div>
-                <button class="hire-btn">Hire</button>
-            </div>
-
-            <div class="freelancer-card">
-                <div class="freelancer-avatar">MW</div>
-                <div class="freelancer-info">
-                    <h4>Mike Wilson</h4>
-                    <div class="freelancer-skill">Content Writer</div>
-                    <div class="freelancer-rating">★★★★★ 4.9</div>
-                </div>
-                <button class="hire-btn">Hire</button>
-            </div>
-
-            <a href="#" style="color: #108a00; text-decoration: none; font-size: 0.9rem; display: block; margin-top: 1rem; text-align: center;">
+            <a href="{% url 'client:all_freelancers' %}" style="color: #0a66c2; text-decoration: none; font-size: 0.9rem; display: block; margin-top: 1rem; text-align: center;">
                 View all recommendations →
             </a>
         </div>
     </div>
 </div>
 
+{% include 'includes/footer.html' %}
 </body>
 </html>

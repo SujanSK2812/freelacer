@@ -1,21 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from accounts.decorators import client_required
 from projects.models import JobPost, Job
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
 
-@login_required
+@client_required
 def client_home(request):
     if request.user.is_superuser:
         return redirect("accounts:admin_home")
-    if getattr(request.user, "role", None) == "freelancer":
-        return redirect("freelancer:freelancer_home")
 
     # Client Job Postings (Work available)
-    client_jobs = Job.objects.select_related('client').all().order_by("-created_at")
+    client_jobs = Job.objects.select_related('client').filter(client__role='client').order_by("-created_at")
     for job in client_jobs:
         prof = getattr(job.client, 'freelancerprofile', None)
         job.author_dp = prof.profile_picture if (prof and prof.profile_picture) else None
@@ -25,7 +24,7 @@ def client_home(request):
             job.skills_list = []
 
     # Freelancer Posts / Talent Showcases
-    freelancer_posts = JobPost.objects.select_related('client').prefetch_related('comments__user', 'reactions').all().order_by("-created_at")
+    freelancer_posts = JobPost.objects.select_related('client').filter(client__role='freelancer').prefetch_related('comments__user', 'reactions').order_by("-created_at")
 
     for post in freelancer_posts:
         prof = getattr(post.client, 'freelancerprofile', None)
@@ -47,18 +46,31 @@ def client_home(request):
     })
 
 
-@login_required
+from proposals.models import Proposal
+
+@client_required
 def client_dashboard(request):
-    return render(request, "client/dashboard.html")
+    client_jobs = Job.objects.filter(client=request.user).order_by('-created_at')
+    
+    active_jobs_count = client_jobs.count()
+    proposals_count = Proposal.objects.filter(job__client=request.user).count()
+    
+    recommended_freelancers = User.objects.filter(role="freelancer")[:5]
+    
+    for job in client_jobs:
+        job.proposal_count = Proposal.objects.filter(job=job).count()
+        job.status = 'Open'  # Assuming all jobs are 'Open' for now
 
+    return render(request, "client/dashboard.html", {
+        "client_jobs": client_jobs,
+        "active_jobs_count": active_jobs_count,
+        "proposals_count": proposals_count,
+        "recommended_freelancers": recommended_freelancers,
+    })
 
-@login_required
+@client_required
 def create_job(request):
-
-    is_client = getattr(request.user, 'role', None) == 'client' or request.user.is_superuser
-
     if request.method == "POST":
-
         title = request.POST.get("title")
         description = request.POST.get("description")
         budget = request.POST.get("budget", "5000")
@@ -66,32 +78,22 @@ def create_job(request):
         experience_level = request.POST.get("experience_level", "Intermediate")
         image = request.FILES.get("image")
 
-        if is_client:
-            Job.objects.create(
-                client=request.user,
-                title=title,
-                description=description,
-                budget=budget,
-                skills=skills,
-                experience_level=experience_level
-            )
-            messages.success(request, "Work posted successfully! Freelancers can now view it and submit proposals.")
-        else:
-            messages.success(request, "Talent showcase posted successfully! Clients can now view your skills.")
-
-        JobPost.objects.create(
+        Job.objects.create(
             client=request.user,
             title=title,
             description=description,
+            budget=budget,
+            skills=skills,
+            experience_level=experience_level,
             image=image
         )
-
+        messages.success(request, "Work posted successfully! Freelancers can now view it and submit proposals.")
         return redirect("/")
 
-    return render(request, "client/create_job.html", {"is_client": is_client})
+    return render(request, "client/create_job.html", {"is_client": True})
 
 
-@login_required
+@client_required
 def all_freelancers(request):
 
     freelancers = User.objects.filter(role="freelancer")
@@ -103,8 +105,15 @@ def all_freelancers(request):
 
 @login_required
 def job_detail(request, job_id):
+    job = Job.objects.filter(id=job_id).first()
+    if not job:
+        job = get_object_or_404(JobPost, id=job_id)
 
-    job = get_object_or_404(JobPost, id=job_id)
+    # Attach convenience attributes if it's a Job model instance
+    if hasattr(job, 'experience_level') and not hasattr(job, 'experience_required'):
+        setattr(job, 'experience_required', job.experience_level)
+    if hasattr(job, 'skills') and not hasattr(job, 'category'):
+        setattr(job, 'category', job.skills)
 
     return render(request, "client/job_detail.html", {
         "job": job

@@ -36,7 +36,7 @@
       }
 
       nav h2 {
-        color: #14a800;
+        color: #0a66c2;
         font-size: 1.5rem;
         font-weight: 700;
       }
@@ -54,7 +54,7 @@
 
       .nav-links a:hover,
       .nav-links a.active {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       /* Main Container */
@@ -85,7 +85,7 @@
 
       /* Hero Section */
       .hero-section {
-        background: linear-gradient(135deg, #14a80010, #0f172a05);
+        background: linear-gradient(135deg, #0a66c210, #0f172a05);
         border-radius: 30px;
         padding: 3rem;
         margin-bottom: 3rem;
@@ -123,7 +123,7 @@
       .hero-stat .number {
         font-size: 2rem;
         font-weight: 700;
-        color: #14a800;
+        color: #0a66c2;
         line-height: 1.2;
       }
 
@@ -139,7 +139,7 @@
 
       .hero-image i {
         font-size: 8rem;
-        color: #14a800;
+        color: #0a66c2;
         opacity: 0.8;
       }
 
@@ -177,7 +177,7 @@
 
       .step-card:hover {
         transform: translateY(-5px);
-        border-color: #14a800;
+        border-color: #0a66c2;
         box-shadow: 0 10px 30px rgba(20, 168, 0, 0.1);
       }
 
@@ -187,7 +187,7 @@
         left: 2rem;
         width: 40px;
         height: 40px;
-        background: #14a800;
+        background: #0a66c2;
         color: white;
         border-radius: 50%;
         display: flex;
@@ -200,7 +200,7 @@
 
       .step-card i {
         font-size: 2.5rem;
-        color: #14a800;
+        color: #0a66c2;
         margin: 1.5rem 0 1rem;
       }
 
@@ -245,7 +245,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #14a800;
+        color: #0a66c2;
         flex-shrink: 0;
       }
 
@@ -293,7 +293,7 @@
       }
 
       .bidding-card h4 i {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .bidding-card ul {
@@ -309,12 +309,12 @@
       }
 
       .bidding-card ul li i {
-        color: #14a800;
+        color: #0a66c2;
         font-size: 0.9rem;
       }
 
       .bidding-card.do ul li i {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .bidding-card.dont ul li i {
@@ -339,7 +339,7 @@
 
       .story-card:hover {
         transform: translateY(-5px);
-        border-color: #14a800;
+        border-color: #0a66c2;
       }
 
       .story-avatar {
@@ -351,7 +351,7 @@
         align-items: center;
         justify-content: center;
         margin-bottom: 1rem;
-        color: #14a800;
+        color: #0a66c2;
         font-size: 1.5rem;
         font-weight: bold;
       }
@@ -363,7 +363,7 @@
       }
 
       .story-role {
-        color: #14a800;
+        color: #0a66c2;
         font-size: 0.9rem;
         margin-bottom: 1rem;
       }
@@ -416,13 +416,13 @@
       }
 
       .resource-card:hover {
-        border-color: #14a800;
+        border-color: #0a66c2;
         transform: translateY(-3px);
       }
 
       .resource-card i {
         font-size: 2rem;
-        color: #14a800;
+        color: #0a66c2;
         margin-bottom: 1rem;
       }
 
@@ -461,7 +461,7 @@
       }
 
       .faq-item h4 i {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .faq-item p {
@@ -502,7 +502,7 @@
       }
 
       .btn-primary {
-        background: #14a800;
+        background: #0a66c2;
         color: white;
       }
 
@@ -514,8 +514,8 @@
 
       .btn-secondary {
         background: white;
-        color: #14a800;
-        border: 2px solid #14a800;
+        color: #0a66c2;
+        border: 2px solid #0a66c2;
         margin-left: 1rem;
       }
 
@@ -541,7 +541,7 @@
       }
 
       .footer-section h3 {
-        color: #14a800;
+        color: #0a66c2;
         margin-bottom: 1rem;
       }
 
@@ -565,7 +565,7 @@
       }
 
       .footer-section ul li a:hover {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .social-links {
@@ -580,7 +580,7 @@
       }
 
       .social-links a:hover {
-        color: #14a800;
+        color: #0a66c2;
       }
 
       .footer-bottom {
@@ -1025,14 +1025,14 @@
         <h2>Ready to Start Finding Work?</h2>
         <p>Join our community of successful freelancers today</p>
         <div>
-          <a
-            href="{% url 'accounts:select_role' %}?role=freelancer"
-            class="btn btn-primary"
-            >Create Freelancer Profile</a
-          >
-          <a href="{% url 'freelancer:search_results' %}" class="btn btn-secondary"
-            >Browse Projects</a
-          >
+          {% if not request.user.is_authenticated %}
+          <a href="{% url 'accounts:select_role' %}?role=freelancer" class="btn btn-primary">Create Freelancer Profile</a>
+          {% elif request.user.role == 'freelancer' %}
+          <a href="{% url 'freelancer:freelancer_home' %}" class="btn btn-primary">Go to Dashboard</a>
+          {% elif request.user.role == 'client' %}
+          <a href="{% url 'client:client_home' %}" class="btn btn-primary">Go to Dashboard</a>
+          {% endif %}
+          <a href="{% url 'freelancer:search_results' %}" class="btn btn-secondary">Browse Projects</a>
         </div>
       </div>
     </div>

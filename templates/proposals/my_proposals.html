@@ -48,7 +48,7 @@
         }
 
         .page-header-title i {
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .proposal-card-item {
@@ -90,7 +90,7 @@
             padding: 14px 18px;
             border-radius: 12px;
             margin-bottom: 14px;
-            border-left: 3px solid #108a00;
+            border-left: 3px solid #0a66c2;
         }
 
         .proposal-status-badge {
@@ -148,9 +148,9 @@
     <div class="proposal-card-item">
         <div class="proposal-job-title">{{ proposal.job.title }}</div>
         <div class="proposal-meta-row">
-            <span><i class="fas fa-rupee-sign" style="color:#108a00;"></i> Bid Amount: <strong>₹{{ proposal.bid_amount }}</strong></span>
-            <span><i class="fas fa-clock" style="color:#108a00;"></i> Delivery: {{ proposal.delivery_days }} Days</span>
-            <span><i class="fas fa-calendar" style="color:#108a00;"></i> Submitted {{ proposal.created_at|timesince }} ago</span>
+            <span><i class="fas fa-rupee-sign" style="color:#0a66c2;"></i> Bid Amount: <strong>₹{{ proposal.bid_amount }}</strong></span>
+            <span><i class="fas fa-clock" style="color:#0a66c2;"></i> Delivery: {{ proposal.delivery_days }} Days</span>
+            <span><i class="fas fa-calendar" style="color:#0a66c2;"></i> Submitted {{ proposal.created_at|timesince }} ago</span>
         </div>
 
         <div class="proposal-text-box">
@@ -168,7 +168,7 @@
         <i class="fas fa-folder-open"></i>
         <h3>No proposals submitted yet</h3>
         <p style="margin-top: 8px; font-size: 14px;">Browse active client jobs on the home feed and click "Apply Now" to submit your first proposal!</p>
-        <a href="/" style="display: inline-block; margin-top: 16px; background: #108a00; color: white; padding: 10px 24px; border-radius: 20px; text-decoration: none; font-weight: 700;">Browse Jobs</a>
+        <a href="/" style="display: inline-block; margin-top: 16px; background: #0a66c2; color: white; padding: 10px 24px; border-radius: 20px; text-decoration: none; font-weight: 700;">Browse Jobs</a>
     </div>
     {% endfor %}
 </div>

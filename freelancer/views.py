@@ -11,17 +11,22 @@ from accounts.models import Connection, ConnectionRequest
 from django.shortcuts import get_object_or_404
 from proposals.models import Proposal
 
+from accounts.decorators import freelancer_required
+
+@freelancer_required
 def freelancer_home(request):
-    if not request.user.is_authenticated:
-        return redirect("home")
     if request.user.is_superuser:
         return redirect("accounts:admin_home")
-    if getattr(request.user, "role", None) == "client":
-        return redirect("client:client_home")
 
     # Client Job Postings (Work available)
-    client_jobs = Job.objects.select_related('client').all().order_by("-created_at")
+    client_jobs = Job.objects.select_related('client').filter(client__role='client').order_by("-created_at")
+    
+    applied_job_ids = set()
+    if request.user.is_authenticated:
+        applied_job_ids = set(Proposal.objects.filter(freelancer=request.user).values_list('job_id', flat=True))
+
     for job in client_jobs:
+        job.has_applied = job.id in applied_job_ids
         prof = getattr(job.client, 'freelancerprofile', None)
         job.author_dp = prof.profile_picture if (prof and prof.profile_picture) else None
         if hasattr(job, 'skills') and job.skills:
@@ -31,7 +36,7 @@ def freelancer_home(request):
 
     # Freelancer Posts / Talent Showcases
     from projects.models import JobPost
-    freelancer_posts = JobPost.objects.select_related('client').prefetch_related('comments__user', 'reactions').all().order_by("-created_at")
+    freelancer_posts = JobPost.objects.select_related('client').filter(client__role='freelancer').prefetch_related('comments__user', 'reactions').order_by("-created_at")
 
     for post in freelancer_posts:
         prof = getattr(post.client, 'freelancerprofile', None)
@@ -41,23 +46,46 @@ def freelancer_home(request):
         else:
             post.liked_by_user = False
         post.likes_count = post.reactions.filter(reaction_type='like').count()
-        post.comments_all = post.comments.all()
+        post.comments_all = post.comments.filter(parent=None).prefetch_related('reactions', 'replies__user', 'replies__reactions')
         for comment in post.comments_all:
             c_prof = getattr(comment.user, 'freelancerprofile', None)
             comment.author_dp = c_prof.profile_picture if (c_prof and c_prof.profile_picture) else None
-        post.comments_count = post.comments_all.count()
+            comment.likes_count = comment.reactions.filter(reaction_type='like').count()
+            if request.user.is_authenticated:
+                comment.liked_by_user = comment.reactions.filter(user=request.user, reaction_type='like').exists()
+            else:
+                comment.liked_by_user = False
+            
+            for reply in comment.replies.all():
+                r_prof = getattr(reply.user, 'freelancerprofile', None)
+                reply.author_dp = r_prof.profile_picture if (r_prof and r_prof.profile_picture) else None
+                reply.likes_count = reply.reactions.filter(reaction_type='like').count()
+                if request.user.is_authenticated:
+                    reply.liked_by_user = reply.reactions.filter(user=request.user, reaction_type='like').exists()
+                else:
+                    reply.liked_by_user = False
+
+        post.comments_count = post.comments.count()
 
     profile = None
     proposals_count = 0
+    active_interviews_count = 0
+    profile_views = 0
+    
     if request.user.is_authenticated:
         profile = FreelancerProfile.objects.filter(user=request.user).first()
         proposals_count = Proposal.objects.filter(freelancer=request.user).count()
+        active_interviews_count = Proposal.objects.filter(freelancer=request.user, status="accepted").count()
+        if profile:
+            profile_views = profile.profile_views
 
     context = {
         "jobs": client_jobs,
         "freelancer_posts": freelancer_posts,
         "profile": profile,
         "proposals_count": proposals_count,
+        "active_interviews_count": active_interviews_count,
+        "profile_views": profile_views,
     }
 
     return render(request, "freelancer/home.html", context)
@@ -65,7 +93,7 @@ def freelancer_home(request):
 from django.db.models import Sum
 from payments.models import Payment
 
-@login_required
+@freelancer_required
 def freelancer_dashboard(request):
     if request.user.is_superuser:
         return redirect("accounts:admin_home")
@@ -78,8 +106,13 @@ def freelancer_dashboard(request):
     accepted_proposals = all_proposals.filter(status="accepted")
     pending_proposals = all_proposals.filter(status="pending")
 
+    applied_job_ids = set()
+    if request.user.is_authenticated:
+        applied_job_ids = set(Proposal.objects.filter(freelancer=request.user).values_list('job_id', flat=True))
+
     jobs = Job.objects.all().order_by("-created_at")[:6]
     for job in jobs:
+        job.has_applied = job.id in applied_job_ids
         if hasattr(job, 'skills') and job.skills:
             job.skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
         else:
@@ -94,12 +127,9 @@ def freelancer_dashboard(request):
     total_earnings = paid_payments.aggregate(total=Sum('amount'))['total'] or 0
 
     # Real profile completeness calculation
-    profile_completeness = 20
+    profile_completeness = 0
     if freelancer_profile:
-        if freelancer_profile.title: profile_completeness += 20
-        if freelancer_profile.bio: profile_completeness += 20
-        if freelancer_profile.skills: profile_completeness += 20
-        if freelancer_profile.hourly_rate: profile_completeness += 20
+        profile_completeness = freelancer_profile.profile_completeness
 
     active_projects = Project.objects.filter(status='in_progress')
 
@@ -129,11 +159,11 @@ def freelancer_dashboard(request):
 def search_results(request):
     query = request.GET.get('q')
 
-    projects = []
+    jobs = []
     freelancers = []
 
     if query:
-        projects = Project.objects.filter(title__icontains=query)
+        jobs = Job.objects.filter(title__icontains=query)
 
         freelancers = User.objects.filter(
             role="freelancer",
@@ -142,13 +172,13 @@ def search_results(request):
 
     return render(request, 'search_results.html', {
         'query': query,
-        'projects': projects,
+        'projects': jobs,
         'freelancers': freelancers
     })
 
 from decimal import Decimal
 
-@login_required
+@freelancer_required
 def create_profile(request):
     if request.user.is_superuser:
         return redirect("accounts:admin_home")
@@ -202,18 +232,33 @@ def create_profile(request):
     })
 
 
-@login_required
-def my_proposals(request):
-    # later you can fetch real proposals from DB
-    proposals = []
+from django.http import JsonResponse
 
-    return render(request, "freelancer/my_proposals.html", {
+@freelancer_required
+def toggle_availability(request):
+    if request.method == "POST":
+        profile = getattr(request.user, 'freelancerprofile', None)
+        if profile:
+            profile.is_available = not profile.is_available
+            profile.save()
+            return JsonResponse({'status': 'success', 'is_available': profile.is_available})
+        return JsonResponse({'status': 'error', 'message': 'Profile not found'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=400)
+
+
+@freelancer_required
+def my_proposals(request):
+    proposals = Proposal.objects.filter(
+        freelancer=request.user
+    ).order_by("-created_at")
+
+    return render(request, "proposals/my_proposals.html", {
         "proposals": proposals
     })
 
 
 
-@login_required
+@freelancer_required
 def edit_profile(request):
     user = request.user
 
@@ -262,7 +307,7 @@ def freelancer_profile(request, freelancer_id):
 
 
 
-@login_required
+@freelancer_required
 def freelancer_connections(request):
 
     sent_connections = Connection.objects.filter(
@@ -295,3 +340,36 @@ def freelancer_connections(request):
 # {% if profile.profile_picture %}
 #     <img src="{{ profile.profile_picture }}" alt="Profile">
 # {% endif %}
+
+from projects.models import JobPost
+from django.contrib import messages
+
+@freelancer_required
+def create_showcase(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        image = request.FILES.get("image")
+
+        JobPost.objects.create(
+            client=request.user,
+            title=title,
+            description=description,
+            image=image
+        )
+        messages.success(request, "Talent showcase posted successfully! Clients can now view your skills.")
+        return redirect("/")
+
+    return render(request, "freelancer/create_showcase.html")
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+@freelancer_required
+@require_POST
+def toggle_availability(request):
+    profile = getattr(request.user, 'freelancerprofile', None)
+    if profile:
+        profile.is_available = not profile.is_available
+        profile.save()
+        return JsonResponse({'status': 'success', 'is_available': profile.is_available})
+    return JsonResponse({'status': 'error', 'message': 'Profile not found'}, status=400)

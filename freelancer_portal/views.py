@@ -50,8 +50,7 @@ def contact(request):
         message = request.POST.get("message")
         message_count = ContactMessage.objects.filter(email=email).count()
         if message_count >= 3:
-            messages.error(request, "You have reached the maximum number of messages allowed. Please wait before sending more.")
-            return render(request, "footers_file/contact.html")
+            return render(request, "footers_file/contact.html", {"error_message": "You have reached the maximum number of messages allowed. Please wait before sending more."})
         # ✅ SAVE TO DATABASE (IMPORTANT)
         ContactMessage.objects.create(
             first_name=first_name,
@@ -90,7 +89,7 @@ Message:
         )
 
 
-        messages.success(request, "Your message has been sent successfully!")
+        return render(request, "footers_file/contact.html", {"success_message": "Your message has been sent successfully!"})
 
     return render(request, "footers_file/contact.html")
 

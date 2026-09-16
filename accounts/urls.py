@@ -15,6 +15,9 @@ urlpatterns = [
     path('role-redirect/<str:role>/', views.role_redirect, name='role_redirect'),
     path("admin-home/", views.admin_home, name="admin_home"),
     path("admin/users/", views.admin_users, name="admin_users"),
+    path("admin/connection-requests/", views.admin_connection_requests, name="admin_connection_requests"),
+    path("admin/accept-request/<int:request_id>/", views.admin_accept_request, name="admin_accept_request"),
+    path("admin/reject-request/<int:request_id>/", views.admin_reject_request, name="admin_reject_request"),
     path('dashboard/', views.redirect_dashboard, name='dashboard'),
     path('connect/<int:user_id>/',views.send_connection_request,name='send_connection_request'),
 
@@ -26,6 +29,7 @@ urlpatterns = [
     path("followers/", views.followers_list, name="followers"),
     path("following/", views.following_list, name="following"),
     path("pending-requests/", views.pending_requests, name="pending_requests"),
+    path("mark-notifications-read/", views.mark_notifications_read, name="mark_notifications_read"),
     path("find-connections/", views.find_connections, name="find_connections"),
     path("my-profile/", views.my_profile, name="my_profile"),
     path("profile/<int:user_id>/", views.view_profile, name="view_profile"),

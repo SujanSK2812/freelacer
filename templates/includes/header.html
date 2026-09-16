@@ -21,15 +21,43 @@
 
       {% if request.user.is_authenticated and not request.user.is_superuser %}
       <div class="upwork-nav-menu">
+        
+        {% if request.user.role == 'client' %}
+        <!-- CLIENT NAVIGATION -->
+        <div class="nav-dropdown-item">
+          <a href="{% url 'client:client_home' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'client_home' %}active{% endif %}">
+            Find Talent <i class="fas fa-chevron-down nav-arrow"></i>
+          </a>
+          <div class="dropdown-popover">
+            <a href="{% url 'client:client_home' %}"><i class="fas fa-search"></i> Search for Freelancers</a>
+            <a href="{% url 'client:all_freelancers' %}"><i class="fas fa-users"></i> All Freelancers</a>
+          </div>
+        </div>
+
+        <div class="nav-dropdown-item">
+          <a href="{% url 'client:client_dashboard' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+            My Projects <i class="fas fa-chevron-down nav-arrow"></i>
+          </a>
+          <div class="dropdown-popover">
+            <a href="{% url 'client:client_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Client Dashboard</a>
+            <a href="{% url 'client:create_job' %}"><i class="fas fa-plus"></i> Post a Job</a>
+          </div>
+        </div>
+
+
+
+        {% else %}
+        <!-- FREELANCER NAVIGATION -->
         <div class="nav-dropdown-item">
           <a href="{% url 'freelancer:freelancer_home' %}"
             class="nav-link {% if request.resolver_match.url_name == 'freelancer_home' %}active{% endif %}">
             Find Work <i class="fas fa-chevron-down nav-arrow"></i>
           </a>
           <div class="dropdown-popover">
-            <a href="{% url 'freelancer:freelancer_home' %}"><i class="fas fa-search"></i> Search for Jobs</a>
-            <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-contract"></i> Saved Jobs &
-              Proposals</a>
+
+            <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-contract"></i> Saved Jobs & Proposals</a>
             <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-user-circle"></i> Profile & Skills</a>
           </div>
         </div>
@@ -40,16 +68,15 @@
             My Jobs <i class="fas fa-chevron-down nav-arrow"></i>
           </a>
           <div class="dropdown-popover">
-            <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Freelancer
-              Dashboard</a>
-            <a href="{% url 'freelancer:freelancer_dashboard' %}#active-contracts"><i class="fas fa-tasks"></i> Active
-              Contracts</a>
+            <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Freelancer Dashboard</a>
+            <a href="{% url 'freelancer:freelancer_dashboard' %}#active-contracts"><i class="fas fa-tasks"></i> Active Contracts</a>
             <a href="{% url 'freelancer:freelancer_connections' %}"><i class="fas fa-users"></i> Client Network</a>
           </div>
         </div>
 
-        <a href="{% url 'projects:reports' %}"
-          class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}">Reports</a>
+        <a href="{% url 'freelancer:my_proposals' %}"
+          class="nav-link {% if request.resolver_match.url_name == 'my_proposals' %}active{% endif %}">Proposals</a>
+        {% endif %}
 
         <a href="{% url 'chat_home' %}"
           class="nav-link {% if request.resolver_match.url_name == 'chat_home' %}active{% endif %}">
@@ -78,13 +105,13 @@
       <!-- POST WORK / POST TALENT BUTTON BASED ON ROLE -->
       {% if request.user.role == 'client' %}
       <a href="{% url 'client:create_job' %}" class="upwork-btn-primary"
-        style="background: #108a00; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        style="background: #0a66c2; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
         <i class="fas fa-plus"></i> Post Work
       </a>
-      {% else %}
-      <a href="{% url 'client:create_job' %}" class="upwork-btn-primary"
-        style="background: #108a00; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-        <i class="fas fa-star"></i> Post
+      {% elif request.user.role == 'freelancer' %}
+      <a href="{% url 'freelancer:create_showcase' %}" class="upwork-btn-primary"
+        style="background: #0a66c2; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        <i class="fas fa-star"></i> Post Showcase
       </a>
       {% endif %}
 
@@ -92,98 +119,53 @@
       <div class="notif-wrapper" style="position: relative;">
         <div class="notif-bell-icon" title="Notifications" onclick="toggleNotifMenu(event)">
           <i class="fas fa-bell"></i>
-          <span class="bell-badge" id="notifBadge">3</span>
+          {% if unread_notifications_count > 0 %}
+          <span class="bell-badge" id="notifBadge">{{ unread_notifications_count }}</span>
+          {% else %}
+          <span class="bell-badge" id="notifBadge" style="display: none;">0</span>
+          {% endif %}
         </div>
 
         <!-- NOTIFICATIONS DROPDOWN MENU -->
         <div class="notif-dropdown" id="notifDropdown">
           <div class="notif-header">
             <div class="notif-title">
-              <i class="fas fa-bell" style="color: #108a00;"></i> Notifications
+              <i class="fas fa-bell" style="color: #0a66c2;"></i> Notifications
             </div>
-            <button type="button" class="mark-read-btn" onclick="clearNotifBadge(event)">Mark all read</button>
+            {% if unread_notifications_count > 0 %}
+            <button type="button" class="mark-read-btn" id="markAllReadBtn" onclick="markAllNotificationsRead(event)">Mark all read</button>
+            {% else %}
+            <button type="button" class="mark-read-btn" id="markAllReadBtn" style="display: none;" onclick="markAllNotificationsRead(event)">Mark all read</button>
+            {% endif %}
           </div>
 
           <div class="notif-list">
-            {% if request.user.role == 'client' %}
-              <!-- Client Role Notifications -->
-              <a href="{% url 'client:client_home' %}" class="notif-item unread">
-                <div class="notif-icon-box client-bg">
-                  <i class="fas fa-file-signature"></i>
+            {% for notification in notifications %}
+              <a href="{{ notification.link|default:'#' }}" class="notif-item {% if not notification.is_read %}unread{% endif %}">
+                <div class="notif-icon-box {% if request.user.role == 'client' %}client-bg{% elif request.user.role == 'freelancer' %}freelancer-bg{% else %}admin-bg{% endif %}">
+                  {% if notification.notification_type == 'proposal_view' %}
+                    <i class="fas fa-eye"></i>
+                  {% elif notification.notification_type == 'proposal_status' %}
+                    <i class="fas fa-check-circle"></i>
+                  {% elif notification.notification_type == 'new_project' %}
+                    <i class="fas fa-briefcase"></i>
+                  {% elif notification.notification_type == 'message' %}
+                    <i class="fas fa-comments"></i>
+                  {% else %}
+                    <i class="fas fa-bell"></i>
+                  {% endif %}
                 </div>
                 <div class="notif-content">
-                  <div class="notif-text">New proposal submitted on your job post <strong>Full Stack Developer</strong>.</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 5 minutes ago</div>
+                  <div class="notif-text">{{ notification.message|safe }}</div>
+                  <div class="notif-time"><i class="far fa-clock"></i> {{ notification.created_at|timesince }} ago</div>
                 </div>
               </a>
-              <a href="{% url 'client:client_home' %}" class="notif-item unread">
-                <div class="notif-icon-box client-bg">
-                  <i class="fas fa-comments"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-text">Freelancer sent a message regarding project scope & milestone deliverables.</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 1 hour ago</div>
-                </div>
-              </a>
-              <a href="{% url 'client:create_job' %}" class="notif-item">
-                <div class="notif-icon-box client-bg">
-                  <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-text">Your job posting <strong>Senior Django Engineer</strong> is live and receiving bids.</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 3 hours ago</div>
-                </div>
-              </a>
-            {% elif request.user.role == 'freelancer' %}
-              <!-- Freelancer Role Notifications -->
-              <a href="{% url 'freelancer:my_proposals' %}" class="notif-item unread">
-                <div class="notif-icon-box freelancer-bg">
-                  <i class="fas fa-eye"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-text">Your proposal for <strong>Full Stack Django & React Developer Needed</strong> was viewed by client.</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 10 minutes ago</div>
-                </div>
-              </a>
-              <a href="{% url 'freelancer:freelancer_dashboard' %}" class="notif-item unread">
-                <div class="notif-icon-box freelancer-bg">
-                  <i class="fas fa-bolt"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-text">You received <strong>50 Free Bidding Connects</strong> credited to your account!</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 2 hours ago</div>
-                </div>
-              </a>
-              <a href="/" class="notif-item">
-                <div class="notif-icon-box freelancer-bg">
-                  <i class="fas fa-briefcase"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-text">New high-matching client project <strong>Python Web Scraping Project</strong> just posted.</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 5 hours ago</div>
-                </div>
-              </a>
-            {% else %}
-              <!-- Admin / Default Notifications -->
-              <a href="{% url 'accounts:admin_home' %}" class="notif-item unread">
-                <div class="notif-icon-box admin-bg">
-                  <i class="fas fa-user-shield"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-text">System alert: New user account registered and OTP verified successfully.</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 15 minutes ago</div>
-                </div>
-              </a>
-              <a href="{% url 'accounts:admin_home' %}" class="notif-item">
-                <div class="notif-icon-box admin-bg">
-                  <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="notif-content">
-                  <div class="notif-text">Daily summary: 5 proposals and 2 talent posts submitted today.</div>
-                  <div class="notif-time"><i class="far fa-clock"></i> 4 hours ago</div>
-                </div>
-              </a>
-            {% endif %}
+            {% empty %}
+              <div style="padding: 2rem 1rem; text-align: center; color: #5e6b7c;">
+                <i class="fas fa-bell-slash" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem;"></i>
+                <p>You have no notifications.</p>
+              </div>
+            {% endfor %}
           </div>
           <div class="notif-footer">
             <span style="font-size: 12px; color: #64748b;">Role: <strong>{{ request.user.role|default:"User"|title }}</strong> Notifications</span>
@@ -194,7 +176,7 @@
 
       <!-- PROFILE MENU TOGGLE -->
       <div class="upwork-user-menu" onclick="toggleUpworkMenu(event)">
-        <div class="user-avatar-circle" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; background: #108a00; color: white;">
+        <div class="user-avatar-circle" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; background: #0a66c2; color: white;">
           {% if request.user.get_profile_picture %}
           <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
           {% else %}
@@ -206,7 +188,7 @@
         <!-- PROFILE DROPDOWN MENU -->
         <div class="upwork-dropdown" id="upworkMenu">
           <div class="upwork-menu-header">
-            <div class="menu-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; background: #108a00; color: white;">
+            <div class="menu-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; background: #0a66c2; color: white;">
               {% if request.user.get_profile_picture %}
               <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
               {% else %}
@@ -223,11 +205,11 @@
             </div>
           </div>
 
-          {% if not request.user.is_superuser %}
+          {% if request.user.role == 'freelancer' and request.user.freelancerprofile %}
           <div class="availability-toggle-box">
-            <span class="avail-label"><i class="fas fa-circle avail-dot"></i> Available for work</span>
+            <span class="avail-label"><i class="fas fa-circle avail-dot" id="header-avail-dot" {% if not request.user.freelancerprofile.is_available %}style="color:#cbd5e1;"{% endif %}></i> Available for work</span>
             <label class="switch-toggle">
-              <input type="checkbox" checked>
+              <input type="checkbox" id="header-avail-toggle" {% if request.user.freelancerprofile.is_available %}checked{% endif %}>
               <span class="slider-round"></span>
             </label>
           </div>
@@ -276,20 +258,20 @@
 
   .upwork-header {
     background: #ffffff;
-    border-bottom: 1px solid #e4e6eb;
+    border-bottom: none;
     position: sticky;
     top: 0;
     z-index: 1000;
     height: 64px;
     display: flex;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: none;
   }
 
   .upwork-header-container {
     width: 100%;
-    max-width: 100%;
-    margin: 0;
+    max-width: 1400px;
+    margin: 0 auto;
     padding: 0 32px;
     display: flex;
     justify-content: space-between;
@@ -310,7 +292,7 @@
   }
 
   .logo-icon {
-    background: #108a00;
+    background: #0a66c2;
     color: #ffffff;
     width: 34px;
     height: 34px;
@@ -329,7 +311,7 @@
   }
 
   .logo-accent {
-    color: #108a00;
+    color: #0a66c2;
   }
 
   .upwork-nav-menu {
@@ -362,7 +344,7 @@
 
   .nav-link:hover,
   .nav-link.active {
-    color: #108a00;
+    color: #0a66c2;
   }
 
   .nav-arrow {
@@ -402,19 +384,19 @@
   }
 
   .dropdown-popover a:hover {
-    background: #f4f9f4;
-    color: #108a00;
+    background: #eef3f8;
+    color: #0a66c2;
   }
 
   .dropdown-popover a i {
-    color: #108a00;
+    color: #0a66c2;
     width: 16px;
   }
 
   .nav-unread-dot {
     width: 8px;
     height: 8px;
-    background: #108a00;
+    background: #0a66c2;
     border-radius: 50%;
     display: inline-block;
   }
@@ -451,14 +433,14 @@
   }
 
   .upwork-search-box input:focus {
-    border-color: #108a00;
+    border-color: #0a66c2;
     background-color: #ffffff;
     width: 280px;
   }
 
   .connects-pill {
-    background: #e8f5e9;
-    color: #108a00;
+    background: #eef3f8;
+    color: #0a66c2;
     border-radius: 16px;
     padding: 6px 14px;
     font-size: 13px;
@@ -471,7 +453,7 @@
   }
 
   .connects-pill:hover {
-    background: #d4edda;
+    background: #ddeefe;
   }
 
   .notif-bell-icon {
@@ -485,15 +467,15 @@
   }
 
   .notif-bell-icon:hover {
-    background: #f4f9f4;
-    color: #108a00;
+    background: #eef3f8;
+    color: #0a66c2;
   }
 
   .bell-badge {
     position: absolute;
     top: 4px;
     right: 4px;
-    background: #108a00;
+    background: #0a66c2;
     color: white;
     font-size: 10px;
     font-weight: bold;
@@ -514,7 +496,7 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: #108a00;
+    background: #0a66c2;
     color: white;
     display: flex;
     align-items: center;
@@ -538,7 +520,7 @@
     right: 0;
     width: 10px;
     height: 10px;
-    background: #108a00;
+    background: #057642;
     border: 2px solid #ffffff;
     border-radius: 50%;
   }
@@ -568,7 +550,7 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #108a00;
+    background: #0a66c2;
     color: white;
     display: flex;
     align-items: center;
@@ -591,7 +573,7 @@
 
   .menu-badge {
     font-size: 11px;
-    color: #108a00;
+    color: #0a66c2;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -619,7 +601,7 @@
   }
 
   .avail-dot {
-    color: #108a00;
+    color: #057642;
     font-size: 8px;
   }
 
@@ -661,7 +643,7 @@
   }
 
   input:checked+.slider-round {
-    background-color: #108a00;
+    background-color: #0a66c2;
   }
 
   input:checked+.slider-round:before {
@@ -687,8 +669,8 @@
   }
 
   .upwork-dropdown a:hover {
-    background: #f4f9f4;
-    color: #108a00;
+    background: #eef3f8;
+    color: #0a66c2;
   }
 
   .upwork-logout-btn {
@@ -696,7 +678,7 @@
   }
 
   .upwork-btn-link {
-    color: #108a00;
+    color: #0a66c2;
     font-weight: 600;
     font-size: 14px;
     text-decoration: none;
@@ -704,7 +686,7 @@
   }
 
   .upwork-btn-primary {
-    background: #108a00;
+    background: #0a66c2;
     color: #ffffff;
     font-weight: 600;
     font-size: 14px;
@@ -715,7 +697,7 @@
   }
 
   .upwork-btn-primary:hover {
-    background: #0f7a00;
+    background: #004182;
   }
 
   /* NOTIFICATION DROPDOWN STYLING */
@@ -760,7 +742,7 @@
   .mark-read-btn {
     background: none;
     border: none;
-    color: #108a00;
+    color: #0a66c2;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -770,7 +752,7 @@
   }
 
   .mark-read-btn:hover {
-    background: #e8f5e9;
+    background: #eef3f8;
   }
 
   .notif-list {
@@ -793,7 +775,7 @@
   }
 
   .notif-item.unread {
-    background: #f4fbf4;
+    background: #f0f7ff;
   }
 
   .notif-icon-box {
@@ -807,8 +789,9 @@
     flex-shrink: 0;
   }
 
-  .client-bg { background: #e8f5e9; color: #108a00; }
-  .freelancer-bg { background: #e8f5e9; color: #108a00; }
+  .client-bg { background: #eef3f8; color: #0a66c2; }
+  .freelancer-bg { background: #eef3f8; color: #0a66c2; }
+  .admin-bg { background: #fef3c7; color: #b45309; }
   .admin-bg { background: #fef3c7; color: #b45309; }
 
   .notif-content {
@@ -854,17 +837,28 @@
 </style>
 
 <script>
-  const currentUserId = "{{ request.user.id|default:'guest' }}";
-  const notifKey = "notif_read_user_" + currentUserId;
-
-  function applyNotifReadState() {
-    if (localStorage.getItem(notifKey) === "true") {
-      const badge = document.getElementById("notifBadge");
-      if (badge) badge.style.display = "none";
-      document.querySelectorAll(".notif-item.unread").forEach(item => {
-        item.classList.remove("unread");
-      });
-    }
+  function markAllNotificationsRead(e) {
+    if (e) e.stopPropagation();
+    
+    fetch('{% url "accounts:mark_notifications_read" %}', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken'),
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(data => {
+      if (data.status === 'success') {
+        const badge = document.getElementById("notifBadge");
+        if (badge) badge.style.display = "none";
+        
+        const btn = document.getElementById("markAllReadBtn");
+        if (btn) btn.style.display = "none";
+        
+        document.querySelectorAll(".notif-item.unread").forEach(item => {
+          item.classList.remove("unread");
+        });
+      }
+    });
   }
 
   function toggleUpworkMenu(e) {
@@ -883,18 +877,6 @@
     if (notif) notif.style.display = notif.style.display === "block" ? "none" : "block";
   }
 
-  function clearNotifBadge(e) {
-    if (e) e.stopPropagation();
-    localStorage.setItem(notifKey, "true");
-    const badge = document.getElementById("notifBadge");
-    if (badge) badge.style.display = "none";
-    document.querySelectorAll(".notif-item.unread").forEach(item => {
-      item.classList.remove("unread");
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", applyNotifReadState);
-
   document.addEventListener("click", function (e) {
     const menu = document.getElementById("upworkMenu");
     if (menu && !e.target.closest(".upwork-user-menu")) {
@@ -905,5 +887,58 @@
       notif.style.display = "none";
     }
   });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const headerAvailToggle = document.getElementById('header-avail-toggle');
+    if (headerAvailToggle) {
+      headerAvailToggle.addEventListener('change', function() {
+        fetch('/freelancer/toggle-availability/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+          }
+        }).then(res => res.json()).then(data => {
+          if (data.status === 'success') {
+            const availDot = document.getElementById('header-avail-dot');
+            if (availDot) {
+                if (data.is_available) {
+                  availDot.style.color = '#108a00';
+                } else {
+                  availDot.style.color = '#cbd5e1';
+                }
+            }
+            
+            const homeBadgeText = document.getElementById('home-avail-badge-text');
+            const homeBadgeStatus = document.getElementById('home-avail-badge-status');
+            if (homeBadgeText && homeBadgeStatus) {
+              if (data.is_available) {
+                homeBadgeText.innerHTML = '<i class="fas fa-circle" id="home-avail-badge-dot" style="color:#0a66c2; font-size:9px;"></i> Available now';
+                homeBadgeStatus.innerText = 'On';
+              } else {
+                homeBadgeText.innerHTML = '<i class="fas fa-circle" id="home-avail-badge-dot" style="color:#cbd5e1; font-size:9px;"></i> Not available';
+                homeBadgeStatus.innerText = 'Off';
+              }
+            }
+          }
+        });
+      });
+    }
+  });
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 </script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />

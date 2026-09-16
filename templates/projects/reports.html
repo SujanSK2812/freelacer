@@ -23,13 +23,13 @@
     .container h2 {
         font-size: 2rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #108a00, #2b9348);
+        background: linear-gradient(135deg, #0a66c2, #2b9348);
         background-clip: text;
         -webkit-background-clip: text;
         color: transparent;
         margin-bottom: 2rem;
         padding-bottom: 0.75rem;
-        border-bottom: 3px solid #108a00;
+        border-bottom: 3px solid #0a66c2;
         display: inline-block;
     }
 
@@ -58,7 +58,7 @@
     .stat-number {
         font-size: 2.2rem;
         font-weight: 800;
-        color: #108a00;
+        color: #0a66c2;
         line-height: 1.2;
     }
 
@@ -182,7 +182,7 @@
           labels: ['Clients', 'Freelancers'],
           datasets: [{
               data: [{{ clients }}, {{ freelancers }}],
-              backgroundColor: ['#108a00', '#0066cc']
+              backgroundColor: ['#0a66c2', '#0066cc']
           }]
       }
   });
@@ -208,7 +208,7 @@
           datasets: [{
               label: 'Projects Created',
               data: {{ counts|safe }},
-              borderColor: '#108a00',
+              borderColor: '#0a66c2',
               fill: false
           }]
       }

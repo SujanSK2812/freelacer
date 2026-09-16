@@ -59,7 +59,7 @@
 
         .connections-icon {
             font-size: 2.5rem;
-            color: #14a800;
+            color: #0a66c2;
             background: #f0f7f0;
             width: 80px;
             height: 80px;
@@ -78,7 +78,7 @@
         }
 
         .connections-count {
-            color: #14a800;
+            color: #0a66c2;
             background: #f0f7f0;
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
@@ -125,7 +125,7 @@
         }
 
         .search-input:focus {
-            border-color: #14a800;
+            border-color: #0a66c2;
             box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
         }
 
@@ -161,29 +161,86 @@
         }
 
         .filter-tab:hover {
-            color: #14a800;
+            color: #0a66c2;
             background: #f0f7f0;
         }
 
         .filter-tab.active {
-            color: #14a800;
+            color: #0a66c2;
             background: #f0f7f0;
         }
 
-        .sort-select {
-            padding: 0.5rem 1rem;
-            border: 2px solid #e0e6e0;
-            border-radius: 8px;
-            background: white;
-            color: #2d3a2d;
-            font-size: 0.9rem;
-            cursor: pointer;
+        /* Custom Sort Dropdown Styles */
+        .custom-sort-dropdown {
+            position: relative;
+            display: inline-block;
             font-family: inherit;
+            width: 240px; /* Wider to match screenshot */
         }
 
-        .sort-select:focus {
+        .sort-select-button {
+            width: 100%;
+            padding: 0.75rem 1.2rem;
+            border: 2px solid #0a66c2; /* Blue border shown in screenshot */
+            border-radius: 10px;
+            background: white;
+            color: #2d3a2d;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .sort-select-button:focus {
             outline: none;
-            border-color: #14a800;
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.2);
+        }
+
+        .sort-options-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0; /* Matches exact width of the button */
+            background: #555555;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 100;
+            padding: 8px 0;
+            display: none;
+        }
+
+        .sort-options-menu.open {
+            display: block;
+        }
+
+        .sort-option {
+            padding: 12px 20px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+
+        .sort-option:hover {
+            background: #666666;
+        }
+
+        .sort-option .fa-check {
+            opacity: 0;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .sort-option.selected .fa-check {
+            opacity: 1;
         }
 
         /* Users List */
@@ -206,7 +263,7 @@
         }
 
         .users-list::-webkit-scrollbar-thumb {
-            background: #14a800;
+            background: #0a66c2;
             border-radius: 10px;
         }
 
@@ -239,7 +296,7 @@
         .user-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            border-color: #14a80020;
+            border-color: #0a66c220;
         }
 
         /* User Info */
@@ -254,7 +311,7 @@
         .user-avatar {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #14a800 0%, #0d8f00 100%);
+            background: linear-gradient(135deg, #0a66c2 0%, #0d8f00 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -289,7 +346,7 @@
         }
 
         .user-details p i {
-            color: #14a800;
+            color: #0a66c2;
             font-size: 0.85rem;
         }
 
@@ -301,7 +358,7 @@
             background: #f0f7f0;
             border-radius: 12px;
             font-size: 0.7rem;
-            color: #14a800;
+            color: #0a66c2;
             font-weight: 500;
         }
 
@@ -320,13 +377,13 @@
         }
 
         .mutual-connections i {
-            color: #14a800;
+            color: #0a66c2;
             font-size: 0.7rem;
         }
 
         /* Connect Button */
         .connect-btn {
-            background: #14a800;
+            background: #0a66c2;
             color: white;
             padding: 0.75rem 1.5rem;
             border: none;
@@ -384,6 +441,16 @@
             box-shadow: none;
         }
 
+        .connect-btn.rejected {
+            background: #ef4444;
+            cursor: not-allowed;
+        }
+
+        .connect-btn.rejected:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -417,7 +484,7 @@
             width: 50px;
             height: 50px;
             border: 3px solid #f0f7f0;
-            border-top-color: #14a800;
+            border-top-color: #0a66c2;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin: 0 auto 1rem;
@@ -430,7 +497,7 @@
         /* Message Styles */
         .message {
             background: #f0f7f0;
-            border-left: 4px solid #14a800;
+            border-left: 4px solid #0a66c2;
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1.5rem;
@@ -445,7 +512,7 @@
         }
 
         .message i {
-            color: #14a800;
+            color: #0a66c2;
         }
 
         .message.error i {
@@ -469,7 +536,7 @@
         }
 
         .footer-section h3 {
-            color: #14a800;
+            color: #0a66c2;
             font-size: 1.2rem;
             margin-bottom: 1rem;
         }
@@ -503,7 +570,7 @@
         }
 
         .footer-section ul li a:hover {
-            color: #14a800;
+            color: #0a66c2;
         }
 
         .social-links {
@@ -518,7 +585,7 @@
         }
 
         .social-links a:hover {
-            color: #14a800;
+            color: #0a66c2;
         }
 
         .footer-bottom {
@@ -621,7 +688,7 @@
 
         /* Selection Color */
         ::selection {
-            background: #14a800;
+            background: #0a66c2;
             color: white;
         }
     </style>
@@ -659,10 +726,20 @@
            
             <div class="filter-options">
                 
-                <select class="sort-select" id="sortSelect">
-                    <option value="name">Sort by Name</option>
-                    <option value="recent">Sort by Recent</option>
-                </select>
+                <div class="custom-sort-dropdown" id="customSortDropdown">
+                    <button class="sort-select-button" id="sortSelectButton">
+                        <span>Sort by Name</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; color: #5e6b7e;"></i>
+                    </button>
+                    <div class="sort-options-menu" id="sortOptionsMenu">
+                        <div class="sort-option selected" data-value="name">
+                            <i class="fas fa-check"></i> Sort by Name
+                        </div>
+                        <div class="sort-option" data-value="recent">
+                            <i class="fas fa-check"></i> Sort by Recent
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -702,6 +779,11 @@
                         <button class="connect-btn connected" disabled>
                             <i class="fas fa-check-circle"></i>
                             <span>Connected</span>
+                        </button>
+                    {% elif user.connection_status == 'rejected' %}
+                        <button class="connect-btn rejected" disabled>
+                            <i class="fas fa-times-circle"></i>
+                            <span>Request Rejected</span>
                         </button>
                     {% else %}
                         <a href="{% url 'accounts:send_connection_request' user.id %}" class="connect-btn">
@@ -786,26 +868,51 @@ filterTabs.forEach(tab => {
 });
 
 // Sort functionality
-const sortSelect = document.getElementById('sortSelect');
-if (sortSelect) {
-    sortSelect.addEventListener('change', function() {
-        const sortValue = this.value;
-        const usersList = document.getElementById('usersList');
-        const cards = Array.from(userCards);
-        
-        if (sortValue === 'name') {
-            cards.sort((a, b) => {
-                const nameA = a.getAttribute('data-name') || '';
-                const nameB = b.getAttribute('data-name') || '';
-                return nameA.localeCompare(nameB);
-            });
-        } else if (sortValue === 'recent') {
-            // For recent, keep original order or reverse
-            cards.reverse();
-        }
-        
-        // Re-append sorted cards
-        cards.forEach(card => usersList.appendChild(card));
+const sortDropdown = document.getElementById('customSortDropdown');
+const sortBtn = document.getElementById('sortSelectButton');
+const sortMenu = document.getElementById('sortOptionsMenu');
+const sortOptions = document.querySelectorAll('.sort-option');
+
+if (sortDropdown) {
+    // Toggle menu
+    sortBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sortMenu.classList.toggle('open');
+    });
+
+    // Close menu on outside click
+    document.addEventListener('click', () => {
+        sortMenu.classList.remove('open');
+    });
+
+    sortOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const sortValue = this.getAttribute('data-value');
+            const labelText = this.textContent.trim();
+            
+            // Update UI
+            sortOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            sortBtn.querySelector('span').textContent = labelText;
+            
+            // Sort logic
+            const usersList = document.getElementById('usersList');
+            const cards = Array.from(userCards);
+            
+            if (sortValue === 'name') {
+                cards.sort((a, b) => {
+                    const nameA = a.getAttribute('data-name') || '';
+                    const nameB = b.getAttribute('data-name') || '';
+                    return nameA.localeCompare(nameB);
+                });
+            } else if (sortValue === 'recent') {
+                // For recent, keep original order or reverse
+                cards.reverse();
+            }
+            
+            // Re-append sorted cards
+            cards.forEach(card => usersList.appendChild(card));
+        });
     });
 }
 

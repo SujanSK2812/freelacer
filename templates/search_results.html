@@ -32,7 +32,7 @@
             font-size: 1.8rem;
             margin-bottom: 2rem;
             padding-bottom: 0.5rem;
-            border-bottom: 3px solid #108a00;
+            border-bottom: 3px solid #0a66c2;
             display: inline-block;
         }
 
@@ -51,7 +51,7 @@
         }
 
         .section-header .count {
-            background: #108a00;
+            background: #0a66c2;
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -80,11 +80,11 @@
         .project-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-            border-color: #108a00;
+            border-color: #0a66c2;
         }
 
         .project-title {
-            color: #108a00;
+            color: #0a66c2;
             font-size: 1.3rem;
             margin-bottom: 0.75rem;
             font-weight: 600;
@@ -100,7 +100,7 @@
         .project-budget {
             display: inline-block;
             background: #f3f2ef;
-            color: #108a00;
+            color: #0a66c2;
             padding: 6px 12px;
             border-radius: 6px;
             font-weight: 600;
@@ -110,7 +110,7 @@
 
         .project-budget i {
             margin-right: 5px;
-            color: #108a00;
+            color: #0a66c2;
         }
 
         /* Freelancer Card */
@@ -129,7 +129,7 @@
         .freelancer-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-            border-color: #108a00;
+            border-color: #0a66c2;
         }
 
         .freelancer-avatar {
@@ -141,7 +141,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            color: #108a00;
+            color: #0a66c2;
         }
 
         .freelancer-info {
@@ -156,7 +156,7 @@
         }
 
         .freelancer-role {
-            color: #108a00;
+            color: #0a66c2;
             font-size: 0.85rem;
             margin-bottom: 0.5rem;
         }
@@ -169,15 +169,15 @@
         }
 
         .freelancer-stats i {
-            color: #108a00;
+            color: #0a66c2;
             margin-right: 4px;
         }
 
         /* View Profile Button */
         .view-profile-btn {
             background: transparent;
-            border: 1px solid #108a00;
-            color: #108a00;
+            border: 1px solid #0a66c2;
+            color: #0a66c2;
             padding: 6px 16px;
             border-radius: 6px;
             cursor: pointer;
@@ -188,7 +188,7 @@
         }
 
         .view-profile-btn:hover {
-            background: #108a00;
+            background: #0a66c2;
             color: white;
         }
 
@@ -204,7 +204,7 @@
 
         .empty-state i {
             font-size: 3rem;
-            color: #108a00;
+            color: #0a66c2;
             margin-bottom: 1rem;
             opacity: 0.5;
         }
@@ -232,8 +232,8 @@
 
         .back-button:hover {
             background: #f3f2ef;
-            border-color: #108a00;
-            color: #108a00;
+            border-color: #0a66c2;
+            color: #0a66c2;
         }
 
         /* No Results Message */
@@ -365,51 +365,10 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="empty-state">
-        <i class="fas fa-search"></i>
-        <p>No projects found matching "{{ query }}"</p>
-    </div>
-    {% endif %}
-
-    <!-- Freelancers Section -->
-    <div class="section-header">
-        <h3>Freelancers</h3>
-        <span class="count">{{ freelancers|length }}</span>
-    </div>
-
-    {% if freelancers %}
-    <div class="freelancers-grid">
-        {% for user in freelancers %}
-        <div class="freelancer-card">
-            <div class="freelancer-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="freelancer-info">
-                <div class="freelancer-name">{{ user.username }}</div>
-                <div class="freelancer-role">Freelancer</div>
-                <div class="freelancer-stats">
-                    <span><i class="fas fa-star"></i> {{ user.rating|default:"4.8" }}</span>
-                    <span><i class="fas fa-check-circle"></i> {{ user.project_count|default:"0" }} projects</span>
-                </div>
-            </div>
-            <a href="{% url 'freelancer_profile' user.id %}" class="view-profile-btn">View Profile</a>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-        <i class="fas fa-users"></i>
-        <p>No freelancers found matching "{{ query }}"</p>
-    </div>
-    {% endif %}
-    
-    <!-- Overall No Results Message -->
-    {% if not projects and not freelancers %}
     <div class="no-results-message">
         <i class="fas fa-search"></i>
         <h3>No results found</h3>
-        <p>We couldn't find any projects or freelancers matching "{{ query }}".<br>Try different keywords or browse all listings.</p>
-        
+        <p>We couldn't find any projects matching "{{ query }}".<br>Try different keywords or browse all listings.</p>
     </div>
     {% endif %}
    

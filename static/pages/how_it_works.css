@@ -8,7 +8,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #f8f9fc 0%, #f1f4f9 100%);
+    background: #f3f2ef;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -26,10 +26,10 @@ main {
 
 .how-it-works-container h1 {
     text-align: center;
-    color: #003912;
+    color: #004182;
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .steps-grid {
@@ -42,16 +42,17 @@ main {
 .step-card {
     background: white;
     padding: 2.5rem 2rem;
-    border-radius: 24px;
+    border-radius: 20px;
     text-align: center;
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
 }
 
 .step-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 30px rgba(20, 168, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 16px 30px rgba(10, 102, 194, 0.15);
 }
 
 .step-number {
@@ -59,7 +60,7 @@ main {
     top: -15px;
     left: 50%;
     transform: translateX(-50%);
-    background: #14a800;
+    background: #0a66c2;
     color: white;
     width: 40px;
     height: 40px;
@@ -69,12 +70,12 @@ main {
     justify-content: center;
     font-weight: bold;
     font-size: 1.2rem;
-    box-shadow: 0 4px 10px rgba(20, 168, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(10, 102, 194, 0.3);
 }
 
 .step-card i {
     font-size: 3rem;
-    color: #14a800;
+    color: #0a66c2;
     margin: 1.5rem 0 1rem;
     transition: transform 0.3s ease;
 }
@@ -85,7 +86,7 @@ main {
 
 .step-card h3 {
     font-size: 1.5rem;
-    color: #003912;
+    color: #004182;
     margin-bottom: 1rem;
 }
 
@@ -98,14 +99,15 @@ main {
     text-align: center;
     background: white;
     padding: 4rem;
-    border-radius: 24px;
+    border-radius: 20px;
     margin-top: 3rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
 }
 
 .cta-section h2 {
     font-size: 2rem;
-    color: #003912;
+    color: #004182;
     margin-bottom: 2rem;
 }
 
@@ -128,28 +130,29 @@ main {
 }
 
 .btn-primary {
-    background: #14a800;
+    background: #0a66c2;
     color: white;
-    border: 2px solid #14a800;
+    border: 2px solid #0a66c2;
 }
 
 .btn-primary:hover {
-    background: #108700;
+    background: #004182;
+    border-color: #004182;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(20, 168, 0, 0.3);
+    box-shadow: 0 8px 20px rgba(10, 102, 194, 0.3);
 }
 
 .btn-secondary {
     background: transparent;
-    color: #14a800;
-    border: 2px solid #14a800;
+    color: #0a66c2;
+    border: 2px solid #0a66c2;
 }
 
 .btn-secondary:hover {
-    background: #14a800;
+    background: #0a66c2;
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(20, 168, 0, 0.2);
+    box-shadow: 0 8px 20px rgba(10, 102, 194, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -199,6 +202,6 @@ main {
 }
 
 ::selection {
-    background: #14a800;
+    background: #0a66c2;
     color: white;
 }

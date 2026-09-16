@@ -47,11 +47,21 @@ def comment_job(request, job_id):
     if request.method == "POST":
         job = get_object_or_404(JobPost, id=job_id)
         text = request.POST.get("comment")
+        parent_id = request.POST.get("parent_id")
+
         if text:
+            parent_comment = None
+            if parent_id:
+                try:
+                    parent_comment = Comment.objects.get(id=parent_id)
+                except Comment.DoesNotExist:
+                    pass
+
             comment = Comment.objects.create(
                 user=request.user,
                 job=job,
-                text=text
+                text=text,
+                parent=parent_comment
             )
 
             comments_count = Comment.objects.filter(job=job).count()
@@ -61,6 +71,8 @@ def comment_job(request, job_id):
             if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == 'true':
                 return JsonResponse({
                     'success': True,
+                    'comment_id': comment.id,
+                    'parent_id': parent_comment.id if parent_comment else None,
                     'username': request.user.username,
                     'user_dp': user_dp,
                     'text': comment.text,
@@ -68,6 +80,31 @@ def comment_job(request, job_id):
                     'comments_count': comments_count,
                 })
 
+    return redirect(request.META.get('HTTP_REFERER') or '/')
+
+@login_required
+def toggle_comment_reaction(request, comment_id):
+    from .models import CommentReaction
+    comment = get_object_or_404(Comment, id=comment_id)
+    reaction, created = CommentReaction.objects.get_or_create(
+        user=request.user,
+        comment=comment,
+        defaults={'reaction_type': 'like'}
+    )
+    
+    if not created:
+        reaction.delete()
+        is_liked = False
+    else:
+        is_liked = True
+
+    likes_count = CommentReaction.objects.filter(comment=comment, reaction_type='like').count()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == 'true':
+        return JsonResponse({
+            'liked': is_liked,
+            'likes_count': likes_count,
+        })
     return redirect(request.META.get('HTTP_REFERER') or '/')
 
 
