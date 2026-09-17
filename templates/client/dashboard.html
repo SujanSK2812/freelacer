@@ -752,35 +752,23 @@
         <div class="activity-feed">
             <h3 style="margin-bottom: 1rem;">Recent Activity</h3>
             
+            {% for activity in recent_activities %}
             <div class="activity-item">
                 <div class="activity-icon">
                     <i class="fas fa-file-alt"></i>
                 </div>
                 <div class="activity-content">
-                    <p><strong>New proposal</strong> received for "E-Commerce Website"</p>
-                    <span class="activity-time">2 hours ago</span>
+                    <p><strong>New proposal</strong> received for "{{ activity.job.title }}"</p>
+                    <span class="activity-time">{{ activity.created_at|timesince }} ago</span>
                 </div>
             </div>
-
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="activity-content">
-                    <p><strong>Project completed:</strong> "Logo Design" marked as complete</p>
-                    <span class="activity-time">1 day ago</span>
+            {% empty %}
+            <div class="activity-item" style="border-bottom: none; padding-bottom: 0;">
+                <div class="activity-content" style="color: #64748b;">
+                    <p>No recent activity yet.</p>
                 </div>
             </div>
-
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-star"></i>
-                </div>
-                <div class="activity-content">
-                    <p><strong>New review</strong> received from John D. - 5 stars</p>
-                    <span class="activity-time">2 days ago</span>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 

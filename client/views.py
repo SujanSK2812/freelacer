@@ -61,11 +61,14 @@ def client_dashboard(request):
         job.proposal_count = Proposal.objects.filter(job=job).count()
         job.status = 'Open'  # Assuming all jobs are 'Open' for now
 
+    recent_activities = Proposal.objects.filter(job__client=request.user).order_by('-created_at')[:5]
+
     return render(request, "client/dashboard.html", {
         "client_jobs": client_jobs,
         "active_jobs_count": active_jobs_count,
         "proposals_count": proposals_count,
         "recommended_freelancers": recommended_freelancers,
+        "recent_activities": recent_activities,
     })
 
 @client_required
