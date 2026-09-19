@@ -2,14 +2,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Submit Proposal | {{ job.title }}</title>
     
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -20,206 +18,280 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f9fafb;
-            color: #001e00;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f3f2ef;
+            color: #191919;
             line-height: 1.5;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
 
-        .page-container {
+        .dashboard-container {
             flex: 1;
-            max-width: 860px;
+            max-width: 800px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
             width: 100%;
-            margin: 32px auto;
-            padding: 0 20px;
         }
 
         /* Job Info Summary Header */
         .job-summary-card {
-            background: white;
-            border: 1px solid #e4e6eb;
+            background: #ffffff;
             border-radius: 16px;
-            padding: 28px 32px;
+            padding: 24px 32px;
             margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e0e0e0;
         }
 
         .summary-badge {
-            background: #e8f5e9;
+            background: #eef3f8;
             color: #0a66c2;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #d0e1f9;
         }
 
         .job-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: #001e00;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #000000;
             margin-bottom: 12px;
+            letter-spacing: -0.015em;
         }
 
         .job-meta-row {
             display: flex;
-            gap: 20px;
-            font-size: 14px;
-            color: #5e6b7c;
+            gap: 24px;
+            font-size: 0.9rem;
+            color: #5e5e5e;
             flex-wrap: wrap;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .job-meta-row span {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .job-meta-row i {
             color: #0a66c2;
+            font-size: 1.1rem;
         }
 
         .job-desc-text {
-            font-size: 14px;
-            color: #334155;
+            font-size: 0.95rem;
+            color: #333333;
             line-height: 1.6;
             background: #f8fafc;
-            padding: 16px;
+            padding: 20px;
             border-radius: 12px;
             border-left: 4px solid #0a66c2;
         }
 
-        /* Main Proposal Form Card */
-        .proposal-card {
-            background: white;
-            border: 1px solid #e4e6eb;
+        .main-card {
+            background: #ffffff;
             border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
         }
 
-        .proposal-card-header {
+        .main-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+            border-color: #cbd5e1;
+        }
+
+        .card-header {
+            padding: 2rem 2.25rem;
+            border-bottom: 1px solid #eef3f8;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e4e6eb;
+            gap: 1.25rem;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
         }
 
-        .proposal-card-header i {
-            font-size: 24px;
+        .card-header-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: #eef3f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid #d0e1f9;
+        }
+
+        .card-header-icon i {
             color: #0a66c2;
+            font-size: 1.4rem;
         }
 
-        .proposal-card-header h3 {
-            font-size: 20px;
+        .card-header h2 {
+            font-size: 1.45rem;
             font-weight: 700;
-            color: #001e00;
+            color: #000000;
+            letter-spacing: -0.015em;
+        }
+        
+        .card-header p {
+            color: #5e5e5e;
+            font-size: 0.88rem;
+            margin-top: 0.25rem;
+            font-weight: 400;
+        }
+
+        .job-form {
+            padding: 2.25rem;
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
-            display: block;
-            font-size: 14px;
+            display: flex;
+            align-items: center;
+            color: #191919;
             font-weight: 600;
-            color: #001e00;
-            margin-bottom: 8px;
+            font-size: 0.88rem;
+            margin-bottom: 0.6rem;
         }
 
         .form-group label i {
             color: #0a66c2;
-            margin-right: 6px;
+            margin-right: 0.5rem;
+            font-size: 0.95rem;
+            width: 1.2rem;
+            text-align: center;
         }
 
-        .form-input, .form-textarea {
+        .job-form input[type="text"],
+        .job-form input[type="number"],
+        .job-form textarea,
+        .job-form select {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #cbd5e1;
+            padding: 0.8rem 1.1rem;
+            border: 1.5px solid #cbd5e1;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 0.92rem;
             font-family: inherit;
-            color: #001e00;
-            background: #f8fafc;
-            outline: none;
+            color: #191919;
+            background: #ffffff;
             transition: all 0.2s ease;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            border-color: #0a66c2;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(16, 138, 0, 0.12);
-        }
-
-        .form-textarea {
-            min-height: 180px;
             resize: vertical;
+            appearance: none;
+        }
+
+        .job-form input[type="text"]:focus,
+        .job-form input[type="number"]:focus,
+        .job-form textarea:focus,
+        .job-form select:focus {
+            outline: none;
+            border-color: #0a66c2;
+            box-shadow: 0 0 0 3.5px rgba(10, 102, 194, 0.15);
+            background: #ffffff;
+        }
+
+        .job-form textarea {
+            min-height: 160px;
             line-height: 1.6;
         }
 
         .form-row-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 1.5rem;
         }
 
-        .btn-submit-proposal {
-            background: #0a66c2;
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            font-size: 15px;
-            font-weight: 700;
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eef3f8;
+            margin-top: 1rem;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1.5px solid #666666;
+            padding: 0.65rem 1.4rem;
             border-radius: 24px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #666666;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
-        .btn-submit-proposal:hover {
-            background: #0f7a00;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(16, 138, 0, 0.3);
+        .btn-cancel:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: #191919;
+            border-color: #191919;
         }
 
-        .btn-cancel-link {
-            color: #64748b;
-            text-decoration: none;
+        .post-job-btn {
+            background: #0a66c2;
+            color: #ffffff;
+            border: none;
+            padding: 0.7rem 1.75rem;
+            border-radius: 24px;
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 14px;
-            padding: 14px 24px;
-            transition: color 0.2s;
-        }
-
-        .btn-cancel-link:hover {
-            color: #001e00;
-        }
-
-        .form-actions-flex {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            margin-top: 12px;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(10, 102, 194, 0.2);
+        }
+
+        .post-job-btn:hover {
+            background: #004182;
+            box-shadow: 0 4px 8px rgba(0, 65, 130, 0.3);
+            transform: translateY(-1px);
         }
 
         @media (max-width: 640px) {
+            .dashboard-container {
+                padding: 0 1rem;
+                margin: 1.5rem auto;
+            }
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1.5rem;
+            }
+            .job-form {
+                padding: 1.5rem;
+            }
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+            .form-actions .btn-cancel,
+            .form-actions .post-job-btn {
+                width: 100%;
+                justify-content: center;
+            }
             .form-row-grid {
                 grid-template-columns: 1fr;
             }
-            .job-summary-card, .proposal-card {
+            .job-summary-card {
                 padding: 20px;
             }
         }
@@ -229,7 +301,7 @@
 
 {% include 'includes/header.html' %}
 
-<div class="page-container">
+<div class="dashboard-container">
     <!-- JOB SUMMARY CARD -->
     <div class="job-summary-card">
         <div class="summary-badge">
@@ -247,23 +319,25 @@
     </div>
 
     <!-- PROPOSAL SUBMISSION FORM CARD -->
-    <div class="proposal-card">
-        <div class="proposal-card-header">
-            <i class="fas fa-paper-plane"></i>
-            <h3>Submit Your Proposal</h3>
+    <div class="main-card">
+        <div class="card-header">
+            <div class="card-header-icon">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+            <div>
+                <h2>Submit Your Proposal</h2>
+                <p>Send a compelling proposal to win this job</p>
+            </div>
         </div>
 
-        <form method="POST">
+        <form method="POST" class="job-form">
             {% csrf_token %}
 
             <div class="form-group">
-                <label for="proposal_text">
-                    <i class="fas fa-align-left"></i> Cover Letter / Proposal Details
-                </label>
+                <label for="proposal_text"><i class="fas fa-align-left"></i> Cover Letter / Proposal Details</label>
                 <textarea 
                     id="proposal_text"
                     name="proposal_text" 
-                    class="form-textarea"
                     placeholder="Introduce yourself, explain your approach to this project, relevant skills, and why you are the best fit..."
                     required
                 ></textarea>
@@ -271,37 +345,31 @@
 
             <div class="form-row-grid">
                 <div class="form-group">
-                    <label for="bid_amount">
-                        <i class="fas fa-rupee-sign"></i> Your Bid Amount (₹)
-                    </label>
+                    <label for="bid_amount"><i class="fas fa-rupee-sign"></i> Your Bid Amount (₹)</label>
                     <input 
                         type="number" 
                         id="bid_amount"
                         name="bid_amount" 
-                        class="form-input"
                         placeholder="e.g. {{ job.budget }}"
                         required
                     >
                 </div>
 
                 <div class="form-group">
-                    <label for="delivery_days">
-                        <i class="fas fa-clock"></i> Estimated Delivery (Days)
-                    </label>
+                    <label for="delivery_days"><i class="fas fa-clock"></i> Estimated Delivery (Days)</label>
                     <input 
                         type="number" 
                         id="delivery_days"
                         name="delivery_days" 
-                        class="form-input"
                         placeholder="e.g. 7"
                         required
                     >
                 </div>
             </div>
 
-            <div class="form-actions-flex">
-                <a href="/" class="btn-cancel-link"><i class="fas fa-arrow-left"></i> Back to Jobs</a>
-                <button type="submit" class="btn-submit-proposal">
+            <div class="form-actions">
+                <a href="{% url 'client:job_detail' job.id %}" class="btn-cancel">Cancel</a>
+                <button type="submit" class="post-job-btn">
                     <i class="fas fa-check-circle"></i> Submit Proposal
                 </button>
             </div>

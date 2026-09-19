@@ -45,5 +45,9 @@ class Proposal(models.Model):
     class Meta:
         unique_together = ("freelancer", "job")
 
+    @property
+    def job_has_accepted_proposal(self):
+        return Proposal.objects.filter(job=self.job, status="accepted").exists()
+
     def __str__(self):
         return f"{self.freelancer} -> {self.job.title}"

@@ -12,46 +12,45 @@ from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from freelancer.models import Project
-from .models import EmailOTP
+from .models import EmailOTP, Testimonial
 from .utils import send_portal_email
 from freelancer.models import FreelancerProfile
 
 User = get_user_model()
 
+
+def get_user_dashboard_redirect(user):
+    """
+    Redirect an authenticated user based strictly on their role stored in the database:
+    - Admin (is_superuser, is_staff, or role=='admin') -> accounts:admin_home
+    - Client -> client:client_dashboard
+    - Freelancer -> freelancer:freelancer_dashboard
+    """
+    if not getattr(user, "is_authenticated", False):
+        return redirect("accounts:login")
+
+    if getattr(user, "is_superuser", False) or getattr(user, "is_staff", False) or (getattr(user, "role", None) or "").lower() == "admin":
+        return redirect("accounts:admin_home")
+
+    role = (getattr(user, "role", None) or "").lower()
+    if role == "client":
+        return redirect("client:client_dashboard")
+    elif role == "freelancer":
+        return redirect("freelancer:freelancer_dashboard")
+
+    return redirect("home")
+
+
 def register(request, role=None):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        username = request.POST.get("username")
-        phone = request.POST.get("phone")
-        password = request.POST.get("password")
-        role = request.POST.get("role")
+    if request.user.is_authenticated:
+        return get_user_dashboard_redirect(request.user)
+    return select_role(request, role=role)
 
-        user = User.objects.create_user(
-            email=email,
-            username=username,
-            phone=phone,
-            password=password,
-            role=role,
-            is_active=False
-        )
-
-        # Generate 6-digit OTP
-        EmailOTP.objects.filter(user=user).delete()
-        otp_code = EmailOTP.generate_otp()
-        EmailOTP.objects.create(user=user, otp=otp_code)
-
-        send_portal_email(
-            "Your Verification OTP - Freelancer Portal",
-            f"Hi {username},\n\nYour OTP for activating your Freelancer Portal account is: {otp_code}\n\nThis OTP is valid for 5 minutes.",
-            [email],
-        )
-
-        messages.success(request, f"Account created! Please enter the 6-digit OTP sent to {email}.")
-        return redirect("accounts:verify_otp", user_id=user.id)
-
-    return render(request, "accounts/register.html")
 
 def verify_otp(request, user_id):
+    if request.user.is_authenticated:
+        return get_user_dashboard_redirect(request.user)
+
     user = get_object_or_404(User, id=user_id)
 
     if user.is_active:
@@ -83,6 +82,9 @@ def verify_otp(request, user_id):
 
 
 def resend_otp(request, user_id):
+    if request.user.is_authenticated:
+        return get_user_dashboard_redirect(request.user)
+
     user = get_object_or_404(User, id=user_id)
 
     if user.is_active:
@@ -231,32 +233,37 @@ def password_reset_confirm(request, uidb64, token):
 # REGISTER (ROLE BASED)
 # ==========================
 def select_role(request, role=None):
+    # Strict security check: authenticated users must NEVER access registration or role selection
+    if request.user.is_authenticated:
+        return get_user_dashboard_redirect(request.user)
 
-    role = role or request.GET.get("role")
+    role = (role or request.GET.get("role") or "").lower()
 
-    # If role not selected → show role selection page
-    if not role:
+    # If role not selected or invalid → show role selection page
+    if not role or role not in ["client", "freelancer"]:
         return render(request, "accounts/select_role.html")
 
     if request.method == "POST":
-
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        phone = request.POST.get("phone")
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        phone = request.POST.get("phone", "").strip()
         password = request.POST.get("password")
+        post_role = (request.POST.get("role") or role).lower()
+        if post_role not in ["client", "freelancer"]:
+            post_role = "client"
 
         # Uniqueness checks
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             messages.error(request, "Email already registered.")
-            return redirect(request.path + f"?role={role}")
+            return redirect(f"{request.path}?role={post_role}")
 
         if User.objects.filter(phone=phone).exists():
             messages.error(request, "Phone already registered.")
-            return redirect(request.path + f"?role={role}")
+            return redirect(f"{request.path}?role={post_role}")
 
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username__iexact=username).exists():
             messages.error(request, "Username already taken.")
-            return redirect(request.path + f"?role={role}")
+            return redirect(f"{request.path}?role={post_role}")
 
         # Create user (inactive until activation)
         user = User.objects.create_user(
@@ -264,7 +271,7 @@ def select_role(request, role=None):
             email=email,
             phone=phone,
             password=password,
-            role=role,
+            role=post_role,
             is_active=False
         )
 
@@ -281,7 +288,6 @@ def select_role(request, role=None):
 
         messages.success(request, f"Account created! Please enter the 6-digit OTP sent to {email}.")
         return redirect("accounts:verify_otp", user_id=user.id)
-
 
     return render(request, "accounts/register.html", {"role": role})
 
@@ -312,55 +318,39 @@ def activate_account(request, uidb64, token):
 # ==========================
 
 def user_login(request):
-
     if request.user.is_authenticated:
-        if request.user.is_superuser:
-            return redirect("accounts:admin_home")
-        elif getattr(request.user, "role", None) == "client":
-            return redirect("client:client_dashboard")
-        elif getattr(request.user, "role", None) == "freelancer":
-            return redirect("freelancer:freelancer_dashboard")
-        return redirect("home")
+        return get_user_dashboard_redirect(request.user)
 
     if request.method == "POST":
-
-        email = request.POST.get("email")
+        email = (request.POST.get("email") or "").strip()
         password = request.POST.get("password")
 
         user = None
 
         # Try login using EMAIL (normal users)
         try:
-            user_obj = User.objects.get(email=email)
+            user_obj = User.objects.get(email__iexact=email)
             user = authenticate(request, username=user_obj.username, password=password)
         except User.DoesNotExist:
             pass
 
-        # ✅ Try login using USERNAME (for admin)
+        # Try login using USERNAME (for admin)
         if user is None:
             user = authenticate(request, username=email, password=password)
 
         if user is not None:
-
             if not user.is_active:
                 messages.error(request, "Activate your account first.")
                 return redirect("accounts:login")
 
             login(request, user)
-
-            if user.is_superuser:
-                return redirect("accounts:admin_home")
-
-            elif user.role == "client":
-                return redirect("client:client_dashboard")
-
-            elif user.role == "freelancer":
-                return redirect("freelancer:freelancer_dashboard")
-
+            return get_user_dashboard_redirect(user)
         else:
             messages.error(request, "Invalid email or password")
 
     return render(request, "accounts/login.html")
+
+
 # ==========================
 # LOGOUT
 # ==========================
@@ -369,21 +359,10 @@ def logout_view(request):
     return redirect("home")
 
 
-
 @login_required
 def role_redirect(request, role):
-
-    if role == "client":
-        if request.user.role == "client":
-            return redirect("client:client_dashboard")
-        else:
-            return redirect("accounts:select_role")
-
-    elif role == "freelancer":
-        if request.user.role == "freelancer":
-            return redirect("freelancer:freelancer_dashboard")
-        else:
-            return redirect("accounts:select_role")
+    # Role comes strictly from the authenticated user's database record!
+    return get_user_dashboard_redirect(request.user)
 
 
 
@@ -457,18 +436,7 @@ from django.shortcuts import redirect
 
 @login_required
 def redirect_dashboard(request):
-    user = request.user
-
-    if user.is_superuser:
-        return redirect('/admin/')
-
-    elif getattr(user, 'role', None) == "client":
-        return redirect('client:client_home')
-
-    elif getattr(user, 'role', None) == "freelancer":
-        return redirect('freelancer:freelancer_home')
-
-    return redirect('/')
+    return get_user_dashboard_redirect(request.user)
 
 
 
@@ -516,6 +484,15 @@ def send_connection_request(request, user_id):
         ConnectionRequest.objects.create(
             sender=request.user,
             receiver=receiver
+        )
+        
+        from accounts.models import Notification
+        from django.urls import reverse
+        Notification.objects.create(
+            user=receiver,
+            notification_type='connection_request',
+            message=f"{request.user.username} sent you a connection request.",
+            link=reverse('accounts:pending_requests')
         )
 
     return redirect(request.META.get("HTTP_REFERER") or "/")
@@ -706,9 +683,11 @@ def my_profile(request):
 
 
 def view_profile(request, user_id):
-
     user = get_object_or_404(User, id=user_id)
 
+    if user.role == 'freelancer':
+        return redirect('freelancer:freelancer_profile', freelancer_id=user.id)
+        
     profile = FreelancerProfile.objects.filter(
         user=user
     ).first()
@@ -731,3 +710,62 @@ def remove_follower(request, follower_id):
     ).delete()
 
     return redirect('accounts:followers')
+
+
+def testimonials_view(request):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.error(request, "Please log in to submit a testimonial.")
+            return redirect("accounts:login")
+
+        # Name and role are strictly locked to the authenticated user's account
+        name = request.user.get_full_name() or request.user.username
+        if hasattr(request.user, "role") and request.user.role:
+            role = request.user.role.capitalize()
+        elif request.user.is_superuser or request.user.is_staff:
+            role = "Admin"
+        else:
+            role = "Client"
+
+        message_text = request.POST.get("message", "").strip()
+        if not message_text:
+            messages.error(request, "Please write your testimonial before submitting.")
+            return redirect("accounts:testimonials")
+
+        rating_val = request.POST.get("rating", "").strip()
+        try:
+            rating = int(rating_val)
+            if rating < 1 or rating > 5:
+                rating = 5
+        except (ValueError, TypeError):
+            rating = 5
+
+        Testimonial.objects.create(
+            name=name,
+            role=role,
+            rating=rating,
+            message=message_text,
+            available_connects=80,
+            used_connects=20,
+        )
+        messages.success(request, "Thank you! Your testimonial has been shared successfully.")
+        return redirect("accounts:testimonials")
+
+    testimonials = Testimonial.objects.all().order_by("-id")
+
+    default_name = ""
+    default_role = "Client"
+    if request.user.is_authenticated:
+        default_name = request.user.get_full_name() or request.user.username
+        if hasattr(request.user, "role") and request.user.role:
+            default_role = request.user.role.capitalize()
+
+    return render(
+        request,
+        "accounts/testimonials.html",
+        {
+            "testimonials": testimonials,
+            "default_name": default_name,
+            "default_role": default_role,
+        },
+    )

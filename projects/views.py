@@ -19,6 +19,10 @@ from django.http import JsonResponse
 
 @login_required
 def like_job(request, job_id):
+    post_type = request.GET.get('type') or request.POST.get('type')
+    if post_type == 'job':
+        return like_client_job(request, job_id)
+
     job = get_object_or_404(JobPost, id=job_id)
     reaction, created = Reaction.objects.get_or_create(
         user=request.user,
@@ -43,7 +47,37 @@ def like_job(request, job_id):
 
 
 @login_required
+def like_client_job(request, job_id):
+    from projects.models import Job
+    job = get_object_or_404(Job, id=job_id)
+    reaction, created = Reaction.objects.get_or_create(
+        user=request.user,
+        client_job=job,
+        defaults={'reaction_type': 'like'}
+    )
+    if not created:
+        reaction.delete()
+        is_liked = False
+    else:
+        is_liked = True
+
+    likes_count = Reaction.objects.filter(client_job=job, reaction_type='like').count()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == 'true':
+        return JsonResponse({
+            'liked': is_liked,
+            'likes_count': likes_count,
+        })
+
+    return redirect(request.META.get('HTTP_REFERER') or '/')
+
+
+@login_required
 def comment_job(request, job_id):
+    post_type = request.GET.get('type') or request.POST.get('type')
+    if post_type == 'job':
+        return comment_client_job(request, job_id)
+
     if request.method == "POST":
         job = get_object_or_404(JobPost, id=job_id)
         text = request.POST.get("comment")
@@ -57,16 +91,83 @@ def comment_job(request, job_id):
                 except Comment.DoesNotExist:
                     pass
 
-            comment = Comment.objects.create(
+            from django.utils import timezone
+            from datetime import timedelta
+            # Prevent rapid duplicate comment creation
+            recent_comment = Comment.objects.filter(
                 user=request.user,
                 job=job,
                 text=text,
-                parent=parent_comment
-            )
+                parent=parent_comment,
+                created_at__gte=timezone.now() - timedelta(seconds=2)
+            ).first()
+
+            if recent_comment:
+                comment = recent_comment
+            else:
+                comment = Comment.objects.create(
+                    user=request.user,
+                    job=job,
+                    text=text,
+                    parent=parent_comment
+                )
 
             comments_count = Comment.objects.filter(job=job).count()
-            prof = getattr(request.user, 'freelancerprofile', None)
-            user_dp = prof.profile_picture if (prof and prof.profile_picture) else None
+            user_dp = request.user.get_profile_picture
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == 'true':
+                return JsonResponse({
+                    'success': True,
+                    'comment_id': comment.id,
+                    'parent_id': parent_comment.id if parent_comment else None,
+                    'username': request.user.username,
+                    'user_dp': user_dp,
+                    'text': comment.text,
+                    'created_at': 'Just now',
+                    'comments_count': comments_count,
+                })
+
+    return redirect(request.META.get('HTTP_REFERER') or '/')
+
+
+@login_required
+def comment_client_job(request, job_id):
+    from projects.models import Job
+    if request.method == "POST":
+        job = get_object_or_404(Job, id=job_id)
+        text = request.POST.get("comment")
+        parent_id = request.POST.get("parent_id")
+
+        if text:
+            parent_comment = None
+            if parent_id:
+                try:
+                    parent_comment = Comment.objects.get(id=parent_id)
+                except Comment.DoesNotExist:
+                    pass
+
+            from django.utils import timezone
+            from datetime import timedelta
+            recent_comment = Comment.objects.filter(
+                user=request.user,
+                client_job=job,
+                text=text,
+                parent=parent_comment,
+                created_at__gte=timezone.now() - timedelta(seconds=2)
+            ).first()
+
+            if recent_comment:
+                comment = recent_comment
+            else:
+                comment = Comment.objects.create(
+                    user=request.user,
+                    client_job=job,
+                    text=text,
+                    parent=parent_comment
+                )
+
+            comments_count = Comment.objects.filter(client_job=job).count()
+            user_dp = request.user.get_profile_picture
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.POST.get('ajax') == 'true':
                 return JsonResponse({

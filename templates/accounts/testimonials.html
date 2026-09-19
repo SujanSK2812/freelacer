@@ -1,0 +1,648 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials & Reviews | Freelancer Portal</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f4f6fb;
+            color: #191919;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .testimonials-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+
+        /* Messages */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #e6f7ec;
+            color: #107c41;
+            border: 1px solid #bfe3cc;
+        }
+
+        .alert-error {
+            background: #fde8e8;
+            color: #b91c1c;
+            border: 1px solid #f8b4b4;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.75rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #004182;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #334155;
+        }
+
+        .form-control {
+            padding: 0.85rem 1.1rem;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0a66c2;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.12);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .rating-input-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 8px 14px;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            width: fit-content;
+            transition: all 0.2s ease;
+        }
+
+        .rating-input-container:hover,
+        .rating-input-container:focus-within {
+            border-color: #0a66c2;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.12);
+        }
+
+        .rating-input-container.rating-error {
+            border-color: #ef4444;
+            background: #fef2f2;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .rating-stars-picker {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            padding: 4px;
+            font-size: 1.75rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.15s ease;
+            outline: none;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.22);
+        }
+
+        .star-btn:focus-visible {
+            transform: scale(1.22);
+            color: #f59e0b;
+        }
+
+        .star-btn.is-active,
+        .star-btn.is-hovered {
+            color: #f59e0b;
+        }
+
+        .rating-badge-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+            background: #ffffff;
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .rating-badge-text.selected {
+            color: #b45309;
+            background: #fef3c7;
+            border-color: #fde68a;
+        }
+
+        .rating-badge-text.error {
+            color: #b91c1c;
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        .btn-submit {
+            background: #0a66c2;
+            color: white;
+            padding: 0.9rem 2.2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .btn-submit:hover {
+            background: #004182;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(10, 102, 194, 0.25);
+        }
+
+        /* Testimonials Section */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #004182;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .testimonials-count {
+            background: #e8f3fc;
+            color: #0a66c2;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* Grid */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2.25rem;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(10, 102, 194, 0.12);
+            border-color: #cbd5e1;
+        }
+
+        .card-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .stars-row {
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .stars-row .star-filled {
+            color: #f59e0b;
+        }
+
+        .stars-row .star-empty {
+            color: #cbd5e1;
+        }
+
+        .stars-row .rating-score {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-left: 6px;
+        }
+
+        .quote-icon {
+            font-size: 2rem;
+            color: #e2e8f0;
+        }
+
+        .testimonial-text {
+            font-size: 1rem;
+            color: #334155;
+            line-height: 1.7;
+            margin-bottom: 1.75rem;
+            font-style: italic;
+        }
+
+        .author-box {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-top: 1.25rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
+            flex-shrink: 0;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .author-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-top: 3px;
+            width: fit-content;
+        }
+
+        .badge-client {
+            background: #e8f3fc;
+            color: #0a66c2;
+        }
+
+        .badge-freelancer {
+            background: #e6f7ec;
+            color: #107c41;
+        }
+
+        @media (max-width: 768px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'includes/header.html' %}
+
+    <main>
+        <div class="testimonials-container">
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+
+            <!-- Submit Form (Shown for logged in users) -->
+            {% if request.user.is_authenticated %}
+            <div class="form-card" id="submit-form-section">
+                <div class="form-card-header">
+                    <h2 class="form-card-title">
+                        <i class="fas fa-comment-dots" style="color: #0a66c2;"></i> Add Your Testimonial
+                    </h2>
+                    <span style="font-size: 0.9rem; color: #64748b;">
+                        Posting as <strong>{{ default_name }}</strong> ({{ default_role }})
+                    </span>
+                </div>
+
+                <form method="POST" action="{% url 'accounts:testimonials' %}">
+                    {% csrf_token %}
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="id_name"><i class="fas fa-user" style="color: #0a66c2;"></i> Your Name <span style="font-size: 0.78rem; color: #64748b; font-weight: normal;"><i class="fas fa-lock" style="font-size: 0.75rem;"></i> Locked</span></label>
+                            <input type="text" id="id_name" name="name" class="form-control" value="{{ default_name }}" readonly style="background: #f1f5f9; cursor: not-allowed; color: #334155; font-weight: 600; border-color: #cbd5e1;">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_role"><i class="fas fa-briefcase" style="color: #0a66c2;"></i> Your Role <span style="font-size: 0.78rem; color: #64748b; font-weight: normal;"><i class="fas fa-lock" style="font-size: 0.75rem;"></i> Locked</span></label>
+                            <input type="text" id="id_role" name="role" class="form-control" value="{{ default_role }}" readonly style="background: #f1f5f9; cursor: not-allowed; color: #334155; font-weight: 600; border-color: #cbd5e1;">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="ratingInput">
+                                <i class="fas fa-star" style="color: #f59e0b;"></i> Your Rating <span style="font-weight: 400; font-size: 0.82rem; color: #64748b;">(Choose 1 to 5 stars)</span>
+                            </label>
+                            <input type="hidden" name="rating" id="ratingInput" value="" required>
+                            <div class="rating-input-container">
+                                <div class="rating-stars-picker" id="starRatingPicker" role="radiogroup" aria-label="Select your star rating">
+                                    <button type="button" class="star-btn" data-rating="1" title="1 Star - Needs Improvement" aria-label="1 star">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <button type="button" class="star-btn" data-rating="2" title="2 Stars - Fair" aria-label="2 stars">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <button type="button" class="star-btn" data-rating="3" title="3 Stars - Good" aria-label="3 stars">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <button type="button" class="star-btn" data-rating="4" title="4 Stars - Very Good" aria-label="4 stars">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <button type="button" class="star-btn" data-rating="5" title="5 Stars - Excellent" aria-label="5 stars">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </div>
+                                <span class="rating-badge-text" id="ratingLabel">Click to select rating (1-5 stars)</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="id_message"><i class="fas fa-quote-left" style="color: #0a66c2;"></i> Your Review / Testimonial</label>
+                            <textarea id="id_message" name="message" class="form-control" placeholder="Share your thoughts about working on Freelancer Portal, hiring talent, or completing projects..." required></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i> Publish Testimonial
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- Testimonials Grid -->
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-comments" style="color: #0a66c2;"></i> What People Are Saying
+                </h2>
+                {% if testimonials.count > 0 %}
+                <span class="testimonials-count">{{ testimonials.count }} Review{{ testimonials.count|pluralize }}</span>
+                {% endif %}
+            </div>
+
+            <div class="testimonials-grid">
+                {% for t in testimonials %}
+                <div class="testimonial-card">
+                    <div>
+                        <div class="card-top-row">
+                            <div class="stars-row" title="{{ t.rating }} out of 5 stars">
+                                {% for _ in t.full_stars_range %}
+                                <i class="fas fa-star star-filled"></i>
+                                {% endfor %}
+                                {% for _ in t.empty_stars_range %}
+                                <i class="fas fa-star star-empty"></i>
+                                {% endfor %}
+                                <span class="rating-score">{{ t.rating }}.0</span>
+                            </div>
+                            <i class="fas fa-quote-right quote-icon"></i>
+                        </div>
+                        <p class="testimonial-text">"{{ t.message }}"</p>
+                    </div>
+
+                    <div class="author-box">
+                        <div class="author-avatar">
+                            {{ t.name|slice:":1"|upper }}
+                        </div>
+                        <div class="author-info">
+                            <span class="author-name">{{ t.name }}</span>
+                            {% if t.role == 'Client' %}
+                            <span class="author-role-badge badge-client">
+                                <i class="fas fa-building"></i> Client
+                            </span>
+                            {% else %}
+                            <span class="author-role-badge badge-freelancer">
+                                <i class="fas fa-laptop-code"></i> Freelancer
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; background: white; border-radius: 20px;">
+                    <i class="fas fa-comment-slash" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #334155; margin-bottom: 0.5rem;">No Testimonials Yet</h3>
+                    <p style="color: #64748b;">Be the first to share your experience with the Freelancer Portal community!</p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </main>
+
+    {% include 'includes/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const starPicker = document.getElementById('starRatingPicker');
+            if (!starPicker) return;
+
+            const ratingInput = document.getElementById('ratingInput');
+            const ratingLabel = document.getElementById('ratingLabel');
+            const container = starPicker.closest('.rating-input-container');
+            const starButtons = starPicker.querySelectorAll('.star-btn');
+            const form = starPicker.closest('form');
+
+            const ratingDescriptions = {
+                1: '1.0 ★ Needs Improvement',
+                2: '2.0 ★★ Fair',
+                3: '3.0 ★★★ Good',
+                4: '4.0 ★★★★ Very Good',
+                5: '5.0 ★★★★★ Excellent'
+            };
+
+            let selectedRating = parseInt(ratingInput.value, 10) || 0;
+
+            function renderStars(rating, isHover) {
+                starButtons.forEach(btn => {
+                    const val = parseInt(btn.dataset.rating, 10);
+                    if (isHover) {
+                        btn.classList.toggle('is-hovered', val <= rating);
+                    } else {
+                        btn.classList.toggle('is-active', val <= rating);
+                    }
+                });
+            }
+
+            function updateLabel(rating) {
+                if (!ratingLabel) return;
+                if (rating && ratingDescriptions[rating]) {
+                    ratingLabel.textContent = ratingDescriptions[rating];
+                    ratingLabel.classList.add('selected');
+                    ratingLabel.classList.remove('error');
+                } else {
+                    ratingLabel.textContent = 'Click to select rating (1-5 stars)';
+                    ratingLabel.classList.remove('selected', 'error');
+                }
+            }
+
+            // If an initial rating is set
+            if (selectedRating > 0) {
+                renderStars(selectedRating, false);
+                updateLabel(selectedRating);
+            }
+
+            starButtons.forEach(btn => {
+                const val = parseInt(btn.dataset.rating, 10);
+
+                btn.addEventListener('mouseenter', function() {
+                    renderStars(val, true);
+                    updateLabel(val);
+                });
+
+                btn.addEventListener('mouseleave', function() {
+                    starButtons.forEach(b => b.classList.remove('is-hovered'));
+                    renderStars(selectedRating, false);
+                    updateLabel(selectedRating);
+                });
+
+                btn.addEventListener('click', function() {
+                    selectedRating = val;
+                    ratingInput.value = selectedRating;
+                    if (container) container.classList.remove('rating-error');
+                    renderStars(selectedRating, false);
+                    updateLabel(selectedRating);
+                });
+
+                btn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const currentVal = parseInt(ratingInput.value, 10);
+                    if (!currentVal || currentVal < 1 || currentVal > 5) {
+                        e.preventDefault();
+                        if (container) container.classList.add('rating-error');
+                        if (ratingLabel) {
+                            ratingLabel.textContent = '⚠️ Please select a rating (1-5 stars)';
+                            ratingLabel.classList.add('error');
+                        }
+                        starButtons[0].focus();
+                        return false;
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

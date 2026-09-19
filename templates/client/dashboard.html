@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <title>Client Dashboard - Freelancer Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -232,36 +233,49 @@
         }
 
         .connects-card {
-            background: #f7f9fc;
-            border-radius: 12px;
-            padding: 1.2rem;
-            border: 1px solid #e4e6eb;
+            background: linear-gradient(135deg, #eef5ff 0%, #f0f7ff 100%);
+            border-radius: 14px;
+            padding: 1.4rem;
+            border: 1px solid #c7daf5;
+            margin-top: 1rem;
         }
 
         .connects-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
         }
 
         .connects-header h4 {
-            font-size: 0.95rem;
-            color: #5e6b7c;
+            font-size: 0.88rem;
+            color: #4a6080;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .connects-count {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2rem;
+            font-weight: 700;
             color: #0a66c2;
+            line-height: 1;
         }
 
         .get-connects {
             color: #0a66c2;
             text-decoration: none;
-            font-size: 0.9rem;
-            display: block;
-            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 0.75rem;
+            transition: gap 0.2s;
+        }
+
+        .get-connects:hover {
+            gap: 8px;
         }
 
         /* Main Content */
@@ -654,7 +668,7 @@
                     <div class="stat-label">Rating</div>
                 </div>
             </div>
-            <a href="{% url 'accounts:my_profile' %}" class="edit-profile-btn" style="display: block; text-decoration: none;">
+            <a href="{% url 'client:edit_client_profile' %}" class="edit-profile-btn" style="display: block; text-decoration: none;">
                 <i class="fas fa-edit"></i> Edit Profile
             </a>
         </div>
@@ -668,11 +682,11 @@
                 <i class="fas fa-search"></i>
                 <span>Find Freelancers</span>
             </a>
-            <a href="#" class="quick-link">
+            <a href="{% url 'payments:payment_methods' %}" class="quick-link">
                 <i class="fas fa-credit-card"></i>
                 <span>Payment Methods</span>
             </a>
-            <a href="{% url 'accounts:my_profile' %}" class="quick-link">
+            <a href="{% url 'client:edit_client_profile' %}" class="quick-link">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </a>
@@ -680,11 +694,11 @@
 
         <div class="connects-card">
             <div class="connects-header">
-                <h4>Available Connects</h4>
-                <span class="connects-count">80</span>
+                <h4><i class="fas fa-bolt" style="color: #0a66c2; margin-right: 4px;"></i> Available Connects</h4>
             </div>
-            <p style="color: #5e6b7c; font-size: 0.85rem;">Used 20 this month</p>
-            <a href="#" class="get-connects">Get more connects →</a>
+            <div class="connects-count">{{ request.user.available_connects|default:"80" }}</div>
+            <p style="color: #5e6b7c; font-size: 0.82rem; margin-top: 0.4rem;">Used {{ request.user.used_connects|default:"20" }} this month</p>
+            <a href="#" class="get-connects">Get more connects <i class="fas fa-arrow-right" style="font-size: 0.75rem;"></i></a>
         </div>
     </div>
 
@@ -725,9 +739,19 @@
                     <div class="project-header">
                         <div class="project-title">
                             <h4>{{ job.title }}</h4>
-                            <span class="project-status status-open">{{ job.status }}</span>
+                            <span class="project-status {{ job.status_class|default:'status-open' }}">{{ job.status }}</span>
                         </div>
                     </div>
+                    {% if job.image %}
+                    <div style="margin: 0.75rem 0; border-radius: 8px; overflow: hidden; height: 130px; border: 1px solid #e4e6eb;">
+                        <img src="{{ job.image.url }}" alt="{{ job.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    {% endif %}
+                    {% if job.poster %}
+                    <div style="margin: 0.75rem 0; border-radius: 8px; overflow: hidden; height: 130px; border: 1px solid #e4e6eb;">
+                        <img src="{{ job.poster.url }}" alt="{{ job.title }} Poster" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    {% endif %}
                     <div class="project-meta">
                         <span><i class="fas fa-tag"></i> {{ job.budget }}</span>
                         <span><i class="fas fa-clock"></i> Posted {{ job.created_at|timesince }} ago</span>
@@ -815,7 +839,11 @@
             
             {% for freelancer in recommended_freelancers %}
             <div class="freelancer-card">
-                <div class="freelancer-avatar">{{ freelancer.username|make_list|first|upper }}</div>
+                {% if freelancer.get_profile_picture %}
+                    <img src="{{ freelancer.get_profile_picture }}" alt="{{ freelancer.username }}" class="freelancer-avatar" style="object-fit: cover; width: 44px; height: 44px; border-radius: 50%;">
+                {% else %}
+                    <div class="freelancer-avatar">{{ freelancer.username|make_list|first|upper }}</div>
+                {% endif %}
                 <div class="freelancer-info">
                     <h4>{{ freelancer.username }}</h4>
                     <div class="freelancer-skill">{{ freelancer.freelancerprofile.title|default:"Freelancer" }}</div>

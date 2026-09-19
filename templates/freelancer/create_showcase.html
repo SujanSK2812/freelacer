@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Post a Showcase | FreelanceHub</title>
@@ -74,7 +75,7 @@
       </div>
 
       <div class="form-group">
-        <label for="image"><i class="fas fa-image"></i>Attach Portfolio Image / Screenshot (optional)</label>
+        <label for="image"><i class="fas fa-image"></i>Attach Portfolio Image / Showcase (optional)</label>
         <div class="file-upload-wrapper">
           <input type="file" id="image" name="image" accept="image/*">
           <label for="image" class="file-upload-label">
@@ -85,6 +86,23 @@
         <div class="image-preview-wrapper" id="imagePreviewWrapper" style="display:none;">
           <img id="imagePreview" src="" alt="Preview">
           <button type="button" id="removeImageBtn" class="remove-image-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="poster"><i class="fas fa-file-image"></i>Attach Talent Poster (optional)</label>
+        <div class="file-upload-wrapper">
+          <input type="file" id="poster" name="poster" accept="image/*">
+          <label for="poster" class="file-upload-label">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span id="posterFileLabelText">Choose a poster or drag it here</span>
+          </label>
+        </div>
+        <div class="image-preview-wrapper" id="posterPreviewWrapper" style="display:none;">
+          <img id="posterPreview" src="" alt="Poster Preview">
+          <button type="button" id="removePosterBtn" class="remove-image-btn">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -127,6 +145,33 @@
     previewWrapper.style.display = 'none';
     fileLabelText.textContent = 'Choose an image or drag it here';
   });
+
+  const posterInput = document.getElementById('poster');
+  const posterPreviewWrapper = document.getElementById('posterPreviewWrapper');
+  const posterPreviewImg = document.getElementById('posterPreview');
+  const posterFileLabelText = document.getElementById('posterFileLabelText');
+  const removePosterBtn = document.getElementById('removePosterBtn');
+
+  if (posterInput) {
+    posterInput.addEventListener('change', () => {
+      const file = posterInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          posterPreviewImg.src = e.target.result;
+          posterPreviewWrapper.style.display = 'block';
+          posterFileLabelText.textContent = file.name;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    removePosterBtn.addEventListener('click', () => {
+      posterInput.value = '';
+      posterPreviewWrapper.style.display = 'none';
+      posterFileLabelText.textContent = 'Choose a poster or drag it here';
+    });
+  }
 </script>
 
 </body>

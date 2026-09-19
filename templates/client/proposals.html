@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Received Proposals | {{ request.user.username }}{% endblock %}
+
+{% block content %}
+<style>
+    .proposals-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .filters-form {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .filter-input {
+        padding: 0.6rem 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .filter-input:focus {
+        border-color: #0a66c2;
+    }
+
+    /* Custom status filter pill buttons */
+    .status-filter-group {
+        display: flex;
+        gap: 0.4rem;
+        background: #f1f5f9;
+        border-radius: 10px;
+        padding: 4px;
+    }
+
+    .status-pill {
+        padding: 0.4rem 1rem;
+        border-radius: 7px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: #64748b;
+        transition: all 0.18s;
+        white-space: nowrap;
+    }
+
+    .status-pill:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .status-pill.active {
+        background: #ffffff;
+        color: #0a66c2;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .status-pill.active-pending   { background: #fef9c3; color: #854d0e; }
+    .status-pill.active-accepted  { background: #dcfce7; color: #166534; }
+    .status-pill.active-rejected  { background: #fee2e2; color: #991b1b; }
+
+    /* hidden real select for form submission */
+    .filter-select-hidden { display: none; }
+    
+
+
+    .proposals-container {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding-right: 10px;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+    }
+    
+    .proposals-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    .proposals-container::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .proposal-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.2rem;
+        background: #ffffff;
+        transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    
+    .proposal-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        border-color: #cbd5e1;
+    }
+    
+    .proposal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .freelancer-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .freelancer-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-size: 1.3rem;
+        border: 2px solid #e2e8f0;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        flex-shrink: 0;
+    }
+    
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .status-pending { background: #fef08a; color: #854d0e; }
+    .status-accepted { background: #bbf7d0; color: #166534; }
+    .status-rejected { background: #fecaca; color: #991b1b; }
+
+    .proposal-body {
+        margin-bottom: 1.5rem;
+        color: #475569;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    .proposal-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .proposal-actions {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1rem;
+    }
+    
+    .btn-action {
+        padding: 0.5rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+    }
+    
+    .btn-profile { background: #eef3f8; color: #0a66c2; border: 1px solid transparent; }
+    .btn-profile:hover { background: #e2e8f0; }
+    
+    .btn-accept { background: #16a34a; color: white; }
+    .btn-accept:hover { background: #15803d; }
+    
+    .btn-reject { background: #ffffff; color: #dc2626; border: 1px solid #dc2626; }
+    .btn-reject:hover { background: #fef2f2; }
+    
+    .btn-message { background: #0a66c2; color: white; }
+    .btn-message:hover { background: #004182; }
+</style>
+
+<div class="dashboard-container" style="max-width: 1000px; margin: 2.5rem auto; padding: 0 1.5rem;">
+    <div style="background: #ffffff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); padding: 2rem;">
+        
+        <div class="proposals-header">
+            <h2 style="margin: 0;"><i class="fas fa-file-invoice" style="color: #0a66c2;"></i> Received Proposals</h2>
+            
+            <form method="GET" class="filters-form" id="proposalsFilterForm">
+                <input type="text" name="search" class="filter-input" placeholder="Search name or job..." value="{{ search_query }}">
+                
+                <!-- Hidden real select that gets submitted -->
+                <select name="status" class="filter-select-hidden" id="statusSelectHidden">
+                    <option value="" {% if not current_status %}selected{% endif %}>All</option>
+                    <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="accepted" {% if current_status == 'accepted' %}selected{% endif %}>Accepted</option>
+                    <option value="rejected" {% if current_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+
+                <!-- Custom pill-style filter -->
+                <div class="status-filter-group">
+                    <button type="button" class="status-pill {% if not current_status %}active{% endif %}" data-value="">All</button>
+                    <button type="button" class="status-pill {% if current_status == 'pending' %}active active-pending{% endif %}" data-value="pending">Pending</button>
+                    <button type="button" class="status-pill {% if current_status == 'accepted' %}active active-accepted{% endif %}" data-value="accepted">Accepted</button>
+                    <button type="button" class="status-pill {% if current_status == 'rejected' %}active active-rejected{% endif %}" data-value="rejected">Rejected</button>
+                </div>
+            </form>
+        </div>
+
+        {% if messages %}
+            <div style="margin-bottom: 1.5rem;">
+                {% for message in messages %}
+                    <div style="padding: 0.85rem 1.2rem; border-radius: 8px; margin-bottom: 0.8rem; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 0.75rem; {% if message.tags == 'error' %}background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;{% elif message.tags == 'success' %}background: #dcfce7; color: #166534; border: 1px solid #86efac;{% else %}background: #e0f2fe; color: #075985; border: 1px solid #7dd3fc;{% endif %}">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if proposals %}
+            <div class="proposals-container">
+            {% for proposal in proposals %}
+                <div class="proposal-card">
+                    <div class="proposal-header">
+                        <div class="freelancer-info">
+                            {% if proposal.freelancer_dp %}
+                                <img src="{{ proposal.freelancer_dp }}" alt="{{ proposal.freelancer.username }}" class="freelancer-avatar">
+                            {% elif proposal.freelancer.get_profile_picture %}
+                                <img src="{{ proposal.freelancer.get_profile_picture }}" alt="{{ proposal.freelancer.username }}" class="freelancer-avatar">
+                            {% elif proposal.freelancer.freelancerprofile.profile_picture %}
+                                <img src="{{ proposal.freelancer.freelancerprofile.profile_picture }}" alt="{{ proposal.freelancer.username }}" class="freelancer-avatar">
+                            {% else %}
+                                <div class="freelancer-avatar"><i class="fas fa-user"></i></div>
+                            {% endif %}
+                            
+                            <div>
+                                <h3 style="font-size: 1.15rem; color: #1e293b; margin: 0 0 0.2rem 0;">{{ proposal.freelancer.first_name|default:proposal.freelancer.username }} {{ proposal.freelancer.last_name }}</h3>
+                                <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Applied for: <strong><a href="{% url 'client:job_detail' proposal.job.id %}" style="color: #0a66c2; text-decoration: none;">{{ proposal.job.title }}</a></strong></p>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="status-badge status-{{ proposal.status }}">
+                                {{ proposal.status|title }}
+                            </span>
+                            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
+                                {{ proposal.created_at|date:"M d, Y" }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-meta">
+                        <div>
+                            <span style="color: #64748b; font-size: 0.85rem; display: block;">Bid Amount</span>
+                            <strong style="color: #0f172a; font-size: 1.1rem;">₹{{ proposal.bid_amount }}</strong>
+                        </div>
+                        <div>
+                            <span style="color: #64748b; font-size: 0.85rem; display: block;">Estimated Delivery</span>
+                            <strong style="color: #0f172a; font-size: 1.1rem;">{{ proposal.delivery_days }} days</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="proposal-body">
+                        <strong>Cover Letter / Message:</strong><br>
+                        {{ proposal.proposal_text|linebreaks }}
+                    </div>
+
+                    <div class="proposal-actions">
+                        <a href="{% url 'freelancer:freelancer_profile' proposal.freelancer.id %}" class="btn-action btn-profile" target="_blank">
+                            <i class="far fa-user-circle"></i> View Profile
+                        </a>
+                        <a href="{% url 'chat_home' %}?user={{ proposal.freelancer.id }}" class="btn-action btn-message">
+                            <i class="fas fa-comment"></i> Message
+                        </a>
+                        
+                        {% if proposal.status == 'pending' %}
+                            <div style="flex-grow: 1;"></div>
+                            {% if proposal.job_already_accepted %}
+                                <span style="align-self: center; font-size: 0.85rem; color: #64748b; font-weight: 500; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.8rem; background: #f1f5f9; border-radius: 20px;">
+                                    <i class="fas fa-lock"></i> Bid already accepted for this job
+                                </span>
+                                <form method="POST" action="{% url 'client:reject_proposal' proposal.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-reject"><i class="fas fa-times"></i> Reject</button>
+                                </form>
+                            {% else %}
+                                <form method="POST" action="{% url 'client:accept_proposal' proposal.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-accept"><i class="fas fa-check"></i> Accept</button>
+                                </form>
+                                <form method="POST" action="{% url 'client:reject_proposal' proposal.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-reject"><i class="fas fa-times"></i> Reject</button>
+                                </form>
+                            {% endif %}
+                        {% elif proposal.status == 'accepted' %}
+                            <div style="flex-grow: 1;"></div>
+                            <span style="align-self: center; font-size: 0.85rem; color: #166534; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; background: #dcfce7; border-radius: 20px;">
+                                <i class="fas fa-check-circle"></i> Accepted Freelancer
+                            </span>
+                            {% if proposal.is_paid %}
+                                <span style="align-self: center; font-size: 0.85rem; color: #0369a1; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; background: #e0f2fe; border-radius: 20px;">
+                                    <i class="fas fa-check-double"></i> Paid (₹{{ proposal.bid_amount }})
+                                </span>
+                                {% if proposal.payment %}
+                                <a href="{% url 'payments:payment_receipt' proposal.payment.id %}" class="btn-action" style="background: #eef3f8; color: #0a66c2; border: 1px solid #d0e1f9;">
+                                    <i class="fas fa-receipt"></i> View Receipt
+                                </a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'payments:checkout' proposal.id %}" class="btn-action" style="background: #0a66c2; color: white; box-shadow: 0 2px 8px rgba(10, 102, 194, 0.25);">
+                                    <i class="fas fa-credit-card"></i> Pay Freelancer (₹{{ proposal.bid_amount }})
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 4rem 1rem; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                <i class="fas fa-search" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                <h3 style="color: #475569; margin-bottom: 0.5rem;">No proposals found</h3>
+                <p style="margin-bottom: 1.5rem;">Try adjusting your filters or wait for freelancers to apply.</p>
+                <a href="{% url 'client:create_job' %}" style="display: inline-block; color: #0a66c2; text-decoration: none; font-weight: 600;">Post a new job</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.status-pill').forEach(function(pill) {
+        pill.addEventListener('click', function() {
+            // Update hidden select value
+            document.getElementById('statusSelectHidden').value = this.dataset.value;
+
+            // Update active states
+            document.querySelectorAll('.status-pill').forEach(function(p) {
+                p.classList.remove('active', 'active-pending', 'active-accepted', 'active-rejected');
+            });
+            this.classList.add('active');
+            if (this.dataset.value === 'pending')  this.classList.add('active-pending');
+            if (this.dataset.value === 'accepted') this.classList.add('active-accepted');
+            if (this.dataset.value === 'rejected') this.classList.add('active-rejected');
+
+            // Auto-submit
+            document.getElementById('proposalsFilterForm').submit();
+        });
+    });
+</script>
+{% endblock %}

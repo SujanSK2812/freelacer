@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freelancer Work Dashboard | Freelancer Portal</title>
@@ -713,7 +714,7 @@
         <div class="welcome-user-info">
             <div class="hero-avatar">
                 {% if freelancer and freelancer.profile_picture %}
-                    <img src="{{ freelancer.profile_picture }}" alt="{{ request.user.username }}">
+                    <img src="{{ freelancer.profile_picture.url|default:freelancer.profile_picture }}" alt="{{ request.user.username }}">
                 {% else %}
                     {{ request.user.username|slice:":1"|upper }}
                 {% endif %}
@@ -752,19 +753,18 @@
 
     <!-- 5 METRIC PERFORMANCE CARDS -->
     <div class="metrics-grid">
-        <div class="metric-card">
+        <a href="{% url 'payments:freelancer_payment_history' %}" class="metric-card" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
             <div class="metric-header">
-                <div class="metric-icon-box"><i class="fas fa-dollar-sign"></i></div>
-                <span class="metric-trend">Verified Payments</span>
+                <div class="metric-icon-box"><i class="fas fa-wallet"></i></div>
+                <span class="metric-trend" style="color: #0a66c2;">Verified Payments</span>
             </div>
-            <div class="metric-value">${{ total_earnings|default:"0.00" }}</div>
+            <div class="metric-value">₹{{ total_earnings|default:"0.00" }}</div>
             <div class="metric-label">Total Earnings</div>
-        </div>
+        </a>
 
         <div class="metric-card">
             <div class="metric-header">
                 <div class="metric-icon-box" style="background:#e8f4fd; color:#0071dc;"><i class="fas fa-file-signature"></i></div>
-                <span class="metric-trend" style="color:#0071dc;">Accepted Bids</span>
             </div>
             <div class="metric-value">{{ accepted_proposals_count|default:"0" }}</div>
             <div class="metric-label">Active Contracts</div>
@@ -925,7 +925,7 @@
             <div class="sidebar-box profile-summary-mini">
                 <div class="mini-avatar-box" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; background: #0a66c2; color: white;">
                     {% if freelancer and freelancer.profile_picture %}
-                        <img src="{{ freelancer.profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ freelancer.profile_picture.url|default:freelancer.profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
                     {% else %}
                         {{ request.user.username|slice:":1"|upper }}
                     {% endif %}

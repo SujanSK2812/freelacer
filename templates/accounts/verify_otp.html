@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Verify OTP - Freelancer Portal</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -219,9 +221,9 @@
 
 <div class="main-container">
     <div class="otp-card">
-        <div class="icon-box">
-        <i class="fas fa-shield-alt"></i>
-    </div>
+        <div class="icon-box" style="background: #ffffff; box-shadow: 0 4px 14px rgba(10, 102, 194, 0.12);">
+            <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal Logo" style="width: 54px; height: 54px; object-fit: contain; border-radius: 12px;">
+        </div>
 
     <h2>Enter Verification Code</h2>
     <p class="subtitle">

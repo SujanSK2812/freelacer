@@ -21,6 +21,10 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+import os
+from django.urls import re_path
+from django.views.static import serve
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
@@ -38,8 +42,10 @@ urlpatterns = [
     path('messages/', include('messages_app.urls')),
     path('proposals/', include('proposals.urls')),
     path('payments/', include('payments.urls')),
-    
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    re_path(r'^uploads/(?P<path>.*)$', serve, {'document_root': settings.UPLOADS_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'static')}),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.UPLOADS_URL, document_root=settings.UPLOADS_ROOT)
 
 
 if settings.DEBUG:

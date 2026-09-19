@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messages & Chat | Freelancer Portal</title>
@@ -11,6 +12,72 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        /* Custom Modal Styles */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        .custom-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .custom-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .custom-modal-overlay.active .custom-modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .custom-modal-content h3 {
+            margin-bottom: 0.75rem;
+            color: #0f172a;
+            font-size: 1.3rem;
+        }
+        .custom-modal-content p {
+            color: #64748b;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .custom-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+        }
+        .modal-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .modal-btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .modal-btn-cancel:hover {
+            background: #e2e8f0;
         }
 
         body {
@@ -541,13 +608,31 @@
                     <i class="fas fa-user-circle" style="color:#0a66c2; font-size:24px;"></i>
                     {{ other_user.username }}
                 </div>
-
+                <div>
+                    <button type="button" class="btn" style="background-color: transparent; border: 1px solid #dc2626; color: #dc2626; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 13px;" onclick="showClearChatModal()">
+                        <i class="fas fa-trash"></i> Clear Chat
+                    </button>
+                </div>
             </div>
 
             <div class="chat-messages-box" id="messagesBox">
                 {% for msg in messages %}
                 <div class="chat-bubble {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
+                    {% if msg.proposal %}
+                    <div class="proposal-card-message" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 8px; color: #333;">
+                      <h4 style="margin:0 0 10px 0; color:#1e293b; font-size: 1.05rem;">Bid Proposal: {{ msg.proposal.job.title }}</h4>
+                      <p style="margin:5px 0; font-size: 0.9rem;"><strong>Bid:</strong> ₹{{ msg.proposal.bid_amount }}</p>
+                      <p style="margin:5px 0; font-size: 0.9rem;"><strong>Delivery:</strong> {{ msg.proposal.delivery_days }} days</p>
+                      <p style="margin:5px 0 15px 0; font-size: 0.9rem;"><strong>Status:</strong> 
+                        <span class="badge {% if msg.proposal.status == 'pending' %}bg-warning text-dark{% elif msg.proposal.status == 'accepted' %}bg-success{% else %}bg-danger{% endif %}" style="padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">
+                          {{ msg.proposal.status|title }}
+                        </span>
+                      </p>
+                      <a href="{% url 'client:job_detail' msg.proposal.job.id %}" style="display:inline-block; padding: 6px 12px; background: #0a66c2; color: #fff; text-decoration: none; border-radius: 20px; font-size: 0.85rem;">View Details</a>
+                    </div>
+                    {% else %}
                     <div>{{ msg.message }}</div>
+                    {% endif %}
                     <div class="bubble-time-tag">{{ msg.timestamp|date:"h:i A" }}</div>
                 </div>
                 {% empty %}
@@ -565,7 +650,7 @@
             </form>
             {% else %}
             <div class="no-chat-selected-box">
-                <i class="fas fa-comments"></i>
+                <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal" style="height: 52px; width: auto; max-width: 76px; object-fit: contain; border-radius: 12px; margin-bottom: 12px; opacity: 0.9; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.12);">
                 <h4 style="font-size: 18px; color: #001e00; margin-bottom: 6px;">Your Messages</h4>
                 <p>Select a contact from the left list to view or start a conversation.</p>
             </div>
@@ -574,10 +659,32 @@
     </div>
 </div>
 
+<!-- Custom Modal for Clear Chat -->
+<div id="clearChatModal" class="custom-modal-overlay">
+  <div class="custom-modal-content">
+    <h3>Clear Chat?</h3>
+    <p>Are you sure you want to clear this conversation? Your chat history will be removed for you, but it cannot be undone. The other person's history will not be affected.</p>
+    <div class="custom-modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" onclick="closeClearChatModal()">Cancel</button>
+      <form method="POST" action="{% if other_user %}{% url 'clear_chat' other_user.id %}{% endif %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="modal-btn" style="background-color: #dc2626; color: white;">Yes, Clear</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
     const box = document.getElementById('messagesBox');
     if (box) {
         box.scrollTop = box.scrollHeight;
+    }
+    
+    function showClearChatModal() {
+        document.getElementById('clearChatModal').classList.add('active');
+    }
+    function closeClearChatModal() {
+        document.getElementById('clearChatModal').classList.remove('active');
     }
 </script>
 

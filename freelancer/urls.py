@@ -11,6 +11,7 @@ urlpatterns = [
     path('create_profile/', views.create_profile, name='create_profile'),
     path('my-proposals/', views.my_proposals, name='my_proposals'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('delete-showcase/<int:post_id>/', views.delete_showcase, name='delete_showcase'),
     path( "profile/<int:freelancer_id>/", views.freelancer_profile, name="freelancer_profile"),
     path('connections/',views.freelancer_connections,name='freelancer_connections'),
     path('create-showcase/', views.create_showcase, name='create_showcase'),

@@ -8,5 +8,7 @@ urlpatterns = [
     path('reports/', views.reports, name='reports'),
     path('like/<int:job_id>/', views.like_job, name='like_job'),
     path('comment/<int:job_id>/', views.comment_job, name='comment_job'),
+    path('like-job/<int:job_id>/', views.like_client_job, name='like_client_job'),
+    path('comment-job/<int:job_id>/', views.comment_client_job, name='comment_client_job'),
     path('comment-reaction/<int:comment_id>/', views.toggle_comment_reaction, name='toggle_comment_reaction'),
 ]

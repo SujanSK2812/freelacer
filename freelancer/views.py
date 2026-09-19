@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from projects.models import Job
 from .forms import FreelancerProfileForm
 from .models import Project, FreelancerProfile
-import cloudinary.uploader
+from django.contrib import messages
 from django.http import HttpResponse
+from freelancer_portal.upload_utils import validate_uploaded_image, safe_delete_unreferenced_file
 User = get_user_model()
 from accounts.models import Connection, ConnectionRequest
 from django.shortcuts import get_object_or_404
@@ -19,7 +21,7 @@ def freelancer_home(request):
         return redirect("accounts:admin_home")
 
     # Client Job Postings (Work available)
-    client_jobs = Job.objects.select_related('client').filter(client__role='client').order_by("-created_at")
+    client_jobs = Job.objects.select_related('client').filter(client__role='client').prefetch_related('comments__user', 'reactions').order_by("-created_at")
     
     applied_job_ids = set()
     if request.user.is_authenticated:
@@ -27,12 +29,26 @@ def freelancer_home(request):
 
     for job in client_jobs:
         job.has_applied = job.id in applied_job_ids
-        prof = getattr(job.client, 'freelancerprofile', None)
-        job.author_dp = prof.profile_picture if (prof and prof.profile_picture) else None
+        prof = getattr(job.client, 'clientprofile', None) or getattr(job.client, 'freelancerprofile', None)
+        job.author_dp = prof.profile_picture.url if (prof and getattr(prof, 'profile_picture', None)) else None
         if hasattr(job, 'skills') and job.skills:
             job.skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
         else:
             job.skills_list = []
+
+        job.liked_by_user = job.reactions.filter(user=request.user, reaction_type='like').exists() if request.user.is_authenticated else False
+        job.likes_count = job.reactions.filter(reaction_type='like').count()
+        job.comments_all = job.comments.filter(parent=None).prefetch_related('reactions', 'replies__user', 'replies__reactions').distinct()
+        for comment in job.comments_all:
+            comment.author_dp = comment.user.get_profile_picture
+            comment.likes_count = comment.reactions.filter(reaction_type='like').count()
+            comment.liked_by_user = comment.reactions.filter(user=request.user, reaction_type='like').exists() if request.user.is_authenticated else False
+            for reply in comment.replies.all():
+                reply.author_dp = reply.user.get_profile_picture
+                reply.likes_count = reply.reactions.filter(reaction_type='like').count()
+                reply.liked_by_user = reply.reactions.filter(user=request.user, reaction_type='like').exists() if request.user.is_authenticated else False
+
+        job.comments_count = job.comments.count()
 
     # Freelancer Posts / Talent Showcases
     from projects.models import JobPost
@@ -40,16 +56,16 @@ def freelancer_home(request):
 
     for post in freelancer_posts:
         prof = getattr(post.client, 'freelancerprofile', None)
-        post.author_dp = prof.profile_picture if (prof and prof.profile_picture) else None
+        post.author_dp = prof.profile_picture.url if (prof and prof.profile_picture) else None
         if request.user.is_authenticated:
             post.liked_by_user = post.reactions.filter(user=request.user, reaction_type='like').exists()
         else:
             post.liked_by_user = False
         post.likes_count = post.reactions.filter(reaction_type='like').count()
-        post.comments_all = post.comments.filter(parent=None).prefetch_related('reactions', 'replies__user', 'replies__reactions')
+        post.comments_all = post.comments.filter(parent=None).prefetch_related('reactions', 'replies__user', 'replies__reactions').distinct()
         for comment in post.comments_all:
             c_prof = getattr(comment.user, 'freelancerprofile', None)
-            comment.author_dp = c_prof.profile_picture if (c_prof and c_prof.profile_picture) else None
+            comment.author_dp = c_prof.profile_picture.url if (c_prof and c_prof.profile_picture) else None
             comment.likes_count = comment.reactions.filter(reaction_type='like').count()
             if request.user.is_authenticated:
                 comment.liked_by_user = comment.reactions.filter(user=request.user, reaction_type='like').exists()
@@ -58,7 +74,7 @@ def freelancer_home(request):
             
             for reply in comment.replies.all():
                 r_prof = getattr(reply.user, 'freelancerprofile', None)
-                reply.author_dp = r_prof.profile_picture if (r_prof and r_prof.profile_picture) else None
+                reply.author_dp = r_prof.profile_picture.url if (r_prof and r_prof.profile_picture) else None
                 reply.likes_count = reply.reactions.filter(reaction_type='like').count()
                 if request.user.is_authenticated:
                     reply.liked_by_user = reply.reactions.filter(user=request.user, reaction_type='like').exists()
@@ -192,34 +208,43 @@ def create_profile(request):
     if request.method == "POST":
         print("POST HIT")
 
-        profile.title = request.POST.get('title')
-        profile.bio = request.POST.get('bio')
-        profile.experience_level = request.POST.get('experience_level')
+        profile.title = request.POST.get('title', profile.title) or ''
+        profile.bio = request.POST.get('bio', profile.bio) or ''
+        profile.experience_level = request.POST.get('experience_level') or profile.experience_level or 'intermediate'
 
         # FIX FOR DECIMAL ERROR
         hourly_rate = request.POST.get('hourly_rate')
 
         if hourly_rate and hourly_rate.strip():
             profile.hourly_rate = Decimal(hourly_rate)
-        else:
+        elif not profile.hourly_rate:
             profile.hourly_rate = Decimal("0.00")
 
-        profile.skills = request.POST.get('skills')
-        profile.education = request.POST.get('education')
-        profile.work_experience = request.POST.get('work_experience')
-        profile.portfolio_link = request.POST.get('portfolio_link')
-        profile.github_link = request.POST.get('github_link')
-        profile.linkedin = request.POST.get('linkedin')
-        profile.country = request.POST.get('country')
-        profile.city = request.POST.get('city')
+        profile.skills = request.POST.get('skills', profile.skills) or ''
+        profile.education = request.POST.get('education', profile.education) or ''
+        profile.work_experience = request.POST.get('work_experience', profile.work_experience) or ''
+        profile.portfolio_link = request.POST.get('portfolio_link', profile.portfolio_link) or ''
+        profile.github_link = request.POST.get('github_link', profile.github_link) or ''
+        profile.linkedin = request.POST.get('linkedin', profile.linkedin) or ''
+        profile.country = request.POST.get('country', profile.country) or ''
+        profile.city = request.POST.get('city', profile.city) or ''
 
         # PROFILE IMAGE
         if request.FILES.get('profile_picture'):
-            upload_result = cloudinary.uploader.upload(
-                request.FILES['profile_picture']
-            )
-
-            profile.profile_picture = upload_result.get('secure_url')
+            pic = request.FILES['profile_picture']
+            try:
+                validate_uploaded_image(pic)
+                old_pic = profile.profile_picture.name if profile.profile_picture else None
+                profile.profile_picture = pic
+                profile.save()
+                if old_pic and old_pic != profile.profile_picture.name:
+                    safe_delete_unreferenced_file(old_pic)
+            except ValidationError as e:
+                messages.error(request, e.message if hasattr(e, 'message') else str(e))
+                return render(request, 'footers_file/create_profile.html', {'profile': profile})
+            except Exception as e:
+                messages.error(request, f"Error saving image: {str(e)}")
+                return render(request, 'footers_file/create_profile.html', {'profile': profile})
 
         profile.save()
 
@@ -350,17 +375,43 @@ def create_showcase(request):
         title = request.POST.get("title")
         description = request.POST.get("description")
         image = request.FILES.get("image")
+        poster = request.FILES.get("poster")
+
+        try:
+            if image:
+                validate_uploaded_image(image)
+            if poster:
+                validate_uploaded_image(poster)
+        except ValidationError as e:
+            messages.error(request, e.message if hasattr(e, 'message') else str(e))
+            return render(request, "freelancer/create_showcase.html")
 
         JobPost.objects.create(
             client=request.user,
             title=title,
             description=description,
-            image=image
+            image=image,
+            poster=poster
         )
         messages.success(request, "Talent showcase posted successfully! Clients can now view your skills.")
         return redirect("/")
 
     return render(request, "freelancer/create_showcase.html")
+@login_required
+@freelancer_required
+def delete_showcase(request, post_id):
+    if request.method == "POST":
+        post = get_object_or_404(JobPost, id=post_id, client=request.user)
+        img_to_delete = post.image.name if post.image else None
+        poster_to_delete = post.poster.name if hasattr(post, 'poster') and post.poster else None
+        post.delete()
+        if img_to_delete:
+            safe_delete_unreferenced_file(img_to_delete)
+        if poster_to_delete:
+            safe_delete_unreferenced_file(poster_to_delete)
+        messages.success(request, "Talent showcase deleted successfully.")
+    return redirect('freelancer:freelancer_profile')
+
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 

@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>{{ job.title }} | Job Details</title>
@@ -322,6 +323,11 @@
         {% if job.image %}
         <div class="job-image-wrapper">
             <img src="{{ job.image.url }}" alt="{{ job.title }}">
+        </div>
+        {% endif %}
+        {% if job.poster %}
+        <div class="job-image-wrapper">
+            <img src="{{ job.poster.url }}" alt="{{ job.title }} Poster">
         </div>
         {% endif %}
 

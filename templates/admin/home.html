@@ -1,6 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Admin Dashboard | Freelancer Portal</title>
@@ -354,13 +356,6 @@
             <h3>Manage Users & Projects </h3>
             <p>View, edit, suspend or promote freelancers and clients.</p>
             <a href="{% url 'accounts:admin_users' %}" class="btn btn-outline">View →</a>
-        </div>
-        
-        <div class="admin-card">
-            <div class="card-icon"><i class="fas fa-user-plus"></i></div>
-            <h3>Connection Requests</h3>
-            <p>Review and accept or reject connection requests.</p>
-            <a href="{% url 'accounts:admin_connection_requests' %}" class="btn btn-outline">View Requests →</a>
         </div>
         
         <div class="admin-card">

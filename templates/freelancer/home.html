@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Work | Freelancer Portal</title>
@@ -11,6 +12,72 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        /* Custom Modal Styles */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        .custom-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .custom-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .custom-modal-overlay.active .custom-modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .custom-modal-content h3 {
+            margin-bottom: 0.75rem;
+            color: #0f172a;
+            font-size: 1.3rem;
+        }
+        .custom-modal-content p {
+            color: #64748b;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .custom-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+        }
+        .modal-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .modal-btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .modal-btn-cancel:hover {
+            background: #e2e8f0;
         }
 
         body {
@@ -458,6 +525,11 @@
                             <img src="{{ job.image.url }}" alt="Job Image" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; border: 1px solid #e4e6eb;">
                         </div>
                         {% endif %}
+                        {% if job.poster %}
+                        <div class="job-feed-media" style="margin-bottom: 14px;">
+                            <img src="{{ job.poster.url }}" alt="Job Poster" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; border: 1px solid #e4e6eb;">
+                        </div>
+                        {% endif %}
 
                         {% if job.skills_list %}
                         <div class="skills-tag-row" style="margin-bottom: 14px;">
@@ -471,13 +543,114 @@
                             <span class="rating-gold" style="color: #0a66c2;"><i class="fas fa-star"></i> 4.95 rating</span>
                             <span><i class="fas fa-map-marker-alt" style="color: #0a66c2;"></i> India</span>
                         </div>
-                        <div class="job-item-actions" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
-                            <span class="connects-req-label" style="font-size: 13px; color: #5e6b7c;"><i class="fas fa-bolt" style="color:#0a66c2;"></i> 6 Connects required</span>
-                            {% if job.has_applied %}
-                                <span class="btn-apply-green" style="background: #e8f5e9; color: #001e00; padding: 9px 26px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; cursor: not-allowed; border: 1px solid #c8e6c9;">Applied <i class="fas fa-check" style="margin-left: 4px; color: #0a66c2;"></i></span>
-                            {% else %}
-                                <a href="{% url 'submit_proposal' job.id %}" class="btn-apply-green" style="background: #0a66c2; color: white; padding: 9px 26px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.15s ease;">Apply Now</a>
-                            {% endif %}
+                        <!-- POST INTERACTION ROW -->
+                        <div class="job-item-actions" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div style="display: inline-flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                                <!-- LIKE BUTTON & COUNT -->
+                                <button type="button" onclick="toggleLikeJob(this, {{ job.id }})" class="post-stat-btn" style="background: none; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: {% if job.liked_by_user %}#0a66c2{% else %}#64748b{% endif %};" title="Like">
+                                    <i class="{% if job.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up" style="color: {% if job.liked_by_user %}#0a66c2{% else %}#64748b{% endif %}; font-size: 15px;"></i>
+                                    <span id="job-likes-count-{{ job.id }}">{{ job.likes_count }} {{ job.likes_count|pluralize:"Like,Likes" }}</span>
+                                </button>
+
+                                <!-- COMMENT BUTTON & COUNT -->
+                                <button type="button" onclick="toggleComments('job-comments-box-{{ job.id }}')" class="post-stat-btn" style="background: none; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #64748b;" title="Comments">
+                                    <i class="far fa-comment-alt" style="color: #64748b; font-size: 14px;"></i>
+                                    <span id="job-comments-count-{{ job.id }}">{{ job.comments_count }} {{ job.comments_count|pluralize:"Comment,Comments" }}</span>
+                                </button>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                {% if job.has_applied %}
+                                    <span class="btn-apply-green" style="background: #e8f5e9; color: #001e00; padding: 9px 24px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; cursor: not-allowed; border: 1px solid #c8e6c9;">Applied <i class="fas fa-check" style="margin-left: 4px; color: #0a66c2;"></i></span>
+                                {% else %}
+                                    <a href="{% url 'submit_proposal' job.id %}" class="btn-apply-green" style="background: #0a66c2; color: white; padding: 9px 24px; border-radius: 20px; font-weight: 700; font-size: 14px; text-decoration: none; transition: background 0.15s ease;">Apply Now</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- EXPANDABLE COMMENTS DRAWER -->
+                        <div id="job-comments-box-{{ job.id }}" class="comments-container-box" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+                            <!-- COMMENTS LIST -->
+                            <div class="comments-list" id="job-comments-list-{{ job.id }}" style="margin-bottom: 14px;">
+                                {% for comment in job.comments_all %}
+                                <div style="display: flex; gap: 10px; margin-bottom: 12px; width: 100%;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; overflow: hidden;">
+                                        {% if comment.author_dp %}
+                                            <img src="{{ comment.author_dp }}" alt="{{ comment.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% else %}
+                                            {{ comment.user.username|slice:":1"|upper }}
+                                        {% endif %}
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; margin-bottom: 4px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                                <span style="font-weight: 700; font-size: 13px; color: #001e00;">{{ comment.user.username }}</span>
+                                                <span style="font-size: 11px; color: #94a3b8;">{{ comment.created_at|timesince }} ago</span>
+                                            </div>
+                                            <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">{{ comment.text }}</p>
+                                        </div>
+                                        <div style="font-size: 12px; color: #64748b; display: flex; gap: 12px; padding-left: 6px; margin-bottom: 8px;">
+                                            <button type="button" onclick="toggleCommentReaction(this, {{ comment.id }})" style="background:none; border:none; color: {% if comment.liked_by_user %}#0a66c2{% else %}#64748b{% endif %}; font-weight: 600; font-size: 12px; cursor: pointer;">
+                                                <i class="{% if comment.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                                <span>{% if comment.likes_count > 0 %}{{ comment.likes_count }}{% endif %}</span>
+                                            </button>
+                                            <button type="button" onclick="toggleReplyBox('job-reply-box-{{ comment.id }}')" style="background:none; border:none; color: #64748b; font-weight: 600; font-size: 12px; cursor: pointer;">Reply</button>
+                                        </div>
+
+                                        <!-- REPLY FORM -->
+                                        <div id="job-reply-box-{{ comment.id }}" style="display: none; margin-bottom: 12px; padding-left: 6px;">
+                                            <form action="{% url 'projects:comment_client_job' job.id %}" method="POST" onsubmit="submitJobCommentAjax(event, {{ job.id }}, {{ comment.id }})" style="display: flex; gap: 8px; align-items: center;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                                <input type="text" name="comment" placeholder="Reply to {{ comment.user.username }}..." required style="flex: 1; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 16px; font-size: 12px; outline: none; background: #ffffff;">
+                                                <button type="submit" style="background: #0a66c2; color: white; border: none; padding: 6px 12px; border-radius: 16px; font-weight: 700; font-size: 12px; cursor: pointer;"><i class="fas fa-paper-plane"></i></button>
+                                            </form>
+                                        </div>
+
+                                        <!-- NESTED REPLIES -->
+                                        <div id="job-replies-list-{{ comment.id }}">
+                                            {% for reply in comment.replies.all %}
+                                            <div style="display: flex; gap: 8px; margin-bottom: 8px; padding-left: 6px;">
+                                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; overflow: hidden;">
+                                                    {% if reply.author_dp %}
+                                                        <img src="{{ reply.author_dp }}" alt="{{ reply.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% else %}
+                                                        {{ reply.user.username|slice:":1"|upper }}
+                                                    {% endif %}
+                                                </div>
+                                                <div style="flex: 1;">
+                                                    <div style="background: #f1f5f9; border-radius: 12px; padding: 6px 10px; margin-bottom: 3px;">
+                                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                                            <span style="font-weight: 700; font-size: 11px; color: #001e00;">{{ reply.user.username }}</span>
+                                                            <span style="font-size: 10px; color: #94a3b8;">{{ reply.created_at|timesince }}</span>
+                                                        </div>
+                                                        <p style="font-size: 12px; color: #334155; margin: 0; line-height: 1.4;">{{ reply.text }}</p>
+                                                    </div>
+                                                    <div style="font-size: 11px; color: #64748b; padding-left: 6px;">
+                                                        <button type="button" onclick="toggleCommentReaction(this, {{ reply.id }})" style="background:none; border:none; color: {% if reply.liked_by_user %}#0a66c2{% else %}#64748b{% endif %}; font-weight: 600; font-size: 11px; cursor: pointer;">
+                                                            <i class="{% if reply.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                                            <span>{% if reply.likes_count > 0 %}{{ reply.likes_count }}{% endif %}</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="empty-comment-msg" style="font-size: 13px; color: #94a3b8; text-align: center; padding: 8px 0;">No comments yet. Be the first to comment!</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- ADD COMMENT FORM (AJAX) -->
+                            <form action="{% url 'projects:comment_client_job' job.id %}" method="POST" onsubmit="submitJobCommentAjax(event, {{ job.id }})" style="display: flex; gap: 8px; align-items: center;">
+                                {% csrf_token %}
+                                <input type="text" name="comment" placeholder="Write a comment..." required style="flex: 1; padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 18px; font-size: 13px; outline: none; background: #f8fafc;">
+                                <button type="submit" style="background: #0a66c2; color: white; border: none; padding: 8px 16px; border-radius: 18px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fas fa-paper-plane"></i> Post
+                                </button>
+                            </form>
                         </div>
                     </article>
                     {% empty %}
@@ -497,7 +670,7 @@
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2); overflow: hidden; flex-shrink: 0;">
                                     {% if post.author_dp or post.client.freelancerprofile.profile_picture %}
-                                        <img src="{{ post.author_dp|default:post.client.freelancerprofile.profile_picture }}" alt="{{ post.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        <img src="{{ post.author_dp.url|default:post.client.freelancerprofile.profile_picture.url }}" alt="{{ post.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
                                     {% else %}
                                         {{ post.client.username|slice:":1"|upper }}
                                     {% endif %}
@@ -512,6 +685,14 @@
                                     <div class="post-time-text" style="margin-bottom: 0; font-size: 12px; color: #5e6b7c;">Posted {{ post.created_at|timesince }} ago</div>
                                 </div>
                             </div>
+                            
+                            {% if post.client == request.user %}
+                            <div>
+                                <button type="button" class="btn" style="background-color: transparent; border: 1px solid #dc2626; color: #dc2626; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 13px;" onclick="showDeleteShowcaseModal({{ post.id }})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="job-item-title" style="font-size: 20px; font-weight: 700; color: #001e00; cursor: default; margin-bottom: 8px;">{{ post.title }}</div>
@@ -523,26 +704,25 @@
                             <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; max-height: 420px; object-fit: contain; display: block;">
                         </div>
                         {% endif %}
-
-                        <!-- SOCIAL STATS ROW (LIKES & COMMENTS COUNT) -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 10px; font-size: 13px; color: #64748b; border-bottom: 1px solid #f1f5f9;">
-                            <span id="likes-count-{{ post.id }}"><i class="fas fa-thumbs-up" style="color: #0a66c2; margin-right: 4px;"></i> {{ post.likes_count }} {{ post.likes_count|pluralize:"Like,Likes" }}</span>
-                            <span id="comments-count-{{ post.id }}"><i class="far fa-comment-alt" style="margin-right: 4px;"></i> {{ post.comments_count }} {{ post.comments_count|pluralize:"Comment,Comments" }}</span>
+                        {% if post.poster %}
+                        <div style="margin-bottom: 16px; border-radius: 14px; overflow: hidden; background: #0f172a; border: 1px solid #e2e8f0; max-height: 420px; display: flex; align-items: center; justify-content: center;">
+                            <img src="{{ post.poster.url }}" alt="{{ post.title }} Poster" style="width: 100%; max-height: 420px; object-fit: contain; display: block;">
                         </div>
+                        {% endif %}
 
-                        <!-- SOCIAL ACTION BAR -->
-                        <div class="job-item-actions" style="margin-top: 10px; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; gap: 12px;">
-                                <!-- LIKE BUTTON (AJAX) -->
-                                <button type="button" onclick="toggleLikePost(this, {{ post.id }})" class="social-action-btn {% if post.liked_by_user %}liked{% endif %}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; color: {% if post.liked_by_user %}#0a66c2{% else %}#475569{% endif %}; background: {% if post.liked_by_user %}#e8f5e9{% else %}#f8fafc{% endif %}; transition: all 0.15s ease;">
-                                    <i class="{% if post.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
-                                    <span>{% if post.liked_by_user %}Liked{% else %}Like{% endif %}</span>
+                        <!-- POST INTERACTION ROW -->
+                        <div class="job-item-actions" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div style="display: inline-flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                                <!-- LIKE BUTTON & COUNT -->
+                                <button type="button" onclick="toggleLikePost(this, {{ post.id }})" class="post-stat-btn" style="background: none; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: {% if post.liked_by_user %}#0a66c2{% else %}#64748b{% endif %};" title="Like">
+                                    <i class="{% if post.liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up" style="color: {% if post.liked_by_user %}#0a66c2{% else %}#64748b{% endif %}; font-size: 15px;"></i>
+                                    <span id="likes-count-{{ post.id }}">{{ post.likes_count }} {{ post.likes_count|pluralize:"Like,Likes" }}</span>
                                 </button>
 
-                                <!-- COMMENT BUTTON -->
-                                <button type="button" onclick="toggleComments('comments-box-{{ post.id }}')" class="social-action-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; border: none; font-size: 14px; font-weight: 600; color: #475569; background: #f8fafc; cursor: pointer; transition: all 0.15s ease;">
-                                    <i class="far fa-comment-alt"></i>
-                                    <span id="btn-comment-count-{{ post.id }}">Comment{% if post.comments_count > 0 %} ({{ post.comments_count }}){% endif %}</span>
+                                <!-- COMMENT BUTTON & COUNT -->
+                                <button type="button" onclick="toggleComments('comments-box-{{ post.id }}')" class="post-stat-btn" style="background: none; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #64748b;" title="Comments">
+                                    <i class="far fa-comment-alt" style="color: #64748b; font-size: 14px;"></i>
+                                    <span id="comments-count-{{ post.id }}">{{ post.comments_count }} {{ post.comments_count|pluralize:"Comment,Comments" }}</span>
                                 </button>
                             </div>
 
@@ -719,6 +899,21 @@
     </div>
 </div>
 
+<!-- Custom Modal for Delete Showcase -->
+<div id="deleteShowcaseModal" class="custom-modal-overlay">
+  <div class="custom-modal-content">
+    <h3>Delete Talent Showcase?</h3>
+    <p>Are you sure you want to remove this showcase? This action cannot be undone.</p>
+    <div class="custom-modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" onclick="closeDeleteShowcaseModal()">Cancel</button>
+      <form id="deleteShowcaseForm" method="POST" action="" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="modal-btn" style="background-color: #dc2626; color: white;">Yes, Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
     function switchHomeTab(tabId, btn) {
         document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
@@ -744,23 +939,24 @@
         .then(response => response.json())
         .then(data => {
             const icon = btn.querySelector('i');
-            const label = btn.querySelector('span');
             const likesCountElem = document.getElementById('likes-count-' + postId);
 
             if (data.liked) {
                 btn.style.color = '#0a66c2';
-                btn.style.background = '#e8f5e9';
-                icon.className = 'fas fa-thumbs-up';
-                label.innerText = 'Liked';
+                if (icon) {
+                    icon.className = 'fas fa-thumbs-up';
+                    icon.style.color = '#0a66c2';
+                }
             } else {
-                btn.style.color = '#475569';
-                btn.style.background = '#f8fafc';
-                icon.className = 'far fa-thumbs-up';
-                label.innerText = 'Like';
+                btn.style.color = '#64748b';
+                if (icon) {
+                    icon.className = 'far fa-thumbs-up';
+                    icon.style.color = '#64748b';
+                }
             }
 
             if (likesCountElem) {
-                likesCountElem.innerHTML = `<i class="fas fa-thumbs-up" style="color: #0a66c2; margin-right: 4px;"></i> ${data.likes_count} ${data.likes_count === 1 ? 'Like' : 'Likes'}`;
+                likesCountElem.innerText = `${data.likes_count} ${data.likes_count === 1 ? 'Like' : 'Likes'}`;
             }
         })
         .catch(err => console.error('Error liking post:', err));
@@ -803,9 +999,15 @@
     function submitCommentAjax(e, postId, parentId = null) {
         e.preventDefault();
         const form = e.target;
+        if (form.dataset.submitting === 'true') return;
+
         const input = form.querySelector('input[name="comment"]');
         const text = input.value.trim();
         if (!text) return;
+
+        form.dataset.submitting = 'true';
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
 
         const formData = new FormData(form);
         formData.append('ajax', 'true');
@@ -822,9 +1024,14 @@
         })
         .then(res => res.json())
         .then(data => {
+            form.dataset.submitting = 'false';
+            if (submitBtn) submitBtn.disabled = false;
+
             if (data.success) {
                 input.value = '';
                 
+                const avatarHtml = data.user_dp ? `<img src="${data.user_dp}" alt="${data.username}" style="width: 100%; height: 100%; object-fit: cover;">` : data.username.charAt(0).toUpperCase();
+
                 if (data.parent_id) {
                     // It's a reply
                     const repliesList = document.getElementById('replies-list-' + data.parent_id);
@@ -832,7 +1039,7 @@
                         const newReplyHtml = `
                             <div style="display: flex; gap: 8px; margin-bottom: 8px; padding-left: 6px;">
                                 <div style="width: 24px; height: 24px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; overflow: hidden;">
-                                    ${data.username.charAt(0).toUpperCase()}
+                                    ${avatarHtml}
                                 </div>
                                 <div style="flex: 1;">
                                     <div style="background: #f1f5f9; border-radius: 12px; padding: 8px 12px; margin-bottom: 4px;">
@@ -854,8 +1061,8 @@
                     const list = document.getElementById('comments-list-' + postId);
                     const newCommentHtml = `
                         <div style="display: flex; gap: 10px; margin-bottom: 12px; width: 100%;">
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
-                                ${data.username.charAt(0).toUpperCase()}
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; overflow: hidden;">
+                                ${avatarHtml}
                             </div>
                             <div style="flex: 1;">
                                 <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; margin-bottom: 4px;">
@@ -875,17 +1082,146 @@
                     list.insertAdjacentHTML('beforeend', newCommentHtml);
                 }
 
+                const commentsCountElem = document.getElementById('comments-count-' + postId);
                 if (commentsCountElem) {
-                    commentsCountElem.innerHTML = `<i class="far fa-comment-alt" style="margin-right: 4px;"></i> ${data.comments_count} ${data.comments_count === 1 ? 'Comment' : 'Comments'}`;
-                }
-
-                const btnCommentCountElem = document.getElementById('btn-comment-count-' + postId);
-                if (btnCommentCountElem) {
-                    btnCommentCountElem.innerText = `Comment (${data.comments_count})`;
+                    commentsCountElem.innerText = `${data.comments_count} ${data.comments_count === 1 ? 'Comment' : 'Comments'}`;
                 }
             }
         })
-        .catch(err => console.error('Error submitting comment:', err));
+        .catch(err => {
+            form.dataset.submitting = 'false';
+            if (submitBtn) submitBtn.disabled = false;
+            console.error('Error submitting comment:', err);
+        });
+    }
+
+    function toggleLikeJob(btn, jobId) {
+        fetch('/projects/like-job/' + jobId + '/?ajax=true', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const icon = btn.querySelector('i');
+            const likesCountElem = document.getElementById('job-likes-count-' + jobId);
+
+            if (data.liked) {
+                btn.style.color = '#0a66c2';
+                if (icon) {
+                    icon.className = 'fas fa-thumbs-up';
+                    icon.style.color = '#0a66c2';
+                }
+            } else {
+                btn.style.color = '#64748b';
+                if (icon) {
+                    icon.className = 'far fa-thumbs-up';
+                    icon.style.color = '#64748b';
+                }
+            }
+
+            if (likesCountElem) {
+                likesCountElem.innerText = `${data.likes_count} ${data.likes_count === 1 ? 'Like' : 'Likes'}`;
+            }
+        })
+        .catch(err => console.error('Error liking job:', err));
+    }
+
+    function submitJobCommentAjax(e, jobId, parentId = null) {
+        e.preventDefault();
+        const form = e.target;
+        if (form.dataset.submitting === 'true') return;
+
+        const input = form.querySelector('input[name="comment"]');
+        const text = input.value.trim();
+        if (!text) return;
+
+        form.dataset.submitting = 'true';
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+        formData.append('ajax', 'true');
+        if (parentId) {
+            formData.append('parent_id', parentId);
+        }
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            form.dataset.submitting = 'false';
+            if (submitBtn) submitBtn.disabled = false;
+
+            if (data.success) {
+                input.value = '';
+
+                const avatarHtml = data.user_dp ? `<img src="${data.user_dp}" alt="${data.username}" style="width: 100%; height: 100%; object-fit: cover;">` : data.username.charAt(0).toUpperCase();
+
+                if (data.parent_id) {
+                    const repliesList = document.getElementById('job-replies-list-' + data.parent_id);
+                    if (repliesList) {
+                        const newReplyHtml = `
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px; padding-left: 6px;">
+                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0; overflow: hidden;">
+                                    ${avatarHtml}
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="background: #f1f5f9; border-radius: 12px; padding: 6px 10px; margin-bottom: 3px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                            <span style="font-weight: 700; font-size: 11px; color: #001e00;">${data.username}</span>
+                                            <span style="font-size: 10px; color: #94a3b8;">Just now</span>
+                                        </div>
+                                        <p style="font-size: 12px; color: #334155; margin: 0; line-height: 1.4;">${data.text}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        repliesList.insertAdjacentHTML('beforeend', newReplyHtml);
+                        const replyBox = document.getElementById('job-reply-box-' + data.parent_id);
+                        if (replyBox) replyBox.style.display = 'none';
+                    }
+                } else {
+                    const list = document.getElementById('job-comments-list-' + jobId);
+                    const newCommentHtml = `
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px; width: 100%;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; overflow: hidden;">
+                                ${avatarHtml}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="background: #f8fafc; border-radius: 12px; padding: 10px 14px; margin-bottom: 4px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <span style="font-weight: 700; font-size: 13px; color: #001e00;">${data.username}</span>
+                                        <span style="font-size: 11px; color: #94a3b8;">Just now</span>
+                                    </div>
+                                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.4;">${data.text}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    const emptyMsg = list.querySelector('.empty-comment-msg');
+                    if (emptyMsg) emptyMsg.remove();
+
+                    list.insertAdjacentHTML('beforeend', newCommentHtml);
+                }
+
+                const commentsCountElem = document.getElementById('job-comments-count-' + jobId);
+                if (commentsCountElem) {
+                    commentsCountElem.innerText = `${data.comments_count} ${data.comments_count === 1 ? 'Comment' : 'Comments'}`;
+                }
+            }
+        })
+        .catch(err => {
+            form.dataset.submitting = 'false';
+            if (submitBtn) submitBtn.disabled = false;
+            console.error('Error submitting comment:', err);
+        });
     }
 </script>
 

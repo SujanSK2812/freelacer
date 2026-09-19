@@ -14,8 +14,7 @@ User = get_user_model()
 User = get_user_model()
 
 def home(request):
-
-    testimonials = Testimonial.objects.all()
+    testimonials = Testimonial.objects.all().order_by("-id")
 
     freelancers_count = User.objects.filter(role="freelancer").count()
     clients_count = User.objects.filter(role="client").count()

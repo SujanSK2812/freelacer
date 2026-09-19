@@ -17,6 +17,8 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    available_connects = models.IntegerField(default=80)
+    used_connects = models.IntegerField(default=20)
 
     is_verified = models.BooleanField(default=False)  # ✅ ADD THIS
 
@@ -29,8 +31,16 @@ class User(AbstractUser):
     @property
     def get_profile_picture(self):
         try:
-            if hasattr(self, 'freelancerprofile') and self.freelancerprofile.profile_picture:
-                return self.freelancerprofile.profile_picture
+            for prof_attr in ('freelancerprofile', 'clientprofile'):
+                prof = getattr(self, prof_attr, None)
+                if prof and getattr(prof, 'profile_picture', None):
+                    pic = prof.profile_picture
+                    pic_str = str(getattr(pic, 'name', '') or pic).strip()
+                    if pic_str.startswith(('http://', 'https://')):
+                        return pic_str
+                    url = getattr(pic, 'url', None)
+                    if url:
+                        return url
         except Exception:
             pass
         return None
@@ -86,6 +96,8 @@ class ContactMessage(models.Model):
 
 from django.db import models
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 class Testimonial(models.Model):
     ROLE_CHOICES = (
         ("Client", "Client"),
@@ -94,10 +106,23 @@ class Testimonial(models.Model):
 
     name = models.CharField(max_length=100)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    rating = models.PositiveSmallIntegerField(
+        default=5,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Rating given by the reviewer from 1 to 5 stars"
+    )
+    available_connects = models.IntegerField(default=80)
+    used_connects = models.IntegerField(default=20)
     message = models.TextField()
 
+    def full_stars_range(self):
+        return range(self.rating)
+
+    def empty_stars_range(self):
+        return range(max(0, 5 - self.rating))
+
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.rating}★)"
     
 
 from django.db import models
@@ -157,6 +182,7 @@ class Notification(models.Model):
         ('new_project', 'New Project'),
         ('message', 'Message'),
         ('system', 'System'),
+        ('connection_request', 'Connection Request'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
     notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)

@@ -1,0 +1,365 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt #{{ payment.transaction_id }} | Freelancer Portal</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f3f2ef;
+            color: #191919;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .receipt-container {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .receipt-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+
+        .receipt-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .receipt-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0a66c2;
+        }
+
+        .receipt-status-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .receipt-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .receipt-item-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .receipt-item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .parties-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .party-role {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #0a66c2;
+            margin-bottom: 4px;
+        }
+
+        .party-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .party-sub {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .line-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        .line-items-table th {
+            text-align: left;
+            padding: 0.75rem 0;
+            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .line-items-table td {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.95rem;
+        }
+
+        .total-box {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2.5rem;
+        }
+
+        .total-content {
+            width: 280px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+
+        .total-row.grand {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0f172a;
+            border-top: 2px solid #0f172a;
+            padding-top: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-print {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1.5px solid #cbd5e1;
+            padding: 0.65rem 1.4rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-print:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .btn-primary-back {
+            background: #0a66c2;
+            color: white;
+            padding: 0.65rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary-back:hover {
+            background: #004182;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            main {
+                padding: 0;
+            }
+            .receipt-card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+            .actions-bar,
+            header,
+            footer {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="receipt-container">
+        <div class="receipt-card">
+
+            <div class="receipt-top">
+                <div>
+                    <div class="receipt-logo">
+                        <i class="fas fa-handshake"></i> Freelancer Portal
+                    </div>
+                    <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Contract Escrow Disbursement</div>
+                </div>
+
+                <div class="receipt-status-badge">
+                    <i class="fas fa-check-circle"></i> Payment Successful
+                </div>
+            </div>
+
+            <div class="receipt-grid">
+                <div>
+                    <div class="receipt-item-label">Transaction ID</div>
+                    <div class="receipt-item-value"><code>{{ payment.transaction_id }}</code></div>
+                </div>
+                <div>
+                    <div class="receipt-item-label">Payment Date & Time</div>
+                    <div class="receipt-item-value">{{ payment.created_at|date:"F d, Y - h:i A" }}</div>
+                </div>
+                <div>
+                    <div class="receipt-item-label">Payment Method</div>
+                    <div class="receipt-item-value"><i class="fas fa-check-circle" style="color: #16a34a; font-size: 0.85rem;"></i> {{ payment.payment_method }}</div>
+                </div>
+                <div>
+                    <div class="receipt-item-label">Status</div>
+                    <div class="receipt-item-value" style="color: #16a34a;">Funded & Verified</div>
+                </div>
+            </div>
+
+            <div class="parties-box">
+                <div>
+                    <div class="party-role">Paid By (Client)</div>
+                    <div class="party-name">{{ payment.client.get_full_name|default:payment.client.username }}</div>
+                    <div class="party-sub">@{{ payment.client.username }}</div>
+                </div>
+                <div>
+                    <div class="party-role">Paid To (Freelancer)</div>
+                    <div class="party-name">{{ payment.freelancer.get_full_name|default:payment.freelancer.username }}</div>
+                    <div class="party-sub">@{{ payment.freelancer.username }}</div>
+                </div>
+            </div>
+
+            <table class="line-items-table">
+                <thead>
+                    <tr>
+                        <th>Contract Description</th>
+                        <th style="text-align: right;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>{{ payment.proposal.job.title }}</strong>
+                            <div style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">
+                                Delivery Target: {{ payment.proposal.delivery_days }} Days
+                            </div>
+                        </td>
+                        <td style="text-align: right; font-weight: 600;">
+                            ₹{{ payment.amount }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-box">
+                <div class="total-content">
+                    <div class="total-row">
+                        <span>Contract Bid:</span>
+                        <span>₹{{ payment.amount }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Platform Fee:</span>
+                        <span style="color: #16a34a; font-weight: 600;">₹0.00</span>
+                    </div>
+                    <div class="total-row grand">
+                        <span>Total Paid:</span>
+                        <span style="color: #0a66c2;">₹{{ payment.amount }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-bar">
+                <button type="button" class="btn-print" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+                <div style="display: flex; gap: 10px;">
+                    {% if request.user.role == 'freelancer' %}
+                    <a href="{% url 'payments:freelancer_payment_history' %}" class="btn-primary-back">
+                        <i class="fas fa-arrow-left"></i> Payment History
+                    </a>
+                    {% else %}
+                    <a href="{% url 'client:client_proposals' %}" class="btn-primary-back">
+                        <i class="fas fa-arrow-left"></i> Received Proposals
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

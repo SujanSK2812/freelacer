@@ -34,4 +34,5 @@ urlpatterns = [
     path("my-profile/", views.my_profile, name="my_profile"),
     path("profile/<int:user_id>/", views.view_profile, name="view_profile"),
     path('remove-follower/<int:follower_id>/',views.remove_follower,name='remove_follower'),
+    path("testimonials/", views.testimonials_view, name="testimonials"),
 ]

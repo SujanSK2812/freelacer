@@ -5,7 +5,7 @@
     <!-- LEFT: Logo & Nav Links -->
     <div class="upwork-header-left">
       {% if request.user.is_authenticated %}
-        {% if request.user.is_superuser %}
+        {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
           <a href="{% url 'accounts:admin_home' %}" class="upwork-logo">
         {% elif request.user.role == 'client' %}
           <a href="{% url 'client:client_home' %}" class="upwork-logo">
@@ -15,14 +15,32 @@
       {% else %}
         <a href="{% url 'home' %}" class="upwork-logo">
       {% endif %}
-        <span class="logo-icon"><i class="fas fa-briefcase"></i></span>
+        <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal Logo" class="brand-logo-img">
         <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
       </a>
 
-      {% if request.user.is_authenticated and not request.user.is_superuser %}
+      {% if request.user.is_authenticated %}
       <div class="upwork-nav-menu">
         
-        {% if request.user.role == 'client' %}
+        {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
+        <!-- ADMIN NAVIGATION -->
+        <a href="{% url 'accounts:admin_home' %}"
+          class="nav-link {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}">
+          <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+        </a>
+        <a href="{% url 'accounts:admin_users' %}"
+          class="nav-link {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">
+          <i class="fas fa-users-cog"></i> Users Management
+        </a>
+        <a href="{% url 'accounts:admin_connection_requests' %}"
+          class="nav-link {% if request.resolver_match.url_name == 'admin_connection_requests' %}active{% endif %}">
+          <i class="fas fa-user-friends"></i> Requests
+        </a>
+        <a href="/admin/" class="nav-link" target="_blank">
+          <i class="fas fa-tools"></i> Django Admin
+        </a>
+
+        {% elif request.user.role == 'client' %}
         <!-- CLIENT NAVIGATION -->
         <div class="nav-dropdown-item">
           <a href="{% url 'client:client_home' %}"
@@ -217,19 +235,29 @@
 
           <hr class="upwork-hr">
 
-          {% if request.user.is_superuser %}
+          {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
           <a href="{% url 'accounts:admin_home' %}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+          <a href="{% url 'accounts:admin_users' %}"><i class="fas fa-users-cog"></i> Users Management</a>
+          <a href="{% url 'accounts:admin_connection_requests' %}"><i class="fas fa-user-friends"></i> Connection Requests</a>
           <a href="/admin/"><i class="fas fa-user-shield"></i> Django Admin</a>
+          <a href="{% url 'accounts:testimonials' %}"><i class="fas fa-quote-left"></i> Testimonials</a>
+          {% elif request.user.role == 'client' %}
+          <a href="{% url 'client:client_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Client Dashboard</a>
+          <a href="{% url 'client:client_profile' %}"><i class="fas fa-building"></i> Profile & Company Info</a>
+          <a href="{% url 'client:edit_client_profile' %}"><i class="fas fa-cog"></i> Account Settings</a>
+          <a href="{% url 'client:client_proposals' %}"><i class="fas fa-file-invoice"></i> Received Proposals</a>
+          <a href="{% url 'accounts:testimonials' %}"><i class="fas fa-quote-left"></i> Testimonials</a>
           {% else %}
           <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
           <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-id-badge"></i> Profile & Skills</a>
           <a href="{% url 'freelancer:edit_profile' %}"><i class="fas fa-cog"></i> Account Settings</a>
           <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-invoice"></i> Bids & Proposals</a>
+          <a href="{% url 'accounts:testimonials' %}"><i class="fas fa-quote-left"></i> Testimonials</a>
           {% endif %}
 
           <hr class="upwork-hr">
 
-          <a href="{% url 'accounts:logout' %}" class="upwork-logout-btn"><i class="fas fa-sign-out-alt"></i> Log
+          <a href="{% url 'accounts:logout' %}" class="upwork-logout-btn custom-logout-trigger"><i class="fas fa-sign-out-alt"></i> Log
             Out</a>
         </div>
       </div>
@@ -287,8 +315,18 @@
   .upwork-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     text-decoration: none;
+  }
+
+  .brand-logo-img {
+    height: 36px;
+    width: auto;
+    max-width: 48px;
+    object-fit: contain;
+    border-radius: 8px;
+    display: block;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   }
 
   .logo-icon {
@@ -940,5 +978,172 @@
     }
     return cookieValue;
   }
+</script>
+
+<!-- Custom Logout Modal -->
+<div id="logoutModalOverlay" class="logout-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="logoutModalTitle" aria-modal="true">
+  <div class="logout-modal" role="document">
+    <h3 id="logoutModalTitle">Log out</h3>
+    <p>Are you sure you want to log out?</p>
+    <div class="logout-modal-actions">
+      <button id="cancelLogoutBtn" class="logout-btn-secondary" tabindex="0">Cancel</button>
+      <a href="{% url 'accounts:logout' %}" id="confirmLogoutBtn" class="logout-btn-primary" tabindex="0">Log Out</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Logout Modal Styles */
+  .logout-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+  
+  .logout-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .logout-modal {
+    background: #ffffff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 380px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+    border: 1px solid #e2e8f0;
+  }
+
+  .logout-modal-overlay.active .logout-modal {
+    transform: scale(1);
+  }
+
+  .logout-modal h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .logout-modal p {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .logout-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .logout-btn-secondary, .logout-btn-primary {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logout-btn-secondary {
+    background-color: transparent;
+    color: #108a00;
+  }
+
+  .logout-btn-secondary:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .logout-btn-secondary:focus-visible {
+    box-shadow: 0 0 0 2px #108a00;
+  }
+
+  .logout-btn-primary {
+    background-color: #108a00;
+    color: #ffffff;
+  }
+
+  .logout-btn-primary:hover {
+    background-color: #14a800;
+    color: #ffffff;
+  }
+  
+  .logout-btn-primary:focus-visible {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #108a00;
+  }
+  
+  /* Prevent scroll on body when modal is open */
+  body.modal-open {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtns = document.querySelectorAll('.custom-logout-trigger');
+    const modalOverlay = document.getElementById('logoutModalOverlay');
+    const cancelBtn = document.getElementById('cancelLogoutBtn');
+    const confirmBtn = document.getElementById('confirmLogoutBtn');
+    let lastFocusedElement = null;
+
+    if (logoutBtns.length > 0 && modalOverlay) {
+      logoutBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          lastFocusedElement = document.activeElement;
+          modalOverlay.classList.add('active');
+          document.body.classList.add('modal-open');
+          cancelBtn.focus();
+        });
+      });
+
+      function closeModal() {
+        modalOverlay.classList.remove('active');
+        document.body.classList.remove('modal-open');
+        if (lastFocusedElement) {
+          lastFocusedElement.focus();
+        }
+      }
+
+      cancelBtn.addEventListener('click', closeModal);
+
+      // Close on clicking outside modal
+      modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
+          closeModal();
+        }
+      });
+
+      // Escape key to close
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+          closeModal();
+        }
+      });
+    }
+  });
 </script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />

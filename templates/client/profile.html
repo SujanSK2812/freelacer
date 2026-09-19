@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Company Profile | {{ request.user.username }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Premium Clean Profile Styles */
+    .profile-container {
+        max-width: 900px;
+        margin: 2.5rem auto;
+        padding: 0 1rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .card-section {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0,0,0,0.05);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+    
+    @media (max-width: 600px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+    }
+
+    .profile-picture {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-size: 3.5rem;
+        color: #94a3b8;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+        border: 4px solid #ffffff;
+        flex-shrink: 0;
+    }
+
+    .profile-picture img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-info h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2.2rem;
+        color: #0f172a;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .profile-info p {
+        color: #64748b;
+        margin: 0 0 0.4rem 0;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    @media (max-width: 600px) {
+        .profile-info p {
+            justify-content: center;
+        }
+    }
+
+    .profile-info a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .profile-info a:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+    }
+    
+    .profile-info i {
+        color: #94a3b8;
+        width: 20px;
+        text-align: center;
+    }
+
+    .section-title {
+        margin: 0 0 1.5rem 0;
+        color: #0f172a;
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: #3b82f6;
+        font-size: 1.2rem;
+    }
+
+    .about-text {
+        color: #475569;
+        line-height: 1.7;
+        font-size: 1.05rem;
+        margin: 0;
+    }
+
+    .job-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .job-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background: #fafafa;
+    }
+    
+    .job-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        background: #ffffff;
+    }
+
+    .job-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .job-title {
+        text-decoration: none;
+        color: #0f172a;
+        font-weight: 600;
+        font-size: 1.15rem;
+        transition: color 0.2s;
+    }
+
+    .job-title:hover {
+        color: #2563eb;
+    }
+
+    .job-meta {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    
+    .job-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .delete-btn {
+        background-color: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #dc2626;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .delete-btn:hover {
+        background-color: #fee2e2;
+        border-color: #ef4444;
+    }
+
+    .empty-state {
+        color: #94a3b8;
+        text-align: center;
+        padding: 2rem 0;
+        font-size: 1.05rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px dashed #cbd5e1;
+    }
+
+    /* Custom Modal Styles */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        backdrop-filter: blur(4px);
+    }
+    .custom-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+    .custom-modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        transform: translateY(20px) scale(0.95);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .custom-modal-overlay.active .custom-modal-content {
+        transform: translateY(0) scale(1);
+    }
+    .custom-modal-content h3 {
+        margin-bottom: 0.75rem;
+        color: #0f172a;
+        font-size: 1.3rem;
+    }
+    .custom-modal-content p {
+        color: #64748b;
+        margin-bottom: 1.8rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    .custom-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.8rem;
+    }
+    .modal-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+    }
+    .modal-btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    .modal-btn-cancel:hover {
+        background: #e2e8f0;
+    }
+</style>
+
+<div class="profile-container">
+    <!-- Profile Header Section -->
+    <div class="card-section profile-header">
+        <div class="profile-picture">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="{{ request.user.username }}">
+            {% else %}
+                <i class="fas fa-building"></i>
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h1>{{ profile.company_name|default:request.user.first_name|default:request.user.username }}</h1>
+            <p><i class="fas fa-map-marker-alt"></i> {{ profile.city|default:"City" }}, {{ profile.country|default:"Country" }}</p>
+            {% if profile.website %}
+            <p><i class="fas fa-link"></i> <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">{{ profile.website }}</a></p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- About Us Section -->
+    <div class="card-section">
+        <h2 class="section-title"><i class="fas fa-info-circle"></i> About Us</h2>
+        <p class="about-text">{{ profile.bio|default:"No bio provided yet." }}</p>
+    </div>
+
+    <!-- Active Jobs Section -->
+    <div class="card-section">
+        <h2 class="section-title"><i class="fas fa-briefcase"></i> Active Jobs</h2>
+        {% if active_jobs %}
+            <ul class="job-list">
+            {% for job in active_jobs %}
+                <li class="job-item">
+                    <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
+                        {% if job.image %}
+                            <img src="{{ job.image.url }}" alt="{{ job.title }}" style="width: 65px; height: 65px; border-radius: 10px; object-fit: cover; border: 1px solid #e2e8f0; flex-shrink: 0;">
+                        {% elif job.poster %}
+                            <img src="{{ job.poster.url }}" alt="{{ job.title }}" style="width: 65px; height: 65px; border-radius: 10px; object-fit: cover; border: 1px solid #e2e8f0; flex-shrink: 0;">
+                        {% else %}
+                            <div style="width: 65px; height: 65px; border-radius: 10px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                        {% endif %}
+                        <div class="job-details">
+                            <a href="{% url 'client:job_detail' job.id %}" class="job-title">{{ job.title }}</a>
+                            <p class="job-meta">
+                                <span><i class="fas fa-wallet"></i> ₹{{ job.budget }}</span>
+                                <span>&bull;</span>
+                                <span><i class="far fa-calendar-alt"></i> Posted {{ job.created_at|date:"M d, Y" }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="delete-btn" onclick="showDeleteJobModal({{ job.id }})">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; color: #cbd5e1;"></i>
+                <p style="margin:0;">No active jobs posted.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Custom Modal for Delete Job -->
+<div id="deleteJobModal" class="custom-modal-overlay">
+  <div class="custom-modal-content">
+    <h3>Delete Job?</h3>
+    <p>Are you sure you want to delete this job posting? This action cannot be undone and will also remove any related proposals.</p>
+    <div class="custom-modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" onclick="closeDeleteJobModal()">Cancel</button>
+      <form id="deleteJobForm" method="POST" action="" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="modal-btn" style="background-color: #dc2626; color: white;">Yes, Delete</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    function showDeleteJobModal(jobId) {
+        const form = document.getElementById('deleteJobForm');
+        form.action = "{% url 'client:delete_job' 0 %}".replace('0', jobId);
+        document.getElementById('deleteJobModal').classList.add('active');
+    }
+    
+    function closeDeleteJobModal() {
+        document.getElementById('deleteJobModal').classList.remove('active');
+    }
+</script>
+{% endblock %}

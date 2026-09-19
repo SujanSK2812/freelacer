@@ -21,13 +21,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c6(1xp-n*2*80q54p)433*rob_83b+v@!3myt^op961$b4w7je'
-import cloudinary
-
-cloudinary.config(
-    cloud_name = "dnqlduwly",
-    api_key = "732819639689197",
-    api_secret = "SiL95QbL4DAiWWo9q_P-RAqmzkQ"
-)
+# Removed Cloudinary config
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -152,6 +146,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+UPLOADS_URL = "/uploads/"
+UPLOADS_ROOT = os.path.join(BASE_DIR, "uploads")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

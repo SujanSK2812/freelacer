@@ -2,6 +2,7 @@
 <!doctype html>
 <html>
   <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <title>Create Freelancer Profile - Freelancer Portal</title>
     <link
       rel="stylesheet"
@@ -249,6 +250,79 @@
           grid-template-columns: 1fr;
           gap: 1rem;
         }
+      }
+
+      /* Custom Modal Styles */
+      .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        backdrop-filter: blur(4px);
+      }
+      .custom-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+      }
+      .custom-modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        transform: translateY(20px) scale(0.95);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .custom-modal-overlay.active .custom-modal-content {
+        transform: translateY(0) scale(1);
+      }
+      .custom-modal-content h3 {
+        margin-bottom: 0.75rem;
+        color: #0f172a;
+        font-size: 1.3rem;
+      }
+      .custom-modal-content p {
+        color: #64748b;
+        margin-bottom: 1.8rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      .custom-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.8rem;
+      }
+      .modal-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+      }
+      .modal-btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+      }
+      .modal-btn-cancel:hover {
+        background: #e2e8f0;
+      }
+      .modal-btn-confirm {
+        background: #0a66c2;
+        color: white;
+      }
+      .modal-btn-confirm:hover {
+        background: #08529e;
       }
 
       @media (max-width: 768px) {
@@ -526,6 +600,18 @@
     <!-- Footer exactly matching privacy policy style -->
     {% include 'includes/footer.html' %}
 
+    <!-- Custom Modal for Skip Profile -->
+    <div id="skipProfileModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+        <h3>Skip Profile Creation?</h3>
+        <p>Are you sure you want to skip profile creation? You can always complete your profile later from your settings.</p>
+        <div class="custom-modal-actions">
+          <button type="button" class="modal-btn modal-btn-cancel" id="cancelSkipBtn">Cancel</button>
+          <button type="button" class="modal-btn modal-btn-confirm" id="confirmSkipBtn">Yes, Skip</button>
+        </div>
+      </div>
+    </div>
+
     <script>
       // Image preview functionality
       const profilePictureInput = document.getElementById('profilePicture');
@@ -572,17 +658,36 @@
       
       // Skip button functionality
       const skipBtn = document.getElementById('skipBtn');
-      skipBtn.addEventListener('click', function() {
-        if (confirm('Are you sure you want to skip profile creation? You can complete it later.')) {
-          // Use the form but add skip parameter
-          const form = document.getElementById('profileForm');
-          const skipInput = document.createElement('input');
-          skipInput.type = 'hidden';
-          skipInput.name = 'skip';
-          skipInput.value = 'true';
-          form.appendChild(skipInput);
-          form.submit();
+      const skipModal = document.getElementById('skipProfileModal');
+      const cancelSkipBtn = document.getElementById('cancelSkipBtn');
+      const confirmSkipBtn = document.getElementById('confirmSkipBtn');
+
+      skipBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        skipModal.classList.add('active');
+      });
+
+      cancelSkipBtn.addEventListener('click', function() {
+        skipModal.classList.remove('active');
+      });
+
+      // Close modal on outside click
+      skipModal.addEventListener('click', function(e) {
+        if (e.target === skipModal) {
+          skipModal.classList.remove('active');
         }
+      });
+
+      confirmSkipBtn.addEventListener('click', function() {
+        // Use the form but add skip parameter
+        const form = document.getElementById('profileForm');
+        const skipInput = document.createElement('input');
+        skipInput.type = 'hidden';
+        skipInput.name = 'skip';
+        skipInput.value = 'true';
+        form.appendChild(skipInput);
+        form.submit();
+      });
       });
       
       // Form validation before submit

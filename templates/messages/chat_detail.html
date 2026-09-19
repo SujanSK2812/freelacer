@@ -1,6 +1,8 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -297,8 +299,21 @@
           <div
             class="message {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
            
-
+            {% if msg.proposal %}
+            <div class="proposal-card-message" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 8px; color: #333;">
+              <h4 style="margin:0 0 10px 0; color:#1e293b; font-size: 1.05rem;">Bid Proposal: {{ msg.proposal.job.title }}</h4>
+              <p style="margin:5px 0; font-size: 0.9rem;"><strong>Bid:</strong> ₹{{ msg.proposal.bid_amount }}</p>
+              <p style="margin:5px 0; font-size: 0.9rem;"><strong>Delivery:</strong> {{ msg.proposal.delivery_days }} days</p>
+              <p style="margin:5px 0 15px 0; font-size: 0.9rem;"><strong>Status:</strong> 
+                <span class="badge {% if msg.proposal.status == 'pending' %}bg-warning text-dark{% elif msg.proposal.status == 'accepted' %}bg-success{% else %}bg-danger{% endif %}" style="padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">
+                  {{ msg.proposal.status|title }}
+                </span>
+              </p>
+              <a href="{% url 'client:job_detail' msg.proposal.job.id %}" style="display:inline-block; padding: 6px 12px; background: #0a66c2; color: #fff; text-decoration: none; border-radius: 20px; font-size: 0.85rem;">View Details</a>
+            </div>
+            {% else %}
             <div class="message-text">{{ msg.message }}</div>
+            {% endif %}
 
             <div class="message-time">{{ msg.timestamp|date:"h:i A" }}</div>
           </div>

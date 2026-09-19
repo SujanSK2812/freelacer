@@ -1,6 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <title>Pending Requests</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -522,17 +524,17 @@
         {% endif %}
 
         <div class="request-list">
-            {% for request in requests %}
+            {% for conn_request in requests %}
                 <div class="request-card">
                     <div class="user-info">
                         <div class="user-avatar">
-                            {{ request.sender.username|make_list|first|upper }}
+                            {{ conn_request.sender.username|make_list|first|upper }}
                         </div>
                         <div class="user-details">
-                            <h4>{{ request.sender.username }}</h4>
+                            <h4>{{ conn_request.sender.username }}</h4>
                             <p>
                                 <i class="fas fa-envelope"></i>
-                                {{ request.sender.email }}
+                                {{ conn_request.sender.email }}
                             </p>
                         </div>
                     </div>
@@ -549,7 +551,7 @@
                     </div>
 
                     <div class="button-group">
-                        <form method="POST" action="{% url 'accounts:accept_connection_request' request.id %}" style="flex: 1;">
+                        <form method="POST" action="{% url 'accounts:accept_connection_request' conn_request.id %}" style="flex: 1;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-accept">
                                 <i class="fas fa-check-circle"></i>
@@ -557,7 +559,7 @@
                             </button>
                         </form>
 
-                        <form method="POST" action="{% url 'accounts:reject_connection_request' request.id %}" style="flex: 1;">
+                        <form method="POST" action="{% url 'accounts:reject_connection_request' conn_request.id %}" style="flex: 1;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-reject">
                                 <i class="fas fa-times-circle"></i>

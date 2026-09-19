@@ -12,6 +12,11 @@ def submit_proposal(request, job_id):
 
     job = get_object_or_404(Job, id=job_id)
 
+    # Check if job already has an accepted proposal (already awarded)
+    if Proposal.objects.filter(job=job, status="accepted").exists():
+        messages.error(request, "This job has already been awarded to a freelancer and is closed to new proposals.")
+        return redirect("freelancer:freelancer_dashboard")
+
     # Prevent duplicate applications
     if Proposal.objects.filter(freelancer=request.user, job=job).exists():
         messages.error(request, "You have already applied for this job.")
@@ -19,12 +24,22 @@ def submit_proposal(request, job_id):
 
     if request.method == "POST":
 
-        Proposal.objects.create(
+        proposal = Proposal.objects.create(
             freelancer=request.user,
             job=job,
             proposal_text=request.POST.get("proposal_text"),
             bid_amount=request.POST.get("bid_amount"),
             delivery_days=request.POST.get("delivery_days"),
+        )
+        
+        from messages_app.models import Message
+        
+        # Create a message linked to the proposal
+        Message.objects.create(
+            sender=request.user,
+            receiver=job.client,
+            message="Submitted a new proposal.",
+            proposal=proposal
         )
         
         from accounts.models import Notification
@@ -51,7 +66,16 @@ def my_proposals(request):
 
     proposals = Proposal.objects.filter(
         freelancer=request.user
-    ).order_by("-created_at")
+    ).select_related('job', 'job__client').order_by("-created_at")
+
+    from payments.models import Payment
+    paid_map = {
+        p.proposal_id: p
+        for p in Payment.objects.filter(freelancer=request.user, paid=True)
+    }
+    for prop in proposals:
+        prop.payment = paid_map.get(prop.id)
+        prop.is_paid = prop.payment is not None
 
     return render(
         request,

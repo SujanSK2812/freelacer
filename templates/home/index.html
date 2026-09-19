@@ -1,17 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Freelancer Portal - Home</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
 
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <link rel="stylesheet" href="{% static 'home/home.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'home/home.css' %}?v=6">
 
     <style>
         /* LinkedIn Blue Theme Overrides */
-        .hero h1, .dashboard-box h3, .features-section h2, .testimonials-section h2 {
+        .hero h1,
+        .dashboard-box h3,
+        .features-section h2,
+        .testimonials-section h2 {
             color: #004182 !important;
         }
 
@@ -53,12 +57,322 @@
             box-shadow: 0 8px 20px rgba(10, 102, 194, 0.3) !important;
         }
 
-        .feature-card i, .stat-item h3, .testimonial-card i {
+        .feature-card i,
+        .stat-item h3,
+        .testimonial-card i {
             color: #0a66c2 !important;
         }
 
         .feature-card:hover i {
             transform: scale(1.15) !important;
+        }
+
+        /* Expand main container for large cinema-style video display */
+        .container {
+            max-width: 1400px !important;
+            width: 96% !important;
+            padding: 0 1.5rem !important;
+        }
+
+        .hero {
+            padding: 1.25rem !important;
+            width: 100% !important;
+            margin-bottom: 2rem !important;
+            border-radius: 28px !important;
+            background: #ffffff !important;
+        }
+
+        /* ================= PORTAL VIDEO SHOWCASE (CINEMA SIZE) ================= */
+        .portal-video-section {
+            width: 100% !important;
+            max-width: 1280px !important;
+            margin: 0 auto !important;
+            text-align: center;
+            padding: 0 !important;
+        }
+
+        .portal-video-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .portal-video-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e8f3fc;
+            color: #0a66c2;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .portal-video-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #004182;
+            margin-bottom: 0.5rem;
+        }
+
+        .portal-video-subtitle {
+            font-size: 1.05rem;
+            color: #5e6b7e;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .portal-video-card {
+            position: relative;
+            width: 100% !important;
+            max-width: 1280px !important;
+            aspect-ratio: 16 / 9;
+            min-height: 520px;
+            border-radius: 24px;
+            overflow: hidden;
+            background: #000000;
+            box-shadow: 0 24px 70px rgba(10, 102, 194, 0.25), 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(10, 102, 194, 0.28);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        @media (min-width: 1200px) {
+            .portal-video-card {
+                min-height: 640px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .portal-video-card {
+                min-height: 240px;
+                border-radius: 16px;
+            }
+        }
+
+        .portal-video-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 30px 80px rgba(10, 102, 194, 0.3), 0 12px 36px rgba(0, 0, 0, 0.25);
+        }
+
+        .portal-video-card video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+            display: block;
+            border-radius: 22px;
+        }
+
+        .portal-video-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            color: white;
+            background: radial-gradient(circle at center, rgba(13, 50, 77, 0.65) 0%, rgba(9, 30, 58, 0.95) 100%);
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+
+        .portal-video-card:hover .portal-video-placeholder {
+            background: radial-gradient(circle at center, rgba(10, 102, 194, 0.45) 0%, rgba(9, 30, 58, 0.9) 100%);
+        }
+
+        .portal-play-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #0a66c2;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: 0 0 0 10px rgba(10, 102, 194, 0.28), 0 8px 24px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            transition: all 0.25s ease;
+            animation: portalPulse 2.4s infinite;
+        }
+
+        .portal-play-btn i {
+            margin-left: 4px;
+        }
+
+        .portal-video-card:hover .portal-play-btn {
+            transform: scale(1.08);
+            background: #0073e6;
+            box-shadow: 0 0 0 16px rgba(10, 102, 194, 0.38), 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        @keyframes portalPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(10, 102, 194, 0.6), 0 8px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            70% {
+                box-shadow: 0 0 0 18px rgba(10, 102, 194, 0), 0 8px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(10, 102, 194, 0), 0 8px 20px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        .portal-placeholder-text h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.35rem;
+        }
+
+        .portal-placeholder-text p {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        .portal-placeholder-text code {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #93c5fd;
+        }
+
+        .portal-video-pill-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .portal-mini-pill {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            color: #e2e8f0;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .portal-video-helper-note {
+            margin-top: 0.85rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .portal-video-helper-note code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #0a66c2;
+            font-weight: 600;
+        }
+
+        /* Video Info Modal */
+        .portal-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .portal-modal-card {
+            background: white;
+            border-radius: 20px;
+            max-width: 520px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            position: relative;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .portal-modal-card h3 {
+            font-size: 1.35rem;
+            color: #004182;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .portal-modal-card p {
+            font-size: 0.95rem;
+            color: #475569;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .portal-modal-card ol {
+            margin-left: 1.25rem;
+            margin-bottom: 1.25rem;
+            color: #334155;
+            font-size: 0.9rem;
+        }
+
+        .portal-modal-card ol li {
+            margin-bottom: 0.5rem;
+        }
+
+        .portal-modal-card code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #0a66c2;
+            font-weight: 600;
+        }
+
+        .portal-modal-close-btn {
+            background: #0a66c2;
+            color: white;
+            border: none;
+            padding: 0.65rem 1.75rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            float: right;
+        }
+
+        .portal-modal-close-btn:hover {
+            background: #004182;
         }
     </style>
 
@@ -67,215 +381,226 @@
 
 <body>
 
-{% include 'includes/header.html' %}
+    {% include 'includes/header.html' %}
 
-<main>
-<section class="container">
+    <main>
+        <section class="container">
 
-<div class="hero">
+            <div class="hero">
 
-{% if request.user.is_authenticated %}
+                <!-- ============================================================== -->
+                <!-- PORTAL VIDEO SHOWCASE (CINEMA DISPLAY)                         -->
+                <!-- ============================================================== -->
+                <div class="portal-video-section">
+                    <div class="portal-video-card" id="home-video-card">
+                        <!-- Native Video Player (Local MP4/WebM) -->
+                        <video id="portal-video" controls playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                            <source src="{% static 'videos/gemini_generated_video_ed0fe3c5.mp4' %}" type="video/mp4">
+                            <source src="{% static 'videos/freelancer_guide.mp4' %}" type="video/mp4">
+                            <source src="{% static 'videos/landing_intro.mp4' %}" type="video/mp4">
+                            Your browser does not support HTML5 video.
+                        </video>
+                    </div>
+                </div>
 
-    <!-- ADMIN -->
+            </div>
 
-    {% if request.user.is_superuser %}
+            {% if not request.user.is_authenticated %}
+            <div class="selection-box">
+                <a href="{% url 'accounts:select_role' %}" class="btn">
+                    Join To Become a Freelancer
+                </a>
+            </div>
+            {% endif %}
 
-        <h1>Welcome Admin</h1>
-        <p>Manage users, projects and platform activities.</p>
 
-    <!-- CLIENT -->
+            <!-- FEATURES -->
 
-    {% elif request.user.role == "client" %}
+            <div class="features-section">
 
-        <h1>Hire Skilled Freelancers</h1>
-        <p>Post projects and connect with talented professionals.</p>
+                <h2>Why Choose Our Platform?</h2>
 
-    <!-- FREELANCER -->
+                <div class="features-grid">
 
-    {% elif request.user.role == "freelancer" %}
+                    <div class="feature-card">
+                        <i class="fas fa-briefcase"></i>
+                        <h3>Find Quality Work</h3>
+                        <p>Access thousands of projects from clients worldwide</p>
+                    </div>
 
-        <h1>Find Freelance Projects</h1>
-        <p>Discover projects and grow your freelance career.</p>
+                    <div class="feature-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Top Talent</h3>
+                        <p>Connect with verified and skilled professionals</p>
+                    </div>
 
-    {% endif %}
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Secure Payments</h3>
+                        <p>Protected payments and milestone-based releases</p>
+                    </div>
 
-{% else %}
+                    <div class="feature-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>24/7 Support</h3>
+                        <p>Round-the-clock assistance for your projects</p>
+                    </div>
 
-    <h1>Welcome to Freelancer Hiring Portal</h1>
-    <p>Connect Clients with Skilled Freelancers Easily</p>
+                </div>
+            </div>
 
-{% endif %}
 
-</div>
+            <!-- STATS -->
 
-<!-- ROLE BASED DASHBOARD -->
 
-{% if request.user.is_authenticated %}
+            <div class="stats-section">
 
-    <!-- ================= ADMIN ================= -->
+                <div class="stat-item">
+                    <h3>{{ total_count }}+</h3>
+                    <p>Active Freelancers</p>
+                </div>
 
-    {% if request.user.is_superuser %}
+                <div class="stat-item">
+                    <h3>{{ projects_count }}+</h3>
+                    <p>Projects Completed</p>
+                </div>
 
-    <div class="dashboard-box">
-        <h3>Admin Dashboard</h3>
+                <div class="stat-item">
+                    <h3>{{ clients_count }}+</h3>
+                    <p>Happy Clients</p>
+                </div>
 
-        <a href="/admin/" class="btn">
-            Django Admin
-        </a>
+                <div class="stat-item">
+                    <h3>95%</h3>
+                    <p>Satisfaction Rate</p>
+                </div>
 
-        <a href="{% url 'accounts:admin_users' %}" class="btn">
-            Manage Users
-        </a>
+            </div>
 
-    </div>
 
-    <!-- ================= CLIENT ================= -->
+            {% if testimonials %}
+            <!-- TESTIMONIALS -->
 
-    {% elif request.user.role == "client" %}
-
-    <div class="dashboard-box">
-        <h3>Client Dashboard</h3>
-
-        <a href="{% url 'client:create_job' %}" class="btn">
-            Post a Project
-        </a>
-
-        <a href="{% url 'client:client_home' %}" class="btn">
-            View My Projects
-        </a>
-
-        
-    </div>
-
-    <!-- ================= FREELANCER ================= -->
-
-    {% elif request.user.role == "freelancer" %}
-
-    <div class="dashboard-box">
-        <h3>Freelancer Dashboard</h3>
-
-        <a href="{% url 'freelancer:search_results' %}" class="btn">
-            Browse Projects
-        </a>
-
-        <a href="{% url 'freelancer:my_proposals' %}" class="btn">
-            My Bids
-        </a>
-
-    
-    </div>
-
-    {% endif %}
-
-{% else %}
-
-<div class="selection-box">
-
-    <a href="{% url 'accounts:select_role' %}" class="btn">
-        Join To Become a Freelancer
-    </a>
-
-</div>
-
-{% endif %}
-
-
-<!-- FEATURES -->
-
-<div class="features-section">
-
-<h2>Why Choose Our Platform?</h2>
-
-<div class="features-grid">
-
-<div class="feature-card">
-<i class="fas fa-briefcase"></i>
-<h3>Find Quality Work</h3>
-<p>Access thousands of projects from clients worldwide</p>
-</div>
-
-<div class="feature-card">
-<i class="fas fa-users"></i>
-<h3>Top Talent</h3>
-<p>Connect with verified and skilled professionals</p>
-</div>
-
-<div class="feature-card">
-<i class="fas fa-shield-alt"></i>
-<h3>Secure Payments</h3>
-<p>Protected payments and milestone-based releases</p>
-</div>
-
-<div class="feature-card">
-<i class="fas fa-clock"></i>
-<h3>24/7 Support</h3>
-<p>Round-the-clock assistance for your projects</p>
-</div>
-
-</div>
-</div>
-
-
-<!-- STATS -->
-
-
-<div class="stats-section">
-
-  <div class="stat-item">
-    <h3>{{ total_count }}+</h3>
-    <p>Active Freelancers</p>
-  </div>
-
-  <div class="stat-item">
-    <h3>{{ projects_count }}+</h3>
-    <p>Projects Completed</p>
-  </div>
-
-  <div class="stat-item">
-    <h3>{{ clients_count }}+</h3>
-    <p>Happy Clients</p>
-  </div>
-
-  <div class="stat-item">
-    <h3>95%</h3>
-    <p>Satisfaction Rate</p>
-  </div>
-
-</div>
-
-
-<!-- TESTIMONIALS -->
-
-<div class="testimonials-section">
-
-<h2>What Our Users Say</h2>
-
-<div class="testimonials-grid">
-
-    {% for testimonial in testimonials %}
-
-    <div class="testimonial-card">
-
-        <i class="fas fa-quote-left"></i>
-
-        <p>"{{ testimonial.message }}"</p>
-
-        <div class="testimonial-author">
-            <strong>{{ testimonial.name }}</strong>
-            <span>{{ testimonial.role }}</span>
+            <div class="testimonials-section">
+
+                <h2>What Our Users Say</h2>
+
+                <div class="testimonials-grid">
+
+                    {% for testimonial in testimonials %}
+
+                    <div class="testimonial-card">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <i class="fas fa-quote-left" style="margin-bottom: 0;"></i>
+                            <div style="display: flex; gap: 3px; font-size: 0.95rem;" title="{{ testimonial.rating }} out of 5 stars">
+                                {% for _ in testimonial.full_stars_range %}
+                                <i class="fas fa-star" style="color: #f59e0b; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
+                                {% endfor %}
+                                {% for _ in testimonial.empty_stars_range %}
+                                <i class="fas fa-star" style="color: #cbd5e1; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <p>"{{ testimonial.message }}"</p>
+
+                        <div class="testimonial-author">
+                            <strong>{{ testimonial.name }}</strong>
+                            <span>{{ testimonial.role }}</span>
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+            {% endif %}
+
+        </section>
+    </main>
+
+    {% include 'includes/footer.html' %}
+
+    <!-- Video Info Instructions Modal -->
+    <div id="portal-video-info-modal" class="portal-modal-backdrop" onclick="if(event.target===this) closeVideoModal()">
+        <div class="portal-modal-card">
+            <h3><i class="fas fa-photo-film" style="color: #0a66c2;"></i> Video Space Ready!</h3>
+            <p>This video showcase is fully configured and ready for your video. Here is how you can display your video:
+            </p>
+            <ol>
+                <li><strong>Add a Video File:</strong> Place your video (e.g. <span
+                        id="modal-video-filename"><code>freelancer_guide.mp4</code></span>) into the project's
+                    <code>static/videos/</code> folder.
+                </li>
+                <li><strong>Or Embed from YouTube/Vimeo:</strong> Replace the <code>&lt;video&gt;</code> tag in
+                    <code>templates/home/index.html</code> with an <code>&lt;iframe&gt;</code> embed.
+                </li>
+            </ol>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem;">The player includes a responsive 16:9
+                aspect ratio, native HTML5 controls, and fullscreen playback support.</p>
+            <button type="button" class="portal-modal-close-btn" onclick="closeVideoModal()">Got It</button>
         </div>
-
     </div>
 
-    {% endfor %}
+    <script>
+        function handleVideoPlay(videoId, placeholderId, defaultFilename) {
+            const video = document.getElementById(videoId);
+            const placeholder = document.getElementById(placeholderId);
+            if (!video) return;
 
-</div>
-</div>
+            if (video.readyState >= 2) {
+                video.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
+                video.play();
+            } else {
+                video.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
 
-</section>
-</main>
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(err => {
+                        video.style.display = 'none';
+                        if (placeholder) placeholder.style.display = 'flex';
+                        showVideoModal(defaultFilename);
+                    });
+                }
+            }
+        }
 
-{% include 'includes/footer.html' %}
+        function showVideoModal(filename) {
+            const modal = document.getElementById('portal-video-info-modal');
+            const nameElem = document.getElementById('modal-video-filename');
+            if (nameElem && filename) {
+                nameElem.innerHTML = `<code>${filename}</code>`;
+            }
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('portal-video-info-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            ['portal-video', 'freelancer-video', 'landing-video'].forEach(id => {
+                const v = document.getElementById(id);
+                if (v) {
+                    v.addEventListener('loadeddata', function () {
+                        v.style.display = 'block';
+                        const p = document.getElementById(id + '-placeholder');
+                        if (p) p.style.display = 'none';
+                    });
+                }
+            });
+        });
+    </script>
 
 </body>
+
 </html>

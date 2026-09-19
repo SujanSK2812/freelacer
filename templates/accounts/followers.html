@@ -1,6 +1,8 @@
+{% load static %}
 <!doctype html>
 <html>
   <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <title>Followers</title>
     <link
       rel="stylesheet"
@@ -76,7 +78,7 @@
 
       .followers-header h2 {
         color: #1a2b1a;
-        font-size: 2rem;
+        font-size: 32px;
         margin-bottom: 0.5rem;
         font-weight: 600;
       }
@@ -86,14 +88,14 @@
         background: #f0f7f0;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
-        font-size: 1rem;
+        font-size: 16px;
         margin-left: 0.5rem;
         display: inline-block;
       }
 
       .followers-header p {
         color: #5e6b7e;
-        font-size: 1rem;
+        font-size: 18px;
         margin-top: 0.5rem;
       }
 
@@ -235,14 +237,14 @@
 
       .user-details h3 {
         color: #2d3a2d;
-        font-size: 1.2rem;
+        font-size: 20px;
         margin-bottom: 0.25rem;
         font-weight: 600;
       }
 
       .user-details p {
         color: #5e6b7e;
-        font-size: 0.9rem;
+        font-size: 15px;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -262,7 +264,7 @@
         padding: 0.2rem 0.6rem;
         background: #f0f7f0;
         border-radius: 12px;
-        font-size: 0.7rem;
+        font-size: 13px;
         color: #0a66c2;
         font-weight: 500;
       }
@@ -271,7 +273,7 @@
         display: flex;
         gap: 1rem;
         margin-top: 0.5rem;
-        font-size: 0.8rem;
+        font-size: 13px;
         color: #9aa6b5;
       }
 
@@ -295,7 +297,7 @@
       }
 
       .follow-date span {
-        font-size: 0.8rem;
+        font-size: 13px;
         color: #9aa6b5;
         display: flex;
         align-items: center;
@@ -317,7 +319,7 @@
         padding: 0.6rem 1.2rem;
         border: none;
         border-radius: 10px;
-        font-size: 0.9rem;
+        font-size: 14px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -537,8 +539,13 @@
         }
 
         .followers-header h2 {
-          font-size: 1.75rem;
+          font-size: 28px;
         }
+
+        .user-details h3 { font-size: 18px; }
+        .user-details p { font-size: 14px; }
+        .user-badge, .follower-stats, .follow-date span { font-size: 13px; }
+        .btn { font-size: 14px; }
 
         .user-avatar {
           width: 50px;
@@ -567,8 +574,13 @@
         }
 
         .followers-header h2 {
-          font-size: 1.5rem;
+          font-size: 26px;
         }
+
+        .user-details h3 { font-size: 17px; }
+        .user-details p { font-size: 13px; }
+        .user-badge, .follower-stats, .follow-date span { font-size: 12px; }
+        .btn { font-size: 13px; }
 
         .followers-icon {
           width: 60px;

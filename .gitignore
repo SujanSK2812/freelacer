@@ -1,0 +1,38 @@
+# --- Environment Variables & Secrets ---
+.env
+.env.local
+*.env
+
+# --- Python & Django ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+ENV/
+.venv/
+db.sqlite3
+media/
+staticfiles/
+*.log
+
+# --- Node.js / JavaScript ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+
+# --- IDEs & Editors ---
+.vscode/
+.idea/
+*.suo
+*.swp
+*.swo
+
+# --- Operating Systems ---
+.DS_Store
+Thumbs.db
+Desktop.ini

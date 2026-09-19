@@ -20,6 +20,18 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     is_read = models.BooleanField(default=False)
+    
+    deleted_by_sender = models.BooleanField(default=False)
+    
+    deleted_by_receiver = models.BooleanField(default=False)
+
+    proposal = models.ForeignKey(
+        'proposals.Proposal', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='messages'
+    )
 
     def __str__(self):
         return f"{self.sender} -> {self.receiver}"

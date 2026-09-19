@@ -51,8 +51,16 @@ small, .small-text, .metadata, .job-spec-meta span, .post-time-text {
     font-size: clamp(0.9375rem, 1vw, 1rem) !important; /* 15px - 16px */
 }
 
-button, .btn, .btn-primary, .upwork-btn-primary, .btn-sm-primary, .btn-apply-green, .social-action-btn {
+button, .btn, .btn-primary, .upwork-btn-primary, .btn-sm-primary, .btn-apply-green, .social-action-btn, .post-stat-btn {
     font-size: clamp(0.9375rem, 1vw, 1rem) !important; /* 15px - 16px */
+}
+
+.post-stat-btn {
+    transition: background-color 0.15s ease, color 0.15s ease;
+    user-select: none;
+}
+.post-stat-btn:hover {
+    background-color: #f1f5f9 !important;
 }
 
 /* Forms & Inputs */

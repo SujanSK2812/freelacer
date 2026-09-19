@@ -1,7 +1,9 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages as django_messages
 from django.contrib.auth import get_user_model
 from .models import Message
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
@@ -10,24 +12,26 @@ User = get_user_model()
 @login_required
 def chat_home(request):
 
+    # If ?user=ID is passed (e.g. from "Message" button on proposals), go directly to that chat
+    target_user_id = request.GET.get('user')
+    if target_user_id:
+        try:
+            target_user = User.objects.get(id=target_user_id)
+            return redirect('chat_detail', user_id=target_user.id)
+        except User.DoesNotExist:
+            pass
+
     # ADMIN
     if request.user.is_staff:
-
         users = User.objects.exclude(id=request.user.id)
 
     # CLIENT -> only freelancers
     elif request.user.role == "client":
-
-        users = User.objects.filter(
-            role="freelancer"
-        )
+        users = User.objects.filter(role="freelancer")
 
     # FREELANCER -> only clients
     elif request.user.role == "freelancer":
-
-        users = User.objects.filter(
-            role="client"
-        )
+        users = User.objects.filter(role="client")
 
     else:
         users = User.objects.none()
@@ -45,6 +49,9 @@ def chat_detail(request, user_id):
     messages = Message.objects.filter(
         sender__in=[request.user, other_user],
         receiver__in=[request.user, other_user]
+    ).exclude(
+        Q(sender=request.user, deleted_by_sender=True) | 
+        Q(receiver=request.user, deleted_by_receiver=True)
     ).order_by('timestamp')
 
     if request.method == "POST":
@@ -60,7 +67,14 @@ def chat_detail(request, user_id):
 
         return redirect('chat_detail', user_id=other_user.id)
 
-    users = User.objects.exclude(id=request.user.id)
+    if request.user.is_staff:
+        users = User.objects.exclude(id=request.user.id)
+    elif request.user.role == "client":
+        users = User.objects.filter(role="freelancer")
+    elif request.user.role == "freelancer":
+        users = User.objects.filter(role="client")
+    else:
+        users = User.objects.none()
 
     return render(request, 'messages/chat_home.html', {
         'other_user': other_user,
@@ -68,6 +82,27 @@ def chat_detail(request, user_id):
         'users': users,
     })
 
+
+@login_required
+def clear_chat(request, user_id):
+    other_user = get_object_or_404(User, id=user_id)
+    
+    # Get all messages between these two users
+    messages = Message.objects.filter(
+        sender__in=[request.user, other_user],
+        receiver__in=[request.user, other_user]
+    )
+    
+    # Mark as deleted for current user
+    for msg in messages:
+        if msg.sender == request.user:
+            msg.deleted_by_sender = True
+        if msg.receiver == request.user:
+            msg.deleted_by_receiver = True
+        msg.save()
+        
+    django_messages.success(request, f"Chat with {other_user.username} has been cleared.")
+    return redirect('chat_detail', user_id=other_user.id)
 
 
 from accounts.models import ConnectionRequest, Connection

@@ -1,0 +1,399 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings & Payment History | Freelancer Portal</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f3f2ef;
+            color: #191919;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title-group h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title-group p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .btn-back-dashboard {
+            background: #ffffff;
+            color: #0a66c2;
+            border: 1.5px solid #d0e1f9;
+            padding: 0.65rem 1.4rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-back-dashboard:hover {
+            background: #eef3f8;
+            border-color: #0a66c2;
+        }
+
+        /* Stats Row */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: #e6f7ec;
+            color: #107c41;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .stat-icon.purple {
+            background: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        /* Content Card */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table.history-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        table.history-table th {
+            padding: 0.85rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        table.history-table td {
+            padding: 1.1rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.92rem;
+            vertical-align: middle;
+        }
+
+        table.history-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .client-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .client-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #0a66c2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .client-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .badge-verified {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-receipt {
+            color: #0a66c2;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid #d0e1f9;
+            background: #eef3f8;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-receipt:hover {
+            background: #dbeafe;
+            border-color: #0a66c2;
+        }
+
+        .empty-box {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-box i {
+            font-size: 3.5rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="container">
+
+        <div class="page-header">
+            <div class="page-title-group">
+                <h1><i class="fas fa-check-circle" style="color: #16a34a;"></i> Verified Payments & Earnings</h1>
+                <p>View all client payments funded for your accepted bids and download official receipts.</p>
+            </div>
+            <a href="{% url 'freelancer:freelancer_dashboard' %}" class="btn-back-dashboard">
+                <i class="fas fa-arrow-left"></i> Freelancer Dashboard
+            </a>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Total Verified Earnings</div>
+                    <div class="stat-number">₹{{ total_earnings|default:"0.00" }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Funded Contracts</div>
+                    <div class="stat-number">{{ total_payments_count|default:"0" }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Payment Security</div>
+                    <div class="stat-number" style="font-size: 1.25rem;">100% Escrow</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Card -->
+        <div class="card">
+            <h2 class="card-title">
+                <i class="fas fa-history" style="color: #0a66c2;"></i> Completed Client Payments
+            </h2>
+
+            {% if payments %}
+            <div class="table-responsive">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Client</th>
+                            <th>Project / Job Title</th>
+                            <th>Method</th>
+                            <th>Transaction Ref</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Invoice / Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in payments %}
+                        <tr>
+                            <td>{{ p.created_at|date:"M d, Y, h:i A" }}</td>
+                            <td>
+                                <div class="client-cell">
+                                    <div class="client-avatar">
+                                        {% if p.client.get_profile_picture %}
+                                            <img src="{{ p.client.get_profile_picture }}" alt="{{ p.client.username }}">
+                                        {% else %}
+                                            {{ p.client.first_name|default:p.client.username|slice:":1"|upper }}
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: #0f172a;">{{ p.client.get_full_name|default:p.client.username }}</div>
+                                        <div style="font-size: 0.8rem; color: #64748b;">@{{ p.client.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'client:job_detail' p.proposal.job.id %}" style="color: #0a66c2; text-decoration: none; font-weight: 600;">
+                                    {{ p.proposal.job.title }}
+                                </a>
+                                <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">
+                                    Delivery: {{ p.proposal.delivery_days }} Days
+                                </div>
+                            </td>
+                            <td>
+                                <span style="font-size: 0.88rem; color: #334155;">{{ p.payment_method }}</span>
+                            </td>
+                            <td>
+                                <code style="background: #f1f5f9; padding: 3px 6px; border-radius: 4px; font-size: 0.82rem; color: #334155;">{{ p.transaction_id|default:"N/A" }}</code>
+                            </td>
+                            <td>
+                                <strong style="color: #16a34a; font-size: 1.05rem;">₹{{ p.amount }}</strong>
+                            </td>
+                            <td>
+                                <span class="badge-verified">
+                                    <i class="fas fa-check-circle"></i> Funded & Paid
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'payments:payment_receipt' p.id %}" class="btn-receipt">
+                                    <i class="fas fa-file-invoice"></i> View Receipt
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-box">
+                <i class="fas fa-hand-holding-usd"></i>
+                <h3 style="color: #334155; margin-bottom: 0.5rem;">No Payments Received Yet</h3>
+                <p style="margin-bottom: 1.25rem;">When clients accept your proposals and complete payment for your work, your earnings and receipts will appear here.</p>
+                <a href="{% url 'freelancer:my_proposals' %}" style="background: #0a66c2; color: white; padding: 0.7rem 1.5rem; border-radius: 20px; text-decoration: none; font-weight: 600; display: inline-block;">
+                    View My Submitted Proposals
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</main>
+
+{% include 'includes/footer.html' %}
+
+</body>
+</html>

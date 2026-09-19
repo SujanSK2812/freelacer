@@ -6,7 +6,7 @@
       <!-- Column 1: Brand Info -->
       <div class="footer-col brand-col">
         <a href="{% if request.user.is_superuser %}{% url 'accounts:admin_home' %}{% elif request.user.role == 'client' %}{% url 'client:client_home' %}{% else %}{% url 'freelancer:freelancer_home' %}{% endif %}" class="footer-logo">
-          <span class="logo-icon"><i class="fas fa-briefcase"></i></span>
+          <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal Logo" class="footer-brand-logo-img">
           <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
         </a>
         <p class="brand-desc">
@@ -29,16 +29,6 @@
           <li><a href="{% url 'accounts:admin_home' %}">Admin Dashboard</a></li>
           <li><a href="{% url 'accounts:admin_users' %}">Manage Users</a></li>
           <li><a href="/admin/">Django Admin</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 3: Platform Overview -->
-      <div class="footer-col">
-        <h4 class="footer-heading">Platform Overview</h4>
-        <ul class="footer-menu">
-          <li><a href="{% url 'how_it_works' %}">Platform Guide</a></li>
-          <li><a href="{% url 'projects:reports' %}">System Reports</a></li>
-          <li><a href="{% url 'about_us' %}">Case Studies</a></li>
         </ul>
       </div>
       {% elif request.user.is_authenticated and request.user.role == 'freelancer' %}
@@ -152,9 +142,19 @@
   .brand-col .footer-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     text-decoration: none;
     margin-bottom: 12px;
+  }
+
+  .footer-brand-logo-img {
+    height: 32px;
+    width: auto;
+    max-width: 44px;
+    object-fit: contain;
+    border-radius: 6px;
+    display: block;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
 
   .brand-col .logo-icon {

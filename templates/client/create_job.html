@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Post a Job | FreelanceHub</title>
@@ -26,10 +27,10 @@
 
     .dashboard-container {
       flex: 1;
-      max-width: 800px;
-      margin: 2.5rem auto;
+      width: 92%;
+      max-width: 1280px;
+      margin: 2rem auto;
       padding: 0 1.5rem;
-      width: 100%;
     }
 
     .main-card {
@@ -47,7 +48,7 @@
     }
 
     .card-header {
-      padding: 2rem 2.25rem;
+      padding: 1.5rem 2.25rem;
       border-bottom: 1px solid #eef3f8;
       display: flex;
       align-items: center;
@@ -87,11 +88,23 @@
     }
 
     .job-form {
-      padding: 2.25rem;
+      padding: 1.75rem 2.25rem 2.25rem;
+    }
+
+    .job-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px 28px;
+    }
+
+    .job-form-full {
+      grid-column: 1 / -1;
     }
 
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     .form-group label {
@@ -100,7 +113,7 @@
       color: #191919;
       font-weight: 600;
       font-size: 0.88rem;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
     }
 
     .form-group label i {
@@ -139,7 +152,7 @@
     }
 
     .job-form textarea {
-      min-height: 160px;
+      min-height: 130px;
       line-height: 1.6;
     }
 
@@ -204,17 +217,17 @@
 
     .image-preview-wrapper {
       position: relative;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
       text-align: center;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 14px;
-      padding: 1rem;
+      padding: 0.75rem;
     }
 
     .image-preview-wrapper img {
       max-width: 100%;
-      max-height: 220px;
+      max-height: 180px;
       border-radius: 10px;
     }
 
@@ -245,9 +258,9 @@
       justify-content: flex-end;
       align-items: center;
       gap: 1rem;
-      padding-top: 1.5rem;
+      padding-top: 1.25rem;
       border-top: 1px solid #eef3f8;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
     }
 
     .btn-cancel {
@@ -293,21 +306,54 @@
       transform: translateY(-1px);
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 900px) {
       .dashboard-container {
+        width: 94%;
         padding: 0 1rem;
         margin: 1.5rem auto;
       }
+      .job-form-grid {
+        gap: 18px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        width: 95%;
+        padding: 0 0.75rem;
+        margin: 1.25rem auto;
+      }
+      .job-form-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .job-form-full {
+        grid-column: auto;
+      }
+      .card-header {
+        padding: 1.25rem 1.5rem;
+      }
+      .job-form {
+        padding: 1.5rem 1.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
       .card-header {
         flex-direction: column;
         align-items: flex-start;
-        padding: 1.5rem;
+        gap: 0.75rem;
+        padding: 1.25rem 1rem;
+      }
+      .card-header h2 {
+        font-size: 1.25rem;
       }
       .job-form {
-        padding: 1.5rem;
+        padding: 1.25rem 1rem;
       }
       .form-actions {
         flex-direction: column-reverse;
+        gap: 0.75rem;
       }
       .form-actions .btn-cancel,
       .form-actions .post-job-btn {
@@ -337,53 +383,66 @@
     <form method="POST" enctype="multipart/form-data" class="job-form">
       {% csrf_token %}
 
-      <div class="form-group">
-        <label for="title"><i class="fas fa-heading"></i>Job Title</label>
-        <input type="text" id="title" name="title" placeholder="e.g. Senior Full Stack Developer" required>
-      </div>
-
-      <div class="form-group">
-        <label for="description"><i class="fas fa-align-left"></i>Job Description</label>
-        <textarea id="description" name="description" placeholder="Describe the role, responsibilities, and requirements..." required></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="budget"><i class="fas fa-money-bill-wave"></i>Estimated Budget (₹)</label>
-        <input type="number" id="budget" name="budget" placeholder="e.g. 10000" required>
-      </div>
-
-      <div class="form-group">
-        <label for="skills"><i class="fas fa-tags"></i>Required Skills (comma separated)</label>
-        <input type="text" id="skills" name="skills" placeholder="e.g. Python, Django, React, MySQL" required>
-      </div>
-
-      <div class="form-group">
-        <label for="experience_level"><i class="fas fa-layer-group"></i>Experience Level</label>
-        <div class="select-wrapper">
-          <select id="experience_level" name="experience_level">
-            <option value="Entry Level">Entry Level</option>
-            <option value="Intermediate" selected>Intermediate</option>
-            <option value="Expert">Expert</option>
-          </select>
+      <div class="job-form-grid">
+        <div class="form-group">
+          <label for="title"><i class="fas fa-heading"></i>Job Title</label>
+          <input type="text" id="title" name="title" placeholder="e.g. Senior Full Stack Developer" required>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="image"><i class="fas fa-image"></i>Attach Image (Optional)</label>
-        <input type="file" id="image" name="image" accept="image/*">
-        <div id="imagePreviewContainer" class="image-preview-wrapper" style="display: none;">
-            <img id="imagePreview" src="" alt="Image Preview">
-            <button type="button" class="remove-image-btn" id="removeImageBtn" title="Remove image">
-                <i class="fas fa-times"></i>
-            </button>
+        <div class="form-group">
+          <label for="budget"><i class="fas fa-money-bill-wave"></i>Estimated Budget (₹)</label>
+          <input type="number" id="budget" name="budget" placeholder="e.g. 10000" required>
         </div>
-      </div>
 
-      <div class="form-actions">
-        <a href="/" class="btn-cancel">Cancel</a>
-        <button type="submit" class="post-job-btn">
-          <i class="fas fa-paper-plane"></i> Post Work
-        </button>
+        <div class="form-group">
+          <label for="skills"><i class="fas fa-tags"></i>Required Skills (comma separated)</label>
+          <input type="text" id="skills" name="skills" placeholder="e.g. Python, Django, React, MySQL" required>
+        </div>
+
+        <div class="form-group">
+          <label for="experience_level"><i class="fas fa-layer-group"></i>Experience Level</label>
+          <div class="select-wrapper">
+            <select id="experience_level" name="experience_level">
+              <option value="Entry Level">Entry Level</option>
+              <option value="Intermediate" selected>Intermediate</option>
+              <option value="Expert">Expert</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group job-form-full">
+          <label for="description"><i class="fas fa-align-left"></i>Job Description</label>
+          <textarea id="description" name="description" rows="5" placeholder="Describe the role, responsibilities, and requirements..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="image"><i class="fas fa-image"></i>Attach Image (Optional)</label>
+          <input type="file" id="image" name="image" accept="image/*">
+          <div id="imagePreviewContainer" class="image-preview-wrapper" style="display: none;">
+              <img id="imagePreview" src="" alt="Image Preview">
+              <button type="button" class="remove-image-btn" id="removeImageBtn" title="Remove image">
+                  <i class="fas fa-times"></i>
+              </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="poster"><i class="fas fa-file-image"></i>Attach Job Poster (Optional)</label>
+          <input type="file" id="poster" name="poster" accept="image/*">
+          <div id="posterPreviewContainer" class="image-preview-wrapper" style="display: none;">
+              <img id="posterPreview" src="" alt="Poster Preview">
+              <button type="button" class="remove-image-btn" id="removePosterBtn" title="Remove poster">
+                  <i class="fas fa-times"></i>
+              </button>
+          </div>
+        </div>
+
+        <div class="form-actions job-form-full">
+          <a href="/" class="btn-cancel">Cancel</a>
+          <button type="submit" class="post-job-btn">
+            <i class="fas fa-paper-plane"></i> Post Work
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -407,6 +466,27 @@
     document.getElementById('imagePreviewContainer').style.display = 'none';
     document.getElementById('imagePreview').src = '';
   });
+
+  const posterInput = document.getElementById('poster');
+  if (posterInput) {
+    posterInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('posterPreview').src = e.target.result;
+          document.getElementById('posterPreviewContainer').style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('removePosterBtn').addEventListener('click', function() {
+      posterInput.value = '';
+      document.getElementById('posterPreviewContainer').style.display = 'none';
+      document.getElementById('posterPreview').src = '';
+    });
+  }
 </script>
 
 {% include 'includes/footer.html' %}

@@ -1,0 +1,711 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Methods & History | Freelancer Portal</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f3f2ef;
+            color: #191919;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title-group h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title-group p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .btn-add-method {
+            background: #0a66c2;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 24px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(10, 102, 194, 0.25);
+        }
+
+        .btn-add-method:hover {
+            background: #004182;
+            transform: translateY(-1px);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.75rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* Grid */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .method-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 190px;
+            transition: all 0.2s ease;
+        }
+
+        .method-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
+        }
+
+        .method-card.is-default {
+            border: 2px solid #0a66c2;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-type-icon {
+            font-size: 2rem;
+            color: #0a66c2;
+        }
+
+        .badge-default {
+            background: #e0f2fe;
+            color: #0284c7;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-details {
+            margin-bottom: 1.25rem;
+        }
+
+        .card-number-display {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-holder-name {
+            font-size: 0.85rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .card-expiry {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 0.75rem;
+        }
+
+        .btn-delete-method {
+            background: transparent;
+            color: #dc2626;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-delete-method:hover {
+            background: #fee2e2;
+        }
+
+        /* Section Card */
+        .section-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Add Method Form / Modal */
+        #addMethodModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 20px;
+            max-width: 520px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .modal-tab-btn {
+            flex: 1;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .modal-tab-btn.active {
+            background: white;
+            color: #0a66c2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0a66c2;
+            box-shadow: 0 0 0 3.5px rgba(10, 102, 194, 0.15);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.88rem;
+            color: #475569;
+        }
+
+        .btn-submit-modal {
+            width: 100%;
+            background: #0a66c2;
+            color: white;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit-modal:hover {
+            background: #004182;
+        }
+
+        /* History Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table.history-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        table.history-table th {
+            padding: 0.85rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        table.history-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.92rem;
+            vertical-align: middle;
+        }
+
+        table.history-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .badge-status-completed {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-receipt {
+            color: #0a66c2;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #d0e1f9;
+            background: #eef3f8;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-receipt:hover {
+            background: #dbeafe;
+        }
+
+        .empty-box {
+            text-align: center;
+            padding: 3.5rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-box i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-title-group">
+                <h1><i class="fas fa-credit-card" style="color: #0a66c2;"></i> Payment Methods & Billing</h1>
+                <p>Manage your saved cards, UPI IDs, and review contractor project disbursements.</p>
+            </div>
+            <button type="button" class="btn-add-method" onclick="openAddModal()">
+                <i class="fas fa-plus"></i> Add Payment Method
+            </button>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Saved Payment Methods Section -->
+        <div class="section-card">
+            <h2 class="section-title"><i class="fas fa-wallet" style="color: #0a66c2;"></i> Saved Payment Methods</h2>
+
+            {% if saved_methods %}
+            <div class="methods-grid">
+                {% for m in saved_methods %}
+                <div class="method-card {% if m.is_default %}is-default{% endif %}">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-type-icon">
+                                {% if m.method_type == 'card' %}
+                                    {% if m.card_brand == 'Visa' %}
+                                        <i class="fab fa-cc-visa" style="color: #1a1f71;"></i>
+                                    {% elif m.card_brand == 'Mastercard' %}
+                                        <i class="fab fa-cc-mastercard" style="color: #eb001b;"></i>
+                                    {% elif m.card_brand == 'American Express' %}
+                                        <i class="fab fa-cc-amex" style="color: #006fcf;"></i>
+                                    {% else %}
+                                        <i class="fas fa-credit-card" style="color: #0a66c2;"></i>
+                                    {% endif %}
+                                {% elif m.method_type == 'upi' %}
+                                    <i class="fas fa-mobile-alt" style="color: #16a34a;"></i>
+                                {% else %}
+                                    <i class="fas fa-university" style="color: #0284c7;"></i>
+                                {% endif %}
+                            </div>
+                            {% if m.is_default %}
+                            <span class="badge-default"><i class="fas fa-check"></i> Default</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-details">
+                            {% if m.method_type == 'card' %}
+                                <div class="card-number-display">•••• •••• •••• {{ m.card_last4 }}</div>
+                                <div class="card-holder-name">{{ m.card_holder_name }}</div>
+                                {% if m.expiry_month and m.expiry_year %}
+                                <div class="card-expiry">Expires {{ m.expiry_month }}/{{ m.expiry_year }}</div>
+                                {% endif %}
+                            {% elif m.method_type == 'upi' %}
+                                <div class="card-number-display" style="font-size: 1rem; letter-spacing: 0.5px;">{{ m.upi_id }}</div>
+                                <div class="card-holder-name">Unified Payments Interface (UPI)</div>
+                            {% else %}
+                                <div class="card-number-display" style="font-size: 1rem; letter-spacing: 0.5px;">{{ m.bank_name }}</div>
+                                <div class="card-holder-name">Net Banking</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <span style="font-size: 0.8rem; color: #94a3b8;">Added {{ m.created_at|date:"M d, Y" }}</span>
+                        <form method="POST" action="{% url 'payments:delete_payment_method' m.id %}" onsubmit="return confirm('Are you sure you want to remove this payment method?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete-method">
+                                <i class="fas fa-trash-alt"></i> Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-box">
+                <i class="fas fa-credit-card"></i>
+                <h3 style="color: #334155; margin-bottom: 0.5rem;">No Saved Payment Methods</h3>
+                <p>Add a credit/debit card or UPI account for instant project payments when accepting freelancer bids.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Payment History Table -->
+        <div class="section-card">
+            <h2 class="section-title"><i class="fas fa-history" style="color: #0a66c2;"></i> Contractor Payment History</h2>
+
+            {% if payments_history %}
+            <div class="table-responsive">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Freelancer</th>
+                            <th>Project / Job</th>
+                            <th>Method</th>
+                            <th>Transaction ID</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in payments_history %}
+                        <tr>
+                            <td>{{ p.created_at|date:"M d, Y, h:i A" }}</td>
+                            <td>
+                                <strong>{{ p.freelancer.get_full_name|default:p.freelancer.username }}</strong>
+                            </td>
+                            <td>
+                                <a href="{% url 'client:job_detail' p.proposal.job.id %}" style="color: #0a66c2; text-decoration: none; font-weight: 500;">
+                                    {{ p.proposal.job.title }}
+                                </a>
+                            </td>
+                            <td><i class="fas fa-check-circle" style="color: #16a34a; font-size: 0.8rem;"></i> {{ p.payment_method }}</td>
+                            <td><code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem;">{{ p.transaction_id|default:"N/A" }}</code></td>
+                            <td><strong style="color: #0f172a;">₹{{ p.amount }}</strong></td>
+                            <td><span class="badge-status-completed"><i class="fas fa-check"></i> Completed</span></td>
+                            <td>
+                                <a href="{% url 'payments:payment_receipt' p.id %}" class="btn-receipt">
+                                    <i class="fas fa-file-invoice"></i> Receipt
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-box">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <h3 style="color: #334155; margin-bottom: 0.5rem;">No Transactions Yet</h3>
+                <p>When you accept a freelancer's bid and fund their contract, your payment receipts will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</main>
+
+<!-- Add Payment Method Modal -->
+<div id="addMethodModal">
+    <div class="modal-box">
+        <button type="button" class="modal-close-btn" onclick="closeAddModal()">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <h3 style="font-size: 1.3rem; margin-bottom: 1.25rem; color: #0f172a;">
+            <i class="fas fa-plus-circle" style="color: #0a66c2;"></i> Add Payment Method
+        </h3>
+
+        <div class="modal-tabs">
+            <button type="button" class="modal-tab-btn active" onclick="switchMethodTab('card', this)">
+                <i class="fas fa-credit-card"></i> Card
+            </button>
+            <button type="button" class="modal-tab-btn" onclick="switchMethodTab('upi', this)">
+                <i class="fas fa-mobile-alt"></i> UPI
+            </button>
+            <button type="button" class="modal-tab-btn" onclick="switchMethodTab('netbanking', this)">
+                <i class="fas fa-university"></i> Net Banking
+            </button>
+        </div>
+
+        <form method="POST" action="{% url 'payments:add_payment_method' %}" id="addPaymentForm">
+            {% csrf_token %}
+            <input type="hidden" name="method_type" id="methodTypeInput" value="card">
+
+            <!-- Card Fields -->
+            <div id="cardFields">
+                <div class="form-group">
+                    <label for="card_holder_name">Name on Card</label>
+                    <input type="text" id="card_holder_name" name="card_holder_name" class="form-control" placeholder="e.g. John Doe">
+                </div>
+
+                <div class="form-group">
+                    <label for="card_number">Card Number</label>
+                    <input type="text" id="card_number" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expiry_month">Expiry Month (MM)</label>
+                        <input type="text" id="expiry_month" name="expiry_month" class="form-control" placeholder="12" maxlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiry_year">Expiry Year (YY)</label>
+                        <input type="text" id="expiry_year" name="expiry_year" class="form-control" placeholder="28" maxlength="4">
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPI Fields -->
+            <div id="upiFields" style="display: none;">
+                <div class="form-group">
+                    <label for="upi_id">Virtual Payment Address (UPI ID)</label>
+                    <input type="text" id="upi_id" name="upi_id" class="form-control" placeholder="yourname@okhdfcbank">
+                    <span style="font-size: 0.8rem; color: #64748b;">Supports Google Pay, PhonePe, Paytm, BHIM</span>
+                </div>
+            </div>
+
+            <!-- Net Banking Fields -->
+            <div id="netbankingFields" style="display: none;">
+                <div class="form-group">
+                    <label for="bank_name">Select Bank</label>
+                    <select id="bank_name" name="bank_name" class="form-control">
+                        <option value="HDFC Bank">HDFC Bank</option>
+                        <option value="ICICI Bank">ICICI Bank</option>
+                        <option value="State Bank of India">State Bank of India</option>
+                        <option value="Axis Bank">Axis Bank</option>
+                        <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="is_default" name="is_default">
+                <label for="is_default">Set as default payment method</label>
+            </div>
+
+            <button type="submit" class="btn-submit-modal">
+                <i class="fas fa-shield-alt"></i> Save Payment Method
+            </button>
+        </form>
+    </div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+<script>
+    function openAddModal() {
+        document.getElementById('addMethodModal').style.display = 'flex';
+    }
+
+    function closeAddModal() {
+        document.getElementById('addMethodModal').style.display = 'none';
+    }
+
+    // Close modal on click outside
+    document.getElementById('addMethodModal').addEventListener('click', function(e) {
+        if (e.target === this) closeAddModal();
+    });
+
+    function switchMethodTab(type, btn) {
+        document.getElementById('methodTypeInput').value = type;
+        document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.getElementById('cardFields').style.display = (type === 'card') ? 'block' : 'none';
+        document.getElementById('upiFields').style.display = (type === 'upi') ? 'block' : 'none';
+        document.getElementById('netbankingFields').style.display = (type === 'netbanking') ? 'block' : 'none';
+
+        const cardNum = document.getElementById('card_number');
+        if (type === 'card') {
+            cardNum.setAttribute('required', 'required');
+        } else {
+            cardNum.removeAttribute('required');
+        }
+    }
+
+    // Format card number with spaces
+    document.getElementById('card_number').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
+        e.target.value = formatted.substring(0, 19);
+    });
+</script>
+
+</body>
+</html>
