@@ -750,7 +750,11 @@
                 <div class="user-card" data-name="{{ user.username|lower }}" data-email="{{ user.email|lower }}" data-id="{{ user.id }}">
                     <div class="user-info">
                         <div class="user-avatar">
-                            {{ user.username|make_list|first|upper }}
+                            {% if user.get_profile_picture %}
+                                <img src="{{ user.get_profile_picture }}" alt="{{ user.username }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">
+                            {% else %}
+                                {{ user.username|make_list|first|upper }}
+                            {% endif %}
                         </div>
                         <div class="user-details">
                             <h3>{{ user.username }}</h3>
@@ -763,6 +767,9 @@
                                     </span>
                                 {% endif %}
                             </p>
+                            <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.25rem;">
+                                <i class="fas fa-user-friends"></i> {{ user.followers_count }} follower{{ user.followers_count|pluralize }}
+                            </div>
                             {% if user.mutual_connections > 0 %}
                                 <div class="mutual-connections">
                                     <i class="fas fa-users"></i>
@@ -932,14 +939,6 @@ userCards.forEach((card, index) => {
     card.style.animationDelay = `${index * 0.05}s`;
 });
 
-// Confirmation for connect action (optional)
-document.querySelectorAll('.connect-btn:not(.pending):not(.connected)').forEach(button => {
-    button.addEventListener('click', function(e) {
-        if (!confirm('Send connection request to this user?')) {
-            e.preventDefault();
-        }
-    });
-});
 </script>
 
 </body>

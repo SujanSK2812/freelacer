@@ -568,13 +568,14 @@ def followers_list(request):
 
     connections = Connection.objects.filter(
         receiver=request.user
-    )
+    ).select_related('sender')
 
     followers = []
 
     for connection in connections:
 
         follower = connection.sender
+        follower.followed_date = connection.created_at
 
         # check if current user follows back
         is_following_back = Connection.objects.filter(
@@ -589,6 +590,8 @@ def followers_list(request):
 
         follower.is_following_back = is_following_back
         follower.is_requested_back = is_requested_back
+        follower.followers_count = follower.followers.count()
+        follower.following_count = follower.following.count()
 
         followers.append(follower)
 
@@ -609,6 +612,8 @@ def following_list(request):
 
         # attach followed date dynamically
         user.followed_date = connection.created_at   # use your actual field name
+        user.followers_count = user.followers.count()
+        user.following_count = user.following.count()
 
         following_users.append(user)
 
@@ -687,14 +692,64 @@ def view_profile(request, user_id):
 
     if user.role == 'freelancer':
         return redirect('freelancer:freelancer_profile', freelancer_id=user.id)
-        
-    profile = FreelancerProfile.objects.filter(
-        user=user
-    ).first()
+
+    from client.models import ClientProfile
+    from projects.models import Job
+    from accounts.models import Connection, ConnectionRequest
+    from payments.models import Payment
+    from proposals.models import Proposal
+    from django.db.models import Sum
+
+    profile, _ = ClientProfile.objects.get_or_create(user=user)
+
+    # Active and total jobs posted by client
+    jobs = list(Job.objects.filter(client=user).order_by('-created_at'))
+    for job in jobs:
+        job.proposals_count = job.job_proposals.count()
+        if job.skills:
+            job.skill_list = [s.strip() for s in job.skills.split(',') if s.strip()]
+        else:
+            job.skill_list = []
+
+    total_jobs = len(jobs)
+
+    # Financial and hire stats
+    total_spent_val = Payment.objects.filter(client=user, status='completed').aggregate(Sum('amount'))['amount__sum'] or 0
+    total_spent = f"{total_spent_val:,.2f}"
+    total_hires = Payment.objects.filter(client=user, status='completed').values('freelancer').distinct().count()
+
+    # Followers & Following
+    followers_count = Connection.objects.filter(receiver=user).count()
+    following_count = Connection.objects.filter(sender=user).count()
+
+    # Viewer relationships
+    is_owner = bool(request.user.is_authenticated and request.user.id == user.id)
+    is_connected = False
+    is_requested = False
+    applied_job_ids = []
+
+    if request.user.is_authenticated and not is_owner:
+        is_connected = Connection.objects.filter(sender=request.user, receiver=user).exists()
+        is_requested = ConnectionRequest.objects.filter(sender=request.user, receiver=user, status='pending').exists()
+        if getattr(request.user, 'role', '') == 'freelancer':
+            applied_job_ids = list(
+                Proposal.objects.filter(freelancer=request.user, job__client=user).values_list('job_id', flat=True)
+            )
 
     return render(request, "accounts/view_profile.html", {
         "profile_user": user,
         "profile": profile,
+        "jobs": jobs,
+        "total_jobs": total_jobs,
+        "total_spent_val": total_spent_val,
+        "total_spent": total_spent,
+        "total_hires": total_hires,
+        "followers_count": followers_count,
+        "following_count": following_count,
+        "is_owner": is_owner,
+        "is_connected": is_connected,
+        "is_requested": is_requested,
+        "applied_job_ids": applied_job_ids,
     })
 
 
@@ -717,6 +772,14 @@ def testimonials_view(request):
         if not request.user.is_authenticated:
             messages.error(request, "Please log in to submit a testimonial.")
             return redirect("accounts:login")
+
+        # Check if this user has already submitted a testimonial
+        has_existing = Testimonial.objects.filter(user=request.user).exists() or \
+                       Testimonial.objects.filter(name=request.user.username).exists() or \
+                       (request.user.get_full_name() and Testimonial.objects.filter(name=request.user.get_full_name()).exists())
+        if has_existing:
+            messages.warning(request, "You have already shared a testimonial. Each member can only submit one testimonial.")
+            return redirect("accounts:testimonials")
 
         # Name and role are strictly locked to the authenticated user's account
         name = request.user.get_full_name() or request.user.username
@@ -741,6 +804,7 @@ def testimonials_view(request):
             rating = 5
 
         Testimonial.objects.create(
+            user=request.user,
             name=name,
             role=role,
             rating=rating,
@@ -755,10 +819,25 @@ def testimonials_view(request):
 
     default_name = ""
     default_role = "Client"
+    user_testimonial = None
+    user_has_testimonial = False
+
     if request.user.is_authenticated:
         default_name = request.user.get_full_name() or request.user.username
         if hasattr(request.user, "role") and request.user.role:
             default_role = request.user.role.capitalize()
+
+        # Check if user already submitted
+        user_testimonial = Testimonial.objects.filter(user=request.user).first()
+        if not user_testimonial:
+            user_testimonial = Testimonial.objects.filter(name=request.user.username).first()
+            if not user_testimonial and request.user.get_full_name():
+                user_testimonial = Testimonial.objects.filter(name=request.user.get_full_name()).first()
+            if user_testimonial and not user_testimonial.user:
+                user_testimonial.user = request.user
+                user_testimonial.save()
+        
+        user_has_testimonial = user_testimonial is not None
 
     return render(
         request,
@@ -767,5 +846,7 @@ def testimonials_view(request):
             "testimonials": testimonials,
             "default_name": default_name,
             "default_role": default_role,
+            "user_has_testimonial": user_has_testimonial,
+            "user_testimonial": user_testimonial,
         },
     )

@@ -59,7 +59,7 @@
 
         .feature-card i,
         .stat-item h3,
-        .testimonial-card i {
+        .testimonial-card i.fa-quote-left {
             color: #0a66c2 !important;
         }
 
@@ -495,10 +495,10 @@
                             <i class="fas fa-quote-left" style="margin-bottom: 0;"></i>
                             <div style="display: flex; gap: 3px; font-size: 0.95rem;" title="{{ testimonial.rating }} out of 5 stars">
                                 {% for _ in testimonial.full_stars_range %}
-                                <i class="fas fa-star" style="color: #f59e0b; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
+                                <i class="fas fa-star" style="color: #0a66c2 !important; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
                                 {% endfor %}
                                 {% for _ in testimonial.empty_stars_range %}
-                                <i class="fas fa-star" style="color: #cbd5e1; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
+                                <i class="far fa-star" style="color: #cbd5e1 !important; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
                                 {% endfor %}
                             </div>
                         </div>

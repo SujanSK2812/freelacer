@@ -38,7 +38,7 @@
 
       .followers-container {
         background: white;
-        max-width: 900px;
+        max-width: 1040px;
         width: 100%;
         padding: 2.5rem;
         border-radius: 24px;
@@ -161,17 +161,38 @@
 
       /* Follower Card */
       .follower-card {
-        background: #f8f9fc;
-        border-radius: 16px;
-        padding: 1.5rem;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 1.25rem 1.6rem;
+        transition: all 0.25s ease;
+        border: 1px solid #eef2f6;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         animation: slideIn 0.5s ease-out;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 1rem;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+        gap: 1.25rem;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+      }
+
+      .follower-card::-webkit-scrollbar {
+        height: 5px;
+      }
+      .follower-card::-webkit-scrollbar-track {
+        background: #f8fafc;
+        border-radius: 10px;
+      }
+      .follower-card::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .follower-card::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
       }
 
       @keyframes slideIn {
@@ -186,18 +207,19 @@
       }
 
       .follower-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        border-color: #0a66c220;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+        border-color: #cbd5e1;
       }
 
       /* User Info */
       .user-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        flex: 1;
-        min-width: 200px;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 1.1rem;
+        flex-shrink: 0;
+        min-width: max-content;
       }
 
       .user-avatar {
@@ -211,9 +233,17 @@
         color: white;
         font-size: 1.5rem;
         font-weight: 600;
-        box-shadow: 0 4px 10px rgba(20, 168, 0, 0.2);
+        box-shadow: 0 4px 10px rgba(10, 102, 194, 0.2);
         position: relative;
         flex-shrink: 0;
+      }
+
+      .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
       }
 
       .online-status {
@@ -232,24 +262,27 @@
       }
 
       .user-details {
-        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
 
       .user-details h3 {
-        color: #2d3a2d;
-        font-size: 20px;
+        color: #1e2a1e;
+        font-size: 1.15rem;
         margin-bottom: 0.25rem;
-        font-weight: 600;
+        font-weight: 700;
+        white-space: nowrap;
       }
 
       .user-details p {
         color: #5e6b7e;
-        font-size: 15px;
+        font-size: 0.85rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        flex-wrap: wrap;
-        margin-top: 0.25rem;
+        white-space: nowrap;
+        margin-top: 0.2rem;
       }
 
       .user-details p i {
@@ -264,17 +297,18 @@
         padding: 0.2rem 0.6rem;
         background: #f0f7f0;
         border-radius: 12px;
-        font-size: 13px;
+        font-size: 12px;
         color: #0a66c2;
-        font-weight: 500;
+        font-weight: 600;
       }
 
       .follower-stats {
         display: flex;
         gap: 1rem;
-        margin-top: 0.5rem;
-        font-size: 13px;
-        color: #9aa6b5;
+        margin-top: 0.35rem;
+        font-size: 0.82rem;
+        color: #64748b;
+        white-space: nowrap;
       }
 
       .follower-stats span {
@@ -285,113 +319,236 @@
 
       .follower-stats i {
         color: #0a66c2;
-        font-size: 0.7rem;
+        font-size: 0.75rem;
       }
 
-      /* Follow Date */
+      /* Follow Date (Pill) */
       .follow-date {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        min-width: 120px;
+        display: inline-flex !important;
+        align-items: center !important;
+        flex-shrink: 0;
+        min-width: max-content;
+        margin: 0 0.5rem;
       }
 
       .follow-date span {
-        font-size: 13px;
-        color: #9aa6b5;
-        display: flex;
+        font-size: 0.82rem;
+        color: #5e6b7e;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 0.35rem 0.85rem;
+        border-radius: 50px;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
+        white-space: nowrap;
+        font-weight: 500;
       }
 
-      .follow-date i {
+      .follow-date span i {
         color: #0a66c2;
       }
 
       /* Action Buttons */
       .action-buttons {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 0.65rem;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        flex-shrink: 0;
       }
 
       .btn {
-        padding: 0.6rem 1.2rem;
+        padding: 0.58rem 1.15rem;
         border: none;
-        border-radius: 10px;
-        font-size: 14px;
+        border-radius: 40px;
+        font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
         font-family: inherit;
         text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       .btn-message {
         background: #0a66c2;
         color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
 
       .btn-message:hover {
-        background: #108700;
+        background: #004182;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(20, 168, 0, 0.3);
+        box-shadow: 0 6px 16px rgba(10, 102, 194, 0.25);
         color: white;
         text-decoration: none;
       }
 
       .btn-follow-back {
-        background: #e0e6e0;
-        color: #2d3a2d;
+        background: #f1f5f9;
+        color: #0a66c2;
+        border: 1px solid #cbd5e1;
       }
 
       .btn-follow-back:hover {
-        background: #d0d8d0;
+        background: #e2e8f0;
         transform: translateY(-2px);
         text-decoration: none;
-        color: #2d3a2d;
+        color: #004182;
       }
 
       .btn-following {
-        background: #0a66c2;
+        background: #3b82f6;
         color: white;
         cursor: default;
-        opacity: 0.7;
+        border: none;
       }
 
       .btn-following:hover {
+        background: #2563eb;
         transform: none;
         box-shadow: none;
       }
 
       .btn-profile {
-        background: #e0e6e0;
-        color: #2d3a2d;
+        background: #eef2ee;
+        color: #2b4b2b;
+        border: 1px solid #d4e0d4;
       }
 
       .btn-profile:hover {
-        background: #d0d8d0;
+        background: #e2e8e2;
         transform: translateY(-2px);
         text-decoration: none;
-        color: #2d3a2d;
+        color: #2b4b2b;
       }
 
       .btn-remove {
-        background: #f56565;
-        color: white;
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
       }
 
       .btn-remove:hover {
-        background: #e53e3e;
+        background: #fecaca;
+        color: #b91c1c;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(245, 101, 101, 0.3);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
       }
 
       .btn:active {
         transform: translateY(0);
+      }
+
+      /* Custom Remove Follower Confirmation Modal */
+      .custom-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(6px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+
+      .custom-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      .custom-modal-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2rem 2.25rem;
+        max-width: 440px;
+        width: 90%;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+        border: 1px solid #e2e8f0;
+        transform: translateY(15px) scale(0.96);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .custom-modal-overlay.active .custom-modal-card {
+        transform: translateY(0) scale(1);
+      }
+
+      .modal-icon-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #fee2e2;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .modal-header-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .modal-body-desc {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.55;
+        margin: 0 0 1.75rem 0;
+      }
+
+      .modal-btn-row {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .btn-modal-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        padding: 0.65rem 1.35rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.92rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .btn-modal-cancel:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+      }
+
+      .btn-modal-confirm-danger {
+        background: #dc2626;
+        color: #ffffff;
+        border: none;
+        padding: 0.65rem 1.4rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.92rem;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+        transition: all 0.15s ease;
+      }
+
+      .btn-modal-confirm-danger:hover {
+        background: #b91c1c;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
       }
 
       /* Empty State */
@@ -534,84 +691,130 @@
         }
 
         .followers-container {
-          padding: 1.5rem;
-          margin: 1rem;
-        }
-
-        .followers-header h2 {
-          font-size: 28px;
-        }
-
-        .user-details h3 { font-size: 18px; }
-        .user-details p { font-size: 14px; }
-        .user-badge, .follower-stats, .follow-date span { font-size: 13px; }
-        .btn { font-size: 14px; }
-
-        .user-avatar {
-          width: 50px;
-          height: 50px;
-          font-size: 1.2rem;
-        }
-
-        .follower-card {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .action-buttons {
-          width: 100%;
-        }
-
-        .btn {
-          flex: 1;
-          justify-content: center;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .followers-container {
-          padding: 1rem;
+          padding: 1.25rem 1rem;
+          margin: 0.5rem;
         }
 
         .followers-header h2 {
           font-size: 26px;
         }
 
-        .user-details h3 { font-size: 17px; }
-        .user-details p { font-size: 13px; }
-        .user-badge, .follower-stats, .follow-date span { font-size: 12px; }
-        .btn { font-size: 13px; }
-
-        .followers-icon {
-          width: 60px;
-          height: 60px;
-          font-size: 2rem;
+        .follower-card {
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          padding: 1rem 1.25rem;
+          gap: 1rem;
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
         }
 
         .user-info {
-          flex-direction: column;
-          text-align: center;
+          flex-direction: row !important;
+          text-align: left !important;
+          flex-shrink: 0 !important;
+          min-width: max-content !important;
         }
 
-        .user-details p {
-          justify-content: center;
+        .user-avatar {
+          width: 52px;
+          height: 52px;
+          font-size: 1.2rem;
         }
 
-        .follower-stats {
-          justify-content: center;
-        }
+        .user-details h3 { font-size: 17px; }
+        .user-details p { font-size: 13px; }
+        .user-badge, .follower-stats { font-size: 12px; }
 
         .follow-date {
-          text-align: center;
-          width: 100%;
+          display: inline-flex !important;
+          flex-shrink: 0 !important;
+          min-width: max-content !important;
         }
-
-        .follow-date span {
-          justify-content: center;
-        }
+        .follow-date span { font-size: 12px; padding: 0.3rem 0.75rem; }
 
         .action-buttons {
-          flex-direction: column;
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          align-items: center !important;
+          width: auto !important;
+          flex-shrink: 0 !important;
+        }
+
+        .btn {
+          flex: 0 0 auto !important;
+          white-space: nowrap !important;
+          padding: 0.5rem 0.95rem;
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .followers-container {
+          padding: 1rem 0.75rem;
+        }
+
+        .followers-header h2 {
+          font-size: 22px;
+        }
+
+        .follower-card {
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          padding: 0.85rem 1rem;
+          gap: 0.75rem;
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+
+        .user-info {
+          flex-direction: row !important;
+          text-align: left !important;
+          flex-shrink: 0 !important;
+          min-width: max-content !important;
+        }
+
+        .user-avatar {
+          width: 46px;
+          height: 46px;
+          font-size: 1.1rem;
+        }
+
+        .user-details h3 { font-size: 15px; }
+        .user-details p { font-size: 12px; }
+        .user-badge, .follower-stats { font-size: 11px; }
+
+        .follow-date {
+          display: inline-flex !important;
+          flex-shrink: 0 !important;
+          min-width: max-content !important;
+        }
+        .follow-date span { font-size: 11px; padding: 0.25rem 0.65rem; }
+
+        .action-buttons {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          align-items: center !important;
+          width: auto !important;
+          flex-shrink: 0 !important;
+        }
+
+        .btn {
+          flex: 0 0 auto !important;
+          white-space: nowrap !important;
+          padding: 0.45rem 0.85rem;
+          font-size: 12px;
+        }
+
+        .followers-icon {
+          width: 50px;
+          height: 50px;
+          font-size: 1.5rem;
         }
 
         .footer-content {
@@ -658,15 +861,19 @@
           {% for follower in followers %}
           <div
             class="follower-card"
-            data-name="{{ connection.receiver.username|lower }}"
-            data-email="{{ connection.receiver.email|lower }}">
+            data-name="{{ follower.username|lower }}"
+            data-email="{{ follower.email|lower }}">
             <div class="user-info">
               <div class="user-avatar">
-                {% if connection.receiver.freelancerprofile.profile_picture %}
-<img src="{{ connection.receiver.freelancerprofile.profile_picture.url }}">
-{% else %}
-{{ connection.receiver.username|first|upper }}
-{% endif %}
+                {% if follower.get_profile_picture %}
+                  <img src="{{ follower.get_profile_picture }}" alt="{{ follower.username }}">
+                {% elif follower.freelancerprofile.profile_picture %}
+                  <img src="{{ follower.freelancerprofile.profile_picture.url }}" alt="{{ follower.username }}">
+                {% elif follower.clientprofile.profile_picture %}
+                  <img src="{{ follower.clientprofile.profile_picture.url }}" alt="{{ follower.username }}">
+                {% else %}
+                  {{ follower.username|first|upper }}
+                {% endif %}
 
                 <span
                   class="online-status {% if follower.is_online %}online{% else %}offline{% endif %}"></span>
@@ -684,7 +891,7 @@
                 <div class="follower-stats">
                   <span>
                     <i class="fas fa-user-friends"></i>
-                    {{ follower.followers_count|default:"0" }} followers
+                    {{ follower.followers_count }} follower{{ follower.followers_count|pluralize }}
                   </span>
                   <span>
                     <i class="fas fa-calendar-alt"></i>
@@ -738,14 +945,9 @@
               <form
                 method="POST"
                 action="{% url 'accounts:remove_follower' follower.id %}"
-                style="display: inline"
-                onsubmit="
-                  return confirm(
-                    'Are you sure you want to remove this follower?',
-                  );
-                ">
+                style="display: inline">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-remove">
+                <button type="button" class="btn btn-remove btn-trigger-remove-follower">
                   <i class="fas fa-user-minus"></i>
                   <span>Remove</span>
                 </button>
@@ -765,9 +967,89 @@
       </div>
     </main>
 
+    <!-- Custom Remove Follower Confirmation Modal -->
+    <div id="removeFollowerModal" class="custom-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="removeFollowerModalTitle">
+      <div class="custom-modal-card">
+        <div class="modal-icon-badge">
+          <i class="fas fa-user-minus"></i>
+        </div>
+        <h3 id="removeFollowerModalTitle" class="modal-header-title">Remove Follower?</h3>
+        <p id="removeFollowerModalDesc" class="modal-body-desc">
+          Are you sure you want to remove this follower?
+        </p>
+        <div class="modal-btn-row">
+          <button type="button" id="cancelRemoveFollowerBtn" class="btn-modal-cancel">Cancel</button>
+          <button type="button" id="confirmRemoveFollowerBtn" class="btn-modal-confirm-danger">Remove</button>
+        </div>
+      </div>
+    </div>
+
     {% include 'includes/footer.html' %}
 
     <script>
+      // --------------------------------------------------------------
+      // Custom Remove Follower Modal Logic
+      // --------------------------------------------------------------
+      let pendingRemoveFollowerForm = null;
+      const removeFollowerModal = document.getElementById("removeFollowerModal");
+      const removeFollowerModalDesc = document.getElementById("removeFollowerModalDesc");
+      const confirmRemoveFollowerBtn = document.getElementById("confirmRemoveFollowerBtn");
+      const cancelRemoveFollowerBtn = document.getElementById("cancelRemoveFollowerBtn");
+
+      document.querySelectorAll(".btn-trigger-remove-follower").forEach((button) => {
+        button.addEventListener("click", function (e) {
+          e.preventDefault();
+          pendingRemoveFollowerForm = this.closest("form");
+
+          const card = this.closest(".follower-card");
+          const nameEl = card ? (card.querySelector(".user-details h3") || card.querySelector("h3") || card.querySelector(".follower-name")) : null;
+          const userName = nameEl ? nameEl.textContent.trim() : "this follower";
+
+          if (removeFollowerModalDesc) {
+            removeFollowerModalDesc.textContent = `Are you sure you want to remove ${userName} from your followers?`;
+          }
+
+          if (removeFollowerModal) {
+            removeFollowerModal.classList.add("active");
+            document.body.style.overflow = "hidden";
+          }
+        });
+      });
+
+      function closeRemoveFollowerModal() {
+        if (removeFollowerModal) {
+          removeFollowerModal.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+        pendingRemoveFollowerForm = null;
+      }
+
+      if (confirmRemoveFollowerBtn) {
+        confirmRemoveFollowerBtn.addEventListener("click", function () {
+          if (pendingRemoveFollowerForm) {
+            pendingRemoveFollowerForm.submit();
+          }
+        });
+      }
+
+      if (cancelRemoveFollowerBtn) {
+        cancelRemoveFollowerBtn.addEventListener("click", closeRemoveFollowerModal);
+      }
+
+      if (removeFollowerModal) {
+        removeFollowerModal.addEventListener("click", function (e) {
+          if (e.target === removeFollowerModal) {
+            closeRemoveFollowerModal();
+          }
+        });
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && removeFollowerModal && removeFollowerModal.classList.contains("active")) {
+          closeRemoveFollowerModal();
+        }
+      });
+
       // Mobile menu toggle
       document
         .querySelector(".mobile-menu")

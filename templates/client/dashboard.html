@@ -128,16 +128,28 @@
             background: white;
             border-radius: 16px;
             border: 1px solid #e4e6eb;
-            padding: 1.5rem;
+            padding: 0 0 1.5rem 0;
+            overflow: hidden;
             height: fit-content;
             position: sticky;
             top: 90px;
         }
 
+        .sidebar-cover-banner {
+            height: 95px;
+            background: linear-gradient(135deg, #0a66c2, #0a5c00);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            width: 100%;
+            position: relative;
+        }
+
         .profile-summary {
             text-align: center;
-            padding-bottom: 1.5rem;
+            padding: 0 1.5rem 1.5rem;
             border-bottom: 1px solid #e4e6eb;
+            position: relative;
         }
 
         .profile-avatar {
@@ -145,15 +157,26 @@
             height: 100px;
             background: linear-gradient(135deg, #0a66c2, #0a5c00);
             border-radius: 50%;
-            margin: 0 auto 1rem;
+            margin: -50px auto 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 2.5rem;
             font-weight: 600;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 4px solid white;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
         }
 
         .profile-summary h3 {
@@ -208,7 +231,7 @@
         }
 
         .quick-links {
-            padding: 1.5rem 0;
+            padding: 1.25rem 1.25rem 0.5rem;
         }
 
         .quick-link {
@@ -237,7 +260,7 @@
             border-radius: 14px;
             padding: 1.4rem;
             border: 1px solid #c7daf5;
-            margin-top: 1rem;
+            margin: 1rem 1.25rem 0;
         }
 
         .connects-header {
@@ -288,12 +311,48 @@
         /* Welcome Banner */
         .welcome-banner {
             background: linear-gradient(135deg, #0a66c2, #0a5c00);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             border-radius: 16px;
-            padding: 2rem;
+            padding: 2.25rem;
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(10, 102, 194, 0.2);
+        }
+
+        .welcome-user-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .welcome-dp-badge {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0a66c2, #0a5c00);
+            border: 3.5px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .welcome-dp-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .welcome-text h1 {
@@ -626,18 +685,68 @@
         }
 
         @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 1.25rem auto;
+                padding: 0 14px;
+                gap: 1.25rem;
+            }
+
             .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.25rem;
+                padding: 1.5rem 1.25rem;
+            }
+
+            .welcome-user-row {
                 flex-direction: column;
                 text-align: center;
                 gap: 1rem;
             }
             
             .stats-cards {
-                justify-content: center;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                width: 100%;
+            }
+
+            .stat-card {
+                min-width: unset;
+                padding: 1rem 0.8rem;
             }
             
             .nav-links {
                 display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                margin: 1rem auto;
+                padding: 0 10px;
+                gap: 1rem;
+            }
+
+            .welcome-banner {
+                padding: 1.2rem 1rem;
+                border-radius: 14px;
+            }
+
+            .welcome-text h1 {
+                font-size: 1.3rem;
+            }
+
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .action-card {
+                padding: 1rem;
             }
         }
     </style>
@@ -648,12 +757,25 @@
 <div class="dashboard-container">
     <!-- Left Sidebar - Profile -->
     <div class="left-sidebar">
+        <div class="sidebar-cover-banner"
+             {% if request.user.get_banner_image %}
+             style="background-image: url('{{ request.user.get_banner_image }}');"
+             {% elif client_profile.banner_image %}
+             style="background-image: url('{{ client_profile.banner_image.url }}');"
+             {% endif %}>
+        </div>
         <div class="profile-summary">
             <div class="profile-avatar">
-                {{ request.user.username|first|upper }}
+                {% if request.user.get_profile_picture %}
+                    <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}">
+                {% elif client_profile.profile_picture %}
+                    <img src="{{ client_profile.profile_picture.url }}" alt="{{ request.user.username }}">
+                {% else %}
+                    {{ request.user.username|first|upper }}
+                {% endif %}
             </div>
             <h3>{{ request.user.username }}</h3>
-            <div class="profile-title">Client</div>
+            <div class="profile-title">{% if client_profile.company_name %}{{ client_profile.company_name }}{% else %}Client{% endif %}</div>
             <div class="profile-stats">
                 <div class="stat">
                     <div class="stat-value">{{ active_jobs_count }}</div>
@@ -703,15 +825,11 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
         <!-- Welcome Banner -->
         <div class="welcome-banner">
             <div class="welcome-text">
                 <h1>Welcome back, {{ request.user.username }}!</h1>
                 <p>Ready to find your next great freelancer?</p>
-                <a href="{% url 'client:create_job' %}" class="post-job-btn" style="text-decoration: none; display: inline-block;">
-                    <i class="fas fa-plus-circle"></i> Post a Job
-                </a>
             </div>
             <div class="stats-cards">
                 <div class="stat-card">

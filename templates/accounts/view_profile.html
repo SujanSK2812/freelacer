@@ -1,8 +1,1477 @@
-<h1>{{ profile_user.username }}</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-{% if profile and profile.profile_picture %}
-    <img src="{{ profile.profile_picture }}" width="150">
+{% block title %}
+    {% if profile.company_name %}{{ profile.company_name }}{% else %}{{ profile_user.username }}{% endif %} - Client Profile | FreelanceHub
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* =========================================================
+       PREMIUM CLIENT PROFILE STYLES
+       ========================================================= */
+    :root {
+        --cp-primary: #2563eb;
+        --cp-primary-hover: #1d4ed8;
+        --cp-primary-light: #eff6ff;
+        --cp-dark: #0f172a;
+        --cp-slate: #334155;
+        --cp-muted: #64748b;
+        --cp-border: #e2e8f0;
+        --cp-card-bg: #ffffff;
+        --cp-emerald: #059669;
+        --cp-emerald-light: #ecfdf5;
+        --cp-radius: 16px;
+        --cp-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    }
+
+    body {
+        background-color: #f8fafc;
+        color: var(--cp-dark);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .client-profile-page {
+        max-width: 1200px;
+        margin: 2rem auto 4rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Back Navigation Bar */
+    .top-action-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        border: 1px solid var(--cp-border);
+        border-radius: 10px;
+        padding: 0.55rem 1.1rem;
+        color: var(--cp-slate);
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .btn-back-link:hover {
+        background: #f1f5f9;
+        color: var(--cp-primary);
+        border-color: #cbd5e1;
+        transform: translateX(-2px);
+    }
+
+    /* Profile Header Banner & Card */
+    .profile-hero-card {
+        background: var(--cp-card-bg);
+        border-radius: var(--cp-radius);
+        border: 1px solid var(--cp-border);
+        box-shadow: var(--cp-shadow);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .profile-cover-gradient {
+        height: 200px;
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #38bdf8 100%);
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+
+    .profile-cover-gradient.has-banner::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.45) 100%);
+    }
+
+    .profile-cover-gradient.no-banner::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+        background-size: 16px 16px;
+        opacity: 0.7;
+    }
+
+    .btn-change-banner {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        z-index: 10;
+        background: rgba(15, 23, 42, 0.75);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(8px);
+        padding: 0.55rem 1.15rem;
+        border-radius: 9px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+
+    .btn-change-banner:hover {
+        background: rgba(15, 23, 42, 0.95);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: translateY(-1px);
+    }
+
+    .profile-hero-content {
+        padding: 0 2.5rem 2rem 2.5rem;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 850px) {
+        .profile-hero-content {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+        }
+    }
+
+    .profile-identity-group {
+        display: flex;
+        align-items: flex-end;
+        gap: 2rem;
+        margin-top: -65px;
+    }
+
+    @media (max-width: 850px) {
+        .profile-identity-group {
+            flex-direction: column;
+            align-items: center;
+            margin-top: -60px;
+            gap: 1.2rem;
+        }
+    }
+
+    .profile-avatar-frame {
+        width: 140px;
+        height: 140px;
+        border-radius: 24px;
+        background: #ffffff;
+        padding: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        flex-shrink: 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    .profile-avatar-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .profile-avatar-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-avatar-fallback {
+        font-size: 3.5rem;
+        color: var(--cp-primary);
+    }
+
+    .profile-title-block {
+        padding-bottom: 0.5rem;
+    }
+
+    .client-company-title {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: var(--cp-dark);
+        margin: 0 0 0.35rem 0;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .badge-client-role {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.25rem 0.65rem;
+        background: #f1f5f9;
+        color: #475569;
+        border-radius: 20px;
+        border: 1px solid var(--cp-border);
+    }
+
+    .badge-verified-client {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.25rem 0.7rem;
+        background: var(--cp-emerald-light);
+        color: var(--cp-emerald);
+        border-radius: 20px;
+        border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .client-subhead {
+        color: var(--cp-muted);
+        font-size: 1rem;
+        margin: 0 0 0.75rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .client-meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1.25rem;
+        color: var(--cp-slate);
+        font-size: 0.92rem;
+    }
+
+    @media (max-width: 850px) {
+        .client-meta-row {
+            justify-content: center;
+            gap: 0.85rem;
+        }
+    }
+
+    .meta-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+
+    .meta-tag i {
+        color: var(--cp-primary);
+        font-size: 0.95rem;
+    }
+
+    .meta-tag a {
+        color: var(--cp-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.15s ease;
+    }
+
+    .meta-tag a:hover {
+        color: var(--cp-primary-hover);
+        text-decoration: underline;
+    }
+
+    /* Action Buttons in Hero */
+    .profile-hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-bottom: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 850px) {
+        .profile-hero-actions {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+    }
+
+    .btn-action-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        background: var(--cp-primary);
+        color: #ffffff !important;
+        font-weight: 600;
+        font-size: 0.92rem;
+        padding: 0.7rem 1.4rem;
+        border-radius: 10px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .btn-action-primary:hover {
+        background: var(--cp-primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-action-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        background: #ffffff;
+        color: var(--cp-slate) !important;
+        font-weight: 600;
+        font-size: 0.92rem;
+        padding: 0.7rem 1.3rem;
+        border-radius: 10px;
+        text-decoration: none;
+        border: 1px solid var(--cp-border);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .btn-action-outline:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: var(--cp-dark) !important;
+    }
+
+    .btn-action-connected {
+        background: #f0fdf4;
+        color: var(--cp-emerald) !important;
+        border-color: #bbf7d0;
+    }
+
+    .btn-action-connected:hover {
+        background: #dcfce7;
+        border-color: #86efac;
+    }
+
+    .btn-action-pending {
+        background: #fffbeb;
+        color: #b45309 !important;
+        border-color: #fde68a;
+        cursor: default;
+    }
+
+    /* Key Statistics Strip */
+    .profile-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--cp-card-bg);
+        border: 1px solid var(--cp-border);
+        border-radius: var(--cp-radius);
+        padding: 1.35rem 1.5rem;
+        box-shadow: var(--cp-shadow);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px -2px rgba(15, 23, 42, 0.08);
+    }
+
+    .stat-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .stat-icon-blue { background: #eff6ff; color: #2563eb; }
+    .stat-icon-green { background: #ecfdf5; color: #059669; }
+    .stat-icon-purple { background: #faf5ff; color: #7c3aed; }
+    .stat-icon-amber { background: #fffbeb; color: #d97706; }
+
+    .stat-meta {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--cp-dark);
+        line-height: 1.2;
+    }
+
+    .stat-label {
+        font-size: 0.83rem;
+        font-weight: 500;
+        color: var(--cp-muted);
+        margin-top: 0.2rem;
+    }
+
+    /* Two-Column Layout */
+    .profile-main-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    @media (max-width: 980px) {
+        .profile-main-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .client-profile-page {
+            margin: 1rem auto 2rem auto;
+            padding: 0 12px;
+        }
+
+        .profile-cover-gradient {
+            height: 140px;
+        }
+
+        .profile-identity-group {
+            margin-top: -50px;
+            gap: 1rem;
+        }
+
+        .profile-avatar-frame {
+            width: 96px;
+            height: 96px;
+            border-radius: 18px;
+            padding: 4px;
+        }
+
+        .profile-hero-content {
+            padding: 0 1rem 1.25rem 1rem;
+            gap: 1.25rem;
+        }
+
+        .btn-change-banner {
+            top: 10px;
+            right: 10px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.78rem;
+        }
+
+        .content-box {
+            padding: 1.25rem 1rem;
+            margin-bottom: 1.25rem;
+            border-radius: 12px;
+        }
+
+        .box-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .top-action-bar {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .client-profile-page {
+            padding: 0 8px;
+        }
+
+        .profile-cover-gradient {
+            height: 120px;
+        }
+
+        .profile-avatar-frame {
+            width: 84px;
+            height: 84px;
+        }
+    }
+
+    /* Content Cards */
+    .content-box {
+        background: var(--cp-card-bg);
+        border: 1px solid var(--cp-border);
+        border-radius: var(--cp-radius);
+        box-shadow: var(--cp-shadow);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .box-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.35rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--cp-border);
+    }
+
+    .box-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--cp-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .box-title i {
+        color: var(--cp-primary);
+        font-size: 1.15rem;
+    }
+
+    .box-badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: #f1f5f9;
+        color: var(--cp-slate);
+        padding: 0.25rem 0.65rem;
+        border-radius: 20px;
+    }
+
+    .about-body-text {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #475569;
+        margin: 0;
+        white-space: pre-line;
+    }
+
+    /* Job Listings Section */
+    .jobs-feed-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .job-card-item {
+        border: 1px solid var(--cp-border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        background: #ffffff;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .job-card-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+        transform: translateY(-1px);
+    }
+
+    .job-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .job-headline {
+        margin: 0;
+    }
+
+    .job-headline a {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--cp-dark);
+        text-decoration: none;
+        transition: color 0.15s ease;
+    }
+
+    .job-headline a:hover {
+        color: var(--cp-primary);
+    }
+
+    .job-post-date {
+        font-size: 0.82rem;
+        color: var(--cp-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-top: 0.35rem;
+    }
+
+    .job-meta-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        align-items: center;
+    }
+
+    .j-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.83rem;
+        font-weight: 600;
+        padding: 0.3rem 0.75rem;
+        border-radius: 8px;
+    }
+
+    .j-badge-budget {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+
+    .j-badge-level {
+        background: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+    }
+
+    .j-badge-proposals {
+        background: #f8fafc;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+
+    .job-desc-snippet {
+        font-size: 0.94rem;
+        color: #64748b;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .job-skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+    }
+
+    .skill-chip {
+        font-size: 0.78rem;
+        font-weight: 500;
+        background: #f1f5f9;
+        color: #334155;
+        padding: 0.25rem 0.65rem;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .job-actions-strip {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .btn-job-apply {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--cp-primary);
+        color: #ffffff !important;
+        font-size: 0.86rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.15s ease;
+    }
+
+    .btn-job-apply:hover {
+        background: var(--cp-primary-hover);
+    }
+
+    .btn-job-view {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #f8fafc;
+        color: var(--cp-slate) !important;
+        font-size: 0.86rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        border: 1px solid var(--cp-border);
+        transition: all 0.15s ease;
+    }
+
+    .btn-job-view:hover {
+        background: #e2e8f0;
+        color: var(--cp-dark) !important;
+    }
+
+    .badge-job-applied {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #f0fdf4;
+        color: #166534;
+        font-size: 0.84rem;
+        font-weight: 600;
+        padding: 0.45rem 0.9rem;
+        border-radius: 8px;
+        border: 1px solid #bbf7d0;
+    }
+
+    .btn-job-delete {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        font-size: 0.84rem;
+        font-weight: 600;
+        padding: 0.5rem 0.9rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .btn-job-delete:hover {
+        background: #fee2e2;
+        border-color: #f87171;
+    }
+
+    .empty-jobs-banner {
+        text-align: center;
+        padding: 3rem 1.5rem;
+        background: #f8fafc;
+        border: 1px dashed var(--cp-border);
+        border-radius: 12px;
+        color: var(--cp-muted);
+    }
+
+    .empty-jobs-banner i {
+        font-size: 2.75rem;
+        color: #cbd5e1;
+        margin-bottom: 0.85rem;
+    }
+
+    .empty-jobs-banner h4 {
+        margin: 0 0 0.35rem 0;
+        color: var(--cp-dark);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    /* Sidebar Widgets */
+    .sidebar-widget {
+        background: var(--cp-card-bg);
+        border: 1px solid var(--cp-border);
+        border-radius: var(--cp-radius);
+        box-shadow: var(--cp-shadow);
+        padding: 1.75rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .widget-heading {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--cp-dark);
+        margin: 0 0 1.25rem 0;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--cp-border);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .widget-heading i {
+        color: var(--cp-primary);
+        font-size: 1rem;
+    }
+
+    .trust-checklist {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .trust-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        font-size: 0.92rem;
+    }
+
+    .trust-item i {
+        font-size: 1.15rem;
+        margin-top: 0.15rem;
+    }
+
+    .trust-item.verified i { color: var(--cp-emerald); }
+    .trust-item.unverified i { color: #94a3b8; }
+
+    .trust-label {
+        font-weight: 600;
+        color: var(--cp-dark);
+        display: block;
+        margin-bottom: 0.1rem;
+    }
+
+    .trust-subtext {
+        font-size: 0.8rem;
+        color: var(--cp-muted);
+        display: block;
+    }
+
+    .info-kv-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        font-size: 0.92rem;
+    }
+
+    .info-kv-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-k {
+        color: var(--cp-muted);
+        font-size: 0.88rem;
+    }
+
+    .info-v {
+        font-weight: 600;
+        color: var(--cp-dark);
+        text-align: right;
+        word-break: break-all;
+    }
+
+    /* Modal Styles */
+    .delete-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .delete-modal-backdrop.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .delete-modal-box {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 440px;
+        width: 90%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        transform: scale(0.95);
+        transition: transform 0.2s ease;
+    }
+
+    .delete-modal-backdrop.active .delete-modal-box {
+        transform: scale(1);
+    }
+
+    .modal-head-danger {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #dc2626;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .modal-desc-text {
+        font-size: 0.94rem;
+        color: var(--cp-muted);
+        line-height: 1.5;
+        margin-bottom: 1.75rem;
+    }
+
+    .modal-actions-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .modal-btn-cancel {
+        background: #f1f5f9;
+        color: var(--cp-slate);
+        border: none;
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .modal-btn-cancel:hover {
+        background: #e2e8f0;
+    }
+
+    .modal-btn-confirm-delete {
+        background: #dc2626;
+        color: #ffffff;
+        border: none;
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .modal-btn-confirm-delete:hover {
+        background: #b91c1c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="client-profile-page">
+    
+    <!-- Navigation Bar -->
+    <div class="top-action-bar">
+        <a href="javascript:history.back()" class="btn-back-link">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <div style="font-size: 0.88rem; color: #64748b;">
+            Client Directory &bull; <strong>{{ profile_user.username }}</strong>
+        </div>
+    </div>
+
+    <!-- Hero Card -->
+    <div class="profile-hero-card">
+        <div class="profile-cover-gradient {% if profile.banner_image %}has-banner{% else %}no-banner{% endif %}"
+             {% if profile.banner_image %}style="background-image: url('{{ profile.banner_image.url }}');"{% endif %}>
+            {% if is_owner %}
+                <button type="button" class="btn-change-banner" onclick="openBannerModal()" title="Customize your profile banner">
+                    <i class="fas fa-camera"></i> <span>{% if profile.banner_image %}Change Banner{% else %}Add Banner{% endif %}</span>
+                </button>
+            {% endif %}
+        </div>
+        <div class="profile-hero-content">
+            <div class="profile-identity-group">
+                <!-- Avatar Frame -->
+                <div class="profile-avatar-frame">
+                    <div class="profile-avatar-inner">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="{{ profile_user.username }}">
+                        {% elif profile_user.get_profile_picture %}
+                            <img src="{{ profile_user.get_profile_picture }}" alt="{{ profile_user.username }}">
+                        {% else %}
+                            <div class="profile-avatar-fallback">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Info Block -->
+                <div class="profile-title-block">
+                    <h1 class="client-company-title">
+                        {% if profile.company_name %}
+                            {{ profile.company_name }}
+                        {% elif profile_user.first_name %}
+                            {{ profile_user.first_name }} {{ profile_user.last_name }}
+                        {% else %}
+                            {{ profile_user.username }}
+                        {% endif %}
+                        <span class="badge-client-role">Client</span>
+                        <span class="badge-verified-client"><i class="fas fa-check-circle"></i> Verified</span>
+                    </h1>
+                    <div class="client-subhead">
+                        <span>@{{ profile_user.username }}</span>
+                        {% if profile.company_name and profile_user.first_name %}
+                            &bull; <span>{{ profile_user.first_name }} {{ profile_user.last_name }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="client-meta-row">
+                        {% if profile.city or profile.country %}
+                            <span class="meta-tag">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {% if profile.city %}{{ profile.city }}{% endif %}{% if profile.city and profile.country %}, {% endif %}{% if profile.country %}{{ profile.country }}{% endif %}
+                            </span>
+                        {% endif %}
+
+                        {% if profile.website %}
+                            <span class="meta-tag">
+                                <i class="fas fa-globe"></i>
+                                <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">
+                                    {{ profile.website }}
+                                </a>
+                            </span>
+                        {% endif %}
+
+                        <span class="meta-tag">
+                            <i class="far fa-calendar-alt"></i>
+                            Member since {{ profile_user.date_joined|date:"M Y" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Group -->
+            <div class="profile-hero-actions">
+                {% if is_owner %}
+                    <a href="{% url 'client:edit_client_profile' %}" class="btn-action-primary">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'client:create_job' %}" class="btn-action-outline">
+                        <i class="fas fa-plus-circle"></i> Post New Job
+                    </a>
+                {% elif request.user.is_authenticated %}
+                    <a href="{% url 'chat_detail' profile_user.id %}" class="btn-action-primary">
+                        <i class="fas fa-comment-dots"></i> Message Client
+                    </a>
+                    {% if is_connected %}
+                        <button type="button" class="btn-action-outline btn-action-connected" onclick="openDisconnectModal()" title="Click to disconnect">
+                            <i class="fas fa-check"></i> Connected
+                        </button>
+                    {% elif is_requested %}
+                        <span class="btn-action-outline btn-action-pending">
+                            <i class="fas fa-clock"></i> Request Pending
+                        </span>
+                    {% else %}
+                        <a href="{% url 'accounts:send_connection_request' profile_user.id %}" class="btn-action-outline">
+                            <i class="fas fa-user-plus"></i> Connect
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-action-primary">
+                        <i class="fas fa-sign-in-alt"></i> Sign in to Contact
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="profile-stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-blue">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="stat-meta">
+                <span class="stat-value">{{ total_jobs }}</span>
+                <span class="stat-label">Jobs Posted</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-green">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="stat-meta">
+                <span class="stat-value">₹{{ total_spent }}</span>
+                <span class="stat-label">Total Spent</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-purple">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="stat-meta">
+                <span class="stat-value">{{ total_hires }}</span>
+                <span class="stat-label">Freelancers Hired</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-amber">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-meta">
+                <span class="stat-value">{{ followers_count }}</span>
+                <span class="stat-label">Network Followers</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Layout -->
+    <div class="profile-main-layout">
+        
+        <!-- Left / Main Column -->
+        <div class="main-column">
+            
+            <!-- About Company -->
+            <div class="content-box">
+                <div class="box-header">
+                    <h2 class="box-title">
+                        <i class="fas fa-info-circle"></i> About Company
+                    </h2>
+                </div>
+                <div class="about-body-text">
+                    {% if profile.bio %}
+                        {{ profile.bio|linebreaks }}
+                    {% else %}
+                        <p style="color: #94a3b8; font-style: italic; margin: 0;">This client has not added a detailed company overview yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Posted Jobs -->
+            <div class="content-box">
+                <div class="box-header">
+                    <h2 class="box-title">
+                        <i class="fas fa-list-alt"></i> Posted Jobs
+                    </h2>
+                    <span class="box-badge">{{ jobs|length }} Available</span>
+                </div>
+
+                {% if jobs %}
+                    <div class="jobs-feed-list">
+                        {% for job in jobs %}
+                            <div class="job-card-item">
+                                <div class="job-card-top">
+                                    <div>
+                                        <h3 class="job-headline">
+                                            <a href="{% url 'client:job_detail' job.id %}">{{ job.title }}</a>
+                                        </h3>
+                                        <div class="job-post-date">
+                                            <i class="far fa-clock"></i> Posted {{ job.created_at|date:"M d, Y" }}
+                                        </div>
+                                    </div>
+                                    <div class="job-meta-badges">
+                                        <span class="j-badge j-badge-budget">
+                                            <i class="fas fa-rupee-sign"></i> ₹{{ job.budget }}
+                                        </span>
+                                        {% if job.experience_level %}
+                                            <span class="j-badge j-badge-level">
+                                                <i class="fas fa-layer-group"></i> {{ job.experience_level }}
+                                            </span>
+                                        {% endif %}
+                                        <span class="j-badge j-badge-proposals">
+                                            <i class="fas fa-paper-plane"></i> {{ job.proposals_count }} proposals
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {% if job.description %}
+                                    <p class="job-desc-snippet">{{ job.description|truncatewords:35 }}</p>
+                                {% endif %}
+
+                                {% if job.skill_list %}
+                                    <div class="job-skills-container">
+                                        {% for skill in job.skill_list %}
+                                            <span class="skill-chip">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="job-actions-strip">
+                                    {% if is_owner %}
+                                        <a href="{% url 'client:job_detail' job.id %}" class="btn-job-view">
+                                            <i class="fas fa-eye"></i> View Details
+                                        </a>
+                                        <button type="button" class="btn-job-delete" onclick="openDeleteJobModal({{ job.id }})">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    {% else %}
+                                        {% if job.id in applied_job_ids %}
+                                            <span class="badge-job-applied">
+                                                <i class="fas fa-check-circle"></i> Proposal Submitted
+                                            </span>
+                                        {% elif request.user.is_authenticated and request.user.role == 'freelancer' %}
+                                            <a href="{% url 'submit_proposal' job.id %}" class="btn-job-apply">
+                                                <i class="fas fa-paper-plane"></i> Submit Proposal
+                                            </a>
+                                        {% endif %}
+                                        <a href="{% url 'client:job_detail' job.id %}" class="btn-job-view">
+                                            View Details <i class="fas fa-arrow-right"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-jobs-banner">
+                        <i class="fas fa-briefcase"></i>
+                        <h4>No Active Job Postings</h4>
+                        <p style="margin: 0;">This client currently has no active job postings available.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- Right / Sidebar Column -->
+        <div class="sidebar-column">
+            
+            <!-- Trust & Verification -->
+            <div class="sidebar-widget">
+                <h3 class="widget-heading">
+                    <i class="fas fa-shield-alt"></i> Verification & Trust
+                </h3>
+                <div class="trust-checklist">
+                    <div class="trust-item verified">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <span class="trust-label">Payment Verified</span>
+                            <span class="trust-subtext">Completed transactions via platform</span>
+                        </div>
+                    </div>
+                    <div class="trust-item verified">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <span class="trust-label">Email Verified</span>
+                            <span class="trust-subtext">{{ profile_user.email }}</span>
+                        </div>
+                    </div>
+                    {% if profile_user.phone %}
+                        <div class="trust-item verified">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <span class="trust-label">Phone Verified</span>
+                                <span class="trust-subtext">Secure contact registered</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="trust-item verified">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <span class="trust-label">Account Standing</span>
+                            <span class="trust-subtext">Member in good standing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Quick Facts -->
+            <div class="sidebar-widget">
+                <h3 class="widget-heading">
+                    <i class="fas fa-building"></i> Company Facts
+                </h3>
+                <div class="info-kv-list">
+                    <div class="info-kv-row">
+                        <span class="info-k">Company</span>
+                        <span class="info-v">{{ profile.company_name|default:"Individual Client" }}</span>
+                    </div>
+                    <div class="info-kv-row">
+                        <span class="info-k">Location</span>
+                        <span class="info-v">{{ profile.city|default:"Not specified" }}{% if profile.country %}, {{ profile.country }}{% endif %}</span>
+                    </div>
+                    <div class="info-kv-row">
+                        <span class="info-k">Joined On</span>
+                        <span class="info-v">{{ profile_user.date_joined|date:"M d, Y" }}</span>
+                    </div>
+                    {% if profile.website %}
+                        <div class="info-kv-row">
+                            <span class="info-k">Website</span>
+                            <span class="info-v">
+                                <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer" style="color: var(--cp-primary); text-decoration: none;">
+                                    Visit Site <i class="fas fa-external-link-alt" style="font-size: 0.75rem;"></i>
+                                </a>
+                            </span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% if is_owner %}
+<!-- Banner Upload / Change Modal -->
+<div id="bannerModalBackdrop" class="delete-modal-backdrop">
+    <div class="delete-modal-box" style="max-width: 500px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.65rem; font-size: 1.25rem; font-weight: 700; color: var(--cp-dark);">
+                <i class="fas fa-panorama" style="color: var(--cp-primary);"></i>
+                <span>{% if profile.banner_image %}Change Banner Image{% else %}Add Banner Image{% endif %}</span>
+            </div>
+            <button type="button" onclick="closeBannerModal()" style="background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
+
+        <form method="POST" action="{% url 'client:update_client_banner' %}" enctype="multipart/form-data" id="bannerUploadForm">
+            {% csrf_token %}
+            
+            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.25rem; line-height: 1.5;">
+                Upload a custom cover banner for your company profile page (JPG, PNG, or WEBP recommended).
+            </p>
+
+            <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 1.5rem; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.2s ease;" 
+                 onclick="document.getElementById('bannerFileInput').click()"
+                 id="bannerDropZone">
+                <input type="file" name="banner_image" id="bannerFileInput" accept="image/*" style="display: none;" onchange="previewBannerFile(this)">
+                <div id="bannerUploadPlaceholder">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 2.25rem; color: var(--cp-primary); margin-bottom: 0.5rem; display: block;"></i>
+                    <span style="font-weight: 600; color: var(--cp-dark); font-size: 0.95rem; display: block;">Click to choose an image</span>
+                    <span style="font-size: 0.82rem; color: #94a3b8;">or select a file from your computer</span>
+                </div>
+                <div id="bannerPreviewContainer" style="display: none;">
+                    <img id="bannerImagePreview" src="" alt="Banner Preview" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <span id="bannerFileName" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: #475569; font-weight: 500;"></span>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; flex-wrap: wrap; gap: 0.75rem;">
+                {% if profile.banner_image %}
+                    <button type="submit" name="action" value="delete" class="modal-btn-cancel" style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca;">
+                        <i class="fas fa-trash-alt"></i> Remove Banner
+                    </button>
+                {% else %}
+                    <div></div>
+                {% endif %}
+
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" class="modal-btn-cancel" onclick="closeBannerModal()">Cancel</button>
+                    <button type="submit" class="btn-action-primary" style="border: none; padding: 0.6rem 1.4rem; font-size: 0.92rem;">
+                        <i class="fas fa-save"></i> Save Banner
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Job Modal -->
+<div id="deleteModalBackdrop" class="delete-modal-backdrop">
+    <div class="delete-modal-box">
+        <div class="modal-head-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Delete Job Posting?</span>
+        </div>
+        <p class="modal-desc-text">
+            Are you sure you want to permanently delete this job? All submitted proposals and job details will be removed. This action cannot be undone.
+        </p>
+        <div class="modal-actions-group">
+            <button type="button" class="modal-btn-cancel" onclick="closeDeleteJobModal()">Cancel</button>
+            <form id="deleteJobActionForm" method="POST" action="" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="modal-btn-confirm-delete">Yes, Delete Job</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endif %}
 
-<p>{{ profile.bio }}</p>
-<p>{{ profile.skills }}</p>
+<!-- Disconnect Confirmation Modal -->
+{% if is_connected %}
+<div id="disconnectModalBackdrop" class="delete-modal-backdrop">
+    <div class="delete-modal-box">
+        <div class="modal-head-danger">
+            <i class="fas fa-user-minus"></i>
+            <span>Disconnect from {{ profile_user.username }}?</span>
+        </div>
+        <p class="modal-desc-text">
+            Are you sure you want to disconnect from <strong>{{ profile_user.username }}</strong>? You will no longer follow each other's updates.
+        </p>
+        <div class="modal-actions-group">
+            <button type="button" class="modal-btn-cancel" onclick="closeDisconnectModal()">Cancel</button>
+            <form method="POST" action="{% url 'accounts:remove_connection' profile_user.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="modal-btn-confirm-delete">Yes, Disconnect</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    function openDisconnectModal() {
+        const modal = document.getElementById('disconnectModalBackdrop');
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeDisconnectModal() {
+        const modal = document.getElementById('disconnectModalBackdrop');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function openBannerModal() {
+        const modal = document.getElementById('bannerModalBackdrop');
+        if (modal) modal.classList.add('active');
+    }
+
+    function closeBannerModal() {
+        const modal = document.getElementById('bannerModalBackdrop');
+        if (modal) modal.classList.remove('active');
+    }
+
+    function previewBannerFile(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('bannerImagePreview').src = e.target.result;
+                document.getElementById('bannerFileName').textContent = file.name;
+                document.getElementById('bannerUploadPlaceholder').style.display = 'none';
+                document.getElementById('bannerPreviewContainer').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function openDeleteJobModal(jobId) {
+        const form = document.getElementById('deleteJobActionForm');
+        if (form) {
+            form.action = "{% url 'client:delete_job' 0 %}".replace('0', jobId);
+            document.getElementById('deleteModalBackdrop').classList.add('active');
+        }
+    }
+
+    function closeDeleteJobModal() {
+        const modal = document.getElementById('deleteModalBackdrop');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
+
+    // Close modal on backdrop click or Escape
+    window.addEventListener('click', function(e) {
+        const deleteModal = document.getElementById('deleteModalBackdrop');
+        if (e.target === deleteModal) {
+            closeDeleteJobModal();
+        }
+        const bannerModal = document.getElementById('bannerModalBackdrop');
+        if (e.target === bannerModal) {
+            closeBannerModal();
+        }
+        const disconnectModal = document.getElementById('disconnectModalBackdrop');
+        if (e.target === disconnectModal) {
+            closeDisconnectModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeDisconnectModal();
+            closeDeleteJobModal();
+            closeBannerModal();
+        }
+    });
+</script>
+{% endblock %}

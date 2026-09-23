@@ -55,6 +55,10 @@ def client_profile_path(instance, filename):
     return f"uploads/clients/profile/{secure_unique_filename(filename)}"
 
 
+def client_banner_path(instance, filename):
+    return f"uploads/clients/banner/{secure_unique_filename(filename)}"
+
+
 def client_job_path(instance, filename):
     return f"uploads/clients/jobs/{secure_unique_filename(filename)}"
 
@@ -165,6 +169,9 @@ def safe_delete_unreferenced_file(file_path):
     lookup_values = list({raw_path, rel_path})
 
     if ClientProfile.objects.filter(profile_picture__in=lookup_values).exists():
+        return False
+
+    if hasattr(ClientProfile, 'banner_image') and ClientProfile.objects.filter(banner_image__in=lookup_values).exists():
         return False
 
     if FreelancerProfile.objects.filter(profile_picture__in=lookup_values).exists():

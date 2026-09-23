@@ -290,10 +290,15 @@ def edit_profile(request):
     if request.method == "POST":
         user.username = request.POST.get("username")
         user.save()
-        return redirect("freelancer:freelancer_dashboard")
+        messages.success(request, "Account updated successfully.")
+        return redirect("freelancer:edit_profile")
+
+    from projects.models import JobPost
+    showcases = JobPost.objects.filter(client=request.user).order_by('-id')
 
     return render(request, "freelancer/edit_profile.html", {
-        "user": user
+        "user": user,
+        "showcases": showcases,
     })
 
 
@@ -410,7 +415,8 @@ def delete_showcase(request, post_id):
         if poster_to_delete:
             safe_delete_unreferenced_file(poster_to_delete)
         messages.success(request, "Talent showcase deleted successfully.")
-    return redirect('freelancer:freelancer_profile')
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or 'freelancer:edit_profile'
+    return redirect(next_url)
 
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST

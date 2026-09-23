@@ -326,6 +326,111 @@
             color: #bc1c1e;
         }
 
+        /* Custom Modal Styles */
+        .custom-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .custom-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .custom-modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem 2.25rem;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            border: 1px solid #e2e8f0;
+            transform: translateY(15px) scale(0.96);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .custom-modal-overlay.active .custom-modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-icon-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #fee2e2;
+            color: #dc2626;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .modal-header-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .modal-body-desc {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            margin: 0 0 1.75rem 0;
+        }
+
+        .modal-btn-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-modal-cancel {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            padding: 0.65rem 1.35rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-modal-cancel:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .btn-modal-confirm-danger {
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            padding: 0.65rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+            transition: all 0.15s ease;
+        }
+
+        .btn-modal-confirm-danger:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+        }
+
         /* Footer Styles - Matching Registration Page */
         footer {
             background: white;
@@ -528,7 +633,11 @@
                 <div class="request-card">
                     <div class="user-info">
                         <div class="user-avatar">
-                            {{ conn_request.sender.username|make_list|first|upper }}
+                            {% if conn_request.sender.get_profile_picture %}
+                                <img src="{{ conn_request.sender.get_profile_picture }}" alt="{{ conn_request.sender.username }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">
+                            {% else %}
+                                {{ conn_request.sender.username|make_list|first|upper }}
+                            {% endif %}
                         </div>
                         <div class="user-details">
                             <h4>{{ conn_request.sender.username }}</h4>
@@ -536,6 +645,9 @@
                                 <i class="fas fa-envelope"></i>
                                 {{ conn_request.sender.email }}
                             </p>
+                            <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.25rem;">
+                                <i class="fas fa-user-friends"></i> {{ conn_request.sender.followers_count }} follower{{ conn_request.sender.followers_count|pluralize }}
+                            </div>
                         </div>
                     </div>
                     
@@ -581,24 +693,93 @@
     </div>
 </main>
 
-<!-- Footer - Include your footer template -->
-{% include 'includes/footer.html' %}
+    <!-- Custom Reject Request Confirmation Modal -->
+    <div id="rejectRequestModal" class="custom-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rejectModalTitle">
+      <div class="custom-modal-card">
+        <div class="modal-icon-badge">
+          <i class="fas fa-user-times"></i>
+        </div>
+        <h3 id="rejectModalTitle" class="modal-header-title">Reject Request?</h3>
+        <p id="rejectModalDesc" class="modal-body-desc">
+          Are you sure you want to reject this connection request?
+        </p>
+        <div class="modal-btn-row">
+          <button type="button" id="cancelRejectBtn" class="btn-modal-cancel">Cancel</button>
+          <button type="button" id="confirmRejectBtn" class="btn-modal-confirm-danger">Reject</button>
+        </div>
+      </div>
+    </div>
 
-<script>
-// Mobile menu toggle
-document.querySelector('.mobile-menu')?.addEventListener('click', function() {
-    document.querySelector('.nav-links').classList.toggle('show');
-});
+    <!-- Footer - Include your footer template -->
+    {% include 'includes/footer.html' %}
 
-// Add confirmation for reject action
-document.querySelectorAll('.btn-reject').forEach(button => {
-    button.addEventListener('click', function(e) {
-        if (!confirm('Are you sure you want to reject this connection request?')) {
+    <script>
+    // Mobile menu toggle
+    document.querySelector('.mobile-menu')?.addEventListener('click', function() {
+        document.querySelector('.nav-links').classList.toggle('show');
+    });
+
+    // Custom Reject Modal Logic
+    let pendingRejectForm = null;
+    const rejectRequestModal = document.getElementById("rejectRequestModal");
+    const rejectModalDesc = document.getElementById("rejectModalDesc");
+    const confirmRejectBtn = document.getElementById("confirmRejectBtn");
+    const cancelRejectBtn = document.getElementById("cancelRejectBtn");
+
+    document.querySelectorAll('.btn-reject').forEach(button => {
+        button.addEventListener('click', function(e) {
             e.preventDefault();
+            pendingRejectForm = this.closest("form");
+
+            const card = this.closest(".request-card");
+            const nameEl = card ? (card.querySelector(".user-details h4") || card.querySelector("h4")) : null;
+            const userName = nameEl ? nameEl.textContent.trim() : "this connection request";
+
+            if (rejectModalDesc) {
+                rejectModalDesc.textContent = `Are you sure you want to reject the connection request from ${userName}?`;
+            }
+
+            if (rejectRequestModal) {
+                rejectRequestModal.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
+        });
+    });
+
+    function closeRejectModal() {
+        if (rejectRequestModal) {
+            rejectRequestModal.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+        pendingRejectForm = null;
+    }
+
+    if (confirmRejectBtn) {
+        confirmRejectBtn.addEventListener("click", function() {
+            if (pendingRejectForm) {
+                pendingRejectForm.submit();
+            }
+        });
+    }
+
+    if (cancelRejectBtn) {
+        cancelRejectBtn.addEventListener("click", closeRejectModal);
+    }
+
+    if (rejectRequestModal) {
+        rejectRequestModal.addEventListener("click", function(e) {
+            if (e.target === rejectRequestModal) {
+                closeRejectModal();
+            }
+        });
+    }
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape" && rejectRequestModal && rejectRequestModal.classList.contains("active")) {
+            closeRejectModal();
         }
     });
-});
-</script>
+    </script>
 
 </body>
 </html>

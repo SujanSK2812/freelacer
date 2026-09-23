@@ -98,12 +98,34 @@
                 <div class="current-image-preview">
                     {% if profile.profile_picture %}
                         <img src="{{ profile.profile_picture.url }}" alt="Current Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <span style="color: #64748b; font-size: 0.9rem;">Current Image</span>
+                        <span style="color: #64748b; font-size: 0.9rem;">Current Profile Picture</span>
                     {% else %}
                         <div style="width: 80px; height: 80px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; border: 1px dashed #cbd5e1;">
                             <i class="fas fa-image" style="font-size: 1.5rem;"></i>
                         </div>
                         <span style="color: #94a3b8; font-size: 0.9rem;">No profile image</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Profile Banner Image</label>
+                <input type="file" name="banner_image" class="form-control" accept="image/*">
+                
+                <div class="current-image-preview">
+                    {% if profile.banner_image %}
+                        <img src="{{ profile.banner_image.url }}" alt="Current Banner" style="width: 160px; height: 60px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div>
+                            <span style="color: #64748b; font-size: 0.9rem; display: block;">Current Banner</span>
+                            <label style="display: flex; align-items: center; gap: 0.4rem; color: #dc2626; font-size: 0.85rem; cursor: pointer; margin-top: 0.3rem;">
+                                <input type="checkbox" name="remove_banner" value="1"> Remove current banner
+                            </label>
+                        </div>
+                    {% else %}
+                        <div style="width: 160px; height: 60px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; border: 1px dashed #cbd5e1;">
+                            <i class="fas fa-panorama" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <span style="color: #94a3b8; font-size: 0.9rem;">No custom banner (default gradient active)</span>
                     {% endif %}
                 </div>
             </div>
@@ -148,5 +170,99 @@
             </div>
         </div>
     </form>
+
+    <!-- ================= MANAGE POSTED JOBS / DELETE OPTION ================= -->
+    <div style="margin: 3rem 0 2rem; border-top: 1px solid #e2e8f0;"></div>
+
+    <div class="settings-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="font-size: 1.6rem; color: #0f172a; margin-bottom: 0.35rem;">
+                <i class="fas fa-briefcase" style="color: #0a66c2;"></i> Manage Posted Jobs
+            </h2>
+            <p style="color: #64748b; font-size: 0.95rem; margin: 0;">Review your active project postings or delete jobs you no longer need.</p>
+        </div>
+        <a href="{% url 'client:create_job' %}" style="background: #0a66c2; color: white; padding: 0.6rem 1.4rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-plus"></i> Post New Job
+        </a>
+    </div>
+
+    {% if jobs %}
+    <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+        {% for job in jobs %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="flex: 1; min-width: 240px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.35rem;">
+                    <a href="{% url 'client:job_detail' job.id %}" style="font-size: 1.15rem; font-weight: 700; color: #0f172a; text-decoration: none;">
+                        {{ job.title }}
+                    </a>
+                    <span style="background: #e0f2fe; color: #0369a1; padding: 2px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600;">
+                        {{ job.status|default:"Open" }}
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px; font-size: 0.85rem; color: #64748b; flex-wrap: wrap;">
+                    <span><i class="fas fa-tag" style="color: #0a66c2;"></i> ₹{{ job.budget }}</span>
+                    <span><i class="fas fa-layer-group" style="color: #0a66c2;"></i> {{ job.experience_level|default:"Intermediate"|title }}</span>
+                    <span><i class="fas fa-clock" style="color: #0a66c2;"></i> Posted {{ job.created_at|timesince }} ago</span>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <a href="{% url 'client:job_detail' job.id %}" style="padding: 0.5rem 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; color: #334155; font-size: 0.88rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-eye"></i> View
+                </a>
+                <button type="button" onclick="openDeleteJobModal('{{ job.id }}', '{{ job.title|escapejs }}')" style="padding: 0.5rem 1.1rem; border-radius: 8px; border: 1px solid #fecaca; background: #fee2e2; color: #b91c1c; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 2.5rem; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1; margin-top: 1.5rem;">
+        <i class="fas fa-briefcase" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem; display: block;"></i>
+        <p style="color: #64748b; font-size: 0.95rem; margin: 0;">You have not posted any jobs yet.</p>
+    </div>
+    {% endif %}
 </div>
+
+<!-- DELETE JOB CONFIRMATION MODAL -->
+<div id="deleteJobModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 16px; max-width: 440px; width: 100%; padding: 2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 1.25rem;">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 0.5rem;">Delete Job Posting?</h3>
+        <p style="color: #64748b; font-size: 0.92rem; line-height: 1.5; margin-bottom: 1.5rem;">
+            Are you sure you want to permanently delete <strong id="deleteJobTitle" style="color: #0f172a;">this job</strong>? This action cannot be undone.
+        </p>
+        <form id="deleteJobForm" method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'client:edit_client_profile' %}">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" onclick="closeDeleteJobModal()" style="padding: 0.65rem 1.4rem; border-radius: 10px; border: 1px solid #cbd5e1; background: white; color: #475569; font-weight: 600; cursor: pointer;">
+                    Cancel
+                </button>
+                <button type="submit" style="padding: 0.65rem 1.4rem; border-radius: 10px; border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer;">
+                    Yes, Delete Job
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openDeleteJobModal(jobId, jobTitle) {
+    document.getElementById('deleteJobTitle').textContent = `"${jobTitle}"`;
+    document.getElementById('deleteJobForm').action = `/client/delete-job/${jobId}/`;
+    const modal = document.getElementById('deleteJobModal');
+    modal.style.display = 'flex';
+}
+function closeDeleteJobModal() {
+    const modal = document.getElementById('deleteJobModal');
+    modal.style.display = 'none';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeDeleteJobModal();
+});
+</script>
 {% endblock %}

@@ -391,6 +391,9 @@
         }
 
         @media (max-width: 768px) {
+            main {
+                padding: 1.25rem 14px 2.5rem;
+            }
 
             .form-grid {
                 grid-template-columns: 1fr;
@@ -398,6 +401,26 @@
 
             .testimonials-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                padding: 1.5rem 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 1rem 10px 2rem;
+            }
+
+            .form-card {
+                padding: 1.25rem 1rem;
+            }
+
+            .form-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
     </style>
@@ -419,8 +442,47 @@
             {% endif %}
 
 
-            <!-- Submit Form (Shown for logged in users) -->
-            {% if request.user.is_authenticated %}
+            <!-- Testimonial Section for Logged in users -->
+            {% if request.user.is_authenticated and user_has_testimonial %}
+            <div class="form-card" id="already-submitted-section" style="border-left: 5px solid #10b981; background: #ffffff;">
+                <div class="form-card-header" style="margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h2 class="form-card-title" style="color: #0f172a; font-size: 1.35rem; margin-bottom: 0.2rem;">
+                                Your Testimonial is Published
+                            </h2>
+                            <p style="color: #64748b; font-size: 0.9rem; margin: 0;">
+                                You have already submitted your testimonial as <strong>{{ default_name }}</strong> ({{ default_role }}). Each member can submit one testimonial.
+                            </p>
+                        </div>
+                    </div>
+                    <span style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.82rem; font-weight: 600; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;">
+                        <i class="fas fa-check"></i> Active Review
+                    </span>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <div class="stars-row">
+                            {% for _ in user_testimonial.full_stars_range %}
+                                <i class="fas fa-star star-filled"></i>
+                            {% endfor %}
+                            {% for _ in user_testimonial.empty_stars_range %}
+                                <i class="far fa-star star-empty"></i>
+                            {% endfor %}
+                            <span class="rating-score">{{ user_testimonial.rating }}.0</span>
+                        </div>
+                        <span style="font-size: 0.82rem; color: #94a3b8;"><i class="fas fa-lock"></i> One testimonial per account</span>
+                    </div>
+                    <p style="font-size: 1.05rem; color: #334155; line-height: 1.7; font-style: italic; margin: 0;">
+                        "{{ user_testimonial.message }}"
+                    </p>
+                </div>
+            </div>
+            {% elif request.user.is_authenticated %}
             <div class="form-card" id="submit-form-section">
                 <div class="form-card-header">
                     <h2 class="form-card-title">
@@ -505,7 +567,7 @@
                                 <i class="fas fa-star star-filled"></i>
                                 {% endfor %}
                                 {% for _ in t.empty_stars_range %}
-                                <i class="fas fa-star star-empty"></i>
+                                <i class="far fa-star star-empty"></i>
                                 {% endfor %}
                                 <span class="rating-score">{{ t.rating }}.0</span>
                             </div>

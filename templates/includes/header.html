@@ -266,9 +266,185 @@
       <a href="{% url 'accounts:login' %}" class="upwork-btn-link">Log In</a>
       <a href="{% url 'accounts:select_role' %}" class="upwork-btn-primary">Sign Up</a>
       {% endif %}
+
+      <!-- MOBILE MENU HAMBURGER BUTTON -->
+      <button type="button" class="mobile-nav-toggle-btn" id="mobileNavToggle" aria-label="Toggle navigation menu" onclick="toggleMobileNav(event)">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
   </div>
 </header>
+
+<!-- ================= MOBILE NAVIGATION DRAWER & BACKDROP ================= -->
+<div id="mobileNavOverlay" class="mobile-nav-overlay" onclick="closeMobileNav()"></div>
+
+<aside id="mobileNavDrawer" class="mobile-nav-drawer" aria-label="Mobile Navigation">
+  <div class="mobile-drawer-header">
+    <div class="mobile-drawer-brand">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" class="brand-logo-img" style="height: 30px;">
+      <span class="logo-text" style="font-size: 18px;">Freelancer<span class="logo-accent">Portal</span></span>
+    </div>
+    <button type="button" class="mobile-drawer-close-btn" aria-label="Close menu" onclick="closeMobileNav()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="mobile-drawer-body">
+    {% if request.user.is_authenticated %}
+    <!-- USER PROFILE CARD IN DRAWER -->
+    <div class="mobile-user-card">
+      <div class="mobile-user-avatar">
+        {% if request.user.get_profile_picture %}
+        <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}">
+        {% else %}
+        {{ request.user.username|slice:":1"|upper }}
+        {% endif %}
+      </div>
+      <div class="mobile-user-details">
+        <div class="mobile-user-name">{{ request.user.username }}</div>
+        <div class="mobile-user-role">
+          {% if request.user.is_superuser %}
+          <i class="fas fa-user-shield"></i> Administrator
+          {% elif request.user.role == 'client' %}
+          <i class="fas fa-building"></i> Client
+          {% else %}
+          <i class="fas fa-user-check"></i> Freelancer
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS IN DRAWER -->
+    <div class="mobile-drawer-actions">
+      {% if request.user.role == 'client' %}
+      <a href="{% url 'client:create_job' %}" class="mobile-action-pill-btn" onclick="closeMobileNav()">
+        <i class="fas fa-plus"></i> Post Work
+      </a>
+      {% elif request.user.role == 'freelancer' %}
+      <a href="{% url 'freelancer:create_showcase' %}" class="mobile-action-pill-btn" onclick="closeMobileNav()">
+        <i class="fas fa-star"></i> Post Showcase
+      </a>
+      <a href="{% url 'freelancer:freelancer_dashboard' %}" class="mobile-connects-badge" onclick="closeMobileNav()">
+        <i class="fas fa-bolt"></i> Connects
+      </a>
+      {% endif %}
+    </div>
+
+    {% if not request.user.is_superuser %}
+    <!-- SEARCH IN DRAWER -->
+    <form action="{% url 'freelancer:search_results' %}" method="GET" class="mobile-drawer-search">
+      <i class="fas fa-search"></i>
+      <input type="text" name="q" placeholder="Search for jobs or talent..." required />
+    </form>
+    {% endif %}
+
+    <!-- ROLE NAVIGATION SECTIONS -->
+    <div class="mobile-drawer-links">
+      <div class="mobile-drawer-section-title">Navigation</div>
+
+      {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
+      <a href="{% url 'accounts:admin_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+      </a>
+      <a href="{% url 'accounts:admin_users' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-users-cog"></i> Users Management
+      </a>
+      <a href="{% url 'accounts:admin_connection_requests' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_connection_requests' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-user-friends"></i> Connection Requests
+      </a>
+      <a href="/admin/" class="mobile-nav-item" target="_blank" onclick="closeMobileNav()">
+        <i class="fas fa-tools"></i> Django Admin
+      </a>
+      <a href="{% url 'accounts:testimonials' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-quote-left"></i> Testimonials
+      </a>
+
+      {% elif request.user.role == 'client' %}
+      <a href="{% url 'client:client_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_home' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-search"></i> Find Talent
+      </a>
+      <a href="{% url 'client:all_freelancers' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'all_freelancers' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-users"></i> All Freelancers
+      </a>
+      <a href="{% url 'client:client_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-tachometer-alt"></i> Client Dashboard
+      </a>
+      <a href="{% url 'client:create_job' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'create_job' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-plus-circle"></i> Post a Job
+      </a>
+      <a href="{% url 'client:client_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_profile' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-building"></i> Profile & Company Info
+      </a>
+      <a href="{% url 'client:edit_client_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'edit_client_profile' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-cog"></i> Account Settings
+      </a>
+      <a href="{% url 'client:client_proposals' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_proposals' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-file-invoice"></i> Received Proposals
+      </a>
+      <a href="{% url 'accounts:testimonials' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-quote-left"></i> Testimonials
+      </a>
+
+      {% else %}
+      <a href="{% url 'freelancer:freelancer_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_home' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-briefcase"></i> Find Work & Jobs
+      </a>
+      <a href="{% url 'freelancer:freelancer_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-tachometer-alt"></i> Freelancer Dashboard
+      </a>
+      <a href="{% url 'freelancer:my_proposals' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'my_proposals' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-file-contract"></i> My Proposals & Bids
+      </a>
+      <a href="{% url 'freelancer:create_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'create_profile' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-user-circle"></i> Profile & Skills
+      </a>
+      <a href="{% url 'freelancer:edit_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-cog"></i> Account Settings
+      </a>
+      <a href="{% url 'freelancer:freelancer_connections' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_connections' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-network-wired"></i> Client Network
+      </a>
+      <a href="{% url 'accounts:testimonials' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-quote-left"></i> Testimonials
+      </a>
+      {% endif %}
+
+      <a href="{% url 'chat_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'chat_home' %}active{% endif %}" onclick="closeMobileNav()">
+        <i class="fas fa-comments"></i> Messages
+      </a>
+    </div>
+
+    <!-- DRAWER LOGOUT -->
+    <div class="mobile-drawer-footer">
+      <a href="{% url 'accounts:logout' %}" class="mobile-logout-btn custom-logout-trigger">
+        <i class="fas fa-sign-out-alt"></i> Log Out
+      </a>
+    </div>
+
+    {% else %}
+    <!-- GUEST / LOGGED-OUT DRAWER -->
+    <div class="mobile-drawer-links" style="margin-top: 1rem;">
+      <a href="{% url 'home' %}" class="mobile-nav-item" onclick="closeMobileNav()">
+        <i class="fas fa-home"></i> Home
+      </a>
+      <a href="{% url 'how_it_works' %}" class="mobile-nav-item" onclick="closeMobileNav()">
+        <i class="fas fa-info-circle"></i> How It Works
+      </a>
+      <a href="{% url 'client:all_freelancers' %}" class="mobile-nav-item" onclick="closeMobileNav()">
+        <i class="fas fa-users"></i> Browse Freelancers
+      </a>
+      <a href="{% url 'how_to_find_work' %}" class="mobile-nav-item" onclick="closeMobileNav()">
+        <i class="fas fa-briefcase"></i> How to Find Work
+      </a>
+    </div>
+
+    <div class="mobile-guest-actions">
+      <a href="{% url 'accounts:login' %}" class="mobile-btn-secondary" onclick="closeMobileNav()">Log In</a>
+      <a href="{% url 'accounts:select_role' %}" class="mobile-btn-primary" onclick="closeMobileNav()">Sign Up</a>
+    </div>
+    {% endif %}
+  </div>
+</aside>
 
 <!-- ================= UPWORK HEADER STYLES ================= -->
 <style>
@@ -858,18 +1034,398 @@
     text-align: center;
   }
 
+  /* Mobile Hamburger Button */
+  .mobile-nav-toggle-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+  }
+
+  .mobile-nav-toggle-btn:hover {
+    background: #f1f5f9;
+    color: #0a66c2;
+    border-color: #cbd5e1;
+  }
+
+  /* Mobile Navigation Drawer */
+  .mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+
+  .mobile-nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-nav-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 86%;
+    max-width: 340px;
+    height: 100vh;
+    height: 100dvh;
+    background: #ffffff;
+    z-index: 9999;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .mobile-nav-drawer.active {
+    transform: translateX(0);
+  }
+
+  .mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fafbfc;
+  }
+
+  .mobile-drawer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mobile-drawer-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .mobile-drawer-close-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .mobile-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* User Card inside Drawer */
+  .mobile-user-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  }
+
+  .mobile-user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0a66c2;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .mobile-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mobile-user-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #0f172a;
+    line-height: 1.2;
+  }
+
+  .mobile-user-role {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mobile-drawer-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .mobile-action-pill-btn {
+    flex: 1;
+    background: #0a66c2;
+    color: #ffffff;
+    padding: 9px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(10, 102, 194, 0.2);
+  }
+
+  .mobile-connects-badge {
+    background: #eef3f8;
+    color: #0a66c2;
+    padding: 9px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #c9d8e8;
+  }
+
+  .mobile-drawer-search {
+    position: relative;
+    width: 100%;
+  }
+
+  .mobile-drawer-search i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 14px;
+  }
+
+  .mobile-drawer-search input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .mobile-drawer-search input:focus {
+    border-color: #0a66c2;
+    background: #ffffff;
+  }
+
+  .mobile-drawer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mobile-drawer-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin: 8px 0 4px 6px;
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .mobile-nav-item i {
+    width: 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 15px;
+  }
+
+  .mobile-nav-item:hover, .mobile-nav-item.active {
+    background: #f0f7ff;
+    color: #0a66c2;
+  }
+
+  .mobile-nav-item:hover i, .mobile-nav-item.active i {
+    color: #0a66c2;
+  }
+
+  .mobile-drawer-footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .mobile-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    background: #fef2f2;
+    transition: background 0.2s;
+  }
+
+  .mobile-logout-btn:hover {
+    background: #fee2e2;
+  }
+
+  .mobile-guest-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .mobile-btn-primary {
+    background: #0a66c2;
+    color: white;
+    text-align: center;
+    padding: 11px;
+    border-radius: 24px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .mobile-btn-secondary {
+    background: transparent;
+    color: #0a66c2;
+    text-align: center;
+    padding: 11px;
+    border-radius: 24px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 14px;
+    border: 1px solid #0a66c2;
+  }
+
+  /* Responsive Breakpoints */
   @media (max-width: 900px) {
     .upwork-nav-menu {
-      display: none;
+      display: none !important;
+    }
+
+    .mobile-nav-toggle-btn {
+      display: inline-flex !important;
+    }
+
+    .upwork-header-container {
+      padding: 0 16px;
+    }
+
+    .upwork-header-left {
+      gap: 16px;
     }
 
     .upwork-search-box input {
-      width: 160px;
+      width: 140px;
     }
 
     .notif-dropdown {
       right: -60px;
       width: 310px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .upwork-search-box {
+      display: none !important;
+    }
+
+    .upwork-header-container {
+      padding: 0 14px;
+    }
+
+    .upwork-header-right {
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .connects-pill {
+      display: none !important;
+    }
+
+    .upwork-btn-primary {
+      display: none !important;
+    }
+
+    .notif-dropdown, .upwork-dropdown {
+      position: fixed !important;
+      top: 64px !important;
+      left: 12px !important;
+      right: 12px !important;
+      width: auto !important;
+      max-width: calc(100vw - 24px) !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .logo-text {
+      font-size: 18px !important;
+    }
+
+    .brand-logo-img {
+      height: 30px !important;
+    }
+
+    .upwork-header-container {
+      padding: 0 10px;
     }
   }
 </style>
@@ -923,6 +1479,43 @@
     const notif = document.getElementById("notifDropdown");
     if (notif && !e.target.closest(".notif-wrapper")) {
       notif.style.display = "none";
+    }
+    const mobileDrawer = document.getElementById("mobileNavDrawer");
+    if (mobileDrawer && mobileDrawer.classList.contains("active") && !e.target.closest("#mobileNavDrawer") && !e.target.closest("#mobileNavToggle")) {
+      closeMobileNav();
+    }
+  });
+
+  function toggleMobileNav(e) {
+    if (e) e.stopPropagation();
+    const drawer = document.getElementById("mobileNavDrawer");
+    if (!drawer) return;
+    if (drawer.classList.contains("active")) {
+      closeMobileNav();
+    } else {
+      openMobileNav();
+    }
+  }
+
+  function openMobileNav() {
+    const drawer = document.getElementById("mobileNavDrawer");
+    const overlay = document.getElementById("mobileNavOverlay");
+    if (drawer) drawer.classList.add("active");
+    if (overlay) overlay.classList.add("active");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeMobileNav() {
+    const drawer = document.getElementById("mobileNavDrawer");
+    const overlay = document.getElementById("mobileNavOverlay");
+    if (drawer) drawer.classList.remove("active");
+    if (overlay) overlay.classList.remove("active");
+    document.body.classList.remove("modal-open");
+  }
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+      closeMobileNav();
     }
   });
 

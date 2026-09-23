@@ -83,6 +83,7 @@ from proposals.models import Proposal
 
 @client_required
 def client_dashboard(request):
+    client_profile = getattr(request.user, 'clientprofile', None)
     client_jobs = Job.objects.filter(client=request.user).order_by('-created_at')
     
     active_jobs_count = client_jobs.count()
@@ -102,6 +103,7 @@ def client_dashboard(request):
     recent_activities = Proposal.objects.filter(job__client=request.user).order_by('-created_at')[:5]
 
     return render(request, "client/dashboard.html", {
+        "client_profile": client_profile,
         "client_jobs": client_jobs,
         "active_jobs_count": active_jobs_count,
         "proposals_count": proposals_count,
@@ -172,16 +174,7 @@ def job_detail(request, job_id):
     })
 @client_required
 def client_profile(request):
-    from client.models import ClientProfile
-    profile, created = ClientProfile.objects.get_or_create(user=request.user)
-    
-    # Active jobs posted by the client
-    active_jobs = Job.objects.filter(client=request.user).order_by('-created_at')
-    
-    return render(request, "client/profile.html", {
-        "profile": profile,
-        "active_jobs": active_jobs,
-    })
+    return redirect('accounts:view_profile', user_id=request.user.id)
 
 @client_required
 def edit_client_profile(request):
@@ -219,13 +212,74 @@ def edit_client_profile(request):
                 messages.error(request, f"Error saving image: {str(e)}")
                 return render(request, "client/edit_profile.html", {"profile": profile})
 
+        # Banner Image Upload
+        if request.POST.get('remove_banner') == '1':
+            if profile.banner_image:
+                old_banner = profile.banner_image.name
+                profile.banner_image = None
+                profile.save()
+                safe_delete_unreferenced_file(old_banner)
+        elif request.FILES.get('banner_image'):
+            banner = request.FILES['banner_image']
+            try:
+                validate_uploaded_image(banner)
+                old_banner = profile.banner_image.name if profile.banner_image else None
+                profile.banner_image = banner
+                profile.save()
+                if old_banner and old_banner != profile.banner_image.name:
+                    safe_delete_unreferenced_file(old_banner)
+            except ValidationError as e:
+                messages.error(request, e.message if hasattr(e, 'message') else str(e))
+                return render(request, "client/edit_profile.html", {"profile": profile})
+            except Exception as e:
+                messages.error(request, f"Error saving banner image: {str(e)}")
+                return render(request, "client/edit_profile.html", {"profile": profile})
+
         profile.save()
         messages.success(request, "Profile updated successfully.")
         return redirect("client:client_profile")
 
+    from projects.models import Job
+    jobs = Job.objects.filter(client=request.user).order_by('-id')
+
     return render(request, "client/edit_profile.html", {
-        "profile": profile
+        "profile": profile,
+        "jobs": jobs
     })
+
+
+@login_required
+@client_required
+def update_client_banner(request):
+    from client.models import ClientProfile
+    profile, _ = ClientProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == "POST":
+        if request.POST.get('action') == 'delete':
+            if profile.banner_image:
+                old_banner = profile.banner_image.name
+                profile.banner_image = None
+                profile.save()
+                safe_delete_unreferenced_file(old_banner)
+                messages.success(request, "Banner removed successfully.")
+        elif request.FILES.get('banner_image'):
+            banner = request.FILES['banner_image']
+            try:
+                validate_uploaded_image(banner)
+                old_banner = profile.banner_image.name if profile.banner_image else None
+                profile.banner_image = banner
+                profile.save()
+                if old_banner and old_banner != profile.banner_image.name:
+                    safe_delete_unreferenced_file(old_banner)
+                messages.success(request, "Banner image updated successfully.")
+            except ValidationError as e:
+                messages.error(request, e.message if hasattr(e, 'message') else str(e))
+            except Exception as e:
+                messages.error(request, f"Error saving banner image: {str(e)}")
+        else:
+            messages.warning(request, "Please select an image file for your banner.")
+
+    return redirect('accounts:view_profile', user_id=request.user.id)
 @login_required
 @client_required
 def delete_job(request, job_id):
@@ -239,7 +293,8 @@ def delete_job(request, job_id):
         if poster_to_delete:
             safe_delete_unreferenced_file(poster_to_delete)
         messages.success(request, "Job deleted successfully.")
-    return redirect('client:client_profile')
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or 'client:client_profile'
+    return redirect(next_url)
 @client_required
 def client_proposals(request):
     from proposals.models import Proposal

@@ -689,6 +689,90 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 16px auto;
+                padding: 0 14px;
+            }
+
+            .completion-notice-card {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 14px;
+            }
+
+            .completion-notice-btn {
+                width: 100%;
+                text-align: center;
+                display: block;
+            }
+
+            .welcome-hero-card {
+                padding: 20px 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .welcome-user-info {
+                gap: 14px;
+            }
+
+            .hero-stats-quick {
+                width: 100%;
+                justify-content: space-between;
+                border-top: 1px solid #f1f5f9;
+                padding-top: 14px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .contracts-tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+                padding-bottom: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                margin: 12px auto;
+                padding: 0 10px;
+            }
+
+            .welcome-hero-card {
+                padding: 16px 12px;
+            }
+
+            .hero-avatar {
+                width: 56px;
+                height: 56px;
+                font-size: 24px;
+            }
+
+            .hero-text h1 {
+                font-size: 18px;
+                flex-wrap: wrap;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contract-item {
+                padding: 16px 12px;
+            }
+
+            .contract-meta {
+                flex-direction: column;
+                gap: 6px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -697,7 +781,7 @@
 
 <div class="dashboard-container">
     {% if not request.user.is_superuser and profile_completeness < 100 %}
-    <div style="background: #eef3f8; border: 1px solid #0a66c2; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.08);">
+    <div class="completion-notice-card" style="background: #eef3f8; border: 1px solid #0a66c2; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.08);">
         <div style="display: flex; align-items: center; gap: 16px;">
             <i class="fas fa-exclamation-circle" style="font-size: 28px; color: #0a66c2;"></i>
             <div>
@@ -705,7 +789,7 @@
                 <p style="margin: 0; font-size: 14px; color: #5e6b7c;">Please complete your profile details to improve your profile and help clients understand your skills and experience.</p>
             </div>
         </div>
-        <a href="{% url 'freelancer:create_profile' %}" style="background: #0a66c2; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; white-space: nowrap; transition: background 0.2s;">Complete Profile →</a>
+        <a href="{% url 'freelancer:create_profile' %}" class="completion-notice-btn" style="background: #0a66c2; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; white-space: nowrap; transition: background 0.2s;">Complete Profile →</a>
     </div>
     {% endif %}
 
@@ -937,6 +1021,7 @@
                 {% else %}
                 <div class="mini-user-role">{{ freelancer.title|default:"Freelancer Profile Incomplete" }}</div>
 
+                {% if profile_completeness < 100 %}
                 <div style="text-align: left; margin-bottom: 12px;">
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5e6b7c;">
                         <span>Profile Completeness</span>
@@ -946,6 +1031,7 @@
                         <div class="progress-fill-bar" style="width: {{ profile_completeness }}%;"></div>
                     </div>
                 </div>
+                {% endif %}
 
                 <a href="{% url 'freelancer:create_profile' %}" class="view-all-link" style="font-size: 13px;">Edit Profile Details →</a>
                 {% endif %}

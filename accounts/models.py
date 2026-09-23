@@ -45,6 +45,49 @@ class User(AbstractUser):
             pass
         return None
 
+    @property
+    def get_banner_image(self):
+        try:
+            for prof_attr in ('clientprofile', 'freelancerprofile'):
+                prof = getattr(self, prof_attr, None)
+                if prof and getattr(prof, 'banner_image', None):
+                    banner = prof.banner_image
+                    banner_str = str(getattr(banner, 'name', '') or banner).strip()
+                    if banner_str.startswith(('http://', 'https://')):
+                        return banner_str
+                    url = getattr(banner, 'url', None)
+                    if url:
+                        return url
+        except Exception:
+            pass
+        return None
+
+    @property
+    def followers_count(self):
+        if hasattr(self, '_followers_count'):
+            return self._followers_count
+        try:
+            return self.followers.count()
+        except Exception:
+            return 0
+
+    @followers_count.setter
+    def followers_count(self, val):
+        self._followers_count = val
+
+    @property
+    def following_count(self):
+        if hasattr(self, '_following_count'):
+            return self._following_count
+        try:
+            return self.following.count()
+        except Exception:
+            return 0
+
+    @following_count.setter
+    def following_count(self, val):
+        self._following_count = val
+
 class EmailOTP(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -104,6 +147,13 @@ class Testimonial(models.Model):
         ("Freelancer", "Freelancer"),
     )
 
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="testimonials"
+    )
     name = models.CharField(max_length=100)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     rating = models.PositiveSmallIntegerField(

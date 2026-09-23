@@ -329,12 +329,28 @@
       }
 
       @media (max-width: 680px) {
+        .freelancers-page {
+          margin: 1rem auto;
+          padding: 0 14px;
+        }
         .freelancer-grid {
           grid-template-columns: 1fr;
+          gap: 1rem;
         }
         .page-header {
           flex-direction: column;
           align-items: flex-start;
+          gap: 0.75rem;
+          margin-bottom: 1.25rem;
+        }
+        .freelancer-card {
+          padding: 1.25rem 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .freelancers-page {
+          padding: 0 10px;
         }
       }
     </style>
