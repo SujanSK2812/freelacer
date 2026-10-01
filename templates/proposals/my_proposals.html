@@ -21,7 +21,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--font-family-base) !important;
             background-color: #f9fafb;
             color: #001e00;
             line-height: 1.5;
@@ -192,7 +192,10 @@
         <div class="proposal-job-title">{{ proposal.job.title }}</div>
         <div class="proposal-meta-row">
             <span><i class="fas fa-rupee-sign" style="color:#0a66c2;"></i> Bid Amount: <strong>₹{{ proposal.bid_amount }}</strong></span>
-            <span><i class="fas fa-clock" style="color:#0a66c2;"></i> Delivery: {{ proposal.delivery_days }} Days</span>
+            <span><i class="fas fa-clock" style="color:#0a66c2;"></i> Delivery: <strong>{{ proposal.delivery_days }} Days</strong></span>
+            {% if proposal.expected_completion_date or proposal.job.expected_completion_date %}
+            <span><i class="fas fa-calendar-check" style="color:#2e7d32;"></i> Target Completion: <strong>{{ proposal.expected_completion_date|default:proposal.job.expected_completion_date|date:"M d, Y" }}</strong></span>
+            {% endif %}
             <span><i class="fas fa-calendar" style="color:#0a66c2;"></i> Submitted {{ proposal.created_at|timesince }} ago</span>
         </div>
 

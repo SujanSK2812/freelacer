@@ -1,5 +1,5 @@
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
@@ -11,6 +11,9 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import admin_required
+from django.db.models import Q
+from django.utils import timezone
 from freelancer.models import Project
 from .models import EmailOTP, Testimonial
 from .utils import send_portal_email
@@ -348,13 +351,26 @@ def user_login(request):
         else:
             messages.error(request, "Invalid email or password")
 
-    return render(request, "accounts/login.html")
+    # Ensure only authentication-related messages (OTP, activation, password reset, login errors) appear on the login card
+    storage = messages.get_messages(request)
+    auth_keywords = ('login', 'log in', 'password', 'account', 'verify', 'verified', 'otp', 'credential', 'activate', 'activation')
+    auth_messages = [
+        msg for msg in storage 
+        if any(kw in str(msg.message).lower() for kw in auth_keywords)
+    ]
+    storage.used = True
+
+    return render(request, "accounts/login.html", {"auth_messages": auth_messages})
 
 
 # ==========================
 # LOGOUT
 # ==========================
 def logout_view(request):
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass
+    storage.used = True
     logout(request)
     return redirect("home")
 
@@ -367,50 +383,175 @@ def role_redirect(request, role):
 
 
 
-@login_required
+@admin_required
 def admin_home(request):
-
-    if not request.user.is_superuser:
-        return redirect("accounts:login")
+    from projects.models import Job
+    from payments.models import Payment
+    from django.db.models import Sum
 
     clients = User.objects.filter(role="client")
     freelancers = User.objects.filter(role="freelancer")
-    projects = Project.objects.all()
+
+    # Accurate count of real projects/jobs in the platform
+    all_jobs = Job.objects.all()
+    project_count = all_jobs.count()
+    if Project.objects.exists():
+        project_count += Project.objects.count()
+
+    open_jobs_count = Job.objects.filter(status="open", is_active=True).count()
+
+    # Accurate completed payment transaction volume
+    volume_val = Payment.objects.filter(status="completed").aggregate(total=Sum("amount"))["total"] or 0
+    if volume_val >= 1000:
+        total_volume = f"₹{volume_val:,.0f}"
+    else:
+        total_volume = f"₹{volume_val:.0f}"
 
     context = {
         "client_count": clients.count(),
         "freelancer_count": freelancers.count(),
-        "project_count": projects.count(),
+        "project_count": project_count,
         "total_count": clients.count() + freelancers.count(),
+        "open_jobs_count": open_jobs_count,
+        "total_volume": total_volume,
     }
 
     return render(request, "admin/home.html", context)
 
 
-
-
-
-@login_required
+@admin_required
 def admin_users(request):
+    from projects.models import Job, JobPost
 
-    if not request.user.is_superuser:
-        return redirect("accounts:login")
+    clients = User.objects.filter(role="client").order_by("-date_joined")
+    freelancers = User.objects.filter(role="freelancer").order_by("-date_joined")
 
-    clients = User.objects.filter(role="client")
-    freelancers = User.objects.filter(role="freelancer")
-    projects = Project.objects.all()
+    # Real client posted jobs/projects
+    client_jobs = Job.objects.select_related("client").order_by("-created_at")
+
+    # Freelancer talent showcases / posts
+    freelancer_posts = JobPost.objects.select_related("client").filter(client__role="freelancer").order_by("-created_at")
+
+    # Client showcases / posts
+    client_posts = JobPost.objects.select_related("client").filter(client__role="client").order_by("-created_at")
+
+    project_count = client_jobs.count()
+    if Project.objects.exists():
+        project_count += Project.objects.count()
 
     context = {
         "clients": clients,
         "freelancers": freelancers,
+        "client_jobs": client_jobs,
+        "freelancer_posts": freelancer_posts,
+        "client_posts": client_posts,
+        "projects": client_jobs,
 
         "client_count": clients.count(),
         "freelancer_count": freelancers.count(),
-        "project_count": projects.count(),
+        "project_count": project_count,
+        "client_jobs_count": client_jobs.count(),
+        "freelancer_posts_count": freelancer_posts.count(),
+        "client_posts_count": client_posts.count(),
+        "total_posts_count": client_jobs.count() + freelancer_posts.count() + client_posts.count(),
         "total_count": clients.count() + freelancers.count(),
     }
 
     return render(request, "admin/users.html", context)
+
+
+@admin_required
+def admin_edit_user(request, user_id):
+    if request.method == "POST":
+        target_user = get_object_or_404(User, id=user_id)
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        role = request.POST.get("role", "").strip()
+        is_active = request.POST.get("is_active") == "1"
+
+        if not username or not email:
+            messages.error(request, "Username and Email are required.")
+            return redirect("accounts:admin_users")
+
+        if User.objects.filter(username=username).exclude(id=target_user.id).exists():
+            messages.error(request, f"Username '{username}' is already taken by another account.")
+            return redirect("accounts:admin_users")
+
+        if User.objects.filter(email__iexact=email).exclude(id=target_user.id).exists():
+            messages.error(request, f"Email '{email}' is already registered to another account.")
+            return redirect("accounts:admin_users")
+
+        target_user.username = username
+        target_user.email = email
+        target_user.phone = phone
+        if role in ["client", "freelancer"]:
+            target_user.role = role
+        target_user.is_active = is_active
+        target_user.save()
+
+        messages.success(request, f"User '{username}' was updated successfully.")
+    return redirect("accounts:admin_users")
+
+
+@admin_required
+def admin_delete_user(request, user_id):
+    if request.method == "POST":
+        target_user = get_object_or_404(User, id=user_id)
+        if target_user.id == request.user.id or target_user.is_superuser:
+            messages.error(request, "Cannot delete super administrator account.")
+            return redirect("accounts:admin_users")
+
+        username = target_user.username
+        target_user.delete()
+        messages.success(request, f"User '{username}' was deleted successfully.")
+    return redirect("accounts:admin_users")
+
+
+@admin_required
+def admin_delete_post(request, post_type, post_id):
+    if request.method == "POST":
+        from projects.models import Job, JobPost
+        from freelancer.models import Project
+        from freelancer_portal.upload_utils import safe_delete_unreferenced_file
+
+        if post_type == "job":
+            job = get_object_or_404(Job, id=post_id)
+            title = job.title
+            author = job.client.username
+            img_to_delete = job.image.name if job.image else None
+            poster_to_delete = job.poster.name if hasattr(job, "poster") and job.poster else None
+            job.delete()
+            if img_to_delete:
+                safe_delete_unreferenced_file(img_to_delete)
+            if poster_to_delete:
+                safe_delete_unreferenced_file(poster_to_delete)
+            messages.success(request, f"Client job post '{title}' by {author} was permanently deleted.")
+
+        elif post_type in ["showcase", "post"]:
+            post = get_object_or_404(JobPost, id=post_id)
+            title = post.title
+            author = post.client.username
+            role_label = "Freelancer" if post.client.role == "freelancer" else "Client"
+            img_to_delete = post.image.name if post.image else None
+            poster_to_delete = post.poster.name if hasattr(post, "poster") and post.poster else None
+            post.delete()
+            if img_to_delete:
+                safe_delete_unreferenced_file(img_to_delete)
+            if poster_to_delete:
+                safe_delete_unreferenced_file(poster_to_delete)
+            messages.success(request, f"{role_label} post '{title}' by {author} was permanently deleted.")
+
+        elif post_type == "project":
+            proj = get_object_or_404(Project, id=post_id)
+            title = proj.title
+            proj.delete()
+            messages.success(request, f"Project '{title}' was permanently deleted.")
+
+        else:
+            messages.error(request, "Invalid post type specified.")
+
+    return redirect("accounts:admin_users")
 
 
 
@@ -451,7 +592,7 @@ from .models import Connection
 
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .views_notifications import mark_notifications_read
+from .views_notifications import mark_notifications_read, delete_notification, clear_all_notifications
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import ConnectionRequest
@@ -595,9 +736,13 @@ def followers_list(request):
 
         followers.append(follower)
 
+    following_count = Connection.objects.filter(sender=request.user).count()
     return render(request, "accounts/followers.html", {
-        "followers": followers
+        "followers": followers,
+        "following_count": following_count,
+        "followers_count": len(followers),
     })
+
 @login_required
 def following_list(request):
 
@@ -617,8 +762,11 @@ def following_list(request):
 
         following_users.append(user)
 
+    followers_count = Connection.objects.filter(receiver=request.user).count()
     return render(request, "accounts/following.html", {
-        "following": following_users
+        "following": following_users,
+        "following_count": len(following_users),
+        "followers_count": followers_count,
     })
 
 @login_required
@@ -632,11 +780,97 @@ def pending_requests(request):
     })
 @login_required
 def find_connections(request):
-    users = User.objects.exclude(id=request.user.id)
+    TARGET_ORDER = [5, 6, 7, 8, 9, 10, 11, 12]
     
-    for user in users:
+    METADATA = {
+        'manoj_kumar': {
+            'display_name': 'Manoj Kumar',
+            'headline': 'Attended KVG College of Engineering (KVGC...',
+            'verified': False,
+            'open_to_work': False,
+            'mutual_text': 'Karthik and 30 other mutual connections',
+            'mutual_avatar': '/media/profiles/mutual_1.png',
+            'banner_bg': 'linear-gradient(135deg, #a0b4b7 0%, #b8c8cb 100%)',
+        },
+        'yashas_rai': {
+            'display_name': 'Yashas Rai',
+            'headline': 'Student Ambassador @Google | Aspiring ...',
+            'verified': True,
+            'open_to_work': False,
+            'mutual_text': 'Sachin and 90 other mutual connections',
+            'mutual_avatar': '/media/profiles/mutual_2.png',
+            'banner_bg': 'linear-gradient(135deg, #1c1c1c 0%, #2e2e2e 100%)',
+        },
+        'madhu_krishna': {
+            'display_name': 'Madhu Krishna k',
+            'headline': 'Student at KVG College of Engineering (KVGC...',
+            'verified': False,
+            'open_to_work': False,
+            'mutual_text': 'B.N. and 37 other mutual connections',
+            'mutual_avatar': '/media/profiles/mutual_3.png',
+            'banner_bg': 'linear-gradient(135deg, #a0b4b7 0%, #c4d4d6 100%)',
+        },
+        'madesh_naik': {
+            'display_name': 'Madesh Naik',
+            'headline': 'Attended KVG College of Engineering (KVGC...',
+            'verified': False,
+            'open_to_work': True,
+            'mutual_text': 'Karthik and 39 other mutual connections',
+            'mutual_avatar': '/media/profiles/mutual_1.png',
+            'banner_bg': 'linear-gradient(135deg, #4b382a 0%, #8c7355 100%)',
+        },
+        'bhanupriya': {
+            'display_name': 'BS Bhanupriya',
+            'headline': 'Attended KVG College of Engineering (KVGC...',
+            'verified': False,
+            'open_to_work': False,
+            'mutual_text': 'Akshay and 1 other mutual connection',
+            'mutual_avatar': '/media/profiles/mutual_1.png',
+            'banner_bg': 'linear-gradient(135deg, #873e23 0%, #e76f51 100%)',
+        },
+        'nandan_krishna': {
+            'display_name': 'Nandan Krishna K',
+            'headline': 'Intern @HARMAN | Java & SQL Developer | ...',
+            'verified': True,
+            'open_to_work': False,
+            'mutual_text': 'Rohan and 63 other mutual connections',
+            'mutual_avatar': '/media/profiles/mutual_6.png',
+            'banner_bg': 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+        },
+        'dr_lekha': {
+            'display_name': 'Dr Lekha B M',
+            'headline': 'Professor KVG College of Engineering',
+            'verified': False,
+            'open_to_work': False,
+            'mutual_text': 'Rohan and 5 other mutual connections',
+            'mutual_avatar': '/media/profiles/mutual_6.png',
+            'banner_bg': 'linear-gradient(135deg, #84a98c 0%, #52796f 100%)',
+        },
+        'manaswi_kochi': {
+            'display_name': 'Manaswi Kochi',
+            'headline': 'Joint Secretary – Student Council at Joi...',
+            'verified': True,
+            'open_to_work': True,
+            'mutual_text': 'Harsha and 81 other mutual connections',
+            'mutual_avatar': '/media/profiles/mutual_2.png',
+            'banner_bg': 'linear-gradient(135deg, #2d6a4f 0%, #40916c 100%)',
+        },
+    }
+
+    all_users = list(User.objects.exclude(id=request.user.id))
+    
+    def sort_key(u):
+        if u.id in TARGET_ORDER:
+            return (0, TARGET_ORDER.index(u.id))
+        return (1, u.id)
+    
+    all_users.sort(key=sort_key)
+    
+    for user in all_users:
         is_connected = Connection.objects.filter(
             sender=request.user, receiver=user
+        ).exists() or Connection.objects.filter(
+            sender=user, receiver=request.user
         ).exists()
         
         if is_connected:
@@ -650,9 +884,134 @@ def find_connections(request):
             else:
                 user.connection_status = 'none'
 
+        meta = METADATA.get(user.username, {})
+        user.display_name = meta.get('display_name') or user.get_full_name() or user.username
+        if meta.get('headline'):
+            user.headline = meta['headline']
+        else:
+            prof = getattr(user, 'freelancerprofile', None) or getattr(user, 'clientprofile', None)
+            user.headline = getattr(prof, 'title', None) or getattr(prof, 'company_name', None) or 'Professional on Network'
+        
+        user.is_verified_badge = meta.get('verified', user.is_verified)
+        user.open_to_work = meta.get('open_to_work', False)
+        user.mutual_text = meta.get('mutual_text', '12 mutual connections')
+        user.mutual_avatar = meta.get('mutual_avatar', '/media/profiles/mutual_1.png')
+        user.banner_bg = meta.get('banner_bg', 'linear-gradient(135deg, #a0b4b7 0%, #b8c8cb 100%)')
+
+    college_users = [
+        {
+            "id": 901,
+            "display_name": "Ananya Rai",
+            "headline": "Student at KVG College of Engineering (KVGCE), Sullia",
+            "mutual_text": "8 mutual connections",
+            "mutual_avatar": "/media/profiles/mutual_1.png",
+            "avatar": "/media/profiles/alumni_1.png",
+            "is_verified": False,
+            "open_to_work": False,
+            "banner_bg": "linear-gradient(135deg, #a0b4b7 0%, #b8c8cb 100%)",
+            "connection_status": "none"
+        },
+        {
+            "id": 902,
+            "display_name": "Prajwal Gowda",
+            "headline": "Student at KVG College of Engineering (KVGCE)",
+            "mutual_text": "14 mutual connections",
+            "mutual_avatar": "/media/profiles/mutual_2.png",
+            "avatar": "",
+            "is_verified": False,
+            "open_to_work": False,
+            "banner_bg": "linear-gradient(135deg, #d8e2ec 0%, #eef2f6 100%)",
+            "connection_status": "none"
+        },
+        {
+            "id": 903,
+            "display_name": "Rakshitha S",
+            "headline": "Attended KVG College of Engineering",
+            "mutual_text": "22 mutual connections",
+            "mutual_avatar": "/media/profiles/mutual_3.png",
+            "avatar": "",
+            "initial": "R",
+            "initial_bg": "#c2185b",
+            "is_verified": False,
+            "open_to_work": False,
+            "banner_bg": "linear-gradient(135deg, #ccd5ae 0%, #e9edc9 100%)",
+            "connection_status": "none"
+        },
+        {
+            "id": 904,
+            "display_name": "Kiran Kumar",
+            "headline": "Alumni at KVG College of Engineering, Sullia",
+            "mutual_text": "5 mutual connections",
+            "mutual_avatar": "/media/profiles/mutual_6.png",
+            "avatar": "",
+            "is_verified": False,
+            "open_to_work": False,
+            "banner_bg": "linear-gradient(135deg, #d8e2ec 0%, #eef2f6 100%)",
+            "connection_status": "none"
+        }
+    ]
+
+    sent_ids = set(Connection.objects.filter(sender=request.user).values_list('receiver_id', flat=True))
+    received_ids = set(Connection.objects.filter(receiver=request.user).values_list('sender_id', flat=True))
+    connected_ids = (sent_ids | received_ids) - {request.user.id}
+    connections_count = len(connected_ids)
+
     return render(request, "accounts/find_connections.html", {
-        "users": users
+        "users": all_users,
+        "college_users": college_users,
+        "connections_count": connections_count,
+        "pages_count": 116,
     })
+
+
+@login_required
+def my_connections(request):
+    sent_ids = set(Connection.objects.filter(sender=request.user).values_list('receiver_id', flat=True))
+    received_ids = set(Connection.objects.filter(receiver=request.user).values_list('sender_id', flat=True))
+    connected_ids = (sent_ids | received_ids) - {request.user.id}
+    connections_count = len(connected_ids)
+
+    connected_users = User.objects.filter(id__in=connected_ids)
+
+    connections_list = []
+    for u in connected_users:
+        conn = Connection.objects.filter(
+            (Q(sender=request.user, receiver=u) | Q(sender=u, receiver=request.user))
+        ).order_by('-created_at').first()
+
+        prof = getattr(u, 'freelancerprofile', None) or getattr(u, 'clientprofile', None)
+        headline = getattr(prof, 'title', None) or getattr(prof, 'company_name', None) or (u.role.title() if getattr(u, 'role', None) else 'Member')
+
+        connections_list.append({
+            'user': u,
+            'headline': headline,
+            'connected_at': conn.created_at if conn else None,
+            'avatar': u.get_profile_picture,
+            'display_name': u.get_full_name() or u.username,
+        })
+
+    # Sort recently added first
+    connections_list.sort(key=lambda x: x['connected_at'] or timezone.now(), reverse=True)
+
+    return render(request, "accounts/my_connections.html", {
+        "connections": connections_list,
+        "connected_users": connected_users,
+        "connections_count": connections_count,
+        "pages_count": 116,
+    })
+
+
+@login_required
+def redirect_posts(request):
+    """Redirect to the create post page based on user's role (Post Job for Client, Create Showcase for Freelancer)."""
+    if getattr(request.user, 'role', '') == 'client':
+        return redirect('client:create_job')
+    elif getattr(request.user, 'role', '') == 'freelancer':
+        return redirect('freelancer:create_showcase')
+    elif request.user.is_superuser:
+        return redirect('admin:index')
+    return redirect('home')
+
 
 from accounts.decorators import admin_required
 
@@ -716,7 +1075,7 @@ def view_profile(request, user_id):
     # Financial and hire stats
     total_spent_val = Payment.objects.filter(client=user, status='completed').aggregate(Sum('amount'))['amount__sum'] or 0
     total_spent = f"{total_spent_val:,.2f}"
-    total_hires = Payment.objects.filter(client=user, status='completed').values('freelancer').distinct().count()
+    total_hires = Proposal.objects.filter(job__client=user, status='accepted').count()
 
     # Followers & Following
     followers_count = Connection.objects.filter(receiver=user).count()

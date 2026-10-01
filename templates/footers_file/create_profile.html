@@ -16,8 +16,7 @@
       }
 
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-family-base) !important;
         background: #f8fafc;
         color: #1e293b;
         line-height: 1.6;
@@ -217,8 +216,9 @@
         background: #e2e8f0;
       }
 
-      /* Image preview styling */
-      .image-preview {
+      /* Image & Banner preview styling */
+      .image-preview,
+      .banner-preview {
         margin-top: 0.8rem;
         display: flex;
         align-items: center;
@@ -232,16 +232,44 @@
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid #0a66c2;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .preview-banner-img {
+        width: 100%;
+        max-width: 280px;
+        height: 80px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid #0a66c2;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .preview-item-wrapper,
+      .banner-item-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
       }
 
       .remove-img {
         background: #fee2e2;
         color: #dc2626;
         border: none;
-        padding: 0.3rem 0.8rem;
+        padding: 0.35rem 0.85rem;
         border-radius: 20px;
         font-size: 0.75rem;
+        font-weight: 500;
         cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .remove-img:hover {
+        background: #fecaca;
       }
 
       /* Responsive */
@@ -401,27 +429,52 @@
           <div class="two-columns">
             <div class="form-group">
               <label><i class="fas fa-camera"></i> Profile Picture</label>
-              <input type="file" name="profile_picture" id="profilePicture" accept="image/jpeg,image/png,image/jpg" />
+              <input type="file" name="profile_picture" id="profilePicture" accept="image/jpeg,image/png,image/jpg,image/webp" />
               <div class="field-hint">
-                Upload a professional photo (JPEG, PNG, max 5MB)
+                Upload a professional photo (JPEG, PNG, WEBP, max 5MB)
               </div>
               <div class="image-preview" id="imagePreview">
                 {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture }}" alt="Profile" class="preview-img">
+                <div class="preview-item-wrapper" id="profilePicCurrent">
+                  <img src="{{ profile.profile_picture.url|default:profile.profile_picture }}" alt="Profile" class="preview-img">
+                  <label class="remove-img" style="cursor: pointer;">
+                    <input type="checkbox" name="remove_profile_picture" value="1" style="width: auto; margin: 0; display: inline-block;">
+                    <i class="fas fa-trash-alt"></i> Remove
+                  </label>
+                </div>
                 {% endif %}
               </div>
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-heading"></i> Professional Title</label>
-              <input
-                type="text"
-                name="title"
-                placeholder="e.g. Senior Full Stack Developer | UI/UX Expert"
-                value="{{ profile.title|default:'' }}" />
+              <label><i class="fas fa-panorama"></i> Profile Banner / Cover</label>
+              <input type="file" name="banner_image" id="bannerImage" accept="image/jpeg,image/png,image/jpg,image/webp" />
               <div class="field-hint">
-                This appears at the top of your profile — make it catchy!
+                Upload a cover banner (JPEG, PNG, WEBP, max 5MB. Recommended: 1200×300)
               </div>
+              <div class="banner-preview" id="bannerPreview">
+                {% if profile.banner_image %}
+                <div class="banner-item-wrapper" id="bannerCurrent">
+                  <img src="{{ profile.banner_image.url|default:profile.banner_image }}" alt="Banner" class="preview-banner-img">
+                  <label class="remove-img" style="cursor: pointer;">
+                    <input type="checkbox" name="remove_banner_image" value="1" style="width: auto; margin: 0; display: inline-block;">
+                    <i class="fas fa-trash-alt"></i> Remove
+                  </label>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-heading"></i> Professional Title</label>
+            <input
+              type="text"
+              name="title"
+              placeholder="e.g. Senior Full Stack Developer | UI/UX Expert"
+              value="{{ profile.title|default:'' }}" />
+            <div class="field-hint">
+              This appears at the top of your profile — make it catchy!
             </div>
           </div>
 
@@ -613,48 +666,115 @@
     </div>
 
     <script>
-      // Image preview functionality
+      // Profile Picture preview functionality
       const profilePictureInput = document.getElementById('profilePicture');
       const imagePreview = document.getElementById('imagePreview');
+      const initialProfilePicHtml = imagePreview ? imagePreview.innerHTML : '';
       
-      profilePictureInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        imagePreview.innerHTML = '';
-        
-        if (file) {
-          // Validate file size (max 5MB)
-          if (file.size > 5 * 1024 * 1024) {
-            alert('File size exceeds 5MB. Please choose a smaller image.');
-            profilePictureInput.value = '';
+      if (profilePictureInput && imagePreview) {
+        profilePictureInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (!file) {
+            imagePreview.innerHTML = initialProfilePicHtml;
             return;
           }
           
-          // Validate file type
-          const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-          if (!validTypes.includes(file.type)) {
-            alert('Please upload a valid image file (JPEG, PNG)');
+          if (file.size > 5 * 1024 * 1024) {
+            alert('Profile picture size exceeds 5MB. Please choose a smaller image.');
             profilePictureInput.value = '';
+            imagePreview.innerHTML = initialProfilePicHtml;
+            return;
+          }
+          
+          const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+          if (!validTypes.includes(file.type)) {
+            alert('Please upload a valid image file (JPEG, PNG, WEBP)');
+            profilePictureInput.value = '';
+            imagePreview.innerHTML = initialProfilePicHtml;
             return;
           }
           
           const reader = new FileReader();
           reader.onload = function(event) {
+            imagePreview.innerHTML = '';
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('preview-item-wrapper');
+
             const img = document.createElement('img');
             img.src = event.target.result;
             img.classList.add('preview-img');
+
             const removeBtn = document.createElement('button');
-            removeBtn.innerHTML = '<i class="fas fa-trash"></i> Remove';
+            removeBtn.type = 'button';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i> Clear';
             removeBtn.classList.add('remove-img');
             removeBtn.onclick = function() {
               profilePictureInput.value = '';
-              imagePreview.innerHTML = '';
+              imagePreview.innerHTML = initialProfilePicHtml;
             };
-            imagePreview.appendChild(img);
-            imagePreview.appendChild(removeBtn);
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            imagePreview.appendChild(wrapper);
           };
           reader.readAsDataURL(file);
-        }
-      });
+        });
+      }
+
+      // Banner image preview functionality
+      const bannerImageInput = document.getElementById('bannerImage');
+      const bannerPreview = document.getElementById('bannerPreview');
+      const initialBannerHtml = bannerPreview ? bannerPreview.innerHTML : '';
+      
+      if (bannerImageInput && bannerPreview) {
+        bannerImageInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (!file) {
+            bannerPreview.innerHTML = initialBannerHtml;
+            return;
+          }
+          
+          if (file.size > 5 * 1024 * 1024) {
+            alert('Banner file size exceeds 5MB. Please choose a smaller image.');
+            bannerImageInput.value = '';
+            bannerPreview.innerHTML = initialBannerHtml;
+            return;
+          }
+          
+          const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+          if (!validTypes.includes(file.type)) {
+            alert('Please upload a valid image file (JPEG, PNG, WEBP)');
+            bannerImageInput.value = '';
+            bannerPreview.innerHTML = initialBannerHtml;
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            bannerPreview.innerHTML = '';
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('banner-item-wrapper');
+
+            const img = document.createElement('img');
+            img.src = event.target.result;
+            img.classList.add('preview-banner-img');
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i> Clear';
+            removeBtn.classList.add('remove-img');
+            removeBtn.onclick = function() {
+              bannerImageInput.value = '';
+              bannerPreview.innerHTML = initialBannerHtml;
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            bannerPreview.appendChild(wrapper);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
       
       // Skip button functionality
       const skipBtn = document.getElementById('skipBtn');
@@ -662,47 +782,40 @@
       const cancelSkipBtn = document.getElementById('cancelSkipBtn');
       const confirmSkipBtn = document.getElementById('confirmSkipBtn');
 
-      skipBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        skipModal.classList.add('active');
-      });
+      if (skipBtn && skipModal) {
+        skipBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          skipModal.classList.add('active');
+        });
+      }
 
-      cancelSkipBtn.addEventListener('click', function() {
-        skipModal.classList.remove('active');
-      });
-
-      // Close modal on outside click
-      skipModal.addEventListener('click', function(e) {
-        if (e.target === skipModal) {
+      if (cancelSkipBtn && skipModal) {
+        cancelSkipBtn.addEventListener('click', function() {
           skipModal.classList.remove('active');
-        }
-      });
+        });
+      }
 
-      confirmSkipBtn.addEventListener('click', function() {
-        // Use the form but add skip parameter
-        const form = document.getElementById('profileForm');
-        const skipInput = document.createElement('input');
-        skipInput.type = 'hidden';
-        skipInput.name = 'skip';
-        skipInput.value = 'true';
-        form.appendChild(skipInput);
-        form.submit();
-      });
-      });
-      
-      // Form validation before submit
-      // const profileForm = document.getElementById('profileForm');
-      // profileForm.addEventListener('submit', function(e) {
-      //   const title = document.querySelector('input[name="title"]').value.trim();
-      //   const bio = document.querySelector('textarea[name="bio"]').value.trim();
-        
-      //   if (!title && !bio) {
-      //     const confirmPartial = confirm('Your profile is mostly empty. Do you want to continue with partial information?');
-      //     if (!confirmPartial) {
-      //       e.preventDefault();
-      //     }
-      //   }
-      // });
+      if (skipModal) {
+        // Close modal on outside click
+        skipModal.addEventListener('click', function(e) {
+          if (e.target === skipModal) {
+            skipModal.classList.remove('active');
+          }
+        });
+      }
+
+      if (confirmSkipBtn) {
+        confirmSkipBtn.addEventListener('click', function() {
+          // Use the form but add skip parameter
+          const form = document.getElementById('profileForm');
+          const skipInput = document.createElement('input');
+          skipInput.type = 'hidden';
+          skipInput.name = 'skip';
+          skipInput.value = 'true';
+          form.appendChild(skipInput);
+          form.submit();
+        });
+      }
     </script>
   </body>
 </html>

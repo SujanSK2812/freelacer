@@ -1,615 +1,511 @@
-<!doctype html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-  <head>
-    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>All Freelancers | FreelanceHub</title>
-    <!-- Font Awesome 6 -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <!-- Google Fonts: Inter -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
-      rel="stylesheet" />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      body {
-        font-family:
-          "Inter",
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        background: #f5f7fb;
-        color: #1e293b;
-        line-height: 1.5;
+{% block title %}Discover Freelancers | FreelanceHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* =========================================================
+       LINKEDIN "PEOPLE YOU MAY KNOW" TALENT DISCOVERY SYSTEM
+       ========================================================= */
+    :root {
+        --li-bg: #f3f2ef;
+        --li-card-bg: #ffffff;
+        --li-border: #e0e0e0;
+        --li-blue: #0a66c2;
+        --li-blue-hover: #004182;
+        --li-blue-light: #ebf4fd;
+        --li-dark: #191919;
+        --li-subtext: #666666;
+        --li-radius: 10px;
+        --li-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --li-shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    body {
+        background-color: var(--li-bg) !important;
+        font-family: var(--font-family-base) !important;
+        color: var(--li-dark);
+    }
+
+    .discovery-page-container {
+        max-width: 1128px;
+        margin: 1.5rem auto 4rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Override clamp headings from global.css */
+    .discovery-page-container h1,
+    .discovery-page-container .discovery-title {
+        font-size: 1.45rem !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+        color: var(--li-dark) !important;
+        margin: 0 !important;
+    }
+
+    .discovery-top-bar {
         display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
 
-      /* main container */
-      .freelancers-page {
-        flex: 1;
-        max-width: 1280px;
-        margin: 2rem auto;
-        padding: 0 1.5rem;
-        width: 100%;
-      }
+    .btn-back-clean {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #ffffff;
+        border: 1px solid var(--li-border);
+        border-radius: 50px;
+        padding: 0.45rem 1.15rem;
+        color: #475569;
+        font-weight: 600;
+        font-size: 0.88rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
 
-      /* header area */
-      .page-header {
-        margin-bottom: 2rem;
+    .btn-back-clean:hover {
+        background: var(--li-blue-light);
+        color: var(--li-blue);
+        border-color: var(--li-blue);
+        transform: translateX(-2px);
+    }
+
+    /* Header Container Card */
+    .discovery-header-card {
+        background: #ffffff;
+        border: 1px solid var(--li-border);
+        border-radius: var(--li-radius);
+        padding: 18px 24px;
+        margin-bottom: 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
-      }
-      .page-header h1 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #0f172a;
+        gap: 12px;
+        box-shadow: var(--li-shadow);
+    }
+
+    .header-title-group {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-      }
-      .page-header h1 i {
-        color: #0a66c2;
-        font-size: 1.8rem;
-      }
-      .stats-badge {
-        background: #eef2ff;
-        padding: 0.4rem 1rem;
-        border-radius: 40px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #1e293b;
-      }
-      .back-link {
-        display: inline-flex;
+        gap: 12px;
+    }
+
+    .header-icon-box {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: var(--li-blue-light);
+        color: var(--li-blue);
+        display: flex;
         align-items: center;
-        gap: 0.5rem;
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 40px;
-        padding: 0.5rem 1.2rem;
-        text-decoration: none;
-        color: #1e293b;
-        font-weight: 500;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-      }
-      .back-link:hover {
-        background: #f8fafc;
-        border-color: #0a66c2;
-        color: #0a66c2;
-      }
-
-      /* freelancer grid (clean cards) */
-      .freelancer-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1rem;
-      }
-
-      .freelancer-card {
-        background: #ffffff;
-        border-radius: 24px;
-        border: 1px solid #eef2f6;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-        overflow: hidden;
-      }
-      .freelancer-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
-        border-color: #e0e7ef;
-      }
-
-      .card-inner {
-        padding: 1.5rem;
-      }
-
-      /* clickable username area */
-      .freelancer-name-link {
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: 0.2s;
-      }
-      .freelancer-name-link h3 {
+        justify-content: center;
         font-size: 1.25rem;
-        font-weight: 600;
-        color: #0f172a;
-        margin-bottom: 0.25rem;
-        transition: color 0.2s;
-      }
-      .freelancer-name-link i {
-        color: #0a66c2;
-        font-size: 1rem;
-        opacity: 0.7;
-        transition:
-          opacity 0.2s,
-          transform 0.2s;
-      }
-      .freelancer-name-link:hover h3 {
-        color: #0a66c2;
-      }
-      .freelancer-name-link:hover i {
-        opacity: 1;
-        transform: translateX(2px);
-      }
+    }
 
-      .freelancer-email {
+    .badge-count {
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: #f1f5f9;
         color: #475569;
-        font-size: 0.85rem;
-        margin: 0.5rem 0 1rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        border-bottom: 1px dashed #eef2f8;
-        padding-bottom: 0.75rem;
-      }
-      .freelancer-email i {
-        color: #6c757d;
-        width: 1.1rem;
-      }
-
-      .skill-section {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin: 0.75rem 0;
-      }
-      .skill-tag {
-        background: #f1f5f9;
-        padding: 0.2rem 0.7rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        font-weight: 500;
-        color: #1e293b;
-      }
-      .skill-tag i {
-        margin-right: 0.3rem;
-        font-size: 0.65rem;
-        color: #0a66c2;
-      }
-      .rate-info {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-top: 0.9rem;
-        padding-top: 0.5rem;
-        border-top: 1px solid #f0f2f5;
-        font-size: 0.85rem;
-        color: #334155;
-        flex-wrap: wrap;
-      }
-      .rate-info span {
-        background: #f8fafc;
-        padding: 0.2rem 0.6rem;
+        padding: 0.25rem 0.75rem;
         border-radius: 20px;
-      }
-
-      /* CONNECT/FOLLOW BUTTON STYLES */
-      .connect-btn {
-        margin-top: 1rem;
-        width: 100%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-        background: #0a66c2;
-        border: none;
-        border-radius: 40px;
-        padding: 0.6rem 1rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: white;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        box-shadow: 0 2px 6px rgba(10, 102, 194, 0.2);
-      }
-      .connect-btn i {
-        font-size: 0.9rem;
-      }
-      .connect-btn:hover {
-        transform: translateY(-2px);
-        background: #004182;
-        box-shadow: 0 6px 14px rgba(10, 102, 194, 0.3);
-      }
-      .connect-btn.connected {
-        background: #eef2ff;
-        color: #1e293b;
         border: 1px solid #cbd5e1;
-        box-shadow: none;
-      }
-      .connect-btn.connected i {
-        color: #0a66c2;
-      }
-      .connect-btn.connected:hover {
-        background: #e2e8f0;
-        transform: none;
-      }
+    }
 
-      .profile-btn {
-        margin-top: 0.75rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        background: transparent;
-        border: 1px solid #cbd5e1;
-        border-radius: 40px;
-        padding: 0.4rem 1rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: #1e293b;
-        text-decoration: none;
-        transition: all 0.2s;
-        width: 100%;
-      }
-      .profile-btn i {
-        font-size: 0.7rem;
-      }
-      .profile-btn:hover {
-        background: #f1f5f9;
-        border-color: #0a66c2;
-        color: #0a66c2;
-      }
+    /* =========================================================
+       GRID OF "PEOPLE YOU MAY KNOW" CARDS (LinkedIn Style)
+       ========================================================= */
+    .people-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 16px;
+    }
 
-      .action-buttons {
+    .person-card {
+        background: #ffffff;
+        border: 1px solid var(--li-border);
+        border-radius: var(--li-radius);
+        overflow: hidden;
+        position: relative;
         display: flex;
         flex-direction: column;
-        gap: 0.6rem;
-        margin-top: 1rem;
-      }
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        box-shadow: var(--li-shadow);
+    }
 
-      .empty-state-modern {
-        text-align: center;
-        background: white;
-        border-radius: 32px;
-        padding: 3rem 2rem;
-        margin-top: 2rem;
-        border: 1px solid #edf2f7;
-      }
-      .empty-state-modern i {
-        font-size: 3rem;
-        color: #cbd5e1;
-        margin-bottom: 1rem;
-      }
-      .empty-state-modern p {
-        color: #64748b;
-      }
+    .person-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--li-shadow-hover);
+        border-color: #cbd5e1;
+    }
 
-      /* Toast notification */
-      .toast-notification {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #1e293b;
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 48px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        z-index: 2000;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(8px);
-        background: rgba(15, 23, 42, 0.95);
+    /* Cover Banner */
+    .card-top-banner {
+        height: 64px;
+        background: linear-gradient(135deg, #0a66c2 0%, #004182 60%, #0f172a 100%);
+        position: relative;
+    }
+
+    .card-top-banner::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
+        background-size: 14px 14px;
+        opacity: 0.7;
+    }
+
+    .btn-dismiss-card {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 5;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.55);
+        color: #ffffff;
+        border: none;
         display: flex;
         align-items: center;
-        gap: 0.6rem;
-        animation: slideUp 0.2s ease;
-        pointer-events: none;
-      }
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+        justify-content: center;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
 
-      @media (max-width: 680px) {
-        .freelancers-page {
-          margin: 1rem auto;
-          padding: 0 14px;
-        }
-        .freelancer-grid {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-        .page-header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.75rem;
-          margin-bottom: 1.25rem;
-        }
-        .freelancer-card {
-          padding: 1.25rem 1rem;
-        }
-      }
+    .btn-dismiss-card:hover {
+        background: rgba(0, 0, 0, 0.8);
+        transform: scale(1.1);
+    }
 
-      @media (max-width: 480px) {
-        .freelancers-page {
-          padding: 0 10px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Include header (Django) -->
-    {% include 'includes/header.html' %}
+    /* Avatar Overlap */
+    .card-avatar-wrap {
+        display: flex;
+        justify-content: center;
+        margin-top: -38px;
+        position: relative;
+        z-index: 2;
+    }
 
-    <main class="freelancers-page">
-      <div class="page-header">
-        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-            <h1>
-            <i class="fas fa-users"></i>
-            All Freelancers
-            </h1>
-            <div class="stats-badge">
-            <i class="fas fa-user-check"></i> {{ freelancers|length }}
-            professionals
+    .card-avatar {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        border: 3.5px solid #ffffff;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .card-avatar-fallback {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0a66c2 0%, #0284c7 100%);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.85rem;
+        font-weight: 700;
+    }
+
+    /* Card Details Body */
+    .card-body-content {
+        padding: 10px 14px 16px 14px;
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .card-info-top {
+        margin-bottom: 12px;
+    }
+
+    .person-name {
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: var(--li-dark);
+        margin: 0 0 3px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .person-name a {
+        color: var(--li-dark);
+        text-decoration: none;
+    }
+
+    .person-name a:hover {
+        color: var(--li-blue);
+        text-decoration: underline;
+    }
+
+    .person-headline {
+        font-size: 0.8rem;
+        color: var(--li-subtext);
+        line-height: 1.35;
+        margin: 0 0 8px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.2em;
+    }
+
+    .person-meta-hint {
+        font-size: 0.75rem;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .person-meta-hint i {
+        color: #94a3b8;
+    }
+
+    /* Card Action Button */
+    .card-btn-wrap {
+        margin-top: auto;
+        padding-top: 8px;
+    }
+
+    .btn-connect-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        width: 100%;
+        background: #ffffff;
+        color: var(--li-blue) !important;
+        border: 1.5px solid var(--li-blue);
+        border-radius: 50px;
+        padding: 0.42rem 1rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        cursor: pointer;
+    }
+
+    .btn-connect-pill:hover {
+        background: var(--li-blue-light);
+        color: var(--li-blue-hover) !important;
+        border-color: var(--li-blue-hover);
+    }
+
+    .btn-following-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        width: 100%;
+        background: #ffffff;
+        color: var(--li-blue) !important;
+        border: 1.5px solid var(--li-blue);
+        border-radius: 50px;
+        padding: 0.42rem 1rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .btn-following-pill:hover {
+        background: #fef2f2;
+        color: #dc2626 !important;
+        border-color: #f87171;
+    }
+
+    .btn-pending-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        width: 100%;
+        background: #f8fafc;
+        color: var(--li-subtext);
+        border: 1px solid var(--li-border);
+        border-radius: 50px;
+        padding: 0.42rem 1rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+    }
+
+    /* Empty State */
+    .empty-people-box {
+        grid-column: 1 / -1;
+        background: #ffffff;
+        border: 1px solid var(--li-border);
+        border-radius: var(--li-radius);
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: #64748b;
+    }
+
+    .empty-people-box i {
+        font-size: 3rem;
+        color: #cbd5e1;
+        margin-bottom: 12px;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="discovery-page-container">
+
+    <!-- Top Action / Breadcrumbs -->
+    <div class="discovery-top-bar">
+        <a href="{% url 'client:client_home' %}" class="btn-back-clean">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <div style="font-size: 0.88rem; color: #64748b; display: flex; align-items: center; gap: 6px;">
+            <span>Network</span>
+            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #94a3b8;"></i>
+            <strong style="color: #0f172a;">Discover Professionals</strong>
+        </div>
+    </div>
+
+    <!-- Header Card -->
+    <div class="discovery-header-card">
+        <div class="header-title-group">
+            <div class="header-icon-box">
+                <i class="fas fa-user-friends"></i>
+            </div>
+            <div>
+                <h1 class="discovery-title">People you may know</h1>
+                <p style="font-size: 0.85rem; color: #64748b; margin: 2px 0 0 0;">
+                    Connect with qualified software engineers, developers, and talent
+                </p>
             </div>
         </div>
-        <a href="{% url 'client:client_home' %}" class="back-link">
-          <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-      </div>
+        <div class="badge-count">
+            <i class="fas fa-check-circle" style="color: #059669;"></i>
+            {{ freelancers|length }} Recommended
+        </div>
+    </div>
 
-      <!-- Freelancer grid with Follow/Connect feature -->
-      <div class="freelancer-grid">
+    <!-- People You May Know Grid (Matching LinkedIn Style) -->
+    <div class="people-grid">
         {% for freelancer in freelancers %}
-        <div class="freelancer-card" data-freelancer-id="{{ freelancer.id }}">
-          <div class="card-inner">
-            <!-- Username is clickable -> leads to profile detail page -->
-            <a
-              href="{% url 'freelancer:freelancer_profile' freelancer.id %}"
-              class="freelancer-name-link">
-              <h3>{{ freelancer.username }}</h3>
-              <i class="fas fa-arrow-right"></i>
-            </a>
-
-            <div class="freelancer-email">
-              <i class="fas fa-envelope"></i>
-              <span>{{ freelancer.email }}</span>
+        <div class="person-card" id="personCard{{ freelancer.id }}">
+            
+            <!-- Top Banner with Dismiss Button -->
+            <div class="card-top-banner">
+                <button type="button" class="btn-dismiss-card" title="Dismiss" onclick="dismissPersonCard({{ freelancer.id }})">
+                    &times;
+                </button>
             </div>
 
-            <!-- Display skills / categories if present -->
-            <div class="skill-section">
-              {% if freelancer.skill_category %}
-              <span class="skill-tag">
-                <i class="fas fa-code"></i> {{ freelancer.skill_category }}
-              </span>
-              {% endif %} {% if freelancer.top_skill %}
-              <span class="skill-tag">
-                <i class="fas fa-star"></i> {{ freelancer.top_skill }}
-              </span>
-              {% else %}
-              <span class="skill-tag">
-                <i class="fas fa-medal"></i> Top Rated
-              </span>
-              {% endif %} {% if freelancer.primary_language %}
-              <span class="skill-tag">
-                <i class="fas fa-language"></i> {{ freelancer.primary_language
-                }}
-              </span>
-              {% endif %}
+            <!-- Overlapping Avatar -->
+            <div class="card-avatar-wrap">
+                <div class="card-avatar">
+                    {% if freelancer.get_profile_picture %}
+                        <img src="{{ freelancer.get_profile_picture }}" alt="{{ freelancer.username }}">
+                    {% elif freelancer.freelancerprofile.profile_picture %}
+                        <img src="{{ freelancer.freelancerprofile.profile_picture.url }}" alt="{{ freelancer.username }}">
+                    {% else %}
+                        <div class="card-avatar-fallback">
+                            {{ freelancer.username|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
 
-            <!-- Rate & experience hints -->
-            <div class="rate-info">
-              {% if freelancer.hourly_rate %}
-              <span
-                ><i class="fas fa-dollar-sign"></i> ${{ freelancer.hourly_rate
-                }}/hr</span
-              >
-              {% else %}
-              <span><i class="fas fa-briefcase"></i> Open to offers</span>
-              {% endif %} {% if freelancer.experience_years %}
-              <span
-                ><i class="fas fa-calendar-alt"></i> {{
-                freelancer.experience_years }} yrs exp</span
-              >
-              {% endif %}
+            <!-- Body Details -->
+            <div class="card-body-content">
+                <div class="card-info-top">
+                    <h3 class="person-name">
+                        <a href="{% url 'freelancer:freelancer_profile' freelancer.id %}">
+                            {{ freelancer.username }}
+                        </a>
+                        <i class="fas fa-check-circle" style="color: var(--li-blue); font-size: 0.85rem;" title="Verified Professional"></i>
+                    </h3>
+
+                    <p class="person-headline">
+                        {% if freelancer.freelancerprofile.title %}
+                            {{ freelancer.freelancerprofile.title }}
+                        {% else %}
+                            Software Engineer & Full Stack Developer
+                        {% endif %}
+                    </p>
+
+                    <div class="person-meta-hint">
+                        {% if freelancer.freelancerprofile.city or freelancer.freelancerprofile.country %}
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ freelancer.freelancerprofile.city|default:"" }}{% if freelancer.freelancerprofile.city and freelancer.freelancerprofile.country %}, {% endif %}{{ freelancer.freelancerprofile.country|default:"" }}</span>
+                        {% else %}
+                            <i class="fas fa-briefcase"></i>
+                            <span>Open to projects</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="card-btn-wrap">
+                    {% if freelancer.id in connected_ids %}
+                        <a href="{% url 'accounts:remove_connection' freelancer.id %}" class="btn-following-pill" title="Click to disconnect">
+                            <i class="fas fa-check"></i> Connected
+                        </a>
+                    {% elif freelancer.id in requested_ids %}
+                        <span class="btn-pending-pill">
+                            <i class="fas fa-clock"></i> Requested
+                        </span>
+                    {% else %}
+                        <a href="{% url 'accounts:send_connection_request' freelancer.id %}" class="btn-connect-pill">
+                            <i class="fas fa-user-plus"></i> Connect
+                        </a>
+                    {% endif %}
+                </div>
             </div>
 
-            <!-- CONNECT / FOLLOW BUTTON (friend-like concept) + View Profile -->
-            <div class="action-buttons">
-              {% if freelancer.id in connected_ids %}
-
-              <a
-                href="{% url 'accounts:remove_connection' freelancer.id %}"
-                class="connect-btn connected">
-                <i class="fas fa-user-check"></i>
-                <span>Requested</span>
-              </a>
-
-              {% else %}
-
-              <a
-                href="{% url 'accounts:send_connection_request' freelancer.id %}"
-                class="connect-btn">
-                <i class="fas fa-user-plus"></i>
-                <span>Follow</span>
-              </a>
-
-              {% endif %}
-              <a
-                href="{% url 'freelancer:freelancer_profile' freelancer.id %}"
-                class="profile-btn">
-                <i class="fas fa-user-astronaut"></i> View full profile
-              </a>
-            </div>
-          </div>
         </div>
         {% empty %}
-        <div class="empty-state-modern">
-          <i class="fas fa-user-slash"></i>
-          <p>No freelancers available at the moment.</p>
-          <p style="font-size: 0.8rem; margin-top: 0.5rem">
-            Check back later or adjust your filters.
-          </p>
+        <div class="empty-people-box">
+            <i class="fas fa-users-slash"></i>
+            <h4 style="color: #0f172a; margin-bottom: 6px;">No freelancers found</h4>
+            <p style="margin: 0; font-size: 0.9rem;">Check back soon for new recommended professionals.</p>
         </div>
         {% endfor %}
-      </div>
-    </main>
+    </div>
 
-    <script>
-      (function () {
-        // Follow/Connect functionality (frontend state + localStorage simulation)
-        // In real implementation you'd send POST to Django endpoint, but this provides full UX with persistence
-        // Key: "followed_freelancers" stores array of IDs
+</div>
 
-        function getFollowedList() {
-          const stored = localStorage.getItem("freelancehub_followed");
-          if (stored) {
-            try {
-              return JSON.parse(stored);
-            } catch (e) {
-              return [];
-            }
-          }
-          return [];
+<script>
+    function dismissPersonCard(id) {
+        const card = document.getElementById('personCard' + id);
+        if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.92)';
+            setTimeout(() => {
+                card.remove();
+            }, 200);
         }
-
-        function saveFollowedList(list) {
-          localStorage.setItem("freelancehub_followed", JSON.stringify(list));
-        }
-
-        function isFollowed(freelancerId) {
-          const list = getFollowedList();
-          return list.includes(freelancerId);
-        }
-
-        function addFollow(freelancerId) {
-          let list = getFollowedList();
-          if (!list.includes(freelancerId)) {
-            list.push(freelancerId);
-            saveFollowedList(list);
-          }
-        }
-
-        function removeFollow(freelancerId) {
-          let list = getFollowedList();
-          const newList = list.filter((id) => id !== freelancerId);
-          saveFollowedList(newList);
-        }
-
-        function updateButtonUI(btn, isFollowing, freelancerName) {
-          const span = btn.querySelector("span");
-          const icon = btn.querySelector("i");
-          if (isFollowing) {
-            btn.classList.add("connected");
-            span.innerText = "Requested";
-            if (icon) icon.className = "fas fa-user-check";
-            btn.setAttribute("data-follow-state", "following");
-          } else {
-            btn.classList.remove("connected");
-            span.innerText = "Follow";
-            if (icon) icon.className = "fas fa-user-plus";
-            btn.setAttribute("data-follow-state", "follow");
-          }
-        }
-
-        function showToast(message, isSuccess = true) {
-          // Remove existing toast if any
-          const oldToast = document.querySelector(".toast-notification");
-          if (oldToast) oldToast.remove();
-
-          const toast = document.createElement("div");
-          toast.className = "toast-notification";
-          toast.innerHTML = `
-        <i class="fas ${isSuccess ? "fa-check-circle" : "fa-info-circle"}" style="color: #a3e635;"></i>
-        <span>${message}</span>
-      `;
-          document.body.appendChild(toast);
-          setTimeout(() => {
-            toast.style.opacity = "0";
-            setTimeout(() => toast.remove(), 300);
-          }, 2500);
-        }
-
-        // Initialize all connect buttons
-        const connectBtns = document.querySelectorAll(".connect-btn");
-
-        connectBtns.forEach((btn) => {
-          const freelancerId = parseInt(btn.getAttribute("data-id"));
-          const freelancerName =
-            btn.getAttribute("data-username") || "Freelancer";
-
-          // Set initial UI based on localStorage
-          const following = isFollowed(freelancerId);
-          updateButtonUI(btn, following, freelancerName);
-
-          // Attach click handler
-          btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const currentState = btn.getAttribute("data-follow-state");
-            const freelancerIdNum = parseInt(btn.getAttribute("data-id"));
-            const name = btn.getAttribute("data-username") || "talent";
-
-            if (currentState === "following") {
-              // Unfollow
-              removeFollow(freelancerIdNum);
-              updateButtonUI(btn, false, name);
-              showToast(`👋 You unfollowed ${name}`, false);
-              console.log(
-                `[Connect] Unfollowed freelancer ID: ${freelancerIdNum}`,
-              );
-            } else {
-              // Follow / Add connection
-              addFollow(freelancerIdNum);
-              updateButtonUI(btn, true, name);
-              showToast(`✨ You are now Requested ${name}!`, true);
-              console.log(
-                `[Connect] Followed freelancer ID: ${freelancerIdNum}`,
-              );
-            }
-
-            // Optional: you could also dispatch an AJAX request to server to persist follow relation
-            // Example: fetch('/api/follow/', { method: 'POST', body: JSON.stringify({ freelancer_id: freelancerIdNum, action: currentState === 'following' ? 'unfollow' : 'follow' }) })
-          });
-        });
-
-        // Additional: keep track of total connections count? (optional)
-        function updateGlobalConnectionHint() {
-          const followedCount = getFollowedList().length;
-          const statsBadge = document.querySelector(".stats-badge");
-          if (statsBadge && followedCount > 0) {
-            // Optionally show followed count near stats, but not intrusive
-            const existingHint = document.querySelector(".follow-hint");
-            if (!existingHint && followedCount > 0) {
-              // subtle addition: we might add small indicator near header
-            }
-          }
-        }
-        updateGlobalConnectionHint();
-
-        console.log(
-          "All Freelancers page ready — Follow/Connect (friend-like) feature active with localStorage.",
-        );
-      })();
-    </script>
-  </body>
-</html>
+    }
+</script>
+{% endblock %}

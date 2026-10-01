@@ -212,26 +212,33 @@ def toggle_comment_reaction(request, comment_id):
 User = get_user_model()
 
 def reports(request):
+    from projects.models import Job
+
     clients = User.objects.filter(role="client").count()
     freelancers = User.objects.filter(role="freelancer").count()
 
-    total_users = User.objects.count()
+    total_users = clients + freelancers
 
-    total_projects = Project.objects.count()
-    open_projects = Project.objects.filter(status="open").count()
-    completed_projects = Project.objects.filter(status="completed").count()
+    total_projects = Job.objects.count()
+    open_projects = Job.objects.filter(status="open", is_active=True).count()
+    completed_projects = Job.objects.filter(status="completed").count()
+
+    if Project.objects.exists():
+        total_projects += Project.objects.count()
+        open_projects += Project.objects.filter(status="open").count()
+        completed_projects += Project.objects.filter(status="completed").count()
 
     # 📊 Projects per month
     projects_by_month = (
-        Project.objects
+        Job.objects
         .annotate(month=TruncMonth('created_at'))
         .values('month')
         .annotate(count=Count('id'))
         .order_by('month')
     )
 
-    months = [p['month'].strftime("%b %Y") for p in projects_by_month]
-    counts = [p['count'] for p in projects_by_month]
+    months = [p['month'].strftime("%b %Y") for p in projects_by_month if p['month']]
+    counts = [p['count'] for p in projects_by_month if p['month']]
 
     context = {
         "clients": clients,

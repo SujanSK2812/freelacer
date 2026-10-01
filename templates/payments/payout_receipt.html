@@ -1,0 +1,301 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payout Receipt - {{ payout.transaction_id }} | Freelancer Portal</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, input, textarea, button, select {
+            font-family: var(--font-family-base);
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            min-height: 100vh;
+            padding: 2.5rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fa, .fas, .fa-solid {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+            font-weight: 900 !important;
+            font-style: normal !important;
+        }
+
+        .far, .fa-regular {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
+        }
+
+        .fab, .fa-brands {
+            font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
+        }
+
+        .receipt-card {
+            background: #ffffff;
+            max-width: 680px;
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .receipt-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            padding: 2rem 2.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .receipt-header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .receipt-header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 3px;
+        }
+
+        .badge-verified {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #4ade80;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .receipt-body {
+            padding: 2.25rem 2.5rem;
+        }
+
+        .amount-banner {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 14px;
+            border: 1px dashed #cbd5e1;
+            margin-bottom: 2rem;
+        }
+
+        .amount-banner .label {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        .amount-banner .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #16a34a;
+            margin-top: 4px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .meta-item .meta-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .meta-item .meta-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .code-box {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #334155;
+            display: inline-block;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 1.5rem 0;
+        }
+
+        .receipt-footer {
+            padding: 1.25rem 2.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-print {
+            background: #0a66c2;
+            color: white;
+            border: none;
+            padding: 0.65rem 1.4rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-print:hover {
+            background: #004182;
+        }
+
+        .btn-close {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .receipt-card {
+                box-shadow: none;
+                border: none;
+            }
+            .receipt-footer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="receipt-card">
+    <div class="receipt-header">
+        <div>
+            <h1>Official Contractor Payout Receipt</h1>
+            <p>Freelancer Portal Disbursement Gateway</p>
+        </div>
+        <div class="badge-verified">
+            <i class="fas fa-check-circle"></i> Paid & Settled
+        </div>
+    </div>
+
+    <div class="receipt-body">
+        <div class="amount-banner">
+            <div class="label">Total Amount Disbursed</div>
+            <div class="value">₹{{ payout.amount|floatformat:2 }}</div>
+        </div>
+
+        <div class="meta-grid">
+            <div class="meta-item">
+                <div class="meta-label">Transaction Reference</div>
+                <div class="meta-val"><span class="code-box">{{ payout.transaction_id }}</span></div>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-label">Payment Date & Time</div>
+                <div class="meta-val">{{ payout.created_at|date:"F d, Y, h:i A" }}</div>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-label">Contractor / Beneficiary</div>
+                <div class="meta-val">
+                    {{ payout.freelancer.get_full_name|default:payout.freelancer.username }}
+                    <span style="font-size: 0.8rem; color: #64748b;">(@{{ payout.freelancer.username }})</span>
+                </div>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-label">Disbursement Channel</div>
+                <div class="meta-val">
+                    {% if payout.payout_method == 'upi' %}
+                        <i class="fas fa-mobile-alt" style="color: #0284c7;"></i> UPI Transfer
+                    {% else %}
+                        <i class="fas fa-university" style="color: #7c3aed;"></i> Bank Account
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="meta-item" style="grid-column: span 2;">
+                <div class="meta-label">Account Details Snapshot</div>
+                <div class="meta-val">{{ payout.recipient_detail }}</div>
+            </div>
+
+            <div class="meta-item" style="grid-column: span 2;">
+                <div class="meta-label">Project / Milestone Reference</div>
+                <div class="meta-val">
+                    {% if payout.job %}
+                        {{ payout.job.title }}
+                    {% else %}
+                        {{ payout.project_title|default:"Independent Contractor Milestone" }}
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if payout.notes %}
+            <div class="meta-item" style="grid-column: span 2;">
+                <div class="meta-label">Admin Notes</div>
+                <div class="meta-val" style="font-weight: 500; font-size: 0.9rem; color: #475569;">
+                    {{ payout.notes }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="font-size: 0.8rem; color: #94a3b8; text-align: center;">
+            This electronic voucher serves as proof of fund disbursement issued by Freelancer Portal.
+        </div>
+    </div>
+
+    <div class="receipt-footer">
+        <a href="javascript:window.close()" class="btn-close">Close Window</a>
+        <button onclick="window.print()" class="btn-print">
+            <i class="fas fa-print"></i> Print / Download PDF
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

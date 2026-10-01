@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f2ef; color: #191919; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; }
+    body { font-family: var(--font-family-base) !important; background: #f3f2ef; color: #191919; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; }
     .dashboard-container { flex: 1; max-width: 800px; margin: 2.5rem auto; padding: 0 1.5rem; width: 100%; }
     .main-card { background: #ffffff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04); border: 1px solid #e0e0e0; overflow: hidden; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
     .main-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09); border-color: #cbd5e1; }
@@ -43,6 +43,134 @@
     .post-job-btn { background: #0a66c2; color: #ffffff; border: none; padding: 0.7rem 1.75rem; border-radius: 24px; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(10, 102, 194, 0.2); }
     .post-job-btn:hover { background: #004182; box-shadow: 0 4px 8px rgba(0, 65, 130, 0.3); transform: translateY(-1px); }
     @media (max-width: 640px) { .dashboard-container { padding: 0 1rem; margin: 1.5rem auto; } .card-header { flex-direction: column; align-items: flex-start; padding: 1.5rem; } .job-form { padding: 1.5rem; } .form-actions { flex-direction: column-reverse; } .form-actions .btn-cancel, .form-actions .post-job-btn { width: 100%; justify-content: center; } }
+
+    /* Upload Status Modal Overlay */
+    .upload-status-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 1.5rem;
+      animation: fadeInModal 0.25s ease-out;
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .upload-status-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      animation: scaleInCard 0.25s ease-out;
+    }
+
+    @keyframes scaleInCard {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .status-icon-wrap {
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .custom-spinner {
+      width: 56px;
+      height: 56px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #0a66c2;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .success-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #dcfce7;
+      color: #16a34a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .error-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .status-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-subtitle {
+      font-size: 0.92rem;
+      color: #64748b;
+      margin-bottom: 1.25rem;
+      line-height: 1.45;
+    }
+
+    .countdown-bar-wrap {
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .countdown-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+      width: 0%;
+      transition: width 3s linear;
+    }
+
+    .status-dismiss-btn {
+      background: #0a66c2;
+      color: white;
+      border: none;
+      padding: 0.65rem 1.4rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -109,7 +237,7 @@
       </div>
 
       <div class="form-actions">
-        <a href="/" class="btn-cancel">Cancel</a>
+        <a href="{% url 'freelancer:freelancer_home' %}?tab=freelancer-posts" class="btn-cancel">Cancel</a>
         <button type="submit" class="post-job-btn">
           <i class="fas fa-paper-plane"></i> Post Talent
         </button>
@@ -172,7 +300,157 @@
       posterFileLabelText.textContent = 'Choose a poster or drag it here';
     });
   }
+
+  // Upload Status Modal and 3-Second Delay Submission Handling
+  const showcaseForm = document.querySelector('.job-form');
+  const postBtn = showcaseForm ? showcaseForm.querySelector('.post-job-btn') : null;
+  const modal = document.getElementById('uploadStatusModal');
+  const spinnerWrap = document.getElementById('uploadSpinnerContainer');
+  const successWrap = document.getElementById('uploadSuccessContainer');
+  const errorWrap = document.getElementById('uploadErrorContainer');
+  const statusTitle = document.getElementById('uploadStatusTitle');
+  const statusSubtitle = document.getElementById('uploadStatusSubtitle');
+  const countdownWrap = document.getElementById('uploadCountdownWrap');
+  const countdownBar = document.getElementById('uploadCountdownBar');
+  const dismissBtn = document.getElementById('uploadDismissBtn');
+
+  let isSubmittingShowcase = false;
+
+  if (showcaseForm) {
+    showcaseForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // 1. Validate the form
+      if (!showcaseForm.checkValidity()) {
+        showcaseForm.reportValidity();
+        return;
+      }
+
+      if (isSubmittingShowcase) return; // Prevent duplicate posts
+      isSubmittingShowcase = true;
+
+      // Disable post button to prevent duplicate clicks
+      if (postBtn) {
+        postBtn.disabled = true;
+        postBtn.style.opacity = '0.6';
+        postBtn.style.cursor = 'not-allowed';
+      }
+
+      // 2. Show loading indicator with message "Uploading your post..."
+      spinnerWrap.style.display = 'flex';
+      successWrap.style.display = 'none';
+      errorWrap.style.display = 'none';
+      countdownWrap.style.display = 'none';
+      dismissBtn.style.display = 'none';
+      countdownBar.style.transition = 'none';
+      countdownBar.style.width = '0%';
+      statusTitle.textContent = "Uploading your post...";
+      statusSubtitle.textContent = "Please wait while we upload your showcase details.";
+      modal.style.display = 'flex';
+
+      // 3. Upload the post immediately (no delay before upload starts)
+      const formData = new FormData(showcaseForm);
+
+      fetch(showcaseForm.action || window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(async (response) => {
+        let data = {};
+        try {
+          data = await response.json();
+        } catch (err) {
+          data = { status: 'error', message: 'Server communication error.' };
+        }
+
+        if (!response.ok || data.status !== 'success') {
+          // Upload failed: Do NOT show success message!
+          spinnerWrap.style.display = 'none';
+          errorWrap.style.display = 'flex';
+          statusTitle.textContent = "Upload Failed";
+          statusSubtitle.textContent = data.message || "An error occurred while uploading your showcase. Please try again.";
+          dismissBtn.style.display = 'inline-block';
+          
+          if (postBtn) {
+            postBtn.disabled = false;
+            postBtn.style.opacity = '1';
+            postBtn.style.cursor = 'pointer';
+          }
+          isSubmittingShowcase = false;
+          return;
+        }
+
+        // 4. Successful upload! Display success message: "Post uploaded successfully!"
+        spinnerWrap.style.display = 'none';
+        successWrap.style.display = 'flex';
+        statusTitle.textContent = "Post uploaded successfully!";
+        statusSubtitle.textContent = "Redirecting to your feed in 3 seconds...";
+        countdownWrap.style.display = 'block';
+
+        // Animate countdown bar over 3 seconds
+        requestAnimationFrame(() => {
+          countdownBar.style.transition = 'width 3s linear';
+          countdownBar.style.width = '100%';
+        });
+
+        // 5. Wait exactly 3 seconds before redirecting to the correct page
+        setTimeout(() => {
+          window.location.href = data.redirect_url || "{% url 'freelancer:freelancer_home' %}?tab=freelancer-posts";
+        }, 3000);
+      })
+      .catch((err) => {
+        spinnerWrap.style.display = 'none';
+        errorWrap.style.display = 'flex';
+        statusTitle.textContent = "Upload Error";
+        statusSubtitle.textContent = "Network error while uploading. Please check your connection and try again.";
+        dismissBtn.style.display = 'inline-block';
+        if (postBtn) {
+          postBtn.disabled = false;
+          postBtn.style.opacity = '1';
+          postBtn.style.cursor = 'pointer';
+        }
+        isSubmittingShowcase = false;
+      });
+    });
+  }
+
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+  }
 </script>
+
+<!-- Upload Status Modal Overlay -->
+<div id="uploadStatusModal" class="upload-status-overlay" style="display: none;">
+  <div class="upload-status-card">
+    <div id="uploadSpinnerContainer" class="status-icon-wrap">
+      <div class="custom-spinner"></div>
+    </div>
+    <div id="uploadSuccessContainer" class="status-icon-wrap" style="display: none;">
+      <div class="success-icon-circle">
+        <i class="fas fa-check"></i>
+      </div>
+    </div>
+    <div id="uploadErrorContainer" class="status-icon-wrap" style="display: none;">
+      <div class="error-icon-circle">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+    </div>
+    
+    <h3 id="uploadStatusTitle" class="status-title">Uploading your post...</h3>
+    <p id="uploadStatusSubtitle" class="status-subtitle">Please wait while we upload your showcase details.</p>
+    
+    <div id="uploadCountdownWrap" class="countdown-bar-wrap" style="display: none;">
+      <div id="uploadCountdownBar" class="countdown-bar-fill"></div>
+    </div>
+    
+    <button type="button" id="uploadDismissBtn" class="status-dismiss-btn" style="display: none;">Close & Try Again</button>
+  </div>
+</div>
 
 </body>
 </html>

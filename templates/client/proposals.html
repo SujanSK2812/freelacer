@@ -275,6 +275,12 @@
                             <span style="color: #64748b; font-size: 0.85rem; display: block;">Estimated Delivery</span>
                             <strong style="color: #0f172a; font-size: 1.1rem;">{{ proposal.delivery_days }} days</strong>
                         </div>
+                        {% if proposal.expected_completion_date or proposal.job.expected_completion_date %}
+                        <div>
+                            <span style="color: #64748b; font-size: 0.85rem; display: block;">Expected Completion</span>
+                            <strong style="color: #047857; font-size: 1.1rem;">{{ proposal.expected_completion_date|default:proposal.job.expected_completion_date|date:"M d, Y" }}</strong>
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <div class="proposal-body">

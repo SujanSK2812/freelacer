@@ -28,10 +28,18 @@ def role_required(allowed_roles, redirect_url=None):
             user_role = getattr(request.user, 'role', None)
 
             if user_role not in allowed_roles:
-                messages.error(request, "Access denied. You do not have permission to access that page.")
+                view_name = getattr(view_func, '__name__', '')
                 if user_role == 'freelancer':
+                    if view_name == 'client_home':
+                        return redirect('freelancer:freelancer_home')
+                    elif view_name in ['client_proposals', 'proposals']:
+                        return redirect('freelancer:my_proposals')
                     return redirect('freelancer:freelancer_dashboard')
                 elif user_role == 'client':
+                    if view_name == 'freelancer_home':
+                        return redirect('client:client_home')
+                    elif view_name in ['my_proposals', 'proposals']:
+                        return redirect('client:client_proposals')
                     return redirect('client:client_dashboard')
                 return redirect('home')
 
@@ -57,8 +65,7 @@ def admin_required(view_func):
         if not request.user.is_authenticated:
             login_url = getattr(settings, 'LOGIN_URL', 'accounts:login')
             return redirect(f"{login_url}?next={request.path}")
-        if not request.user.is_superuser:
-            messages.error(request, "Access denied. Administrator privileges required.")
+        if not request.user.is_superuser and getattr(request.user, 'role', '') != 'admin':
             user_role = getattr(request.user, 'role', None)
             if user_role == 'freelancer':
                 return redirect('freelancer:freelancer_dashboard')

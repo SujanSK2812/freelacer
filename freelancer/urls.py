@@ -7,6 +7,7 @@ app_name = "freelancer"
 urlpatterns = [
     path("home/", views.freelancer_home, name="freelancer_home"),
     path("dashboard/", views.freelancer_dashboard, name="freelancer_dashboard"),
+    path("dashboard/", views.freelancer_dashboard, name="dashboard"),
     path('search/', views.search_results, name='search_results'),
     path('create_profile/', views.create_profile, name='create_profile'),
     path('my-proposals/', views.my_proposals, name='my_proposals'),
@@ -16,4 +17,6 @@ urlpatterns = [
     path('connections/',views.freelancer_connections,name='freelancer_connections'),
     path('create-showcase/', views.create_showcase, name='create_showcase'),
     path('toggle-availability/', views.toggle_availability, name='toggle_availability'),
+    path('active-contracts/', views.active_contracts, name='active_contracts'),
+    path('update-banner/', views.update_freelancer_banner, name='update_freelancer_banner'),
 ]

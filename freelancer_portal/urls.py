@@ -20,12 +20,16 @@ from .views import home
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+import payments.views as payments_views
 
 import os
 from django.urls import re_path
 from django.views.static import serve
 
+from django.views.generic.base import RedirectView
+
 urlpatterns = [
+    path('favicon.ico', RedirectView.as_view(url='/static/images/logo.png', permanent=True)),
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('accounts/', include('accounts.urls')),
@@ -42,6 +46,10 @@ urlpatterns = [
     path('messages/', include('messages_app.urls')),
     path('proposals/', include('proposals.urls')),
     path('payments/', include('payments.urls')),
+    path('contractor-payouts/', payments_views.admin_contractor_payout_view, name='contractor_payouts'),
+    path('contractor-payouts/api/freelancer/<int:freelancer_id>/', payments_views.freelancer_payout_info_api, name='freelancer_payout_info_api'),
+    path('contractor-payouts/receipt/<str:transaction_id>/', payments_views.contractor_payout_receipt_view, name='contractor_payout_receipt'),
+    path('contractor-payouts/delete/<int:payout_id>/', payments_views.delete_contractor_payout, name='delete_contractor_payout_root'),
     re_path(r'^uploads/(?P<path>.*)$', serve, {'document_root': settings.UPLOADS_ROOT}),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': os.path.join(settings.BASE_DIR, 'static')}),

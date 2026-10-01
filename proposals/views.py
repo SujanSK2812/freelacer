@@ -7,10 +7,21 @@ from .models import Proposal
 from projects.models import Job
 
 
-@freelancer_required
+@login_required
 def submit_proposal(request, job_id):
+    if getattr(request.user, 'role', '') == 'client':
+        messages.info(request, "As a client, you can manage this job posting and review received proposals.")
+        return redirect('client:job_detail', job_id=job_id)
+
+    if getattr(request.user, 'role', '') != 'freelancer' and not request.user.is_superuser:
+        return redirect('home')
 
     job = get_object_or_404(Job, id=job_id)
+
+    # Check if job is inactive or completed/expired
+    if not job.is_active or job.status in ['completed', 'expired']:
+        messages.error(request, "This project has been completed or is inactive, and cannot receive new bids.")
+        return redirect("freelancer:freelancer_dashboard")
 
     # Check if job already has an accepted proposal (already awarded)
     if Proposal.objects.filter(job=job, status="accepted").exists():
@@ -54,6 +65,11 @@ def submit_proposal(request, job_id):
 
         return redirect("freelancer:my_proposals")
 
+    if hasattr(job, 'skills') and job.skills:
+        job.skills_list = [s.strip() for s in job.skills.split(",") if s.strip()]
+    else:
+        job.skills_list = []
+
     return render(
         request,
         "proposals/submit_proposal.html",
@@ -61,8 +77,13 @@ def submit_proposal(request, job_id):
     )
 
 
-@freelancer_required
+@login_required
 def my_proposals(request):
+    if getattr(request.user, 'role', '') == 'client':
+        return redirect('client:client_proposals')
+
+    if getattr(request.user, 'role', '') != 'freelancer' and not request.user.is_superuser:
+        return redirect('home')
 
     proposals = Proposal.objects.filter(
         freelancer=request.user

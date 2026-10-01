@@ -16,7 +16,7 @@
 
         body {
             background-color: #f9fafb;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            font-family: var(--font-family-base) !important;
             color: #001e00;
             line-height: 1.5;
         }
@@ -846,13 +846,14 @@
             <div class="metric-label">Total Earnings</div>
         </a>
 
-        <div class="metric-card">
+        <a href="{% url 'freelancer:active_contracts' %}" class="metric-card" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
             <div class="metric-header">
                 <div class="metric-icon-box" style="background:#e8f4fd; color:#0071dc;"><i class="fas fa-file-signature"></i></div>
+                <span class="metric-trend" style="color: #0a66c2;">View Contracts →</span>
             </div>
             <div class="metric-value">{{ accepted_proposals_count|default:"0" }}</div>
             <div class="metric-label">Active Contracts</div>
-        </div>
+        </a>
 
         <div class="metric-card">
             <div class="metric-header">
@@ -881,10 +882,13 @@
         <!-- LEFT WORKSPACE -->
         <div class="workspace-main">
             <!-- TABBED WORKSPACE CARD -->
-            <div class="card-container">
+            <div class="card-container" id="active-contracts">
                 <div class="tabs-header-bar">
                     <button class="tab-btn active" onclick="switchTab('contracts-tab', this)">
-                        <i class="fas fa-briefcase"></i> Active Contracts ({{ accepted_proposals_count|default:"0" }})
+                        <i class="fas fa-briefcase"></i> Active Contracts ({{ active_contracts_count|default:"0" }})
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('completed-contracts-tab', this)">
+                        <i class="fas fa-check-double"></i> Completed Contracts ({{ completed_contracts_count|default:"0" }})
                     </button>
                     <button class="tab-btn" onclick="switchTab('proposals-tab', this)">
                         <i class="fas fa-file-alt"></i> My Proposals ({{ proposals_count|default:"0" }})
@@ -898,20 +902,26 @@
                 <div id="contracts-tab" class="tab-content">
                     <div class="card-title-row">
                         <h3>Contracts in Progress</h3>
-                        <a href="{% url 'projects:project_list' %}" class="view-all-link">All Contracts →</a>
+                        <a href="{% url 'freelancer:active_contracts' %}" class="view-all-link">All Contracts →</a>
                     </div>
 
-                    {% for proposal in accepted_proposals %}
+                    {% for proposal in active_contracts %}
                     <div class="contract-item">
                         <div class="contract-top">
                             <a href="{% url 'client:job_detail' proposal.job.id %}" class="contract-title">{{ proposal.job.title }}</a>
-                            <span class="status-badge">Active Contract</span>
+                            <span class="status-badge" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;">
+                                <i class="fas fa-play-circle" style="font-size: 11px;"></i> In Progress
+                            </span>
                         </div>
-                        <div class="contract-client-info">
-                            <i class="fas fa-user"></i> Client: {{ proposal.job.client.username }} • Delivery Target: {{ proposal.delivery_days }} days
+                        <div class="contract-client-info" style="display:flex; flex-wrap:wrap; gap:14px; margin-top:6px; font-size:13px;">
+                            <span><i class="fas fa-user"></i> Client: <strong>{{ proposal.job.client.username }}</strong></span>
+                            <span><i class="fas fa-stopwatch" style="color: #0a66c2;"></i> Delivery Target: <strong>{{ proposal.delivery_days }} days</strong></span>
+                            {% if proposal.expected_completion_date or proposal.job.expected_completion_date %}
+                            <span><i class="fas fa-calendar-alt" style="color: #d97706;"></i> Expected Completion: <strong>{{ proposal.expected_completion_date|default:proposal.job.expected_completion_date|date:"M d, Y" }}</strong></span>
+                            {% endif %}
                         </div>
                         <div class="contract-footer">
-                            <span class="contract-budget">Agreed Bid: ${{ proposal.bid_amount }}</span>
+                            <span class="contract-budget">Agreed Bid: ₹{{ proposal.bid_amount }}</span>
                             <div class="contract-actions">
                                 <a href="{% url 'chat_detail' proposal.job.client.id %}" class="btn-sm-secondary"><i class="fas fa-comment"></i> Message Client</a>
                             </div>
@@ -921,6 +931,43 @@
                     <div class="empty-box">
                         <i class="fas fa-file-contract"></i>
                         <p style="font-size: 14px; margin-top: 8px;">No active contracts in progress. Browse open jobs and submit proposals to get hired!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- TAB: COMPLETED CONTRACTS -->
+                <div id="completed-contracts-tab" class="tab-content" style="display: none;">
+                    <div class="card-title-row">
+                        <h3>Completed & Inactive Contracts</h3>
+                        <a href="{% url 'freelancer:active_contracts' %}" class="view-all-link">All Contracts →</a>
+                    </div>
+
+                    {% for proposal in completed_contracts %}
+                    <div class="contract-item" style="border-left: 3px solid #10b981; background: #fafafa;">
+                        <div class="contract-top">
+                            <a href="{% url 'client:job_detail' proposal.job.id %}" class="contract-title">{{ proposal.job.title }}</a>
+                            <span class="status-badge" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;">
+                                <i class="fas fa-check-circle"></i> Completed
+                            </span>
+                        </div>
+                        <div class="contract-client-info" style="display:flex; flex-wrap:wrap; gap:14px; margin-top:6px; font-size:13px;">
+                            <span><i class="fas fa-user"></i> Client: <strong>{{ proposal.job.client.username }}</strong></span>
+                            <span><i class="fas fa-stopwatch" style="color: #0a66c2;"></i> Delivery Period: <strong>{{ proposal.delivery_days }} days</strong></span>
+                            {% if proposal.expected_completion_date or proposal.job.expected_completion_date %}
+                            <span><i class="fas fa-calendar-check" style="color: #059669;"></i> Completed Date: <strong>{{ proposal.expected_completion_date|default:proposal.job.expected_completion_date|date:"M d, Y" }}</strong></span>
+                            {% endif %}
+                        </div>
+                        <div class="contract-footer">
+                            <span class="contract-budget">Agreed Bid: ₹{{ proposal.bid_amount }}</span>
+                            <div class="contract-actions">
+                                <a href="{% url 'chat_detail' proposal.job.client.id %}" class="btn-sm-secondary"><i class="fas fa-comment"></i> Message Client</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-box">
+                        <i class="fas fa-check-circle"></i>
+                        <p style="font-size: 14px; margin-top: 8px;">No completed contracts yet.</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -1093,9 +1140,29 @@
         document.querySelectorAll('.tab-btn').forEach(b => {
             b.classList.remove('active');
         });
-        document.getElementById(tabId).style.display = 'block';
-        btn.classList.add('active');
+        const target = document.getElementById(tabId);
+        if (target) target.style.display = 'block';
+        if (btn) {
+            btn.classList.add('active');
+        }
     }
+
+    function handleHashTab() {
+        const hash = window.location.hash;
+        if (hash === '#active-contracts' || hash === '#contracts-tab') {
+            const btn = document.querySelector(".tab-btn[onclick*='contracts-tab']");
+            switchTab('contracts-tab', btn);
+            const container = document.getElementById('active-contracts');
+            if (container) {
+                setTimeout(() => {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+    }
+
+    window.addEventListener('hashchange', handleHashTab);
+    document.addEventListener('DOMContentLoaded', handleHashTab);
 </script>
 
 {% include 'includes/footer.html' %}

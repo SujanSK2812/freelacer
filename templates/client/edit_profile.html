@@ -64,10 +64,15 @@
         background: #004182;
     }
     .current-image-preview {
-        margin-top: 1rem;
+        margin-top: 0.75rem;
         display: flex;
         align-items: center;
         gap: 1rem;
+        min-height: 85px;
+        background: #f8fafc;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
     }
     
     @media (max-width: 768px) {
@@ -91,7 +96,7 @@
         {% csrf_token %}
         
         <div class="form-grid">
-            <div class="form-group full-width">
+            <div class="form-group">
                 <label>Profile Picture</label>
                 <input type="file" name="profile_picture" class="form-control" accept="image/*">
                 
@@ -108,13 +113,13 @@
                 </div>
             </div>
 
-            <div class="form-group full-width">
+            <div class="form-group">
                 <label>Profile Banner Image</label>
                 <input type="file" name="banner_image" class="form-control" accept="image/*">
                 
                 <div class="current-image-preview">
                     {% if profile.banner_image %}
-                        <img src="{{ profile.banner_image.url }}" alt="Current Banner" style="width: 160px; height: 60px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <img src="{{ profile.banner_image.url }}" alt="Current Banner" style="width: 160px; height: 70px; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <div>
                             <span style="color: #64748b; font-size: 0.9rem; display: block;">Current Banner</span>
                             <label style="display: flex; align-items: center; gap: 0.4rem; color: #dc2626; font-size: 0.85rem; cursor: pointer; margin-top: 0.3rem;">
@@ -122,7 +127,7 @@
                             </label>
                         </div>
                     {% else %}
-                        <div style="width: 160px; height: 60px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; border: 1px dashed #cbd5e1;">
+                        <div style="width: 160px; height: 70px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; border: 1px dashed #cbd5e1;">
                             <i class="fas fa-panorama" style="font-size: 1.5rem;"></i>
                         </div>
                         <span style="color: #94a3b8; font-size: 0.9rem;">No custom banner (default gradient active)</span>

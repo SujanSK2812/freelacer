@@ -60,9 +60,15 @@
         </div>
         <h2>Login</h2>
 
-        {% if messages %}
-            {% for message in messages %}
+        {% if auth_messages %}
+            {% for message in auth_messages %}
                 <p class="{% if message.tags %}{{ message.tags }}{% else %}error{% endif %}">{{ message }}</p>
+            {% endfor %}
+        {% elif messages %}
+            {% for message in messages %}
+                {% if 'account' in message.message|lower or 'login' in message.message|lower or 'log in' in message.message|lower or 'password' in message.message|lower or 'verify' in message.message|lower or 'verified' in message.message|lower or 'otp' in message.message|lower or 'activate' in message.message|lower %}
+                    <p class="{% if message.tags %}{{ message.tags }}{% else %}error{% endif %}">{{ message }}</p>
+                {% endif %}
             {% endfor %}
         {% endif %}
 

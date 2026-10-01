@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.urls import reverse
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import timedelta
 from accounts.decorators import client_required
 from projects.models import JobPost, Job
 from django.contrib.auth import get_user_model
@@ -15,8 +19,12 @@ def client_home(request):
     if request.user.is_superuser:
         return redirect("accounts:admin_home")
 
-    # Client Job Postings (Work available)
-    client_jobs = Job.objects.select_related('client').filter(client__role='client').prefetch_related('comments__user', 'reactions').order_by("-created_at")
+    # Client Job Postings (Work available - open and active only)
+    client_jobs = Job.objects.select_related('client').filter(
+        client__role='client',
+        is_active=True,
+        status='open'
+    ).prefetch_related('comments__user', 'reactions').order_by("-created_at")
     for job in client_jobs:
         prof = getattr(job.client, 'clientprofile', None) or getattr(job.client, 'freelancerprofile', None)
         job.author_dp = prof.profile_picture.url if (prof and getattr(prof, 'profile_picture', None)) else None
@@ -60,22 +68,29 @@ def client_home(request):
 
     freelancers = User.objects.filter(role="freelancer")
 
-    from django.db.models import Count
+    from collections import Counter
     from freelancer.models import FreelancerProfile
+    from proposals.models import Proposal
     
-    top_categories = (
-        FreelancerProfile.objects.exclude(title__isnull=True)
-        .exclude(title__exact="")
-        .values("title")
-        .annotate(count=Count("title"))
-        .order_by("-count")[:5]
-    )
+    skill_counts = Counter()
+    for prof in FreelancerProfile.objects.exclude(skills__isnull=True).exclude(skills__exact=""):
+        for skill in prof.get_skills_list():
+            skill_counts[skill] += 1
+            
+    top_categories = [{"title": skill, "count": count} for skill, count in skill_counts.most_common(5)]
+
+    total_freelancers_count = User.objects.filter(role="freelancer").count()
+    total_jobs_count = client_jobs.count()
+    total_proposals_count = Proposal.objects.filter(job__client=request.user).count()
 
     return render(request, "client/home.html", {
         "freelancers": freelancers,
         "jobs": client_jobs,
         "freelancer_posts": freelancer_posts,
         "top_categories": top_categories,
+        "total_freelancers_count": total_freelancers_count,
+        "total_jobs_count": total_jobs_count,
+        "total_proposals_count": total_proposals_count,
     })
 
 
@@ -83,44 +98,101 @@ from proposals.models import Proposal
 
 @client_required
 def client_dashboard(request):
+    from projects.services import auto_complete_expired_projects
+    auto_complete_expired_projects()
+
     client_profile = getattr(request.user, 'clientprofile', None)
-    client_jobs = Job.objects.filter(client=request.user).order_by('-created_at')
+    all_client_jobs = list(Job.objects.filter(client=request.user).prefetch_related('job_proposals__freelancer').order_by('-created_at'))
     
-    active_jobs_count = client_jobs.count()
     proposals_count = Proposal.objects.filter(job__client=request.user).count()
+    
+    # Hire count is the number of proposals accepted by this client
+    hired_count = Proposal.objects.filter(job__client=request.user, status='accepted').count()
+
+    from accounts.models import Testimonial
+    from django.db.models import Avg
+    avg_rating = Testimonial.objects.filter(user=request.user).aggregate(Avg('rating'))['rating__avg']
+    client_rating = f"{avg_rating:.1f}" if avg_rating else "0.0"
     
     recommended_freelancers = User.objects.filter(role="freelancer")[:5]
     
-    for job in client_jobs:
-        job.proposal_count = Proposal.objects.filter(job=job).count()
-        if Proposal.objects.filter(job=job, status='accepted').exists():
-            job.status = 'In Progress'
+    active_jobs = []
+    completed_jobs = []
+
+    for job in all_client_jobs:
+        job.proposal_count = job.job_proposals.count()
+        accepted_prop = job.accepted_proposal
+        job.accepted_bid = accepted_prop
+        
+        if job.status == 'completed':
+            job.status_label = 'Completed'
+            job.status_class = 'status-completed'
+            completed_jobs.append(job)
+        elif job.status == 'expired':
+            job.status_label = 'Expired'
+            job.status_class = 'status-expired'
+            completed_jobs.append(job)
+        elif not job.is_active:
+            job.status_label = 'Inactive'
+            job.status_class = 'status-expired'
+            completed_jobs.append(job)
+        elif job.status == 'in_progress':
+            job.status_label = 'In Progress'
             job.status_class = 'status-in-progress'
+            active_jobs.append(job)
         else:
-            job.status = 'Open'
+            job.status_label = 'Open'
             job.status_class = 'status-open'
+            active_jobs.append(job)
+
+    active_jobs_count = len(active_jobs)
+    completed_jobs_count = len(completed_jobs)
 
     recent_activities = Proposal.objects.filter(job__client=request.user).order_by('-created_at')[:5]
 
+    import random
+    banner_images = [
+        "images/banners/freelance_banner_1.jpg",
+        "images/banners/freelance_banner_2.jpg",
+        "images/banners/freelance_banner_3.jpg",
+        "images/banners/freelance_banner_4.jpg",
+    ]
+    random_banner = random.choice(banner_images)
+
     return render(request, "client/dashboard.html", {
         "client_profile": client_profile,
-        "client_jobs": client_jobs,
+        "client_jobs": all_client_jobs,
+        "active_jobs": active_jobs,
+        "completed_jobs": completed_jobs,
         "active_jobs_count": active_jobs_count,
+        "completed_jobs_count": completed_jobs_count,
         "proposals_count": proposals_count,
+        "hired_count": hired_count,
+        "client_rating": client_rating,
         "recommended_freelancers": recommended_freelancers,
         "recent_activities": recent_activities,
+        "random_banner": random_banner,
     })
 
 @client_required
 def create_job(request):
     if request.method == "POST":
-        title = request.POST.get("title")
-        description = request.POST.get("description")
+        title = (request.POST.get("title") or "").strip()
+        description = (request.POST.get("description") or "").strip()
         budget = request.POST.get("budget", "5000")
         skills = request.POST.get("skills", "Python, Web Development")
         experience_level = request.POST.get("experience_level", "Intermediate")
         image = request.FILES.get("image")
         poster = request.FILES.get("poster")
+
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.headers.get('Accept') == 'application/json'
+
+        if not title or not description:
+            err_msg = "Please provide both a job title and description."
+            if is_ajax:
+                return JsonResponse({"status": "error", "message": err_msg}, status=400)
+            messages.error(request, err_msg)
+            return render(request, "client/create_job.html", {"is_client": True})
 
         try:
             if image:
@@ -128,37 +200,69 @@ def create_job(request):
             if poster:
                 validate_uploaded_image(poster)
         except ValidationError as e:
-            messages.error(request, e.message if hasattr(e, 'message') else str(e))
+            err_msg = e.message if hasattr(e, 'message') else str(e)
+            if is_ajax:
+                return JsonResponse({"status": "error", "message": err_msg}, status=400)
+            messages.error(request, err_msg)
             return render(request, "client/create_job.html", {"is_client": True})
 
-        Job.objects.create(
+        # Deduplication check: prevent duplicate posts if user clicks Submit multiple times
+        recent_duplicate = Job.objects.filter(
             client=request.user,
             title=title,
-            description=description,
-            budget=budget,
-            skills=skills,
-            experience_level=experience_level,
-            image=image,
-            poster=poster
-        )
-        messages.success(request, "Work posted successfully! Freelancers can now view it and submit proposals.")
-        return redirect("/")
+            created_at__gte=timezone.now() - timedelta(seconds=5)
+        ).first()
+
+        if not recent_duplicate:
+            Job.objects.create(
+                client=request.user,
+                title=title,
+                description=description,
+                budget=budget,
+                skills=skills,
+                experience_level=experience_level,
+                image=image,
+                poster=poster
+            )
+
+        redirect_url = reverse("client:client_home")
+
+        if is_ajax:
+            return JsonResponse({
+                "status": "success",
+                "message": "Post uploaded successfully!",
+                "redirect_url": redirect_url
+            })
+
+        messages.success(request, "Post uploaded successfully!")
+        return redirect(redirect_url)
 
     return render(request, "client/create_job.html", {"is_client": True})
 
 
 @client_required
 def all_freelancers(request):
+    from accounts.models import Connection, ConnectionRequest
+    freelancers = User.objects.filter(role="freelancer").select_related('freelancerprofile')
 
-    freelancers = User.objects.filter(role="freelancer")
+    requested_ids = list(ConnectionRequest.objects.filter(
+        sender=request.user
+    ).values_list("receiver_id", flat=True))
+
+    connected_ids = list(Connection.objects.filter(
+        sender=request.user
+    ).values_list("receiver_id", flat=True))
 
     return render(request, "client/all_freelancers.html", {
-        "freelancers": freelancers
+        "freelancers": freelancers,
+        "requested_ids": requested_ids,
+        "connected_ids": connected_ids,
     })
 
 
 @login_required
 def job_detail(request, job_id):
+    from proposals.models import Proposal
     job = Job.objects.filter(id=job_id).first()
     if not job:
         job = get_object_or_404(JobPost, id=job_id)
@@ -169,8 +273,36 @@ def job_detail(request, job_id):
     if hasattr(job, 'skills') and not hasattr(job, 'category'):
         setattr(job, 'category', job.skills)
 
+    # Parse skills
+    skills_list = []
+    if hasattr(job, 'skills') and job.skills:
+        skills_list = [s.strip() for s in job.skills.split(',') if s.strip()]
+
+    # Proposals count
+    proposals_count = 0
+    if hasattr(job, 'job_proposals'):
+        proposals_count = job.job_proposals.count()
+
+    # Check if current user has applied
+    has_applied = False
+    if request.user.is_authenticated and getattr(request.user, 'role', '') == 'freelancer':
+        has_applied = Proposal.objects.filter(job=job, freelancer=request.user).exists()
+
+    # Client information & stats
+    client_profile = getattr(job.client, 'clientprofile', None)
+    client_jobs_count = Job.objects.filter(client=job.client).count()
+    client_hires_count = Proposal.objects.filter(job__client=job.client, status='accepted').count()
+    is_owner = bool(request.user.is_authenticated and request.user.id == job.client.id)
+
     return render(request, "client/job_detail.html", {
-        "job": job
+        "job": job,
+        "skills_list": skills_list,
+        "proposals_count": proposals_count,
+        "has_applied": has_applied,
+        "client_profile": client_profile,
+        "client_jobs_count": client_jobs_count,
+        "client_hires_count": client_hires_count,
+        "is_owner": is_owner,
     })
 @client_required
 def client_profile(request):
@@ -295,8 +427,14 @@ def delete_job(request, job_id):
         messages.success(request, "Job deleted successfully.")
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or 'client:client_profile'
     return redirect(next_url)
-@client_required
+@login_required
 def client_proposals(request):
+    if getattr(request.user, 'role', '') == 'freelancer':
+        return redirect('freelancer:my_proposals')
+
+    if getattr(request.user, 'role', '') != 'client' and not request.user.is_superuser:
+        return redirect('home')
+
     from proposals.models import Proposal
     from django.db.models import Q
     
@@ -357,8 +495,18 @@ def accept_proposal(request, proposal_id):
             return redirect('client:client_proposals')
 
         if proposal.status == 'pending':
+            now = timezone.now()
             proposal.status = 'accepted'
+            proposal.accepted_at = now
             proposal.save()
+
+            # Update Job status and calculate expected completion date from accepted bid's delivery days
+            job = proposal.job
+            job.status = 'in_progress'
+            job.is_active = True
+            job.accepted_at = now
+            job.expected_completion_date = now + timedelta(days=proposal.delivery_days)
+            job.save(update_fields=['status', 'is_active', 'accepted_at', 'expected_completion_date'])
 
             # Notify the accepted freelancer
             Notification.objects.create(

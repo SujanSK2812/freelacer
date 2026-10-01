@@ -28,7 +28,7 @@ class Project(models.Model):
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from freelancer_portal.upload_utils import SafeImageField, freelancer_profile_path
+from freelancer_portal.upload_utils import SafeImageField, freelancer_profile_path, freelancer_banner_path
 
 User = get_user_model()
 
@@ -37,6 +37,7 @@ class FreelancerProfile(models.Model):
 
     # BASIC INFO
     profile_picture = SafeImageField(upload_to=freelancer_profile_path, blank=True, null=True)
+    banner_image = SafeImageField(upload_to=freelancer_banner_path, blank=True, null=True)
     title = models.CharField(max_length=150, blank=True)
     bio = models.TextField(blank=True)
 

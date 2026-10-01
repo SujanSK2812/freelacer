@@ -1,129 +1,275 @@
+/* ==========================================================================
+   STANDARDIZED CENTRALIZED TYPOGRAPHY SYSTEM - FREELANCER PORTAL
+   ========================================================================== */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* 1. Global Clean Professional Font Family */
+    --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-primary: var(--font-family-base);
+
+    /* 2. Standardized Font Sizes & Hierarchy */
+    --font-size-h1: 30px;          /* 28–32px: Main page headings */
+    --font-size-h2: 24px;          /* 22–24px: Section headings */
+    --font-size-h3: 19px;          /* 18–20px: Subheadings */
+    --font-size-h4: 16px;          /* Card titles / sub-sections */
+    --font-size-body: 15px;        /* 15–16px: Body text */
+    --font-size-nav: 15px;         /* 14–16px: Navigation links */
+    --font-size-label: 14px;       /* 14–16px: Form labels */
+    --font-size-btn: 15px;         /* 14–16px: Buttons */
+    --font-size-input: 15px;       /* 14–16px: Inputs & Selects */
+    --font-size-table: 14px;       /* 14–15px: Table content */
+    --font-size-table-th: 13px;    /* Table headers */
+    --font-size-small: 13px;       /* 12–14px: Small descriptions, captions, badges */
+    --font-size-footer: 13px;      /* 12–14px: Footer links and text */
+    --font-size-footer-head: 15px; /* Footer section headings */
+
+    /* Line Heights */
+    --line-height-tight: 1.25;
+    --line-height-heading: 1.3;
+    --line-height-base: 1.55;
+    --line-height-relaxed: 1.65;
+
+    /* Font Weights */
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-heavy: 800;
+
+    /* Common Layout & Header Tokens */
+    --header-max-width: 1400px;
+    --header-padding: 0 32px;
+    --header-height: 64px;
 }
 
-* {
+/* ==========================================================================
+   RESPONSIVE TYPOGRAPHY TOKENS
+   ========================================================================== */
+@media (max-width: 768px) {
+    :root {
+        --font-size-h1: 26px;
+        --font-size-h2: 22px;
+        --font-size-h3: 18px;
+        --font-size-body: 15px;
+        --font-size-nav: 14px;
+        --font-size-label: 14px;
+        --font-size-btn: 14px;
+        --font-size-table: 13px;
+        --font-size-small: 12px;
+        --font-size-footer: 12px;
+        --header-padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-h1: 24px;
+        --font-size-h2: 20px;
+        --font-size-h3: 17px;
+    }
+}
+
+/* ==========================================================================
+   GLOBAL ELEMENT STYLES & RESET
+   ========================================================================== */
+*, *::before, *::after {
     box-sizing: border-box;
 }
 
-body, button, input, select, textarea {
-    font-family: var(--font-primary) !important;
+html, body {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-base);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    max-width: 100vw;
 }
 
-/* ---- RESPONSIVE TYPOGRAPHY SYSTEM ---- */
-
-/* Main Headings */
-h1, .h1, .hero-title {
-    font-size: clamp(2.25rem, 5vw, 4rem) !important; /* 36px - 64px */
-    line-height: 1.2 !important;
+/* Headings */
+h1, .h1, .page-title, .hero-title, .main-heading {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-h1) !important;
+    line-height: var(--line-height-tight) !important;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.02em;
 }
 
-h2, .h2, .section-title {
-    font-size: clamp(1.5rem, 3vw, 2.25rem) !important; /* 24px - 36px */
-    line-height: 1.25 !important;
+h2, .h2, .section-title, .section-heading {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-h2) !important;
+    line-height: var(--line-height-heading) !important;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.015em;
 }
 
-h3, .h3, .card-title {
-    font-size: clamp(1.25rem, 2vw, 1.625rem) !important; /* 20px - 26px */
-    line-height: 1.3 !important;
+h3, .h3, .card-title, .subheading {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-h3) !important;
+    line-height: var(--line-height-heading) !important;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.01em;
 }
 
-/* Content & Body */
-body, p, .body-text, span, div, li {
-    font-size: 16px;
-    line-height: 1.5;
+h4, .h4, .subcard-title {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-h4) !important;
+    line-height: var(--line-height-heading) !important;
+    font-weight: var(--font-weight-semibold);
 }
 
-.large-text, .description {
-    font-size: clamp(1.0625rem, 1.5vw, 1.125rem) !important; /* 17px - 18px */
+h5, .h5, h6, .h6 {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-body) !important;
+    line-height: var(--line-height-heading) !important;
+    font-weight: var(--font-weight-semibold);
 }
 
-small, .small-text, .metadata, .job-spec-meta span, .post-time-text {
-    font-size: clamp(0.8125rem, 1vw, 0.875rem) !important; /* 13px - 14px */
+/* Paragraphs & Text Content */
+p, .body-text {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-base);
 }
 
-/* Navigation & Buttons */
-.nav-link, .nav-dropdown-item a {
-    font-size: clamp(0.9375rem, 1vw, 1rem) !important; /* 15px - 16px */
+span, div, li, td, th, dt, dd {
+    font-family: var(--font-family-base);
 }
 
-button, .btn, .btn-primary, .upwork-btn-primary, .btn-sm-primary, .btn-apply-green, .social-action-btn, .post-stat-btn {
-    font-size: clamp(0.9375rem, 1vw, 1rem) !important; /* 15px - 16px */
+.large-text, .lead-text {
+    font-size: 16px !important;
+    line-height: var(--line-height-relaxed);
+}
+
+/* Small text & descriptions */
+small, .small-text, .metadata, .job-spec-meta span, .post-time-text, .text-muted, .meta-text {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-small) !important;
+    line-height: var(--line-height-sm);
+}
+
+/* ==========================================================================
+   NAVIGATION & LINKS
+   ========================================================================== */
+.sidebar-link, .nav-sub-link, .menu-link {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-nav) !important;
+}
+
+/* ==========================================================================
+   BUTTONS & ACTION ELEMENTS
+   ========================================================================== */
+button, .btn, .btn-primary, .btn-secondary, .btn-sm-primary, 
+.btn-apply-green, .social-action-btn, .post-stat-btn, .action-btn {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-btn) !important;
+    font-weight: var(--font-weight-semibold);
 }
 
 .post-stat-btn {
     transition: background-color 0.15s ease, color 0.15s ease;
     user-select: none;
 }
+
 .post-stat-btn:hover {
     background-color: #f1f5f9 !important;
 }
 
-/* Forms & Inputs */
+/* ==========================================================================
+   FORMS, LABELS & INPUTS
+   ========================================================================== */
 input, textarea, select {
-    font-size: clamp(0.9375rem, 1vw, 1rem) !important; /* 15px - 16px */
-}
-label, .form-label {
-    font-size: clamp(0.8125rem, 1vw, 0.875rem) !important; /* 13px - 14px */
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-input) !important;
 }
 
-/* Notifications */
-.notif-text {
-    font-size: clamp(0.875rem, 1.5vw, 1rem) !important; /* 14px - 16px */
-}
-.notif-time {
-    font-size: clamp(0.75rem, 1vw, 0.8125rem) !important; /* 12px - 13px */
+select {
+    color-scheme: light !important;
+    background-color: #ffffff;
+    color: #0f172a;
 }
 
-/* Footer */
+select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    padding: 8px 12px;
+}
+
+label, .form-label, .field-label {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-label) !important;
+    font-weight: var(--font-weight-medium);
+}
+
+/* ==========================================================================
+   TABLES
+   ========================================================================== */
+table {
+    font-family: var(--font-family-base) !important;
+}
+
+table th, .table th, .custom-table th {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-table-th) !important;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.02em;
+}
+
+table td, .table td, .custom-table td {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-table) !important;
+}
+
+/* ==========================================================================
+   FOOTER TYPOGRAPHY
+   ========================================================================== */
 .footer-heading {
-    font-size: clamp(1rem, 2vw, 1.125rem) !important; /* 16px - 18px */
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-footer-head) !important;
+    font-weight: var(--font-weight-bold) !important;
 }
-.footer-link, .footer-bottom-links a {
-    font-size: clamp(0.875rem, 1vw, 0.9375rem) !important; /* 14px - 15px */
+
+.footer-link, .footer-menu li a, .footer-bottom-links a, .copyright-text, .brand-desc {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-footer) !important;
+}
+
+/* ==========================================================================
+   NOTIFICATIONS & MODALS
+   ========================================================================== */
+.notif-text {
+    font-size: 14px !important;
+}
+
+.notif-time {
+    font-size: 12px !important;
+}
+
+.modal-title, .custom-modal-content h3 {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-h3) !important;
+}
+
+.modal-body, .custom-modal-content p {
+    font-family: var(--font-family-base) !important;
+    font-size: var(--font-size-body) !important;
+}
+
+/* Monospace overrides for code/tx-id */
+code, pre, kbd, samp, .font-mono, .tx-hash, .transaction-id {
+    font-family: var(--font-family-mono) !important;
 }
 
 /* Global Mobile Viewport Protections */
-html, body {
-    max-width: 100vw;
-    overflow-x: hidden;
-}
-
 img, video {
     max-width: 100%;
     height: auto;
 }
 
-/* ---- MOBILE PHONE RESPONSIVE OVERRIDES (<= 640px) ---- */
+/* Mobile Utilities */
 @media (max-width: 640px) {
-    h1, .h1, .hero-title {
-        font-size: clamp(1.4rem, 6vw, 1.85rem) !important; /* ~22px - 30px */
-        line-height: 1.25 !important;
-    }
-
-    h2, .h2, .section-title {
-        font-size: clamp(1.2rem, 4.5vw, 1.45rem) !important; /* ~19px - 23px */
-        line-height: 1.3 !important;
-    }
-
-    h3, .h3, .card-title {
-        font-size: clamp(1.05rem, 3.5vw, 1.2rem) !important; /* ~17px - 19px */
-        line-height: 1.35 !important;
-    }
-
-    .large-text, .description {
-        font-size: 0.95rem !important;
-    }
-
-    body, p, .body-text, span, div, li {
-        font-size: 15px;
-    }
-
-    /* Mobile Utilities */
     .mobile-stack {
         flex-direction: column !important;
         align-items: stretch !important;
@@ -143,5 +289,27 @@ img, video {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
+}
+
+/* ==========================================================================
+   FONT AWESOME ICON SAFEGUARD
+   Prevents typography overrides from breaking Font Awesome icon glyphs
+   ========================================================================== */
+.fa, .fas, .fa-solid {
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+    font-weight: 900 !important;
+    font-style: normal !important;
+}
+
+.far, .fa-regular {
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+}
+
+.fab, .fa-brands {
+    font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
 }
 

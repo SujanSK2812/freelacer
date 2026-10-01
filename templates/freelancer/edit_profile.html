@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Edit Profile | FreelanceHub</title>
+  <title>Account Settings | {{ user.username }} - FreelanceHub</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
   <style>
@@ -16,7 +16,7 @@
     }
 
     body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-family-base, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
       background: #f3f2ef;
       color: #191919;
       line-height: 1.5;
@@ -27,34 +27,123 @@
 
     .dashboard-container {
       flex: 1;
-      max-width: 600px;
-      margin: 2.5rem auto;
-      padding: 0 1.5rem;
+      max-width: 980px;
+      margin: 2rem auto 4rem auto;
+      padding: 0 1.25rem;
       width: 100%;
     }
 
+    /* BREADCRUMB / PAGE TITLE */
+    .page-title-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .page-title-bar h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.015em;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #0a66c2;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 0.45rem 1rem;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      background: #f8fafc;
+      border-color: #0a66c2;
+    }
+
+    /* MESSAGES ALERTS */
+    .alerts-container {
+      margin-bottom: 1.5rem;
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .alert-close {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.7;
+    }
+
+    .alert-close:hover {
+      opacity: 1;
+    }
+
+    /* MAIN CARDS */
     .main-card {
       background: #ffffff;
       border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
       border: 1px solid #e0e0e0;
       overflow: hidden;
+      margin-bottom: 2rem;
       transition: box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
+    /* UNIFIED CARD HEADER */
     .card-header {
-      padding: 2rem 2.25rem;
+      padding: 1.5rem 2rem;
       border-bottom: 1px solid #eef3f8;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 1.25rem;
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .card-header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
     }
 
     .card-header-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       background: #eef3f8;
       display: flex;
       align-items: center;
@@ -65,91 +154,255 @@
 
     .card-header-icon i {
       color: #0a66c2;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
     }
 
     .card-header h2 {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 700;
-      color: #000000;
+      color: #0f172a;
       letter-spacing: -0.015em;
     }
 
     .card-header p {
       color: #5e5e5e;
       font-size: 0.88rem;
-      margin-top: 0.25rem;
+      margin-top: 0.15rem;
       font-weight: 400;
     }
 
+    /* FORM STYLES */
     .job-form {
-      padding: 2.25rem;
+      padding: 2rem 2.25rem;
+    }
+
+    /* PROFILE PICTURE PREVIEW ROW */
+    .avatar-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding-bottom: 1.75rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #f1f5f9;
+      flex-wrap: wrap;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      background: #eef3f8;
+      flex-shrink: 0;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0a66c2;
+      background: #e0f2fe;
+    }
+
+    .banner-upload-wrapper {
+      position: relative;
+      width: 140px;
+      height: 70px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+      flex-shrink: 0;
+    }
+
+    .banner-upload-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .banner-upload-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #ffffff;
+      opacity: 0.85;
+    }
+
+    .avatar-details {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .avatar-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .avatar-subtitle {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 0.75rem;
+    }
+
+    .avatar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-upload-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.45rem 1rem;
+      border-radius: 20px;
+      background: #eef3f8;
+      color: #0a66c2;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #d0e1f9;
+      transition: all 0.2s ease;
+    }
+
+    .btn-upload-file:hover {
+      background: #0a66c2;
+      color: #ffffff;
+    }
+
+    .remove-pic-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: #dc2626;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    /* GRID LAYOUT FOR INPUTS */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem 1.75rem;
     }
 
     .form-group {
-      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
     }
 
     .form-group label {
       display: flex;
       align-items: center;
-      color: #191919;
-      font-size: 0.95rem;
+      color: #1e293b;
+      font-size: 0.92rem;
       font-weight: 600;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
       gap: 0.5rem;
     }
 
     .form-group label i {
       color: #0a66c2;
-      font-size: 1.1rem;
+      font-size: 0.95rem;
+      width: 16px;
+      text-align: center;
     }
 
-    .form-group input {
+    .form-group .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
       width: 100%;
-      padding: 0.85rem 1.1rem;
-      border: 1px solid #00000099;
-      border-radius: 6px;
-      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.95rem;
       font-family: inherit;
-      color: #191919;
+      color: #0f172a;
       background: #ffffff;
       transition: all 0.2s ease;
     }
 
-    .form-group input:focus {
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #0a66c2;
-      box-shadow: 0 0 0 1px #0a66c2;
+      box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.12);
     }
 
+    .form-group textarea {
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field-hint {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 0.35rem;
+    }
+
+    /* FORM ACTION BUTTONS */
     .form-actions {
       display: flex;
       justify-content: flex-end;
       gap: 1rem;
-      margin-top: 2.5rem;
+      margin-top: 2rem;
       padding-top: 1.5rem;
-      border-top: 1px solid #eef3f8;
+      border-top: 1px solid #f1f5f9;
+      align-items: center;
     }
 
     .btn-cancel {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.75rem 1.5rem;
+      padding: 0.65rem 1.4rem;
       border-radius: 24px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: #5e5e5e;
-      background: transparent;
-      border: 1px solid #5e5e5e;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
       text-decoration: none;
-      transition: background 0.2s, color 0.2s;
+      transition: all 0.2s ease;
     }
 
     .btn-cancel:hover {
-      background: #f3f2ef;
+      background: #f1f5f9;
       color: #191919;
+      border-color: #94a3b8;
     }
 
     .post-job-btn {
@@ -157,19 +410,196 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
+      padding: 0.65rem 1.6rem;
       border-radius: 24px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: #ffffff;
       background: #0a66c2;
       border: none;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: background 0.2s ease, transform 0.1s ease;
     }
 
     .post-job-btn:hover {
       background: #004182;
+    }
+
+    /* NEW SHOWCASE CTA BUTTON */
+    .btn-new-showcase {
+      background: #0a66c2;
+      color: #ffffff;
+      padding: 0.55rem 1.3rem;
+      border-radius: 24px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-new-showcase:hover {
+      background: #004182;
+      color: #ffffff;
+    }
+
+    /* SHOWCASE LIST */
+    .showcase-content {
+      padding: 2rem 2.25rem;
+    }
+
+    .showcase-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .showcase-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .showcase-item:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .showcase-info {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .showcase-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid #e2e8f0;
+      background: #e2e8f0;
+    }
+
+    .showcase-thumb-placeholder {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      background: #e0f2fe;
+      color: #0284c7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      border: 1px solid #bae6fd;
+    }
+
+    .showcase-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.3rem;
+      line-height: 1.3;
+    }
+
+    .showcase-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: #64748b;
+      flex-wrap: wrap;
+    }
+
+    .showcase-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .showcase-meta i {
+      color: #0a66c2;
+    }
+
+    .btn-delete-showcase {
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      border: 1px solid #fecaca;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-delete-showcase:hover {
+      background: #fca5a5;
+      color: #7f1d1d;
+      border-color: #f87171;
+    }
+
+    .empty-showcases {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .empty-showcases-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #eef3f8;
+      color: #0a66c2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 1rem auto;
+    }
+
+    .empty-showcases h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.35rem;
+    }
+
+    .empty-showcases p {
+      color: #64748b;
+      font-size: 0.92rem;
+      max-width: 440px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .card-header {
+        padding: 1.25rem 1.5rem;
+      }
+      .job-form, .showcase-content {
+        padding: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -178,22 +608,178 @@
 {% include 'includes/header.html' %}
 
 <div class="dashboard-container">
+
+  <!-- PAGE HEADING BAR -->
+  <div class="page-title-bar">
+    <div>
+      <h1>Account Settings</h1>
+    </div>
+    <a href="{% url 'freelancer:freelancer_dashboard' %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <!-- MESSAGES -->
+  {% if messages %}
+  <div class="alerts-container">
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+        <span>
+          <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+          {{ message }}
+        </span>
+        <button type="button" class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- CARD 1: EDIT ACCOUNT & PROFILE -->
   <div class="main-card">
     <div class="card-header">
-      <div class="card-header-icon">
-        <i class="fas fa-user-edit"></i>
-      </div>
-      <div>
-        <h2>Edit Account</h2>
-        <p>Update your basic account information.</p>
+      <div class="card-header-left">
+        <div class="card-header-icon">
+          <i class="fas fa-user-edit"></i>
+        </div>
+        <div>
+          <h2>Edit Account</h2>
+          <p>Update your basic account information and public profile.</p>
+        </div>
       </div>
     </div>
+
     <div class="job-form">
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="form-group">
-          <label for="username"><i class="fas fa-at"></i>Username</label>
-          <input type="text" id="username" name="username" value="{{ user.username }}" required>
+
+        <!-- AVATAR UPLOAD SECTION -->
+        <div class="avatar-upload-row">
+          <div class="avatar-wrapper">
+            {% if profile.profile_picture %}
+              <img src="{{ profile.profile_picture.url }}" alt="{{ user.username }}" class="avatar-img" id="avatarPreviewImg">
+            {% elif user.get_profile_picture %}
+              <img src="{{ user.get_profile_picture }}" alt="{{ user.username }}" class="avatar-img" id="avatarPreviewImg">
+            {% else %}
+              <div class="avatar-fallback" id="avatarFallback">
+                {{ user.username|first|upper }}
+              </div>
+              <img src="" alt="Preview" class="avatar-img" id="avatarPreviewImg" style="display: none;">
+            {% endif %}
+          </div>
+          <div class="avatar-details">
+            <div class="avatar-title">Profile Picture</div>
+            <div class="avatar-subtitle">Upload a clear square photo (JPEG, PNG, max 5MB).</div>
+            <div class="avatar-actions">
+              <label class="btn-upload-file">
+                <i class="fas fa-camera"></i> Change Photo
+                <input type="file" name="profile_picture" id="profilePicInput" accept="image/*" style="display: none;" onchange="previewAvatar(this)">
+              </label>
+              {% if profile.profile_picture %}
+              <label class="remove-pic-label">
+                <input type="checkbox" name="remove_profile_picture" value="1">
+                <i class="fas fa-trash-alt"></i> Remove photo
+              </label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- BANNER UPLOAD SECTION -->
+        <div class="avatar-upload-row" style="margin-top: 1.25rem;">
+          <div class="banner-upload-wrapper">
+            {% if profile.banner_image %}
+              <img src="{{ profile.banner_image.url }}" alt="Banner" class="banner-upload-img" id="bannerPreviewImg">
+            {% else %}
+              <div class="banner-upload-fallback" id="bannerFallback">
+                <i class="fas fa-image"></i>
+              </div>
+              <img src="" alt="Preview" class="banner-upload-img" id="bannerPreviewImg" style="display: none;">
+            {% endif %}
+          </div>
+          <div class="avatar-details">
+            <div class="avatar-title">Profile Banner / Cover</div>
+            <div class="avatar-subtitle">Upload a wide header banner (JPEG, PNG, WEBP, max 5MB. Recommended: 1200×300).</div>
+            <div class="avatar-actions">
+              <label class="btn-upload-file">
+                <i class="fas fa-camera"></i> {% if profile.banner_image %}Change Banner{% else %}Upload Banner{% endif %}
+                <input type="file" name="banner_image" id="bannerImgInput" accept="image/*" style="display: none;" onchange="previewBanner(this)">
+              </label>
+              {% if profile.banner_image %}
+              <label class="remove-pic-label">
+                <input type="checkbox" name="remove_banner_image" value="1">
+                <i class="fas fa-trash-alt"></i> Remove banner
+              </label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM INPUT FIELDS GRID -->
+        <div class="form-grid-2">
+          
+          <!-- First Name -->
+          <div class="form-group">
+            <label for="first_name"><i class="fas fa-user"></i>First Name</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user.first_name|default:'' }}" placeholder="e.g. John">
+          </div>
+
+          <!-- Last Name -->
+          <div class="form-group">
+            <label for="last_name"><i class="fas fa-user"></i>Last Name</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user.last_name|default:'' }}" placeholder="e.g. Doe">
+          </div>
+
+          <!-- Username -->
+          <div class="form-group">
+            <label for="username"><i class="fas fa-at"></i>Username</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+            <span class="field-hint">Your unique FreelanceHub handle.</span>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email"><i class="fas fa-envelope"></i>Email Address</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            <span class="field-hint">Used for login and contract notifications.</span>
+          </div>
+
+          <!-- Phone -->
+          <div class="form-group">
+            <label for="phone"><i class="fas fa-phone"></i>Phone Number</label>
+            <input type="text" id="phone" name="phone" value="{{ user.phone|default:'' }}" placeholder="e.g. +91 9876543210">
+          </div>
+
+          <!-- Professional Title -->
+          <div class="form-group">
+            <label for="title"><i class="fas fa-briefcase"></i>Professional Title</label>
+            <input type="text" id="title" name="title" value="{{ profile.title|default:'' }}" placeholder="e.g. Full Stack Developer | Python Specialist">
+          </div>
+
+          <!-- Hourly Rate -->
+          <div class="form-group">
+            <label for="hourly_rate"><i class="fas fa-tag"></i>Hourly Rate (₹)</label>
+            <input type="number" step="0.01" id="hourly_rate" name="hourly_rate" value="{{ profile.hourly_rate|default:'' }}" placeholder="e.g. 500.00">
+          </div>
+
+          <!-- City -->
+          <div class="form-group">
+            <label for="city"><i class="fas fa-map-marker-alt"></i>City</label>
+            <input type="text" id="city" name="city" value="{{ profile.city|default:'' }}" placeholder="e.g. Bangalore">
+          </div>
+
+          <!-- Country -->
+          <div class="form-group">
+            <label for="country"><i class="fas fa-globe"></i>Country</label>
+            <input type="text" id="country" name="country" value="{{ profile.country|default:'' }}" placeholder="e.g. India">
+          </div>
+
+          <!-- Bio / Summary -->
+          <div class="form-group full-width">
+            <label for="bio"><i class="fas fa-align-left"></i>About / Professional Bio</label>
+            <textarea id="bio" name="bio" rows="4" placeholder="Describe your background, skills, and the value you bring to clients...">{{ profile.bio|default:'' }}</textarea>
+            <span class="field-hint">A concise summary displayed on your public profile.</span>
+          </div>
+
         </div>
 
         <div class="form-actions">
@@ -206,62 +792,76 @@
     </div>
   </div>
 
-  <!-- MANAGE TALENT SHOWCASES (DELETE OPTION) -->
-  <div class="main-card" style="margin-top: 2rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eef3f8;">
-      <div>
-        <h2 style="font-size: 1.5rem; color: #191919; font-weight: 600; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.75rem;">
-          <i class="fas fa-palette" style="color: #0a66c2;"></i> Manage Showcase Posts
-        </h2>
-        <p style="color: #64748b; font-size: 0.95rem; margin: 0;">Review your portfolio showcases or delete posts you no longer want displayed.</p>
+  <!-- CARD 2: MANAGE TALENT SHOWCASES -->
+  <div class="main-card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-header-icon">
+          <i class="fas fa-palette"></i>
+        </div>
+        <div>
+          <h2>Manage Showcase Posts</h2>
+          <p>Review your portfolio showcases or delete posts you no longer want displayed.</p>
+        </div>
       </div>
-      <a href="{% url 'freelancer:create_showcase' %}" style="background: #0a66c2; color: white; padding: 0.6rem 1.4rem; border-radius: 24px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+      <a href="{% url 'freelancer:create_showcase' %}" class="btn-new-showcase">
         <i class="fas fa-plus"></i> New Showcase
       </a>
     </div>
 
-    {% if showcases %}
-    <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
-      {% for post in showcases %}
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-        <div style="display: flex; align-items: center; gap: 1.25rem; flex: 1; min-width: 240px;">
-          {% if post.image %}
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 56px; height: 56px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 1px solid #e2e8f0;">
-          {% elif post.poster %}
-            <img src="{{ post.poster.url }}" alt="{{ post.title }}" style="width: 56px; height: 56px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 1px solid #e2e8f0;">
-          {% else %}
-            <div style="width: 56px; height: 56px; border-radius: 8px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
-              <i class="fas fa-image"></i>
-            </div>
-          {% endif %}
-          <div>
-            <h4 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">
-              {{ post.title }}
-            </h4>
-            <div style="display: flex; align-items: center; gap: 16px; font-size: 0.85rem; color: #64748b; flex-wrap: wrap;">
-              <span><i class="fas fa-clock" style="color: #0a66c2;"></i> Posted {{ post.created_at|timesince }} ago</span>
-              {% if post.total_likes %}
-              <span><i class="fas fa-thumbs-up" style="color: #0a66c2;"></i> {{ post.total_likes }} like{{ post.total_likes|pluralize }}</span>
-              {% endif %}
+    <div class="showcase-content">
+      {% if showcases %}
+      <div class="showcase-list">
+        {% for post in showcases %}
+        <div class="showcase-item">
+          <div class="showcase-info">
+            {% if post.image %}
+              <img src="{{ post.image.url }}" alt="{{ post.title }}" class="showcase-thumb">
+            {% elif post.poster %}
+              <img src="{{ post.poster.url }}" alt="{{ post.title }}" class="showcase-thumb">
+            {% else %}
+              <div class="showcase-thumb-placeholder">
+                <i class="fas fa-image"></i>
+              </div>
+            {% endif %}
+            <div>
+              <h4 class="showcase-title">
+                {{ post.title }}
+              </h4>
+              <div class="showcase-meta">
+                <span><i class="fas fa-clock"></i> Posted {{ post.created_at|timesince }} ago</span>
+                {% if post.total_likes %}
+                <span><i class="fas fa-thumbs-up"></i> {{ post.total_likes }} like{{ post.total_likes|pluralize }}</span>
+                {% else %}
+                <span><i class="fas fa-thumbs-up"></i> 0 likes</span>
+                {% endif %}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <button type="button" onclick="openDeleteShowcaseModal('{{ post.id }}', '{{ post.title|escapejs }}')" style="padding: 0.5rem 1.1rem; border-radius: 8px; border: 1px solid #fecaca; background: #fee2e2; color: #b91c1c; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;">
-            <i class="fas fa-trash-alt"></i> Delete
-          </button>
+          <div>
+            <button type="button" onclick="openDeleteShowcaseModal('{{ post.id }}', '{{ post.title|escapejs }}')" class="btn-delete-showcase">
+              <i class="fas fa-trash-alt"></i> Delete
+            </button>
+          </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
+      {% else %}
+      <div class="empty-showcases">
+        <div class="empty-showcases-icon">
+          <i class="fas fa-palette"></i>
+        </div>
+        <h3>No Showcase Posts Yet</h3>
+        <p>You have not published any portfolio showcase posts yet. Highlight your best work to get noticed by top clients.</p>
+        <a href="{% url 'freelancer:create_showcase' %}" class="btn-new-showcase">
+          <i class="fas fa-plus"></i> Create Showcase
+        </a>
+      </div>
+      {% endif %}
     </div>
-    {% else %}
-    <div style="text-align: center; padding: 2.5rem; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1; margin-top: 1.5rem;">
-      <i class="fas fa-palette" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem; display: block;"></i>
-      <p style="color: #64748b; font-size: 0.95rem; margin: 0;">You have not published any showcase posts yet.</p>
-    </div>
-    {% endif %}
   </div>
+
 </div>
 
 <!-- DELETE SHOWCASE CONFIRMATION MODAL -->
@@ -270,7 +870,7 @@
     <div style="width: 56px; height: 56px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 1.25rem;">
       <i class="fas fa-trash-alt"></i>
     </div>
-    <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 0.5rem;">Delete Showcase Post?</h3>
+    <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700;">Delete Showcase Post?</h3>
     <p style="color: #64748b; font-size: 0.92rem; line-height: 1.5; margin-bottom: 1.5rem;">
       Are you sure you want to permanently delete <strong id="deleteShowcaseTitle" style="color: #0f172a;">this showcase</strong>? This action cannot be undone.
     </p>
@@ -278,10 +878,10 @@
       {% csrf_token %}
       <input type="hidden" name="next" value="{% url 'freelancer:edit_profile' %}">
       <div style="display: flex; gap: 10px; justify-content: center;">
-        <button type="button" onclick="closeDeleteShowcaseModal()" style="padding: 0.65rem 1.4rem; border-radius: 10px; border: 1px solid #cbd5e1; background: white; color: #475569; font-weight: 600; cursor: pointer;">
+        <button type="button" onclick="closeDeleteShowcaseModal()" style="padding: 0.65rem 1.4rem; border-radius: 20px; border: 1px solid #cbd5e1; background: white; color: #475569; font-weight: 600; cursor: pointer; transition: all 0.2s;">
           Cancel
         </button>
-        <button type="submit" style="padding: 0.65rem 1.4rem; border-radius: 10px; border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer;">
+        <button type="submit" style="padding: 0.65rem 1.4rem; border-radius: 20px; border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer; transition: all 0.2s;">
           Yes, Delete Showcase
         </button>
       </div>
@@ -290,18 +890,60 @@
 </div>
 
 <script>
+function previewAvatar(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = document.getElementById('avatarPreviewImg');
+      const fallback = document.getElementById('avatarFallback');
+      if (img) {
+        img.src = e.target.result;
+        img.style.display = 'block';
+      }
+      if (fallback) {
+        fallback.style.display = 'none';
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function previewBanner(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = document.getElementById('bannerPreviewImg');
+      const fallback = document.getElementById('bannerFallback');
+      if (img) {
+        img.src = e.target.result;
+        img.style.display = 'block';
+      }
+      if (fallback) {
+        fallback.style.display = 'none';
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
 function openDeleteShowcaseModal(postId, postTitle) {
   document.getElementById('deleteShowcaseTitle').textContent = `"${postTitle}"`;
   document.getElementById('deleteShowcaseForm').action = `/freelancer/delete-showcase/${postId}/`;
   const modal = document.getElementById('deleteShowcaseModal');
   modal.style.display = 'flex';
 }
+
 function closeDeleteShowcaseModal() {
   const modal = document.getElementById('deleteShowcaseModal');
   modal.style.display = 'none';
 }
+
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeDeleteShowcaseModal();
+});
+
+document.getElementById('deleteShowcaseModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDeleteShowcaseModal();
 });
 </script>
 

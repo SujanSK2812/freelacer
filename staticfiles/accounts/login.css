@@ -7,7 +7,7 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-family-base) !important;
     background: #f3f2ef;
     min-height: 100vh;
     display: flex;
@@ -41,7 +41,7 @@ main {
 
 .login-container h2 {
     color: #004182;
-    font-size: 2rem;
+    font-size: var(--font-size-h2);
     margin-bottom: 2rem;
     text-align: center;
     font-weight: 700;
@@ -78,6 +78,18 @@ main {
     animation: slideIn 0.3s ease;
 }
 
+.success {
+    background: #def7ec;
+    color: #03543f;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    text-align: center;
+    border-left: 4px solid #057642;
+    animation: slideIn 0.3s ease;
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -89,7 +101,7 @@ input {
     padding: 1rem 1.25rem;
     border: 1.5px solid #cbd5e1;
     border-radius: 40px;
-    font-size: 1rem;
+    font-size: var(--font-size-input, 15px);
     transition: all 0.3s ease;
     outline: none;
     background: #f8fafc;
@@ -153,7 +165,7 @@ button {
     padding: 1rem 1.5rem;
     border: none;
     border-radius: 40px;
-    font-size: 1.1rem;
+    font-size: var(--font-size-btn, 15px);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -230,7 +242,7 @@ button:hover {
 
 .signup-link p {
     color: #5e6b7e;
-    font-size: 0.95rem;
+    font-size: var(--font-size-small, 13px);
 }
 
 .signup-link a {

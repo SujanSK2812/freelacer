@@ -17,7 +17,7 @@
         }
 
         body {
-            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: var(--font-family-base) !important;
             background-color: #f8fafc;
             color: #1e293b;
             line-height: 1.5;
@@ -323,10 +323,10 @@
         <span class="badge-role"><i class="fas fa-shield-alt"></i> Super Administrator</span>
     </div>
 
-    <!-- Quick stats section: additional modern element from common admin patterns -->
+    <!-- Quick stats section: dynamic stats from platform database -->
     <div class="stats-row">
         <div class="stat-item">
-            <div class="stat-number">{{total_count}}</div>
+            <div class="stat-number">{{ total_count }}</div>
             <div class="stat-label">Total Users</div>
         </div>
         <div class="stat-item">
@@ -334,11 +334,11 @@
             <div class="stat-label">Projects</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">23</div>
+            <div class="stat-number">{{ open_jobs_count }}</div>
             <div class="stat-label">Open Jobs</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">$14.2k</div>
+            <div class="stat-number">{{ total_volume }}</div>
             <div class="stat-label">Total Volume</div>
         </div>
     </div>

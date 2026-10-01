@@ -1,10 +1,14 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib import messages as django_messages
 from django.contrib.auth import get_user_model
 from .models import Message
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+
+from accounts.models import Connection
+from proposals.models import Proposal
 
 User = get_user_model()
 
@@ -21,23 +25,34 @@ def chat_home(request):
         except User.DoesNotExist:
             pass
 
-    # ADMIN
-    if request.user.is_staff:
-        users = User.objects.exclude(id=request.user.id)
+    # Find users with whom request.user has exchanged messages
+    partner_ids = Message.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).values_list('sender_id', 'receiver_id')
+    
+    chat_partner_ids = set()
+    for s_id, r_id in partner_ids:
+        if s_id != request.user.id:
+            chat_partner_ids.add(s_id)
+        if r_id != request.user.id:
+            chat_partner_ids.add(r_id)
 
-    # CLIENT -> only freelancers
-    elif request.user.role == "client":
-        users = User.objects.filter(role="freelancer")
+    # If messages exist, open the most recent chat partner
+    latest_msg = Message.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).order_by('-timestamp').first()
+    
+    if latest_msg:
+        first_user_id = latest_msg.receiver_id if latest_msg.sender_id == request.user.id else latest_msg.sender_id
+        return redirect('chat_detail', user_id=first_user_id)
 
-    # FREELANCER -> only clients
-    elif request.user.role == "freelancer":
-        users = User.objects.filter(role="client")
-
-    else:
-        users = User.objects.none()
+    following_count = Connection.objects.filter(sender=request.user).count()
+    followers_count = Connection.objects.filter(receiver=request.user).count()
 
     return render(request, 'messages/chat_home.html', {
-        'users': users
+        'users': [],
+        'following_count': following_count,
+        'followers_count': followers_count,
     })
 
 
@@ -54,32 +69,103 @@ def chat_detail(request, user_id):
         Q(receiver=request.user, deleted_by_receiver=True)
     ).order_by('timestamp')
 
+    # Mark incoming messages as read
+    Message.objects.filter(sender=other_user, receiver=request.user, is_read=False).update(is_read=True)
+
     if request.method == "POST":
+        text = request.POST.get("message", "").strip()
+        image = request.FILES.get("image")
+        attachment = request.FILES.get("attachment")
+        gif_url = request.POST.get("gif_url", "").strip()
 
-        text = request.POST.get("message")
+        if text or image or attachment or gif_url:
+            file_name = None
+            file_size = None
+            if attachment:
+                file_name = attachment.name
+                size_bytes = attachment.size
+                if size_bytes < 1024:
+                    file_size = f"{size_bytes} B"
+                elif size_bytes < 1024 * 1024:
+                    file_size = f"{size_bytes / 1024:.1f} KB"
+                else:
+                    file_size = f"{size_bytes / (1024 * 1024):.1f} MB"
 
-        if text:
             Message.objects.create(
                 sender=request.user,
                 receiver=other_user,
-                message=text
+                message=text,
+                image=image,
+                file_attachment=attachment,
+                file_name=file_name,
+                file_size=file_size,
+                gif_url=gif_url or None
             )
 
         return redirect('chat_detail', user_id=other_user.id)
 
-    if request.user.is_staff:
-        users = User.objects.exclude(id=request.user.id)
-    elif request.user.role == "client":
-        users = User.objects.filter(role="freelancer")
-    elif request.user.role == "freelancer":
-        users = User.objects.filter(role="client")
-    else:
-        users = User.objects.none()
+    # Find users with whom request.user has exchanged messages
+    partner_ids = Message.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).values_list('sender_id', 'receiver_id')
+    
+    chat_partner_ids = set()
+    for s_id, r_id in partner_ids:
+        if s_id != request.user.id:
+            chat_partner_ids.add(s_id)
+        if r_id != request.user.id:
+            chat_partner_ids.add(r_id)
+
+    # Always include current active partner (other_user)
+    chat_partner_ids.add(other_user.id)
+
+    users_qs = User.objects.filter(id__in=chat_partner_ids)
+
+    user_list = list(users_qs)
+    from django.utils import timezone
+    for u in user_list:
+        last_msg = Message.objects.filter(
+            Q(sender=request.user, receiver=u, deleted_by_sender=False) |
+            Q(sender=u, receiver=request.user, deleted_by_receiver=False)
+        ).order_by('-timestamp').first()
+        u.last_message = last_msg
+
+        # Filter metrics
+        u.unread_count = Message.objects.filter(
+            sender=u, receiver=request.user, is_read=False, deleted_by_receiver=False
+        ).count()
+
+        u.is_connection = Connection.objects.filter(
+            (Q(sender=request.user, receiver=u) | Q(sender=u, receiver=request.user))
+        ).exists()
+
+        has_proposal = Proposal.objects.filter(
+            (Q(job__client=request.user, freelancer=u) | Q(job__client=u, freelancer=request.user))
+        ).exists()
+        has_msg_job = Message.objects.filter(
+            (Q(sender=u, receiver=request.user) | Q(sender=request.user, receiver=u)),
+            proposal__isnull=False
+        ).exists()
+        u.has_jobs = has_proposal or has_msg_job
+
+        u.is_inmail = not u.is_connection
+
+        u.is_focused = u.is_connection or u.has_jobs or (u.last_message is not None)
+
+    user_list.sort(
+        key=lambda u: u.last_message.timestamp if getattr(u, 'last_message', None) and u.last_message else timezone.now().replace(year=2000),
+        reverse=True
+    )
+
+    following_count = Connection.objects.filter(sender=request.user).count()
+    followers_count = Connection.objects.filter(receiver=request.user).count()
 
     return render(request, 'messages/chat_home.html', {
         'other_user': other_user,
         'messages': messages,
-        'users': users,
+        'users': user_list,
+        'following_count': following_count,
+        'followers_count': followers_count,
     })
 
 
@@ -101,8 +187,7 @@ def clear_chat(request, user_id):
             msg.deleted_by_receiver = True
         msg.save()
         
-    django_messages.success(request, f"Chat with {other_user.username} has been cleared.")
-    return redirect('chat_detail', user_id=other_user.id)
+    return redirect(f"{reverse('chat_detail', kwargs={'user_id': other_user.id})}?cleared=1")
 
 
 from accounts.models import ConnectionRequest, Connection

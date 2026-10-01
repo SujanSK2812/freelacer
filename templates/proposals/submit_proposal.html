@@ -18,7 +18,7 @@
         }
 
         body {
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--font-family-base) !important;
             background: #f3f2ef;
             color: #191919;
             line-height: 1.5;
@@ -27,93 +27,167 @@
             min-height: 100vh;
         }
 
+        /* HORIZONTAL 2-COLUMN LAYOUT */
         .dashboard-container {
             flex: 1;
-            max-width: 800px;
-            margin: 2.5rem auto;
+            max-width: 1240px;
+            margin: 2.25rem auto;
             padding: 0 1.5rem;
             width: 100%;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 2rem;
+            align-items: start;
         }
 
-        /* Job Info Summary Header */
+        /* LEFT COLUMN: JOB SUMMARY CARD */
         .job-summary-card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 24px 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
+            position: sticky;
+            top: 90px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
         }
 
         .summary-badge {
-            background: #eef3f8;
-            color: #0a66c2;
-            font-size: 0.85rem;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.8rem;
             font-weight: 600;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 16px;
-            border: 1px solid #d0e1f9;
+            width: fit-content;
+            border: 1px solid #bae6fd;
         }
 
         .job-title {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #000000;
-            margin-bottom: 12px;
+            color: #0f172a;
+            line-height: 1.35;
             letter-spacing: -0.015em;
         }
 
-        .job-meta-row {
+        .job-meta-list {
             display: flex;
-            gap: 24px;
-            font-size: 0.9rem;
-            color: #5e5e5e;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem 0;
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        .job-meta-row span {
+        .job-meta-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            color: #64748b;
         }
 
-        .job-meta-row i {
+        .job-meta-label {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #475569;
+        }
+
+        .job-meta-label i {
             color: #0a66c2;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .job-meta-val {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .budget-badge {
+            background: #dcfce7;
+            color: #15803d;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            border: 1px solid #bbf7d0;
+        }
+
+        .job-desc-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .job-desc-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
         }
 
         .job-desc-text {
-            font-size: 0.95rem;
-            color: #333333;
+            font-size: 0.9rem;
+            color: #334155;
             line-height: 1.6;
             background: #f8fafc;
-            padding: 20px;
+            padding: 1.1rem 1.25rem;
             border-radius: 12px;
+            border: 1px solid #e2e8f0;
             border-left: 4px solid #0a66c2;
+            max-height: 240px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
         }
 
+        .job-desc-text::-webkit-scrollbar {
+            width: 4px;
+        }
+        .job-desc-text::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .skill-pill {
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            display: inline-block;
+        }
+
+        /* RIGHT COLUMN: PROPOSAL SUBMISSION CARD */
         .main-card {
             background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
             overflow: hidden;
             transition: box-shadow 0.2s ease, border-color 0.2s ease;
         }
 
         .main-card:hover {
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
             border-color: #cbd5e1;
         }
 
         .card-header {
-            padding: 2rem 2.25rem;
-            border-bottom: 1px solid #eef3f8;
+            padding: 1.75rem 2.25rem;
+            border-bottom: 1px solid #eef2f6;
             display: flex;
             align-items: center;
             gap: 1.25rem;
@@ -124,35 +198,35 @@
             width: 52px;
             height: 52px;
             border-radius: 14px;
-            background: #eef3f8;
+            background: #e0f2fe;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border: 1px solid #d0e1f9;
+            border: 1px solid #bae6fd;
         }
 
         .card-header-icon i {
-            color: #0a66c2;
-            font-size: 1.4rem;
+            color: #0284c7;
+            font-size: 1.35rem;
         }
 
         .card-header h2 {
-            font-size: 1.45rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #000000;
+            color: #0f172a;
             letter-spacing: -0.015em;
         }
         
         .card-header p {
-            color: #5e5e5e;
+            color: #64748b;
             font-size: 0.88rem;
             margin-top: 0.25rem;
             font-weight: 400;
         }
 
         .job-form {
-            padding: 2.25rem;
+            padding: 2rem 2.25rem;
         }
 
         .form-group {
@@ -162,7 +236,7 @@
         .form-group label {
             display: flex;
             align-items: center;
-            color: #191919;
+            color: #0f172a;
             font-weight: 600;
             font-size: 0.88rem;
             margin-bottom: 0.6rem;
@@ -181,12 +255,12 @@
         .job-form textarea,
         .job-form select {
             width: 100%;
-            padding: 0.8rem 1.1rem;
+            padding: 0.85rem 1.1rem;
             border: 1.5px solid #cbd5e1;
             border-radius: 12px;
             font-size: 0.92rem;
             font-family: inherit;
-            color: #191919;
+            color: #0f172a;
             background: #ffffff;
             transition: all 0.2s ease;
             resize: vertical;
@@ -204,7 +278,7 @@
         }
 
         .job-form textarea {
-            min-height: 160px;
+            min-height: 180px;
             line-height: 1.6;
         }
 
@@ -220,18 +294,18 @@
             align-items: center;
             gap: 1rem;
             padding-top: 1.5rem;
-            border-top: 1px solid #eef3f8;
-            margin-top: 1rem;
+            border-top: 1px solid #eef2f6;
+            margin-top: 1.25rem;
         }
 
         .btn-cancel {
             background: transparent;
-            border: 1.5px solid #666666;
-            padding: 0.65rem 1.4rem;
-            border-radius: 24px;
+            border: 1.5px solid #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 40px;
             font-size: 0.88rem;
             font-weight: 600;
-            color: #666666;
+            color: #475569;
             cursor: pointer;
             transition: all 0.2s;
             text-decoration: none;
@@ -240,17 +314,17 @@
         }
 
         .btn-cancel:hover {
-            background: rgba(0, 0, 0, 0.04);
-            color: #191919;
-            border-color: #191919;
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
         }
 
         .post-job-btn {
             background: #0a66c2;
             color: #ffffff;
             border: none;
-            padding: 0.7rem 1.75rem;
-            border-radius: 24px;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
             font-size: 0.9rem;
             font-weight: 600;
             display: inline-flex;
@@ -258,27 +332,51 @@
             gap: 0.6rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(10, 102, 194, 0.2);
+            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
         }
 
         .post-job-btn:hover {
             background: #004182;
-            box-shadow: 0 4px 8px rgba(0, 65, 130, 0.3);
+            box-shadow: 0 6px 16px rgba(0, 65, 130, 0.35);
             transform: translateY(-1px);
         }
 
-        @media (max-width: 640px) {
+        /* RESPONSIVE LAYOUT */
+        @media (max-width: 1040px) {
             .dashboard-container {
+                grid-template-columns: 360px 1fr;
+                gap: 1.5rem;
                 padding: 0 1rem;
-                margin: 1.5rem auto;
             }
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
+            .job-summary-card {
                 padding: 1.5rem;
             }
             .job-form {
-                padding: 1.5rem;
+                padding: 1.75rem;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin: 1.5rem auto;
+            }
+            .job-summary-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-row-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .card-header {
+                padding: 1.25rem 1.5rem;
+            }
+            .job-form {
+                padding: 1.25rem 1.5rem;
             }
             .form-actions {
                 flex-direction: column-reverse;
@@ -288,12 +386,6 @@
                 width: 100%;
                 justify-content: center;
             }
-            .form-row-grid {
-                grid-template-columns: 1fr;
-            }
-            .job-summary-card {
-                padding: 20px;
-            }
         }
     </style>
 </head>
@@ -302,23 +394,68 @@
 {% include 'includes/header.html' %}
 
 <div class="dashboard-container">
-    <!-- JOB SUMMARY CARD -->
+    <!-- LEFT COLUMN: JOB SUMMARY CARD -->
     <div class="job-summary-card">
         <div class="summary-badge">
             <i class="fas fa-briefcase"></i> Job Details
         </div>
+
         <h1 class="job-title">{{ job.title }}</h1>
-        <div class="job-meta-row">
-            <span><i class="fas fa-user-tie"></i> Posted by: {{ job.client.username }}</span>
-            <span><i class="fas fa-money-bill-wave"></i> Budget: ₹{{ job.budget }}</span>
-            <span><i class="fas fa-layer-group"></i> {{ job.experience_level|default:"Intermediate" }}</span>
+
+        <div class="job-meta-list">
+            <div class="job-meta-item">
+                <span class="job-meta-label">
+                    <i class="fas fa-user-tie"></i> Posted By
+                </span>
+                <span class="job-meta-val">{{ job.client.username }}</span>
+            </div>
+
+            <div class="job-meta-item">
+                <span class="job-meta-label">
+                    <i class="fas fa-wallet"></i> Budget
+                </span>
+                <span class="budget-badge">₹{{ job.budget }}</span>
+            </div>
+
+            <div class="job-meta-item">
+                <span class="job-meta-label">
+                    <i class="fas fa-layer-group"></i> Experience Level
+                </span>
+                <span class="job-meta-val">{{ job.experience_level|default:"Intermediate"|title }}</span>
+            </div>
+
+            <div class="job-meta-item">
+                <span class="job-meta-label">
+                    <i class="fas fa-clock"></i> Posted
+                </span>
+                <span class="job-meta-val">{{ job.created_at|timesince }} ago</span>
+            </div>
         </div>
-        <div class="job-desc-text">
-            {{ job.description }}
+
+        {% if job.skills %}
+        <div class="job-desc-section">
+            <div class="job-desc-title">Required Skills</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                {% if job.skills_list %}
+                    {% for skill in job.skills_list %}
+                        <span class="skill-pill">{{ skill }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="skill-pill">{{ job.skills }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="job-desc-section">
+            <div class="job-desc-title">Job Description</div>
+            <div class="job-desc-text">
+                {{ job.description|linebreaksbr }}
+            </div>
         </div>
     </div>
 
-    <!-- PROPOSAL SUBMISSION FORM CARD -->
+    <!-- RIGHT COLUMN: PROPOSAL SUBMISSION FORM CARD -->
     <div class="main-card">
         <div class="card-header">
             <div class="card-header-icon">

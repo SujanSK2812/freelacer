@@ -5,10 +5,24 @@
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results - Freelancer Portal</title>
+    <title>Search Results for "{{ query }}" - Freelancer Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Reset & Base Styles */
+        :root {
+            --sr-primary: #0a66c2;
+            --sr-primary-hover: #004182;
+            --sr-dark: #0f172a;
+            --sr-text: #191919;
+            --sr-muted: #5e6b7c;
+            --sr-border: #e0e0e0;
+            --sr-border-light: #f0f0f0;
+            --sr-bg: #f3f2ef;
+            --sr-card-bg: #ffffff;
+            --sr-green: #01754f;
+            --sr-green-hover: #015f40;
+            --sr-green-light: #e8f5e9;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,367 +30,857 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f3f2ef;
-            color: #1d2c3c;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+            background: var(--sr-bg);
+            color: var(--sr-text);
             line-height: 1.5;
         }
 
-        /* Search Results Container */
-        .search-results-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 5%;
+        .search-results-page {
+            max-width: 1040px;
+            margin: 1.5rem auto 4rem auto;
+            padding: 0 1.25rem;
         }
 
-        .search-results-container h2 {
-            color: #2c3e50;
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid #0a66c2;
-            display: inline-block;
-        }
-
-        /* Section Headers */
-        .section-header {
+        /* Top Bar & Breadcrumb */
+        .sr-top-bar {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin: 2rem 0 1.5rem 0;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .section-header h3 {
-            color: #2c3e50;
-            font-size: 1.5rem;
+        .sr-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--sr-muted);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .sr-back-link:hover {
+            color: var(--sr-primary);
+        }
+
+        /* Search Header & In-page Search Bar */
+        .sr-header-card {
+            background: var(--sr-card-bg);
+            border: 1px solid var(--sr-border);
+            border-radius: 12px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .sr-title-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sr-heading {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--sr-dark);
             margin: 0;
         }
 
-        .section-header .count {
-            background: #0a66c2;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+        .sr-query-highlight {
+            color: var(--sr-primary);
+        }
+
+        .sr-count-meta {
+            font-size: 13.5px;
+            color: var(--sr-muted);
             font-weight: 500;
         }
 
-        /* Projects Grid */
-        .projects-grid, .freelancers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
+        .sr-search-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1.5px solid var(--sr-border);
+            border-radius: 30px;
+            padding: 4px 6px 4px 16px;
+            transition: all 0.2s ease;
+        }
+
+        .sr-search-form:focus-within {
+            border-color: var(--sr-primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.12);
+        }
+
+        .sr-search-form i {
+            color: var(--sr-muted);
+            font-size: 14px;
+        }
+
+        .sr-search-form input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            outline: none;
+            color: var(--sr-text);
+            padding: 6px 0;
+        }
+
+        .sr-search-btn {
+            background: var(--sr-primary);
+            color: #ffffff;
+            border: none;
+            padding: 7px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .sr-search-btn:hover {
+            background: var(--sr-primary-hover);
+        }
+
+        /* Filter Tab Pills */
+        .sr-tabs-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .sr-tab-btn {
+            background: #ffffff;
+            border: 1px solid var(--sr-border);
+            border-radius: 24px;
+            padding: 7px 18px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--sr-muted);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            outline: none;
+            user-select: none;
+        }
+
+        .sr-tab-btn:hover {
+            border-color: var(--sr-primary);
+            color: var(--sr-primary);
+            background: rgba(10, 102, 194, 0.04);
+        }
+
+        .sr-tab-btn.active {
+            background: var(--sr-primary);
+            color: #ffffff;
+            border-color: var(--sr-primary);
+            box-shadow: 0 2px 6px rgba(10, 102, 194, 0.25);
+        }
+
+        .sr-tab-count {
+            background: rgba(0, 0, 0, 0.08);
+            color: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 12px;
+        }
+
+        .sr-tab-btn.active .sr-tab-count {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+
+        /* Results Sections */
+        .sr-section {
             margin-bottom: 2rem;
         }
 
-        /* Project Card */
-        .project-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid #eef2f6;
-        }
-
-        .project-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-            border-color: #0a66c2;
-        }
-
-        .project-title {
-            color: #0a66c2;
-            font-size: 1.3rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
-
-        .project-description {
-            color: #5e6b7c;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-        }
-
-        .project-budget {
-            display: inline-block;
-            background: #f3f2ef;
-            color: #0a66c2;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .project-budget i {
-            margin-right: 5px;
-            color: #0a66c2;
-        }
-
-        /* Freelancer Card */
-        .freelancer-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
+        .sr-section-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            border: 1px solid #eef2f6;
+            gap: 10px;
+            margin-bottom: 1rem;
         }
 
-        .freelancer-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-            border-color: #0a66c2;
+        .sr-section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--sr-dark);
+            margin: 0;
         }
 
-        .freelancer-avatar {
-            width: 60px;
-            height: 60px;
-            background: #f3f2ef;
+        .sr-section-badge {
+            background: #e2e8f0;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* Projects List */
+        .sr-projects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Project Card (Upwork / LinkedIn Style) */
+        .sr-project-card {
+            background: var(--sr-card-bg);
+            border: 1px solid var(--sr-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .sr-project-card:hover {
+            border-color: var(--sr-primary);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .sr-card-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .sr-posted-time {
+            font-size: 12px;
+            color: var(--sr-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sr-project-title-link {
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: var(--sr-primary);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 8px;
+            line-height: 1.35;
+            transition: color 0.15s ease;
+        }
+
+        .sr-project-card:hover .sr-project-title-link {
+            color: var(--sr-primary-hover);
+            text-decoration: underline;
+        }
+
+        /* Metadata Row (Badges) */
+        .sr-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sr-meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            color: var(--sr-muted);
+            font-weight: 500;
+        }
+
+        .sr-budget-badge {
+            background: #eef6ff;
+            color: var(--sr-primary);
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            border: 1px solid rgba(10, 102, 194, 0.15);
+        }
+
+        .sr-budget-badge i {
+            color: var(--sr-primary);
+        }
+
+        .sr-level-badge {
+            background: #f8fafc;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Description snippet */
+        .sr-description {
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            word-break: break-word;
+        }
+
+        /* Skills Tags */
+        .sr-skills-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .sr-skill-tag {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            transition: all 0.12s ease;
+        }
+
+        .sr-project-card:hover .sr-skill-tag {
+            background: #e2e8f0;
+        }
+
+        /* Card Footer */
+        .sr-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--sr-border-light);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .sr-client-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--sr-muted);
+        }
+
+        .sr-client-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #0a66c2;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .sr-verified-icon {
+            color: var(--sr-green);
+            font-size: 13px;
+        }
+
+        .sr-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-view-details {
+            background: #ffffff;
+            color: var(--sr-primary);
+            border: 1.5px solid var(--sr-primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-view-details:hover {
+            background: var(--sr-primary);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .btn-apply-primary {
+            background: var(--sr-green);
+            color: #ffffff;
+            border: none;
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s ease;
+        }
+
+        .btn-apply-primary:hover {
+            background: var(--sr-green-hover);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .badge-applied-pill {
+            background: var(--sr-green-light);
+            color: var(--sr-green);
+            border: 1px solid #c8e6c9;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Freelancer / Talent Cards Grid */
+        .sr-talent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 16px;
+        }
+
+        .sr-talent-card {
+            background: var(--sr-card-bg);
+            border: 1px solid var(--sr-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .sr-talent-card:hover {
+            border-color: var(--sr-primary);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .sr-talent-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .sr-talent-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--sr-primary);
+            flex-shrink: 0;
+        }
+
+        .sr-talent-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sr-talent-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--sr-dark);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 2px;
+            transition: color 0.15s ease;
+        }
+
+        .sr-talent-card:hover .sr-talent-name {
+            color: var(--sr-primary);
+        }
+
+        .sr-talent-role {
+            font-size: 13px;
+            color: var(--sr-muted);
+            font-weight: 500;
+        }
+
+        .sr-talent-bio {
+            font-size: 13.5px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 14px;
+            flex: 1;
+        }
+
+        .sr-talent-rate {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--sr-primary);
+            margin-bottom: 12px;
+        }
+
+        /* Empty State */
+        .sr-empty-card {
+            background: var(--sr-card-bg);
+            border: 1px solid var(--sr-border);
+            border-radius: 12px;
+            padding: 3.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .sr-empty-icon {
+            width: 64px;
+            height: 64px;
+            background: #f1f5f9;
+            color: #94a3b8;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: #0a66c2;
+            font-size: 26px;
+            margin: 0 auto 1.25rem auto;
         }
 
-        .freelancer-info {
-            flex: 1;
+        .sr-empty-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--sr-dark);
+            margin-bottom: 8px;
         }
 
-        .freelancer-name {
-            color: #2c3e50;
-            font-size: 1.1rem;
+        .sr-empty-desc {
+            font-size: 14px;
+            color: var(--sr-muted);
+            max-width: 440px;
+            margin: 0 auto 1.5rem auto;
+            line-height: 1.5;
+        }
+
+        .sr-btn-browse-all {
+            background: var(--sr-primary);
+            color: #ffffff;
+            border: none;
+            padding: 9px 24px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .freelancer-role {
-            color: #0a66c2;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .freelancer-stats {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.85rem;
-            color: #5e6b7c;
-        }
-
-        .freelancer-stats i {
-            color: #0a66c2;
-            margin-right: 4px;
-        }
-
-        /* View Profile Button */
-        .view-profile-btn {
-            background: transparent;
-            border: 1px solid #0a66c2;
-            color: #0a66c2;
-            padding: 6px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
             text-decoration: none;
             display: inline-block;
+            transition: background 0.15s ease;
         }
 
-        .view-profile-btn:hover {
-            background: #0a66c2;
-            color: white;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            background: #f9fafb;
-            border-radius: 12px;
-            color: #5e6b7c;
-            margin: 1rem 0;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            color: #0a66c2;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        .empty-state p {
-            font-size: 1rem;
-        }
-
-        /* Back Button */
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            border: 1px solid #e0e0e0;
-            color: #5e6b7c;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
+        .sr-btn-browse-all:hover {
+            background: var(--sr-primary-hover);
+            color: #ffffff;
             text-decoration: none;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-            font-weight: 500;
         }
 
-        .back-button:hover {
-            background: #f3f2ef;
-            border-color: #0a66c2;
-            color: #0a66c2;
-        }
-
-        /* No Results Message */
-        .no-results-message {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 12px;
-            margin-top: 2rem;
-            border: 1px solid #eef2f6;
-        }
-
-        .no-results-message i {
-            font-size: 4rem;
-            color: #cbd5e1;
-            margin-bottom: 1rem;
-        }
-
-        .no-results-message h3 {
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .no-results-message p {
-            color: #5e6b7c;
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-            .search-results-container {
-                padding: 0 4%;
-                margin: 1rem auto;
-            }
-
-            .search-results-container h2 {
-                font-size: 1.5rem;
-            }
-
-            .section-header h3 {
-                font-size: 1.3rem;
-            }
-
-            .projects-grid, .freelancers-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .project-card {
-                padding: 1rem;
-            }
-
-            .freelancer-card {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .freelancer-stats {
-                justify-content: center;
-            }
-
-            .back-button {
-                margin-bottom: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .search-results-container {
+            .search-results-page {
                 padding: 0 1rem;
-            }
-            
-            .project-title {
-                font-size: 1.1rem;
+                margin-top: 1rem;
             }
 
-            .project-description {
-                font-size: 0.9rem;
+            .sr-card-footer {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
-            .freelancer-avatar {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
+            .sr-actions-group {
+                width: 100%;
+                justify-content: flex-end;
             }
-            
-            .section-header {
-                flex-wrap: wrap;
-            }
-        }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .project-card, .freelancer-card {
-            animation: fadeIn 0.4s ease-out;
         }
     </style>
 </head>
 <body>
+
 {% include 'includes/header.html' %}
-<div class="search-results-container">
+
+<main class="search-results-page">
     
-    <h2>Search Results for "{{ query }}"</h2>
-
-    <!-- Projects Section -->
-    <div class="section-header">
-        <h3>Projects</h3>
-        <span class="count">{{ projects|length }}</span>
+    <!-- Top Back Link -->
+    <div class="sr-top-bar">
+        {% if request.user.role == 'client' %}
+            <a href="{% url 'client:client_dashboard' %}" class="sr-back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        {% else %}
+            <a href="{% url 'freelancer:freelancer_dashboard' %}" class="sr-back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        {% endif %}
     </div>
 
-    {% if projects %}
-    <div class="projects-grid">
-        {% for project in projects %}
-        <div class="project-card">
-            <div class="project-title">{{ project.title }}</div>
-            <div class="project-description">{{ project.description|truncatewords:30 }}</div>
-            <div class="project-budget">
-                <i class="fas fa-rupee-sign"></i> {{ project.budget }}
-            </div>
+    <!-- Header Card with Search Box -->
+    <div class="sr-header-card">
+        <div class="sr-title-row">
+            <h1 class="sr-heading">
+                {% if query %}
+                    Search Results for "<span class="sr-query-highlight">{{ query }}</span>"
+                {% else %}
+                    Browse All Projects & Talent
+                {% endif %}
+            </h1>
+            <span class="sr-count-meta">{{ total_count }} result{{ total_count|pluralize }} found</span>
         </div>
-        {% endfor %}
+
+        <form action="{% url 'freelancer:search_results' %}" method="GET" class="sr-search-form">
+            <i class="fas fa-search"></i>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search by job title, skill (e.g. MERN, Python, React), or username..." required>
+            <button type="submit" class="sr-search-btn">Search</button>
+        </form>
     </div>
-    {% else %}
-    <div class="no-results-message">
-        <i class="fas fa-search"></i>
-        <h3>No results found</h3>
-        <p>We couldn't find any projects matching "{{ query }}".<br>Try different keywords or browse all listings.</p>
+
+    <!-- Filter Tabs -->
+    {% if total_count > 0 %}
+    <div class="sr-tabs-bar">
+        <button type="button" class="sr-tab-btn active" onclick="switchFilterTab('all', this)">
+            All Results <span class="sr-tab-count">{{ total_count }}</span>
+        </button>
+        <button type="button" class="sr-tab-btn" onclick="switchFilterTab('projects', this)">
+            Projects & Jobs <span class="sr-tab-count">{{ projects|length }}</span>
+        </button>
+        {% if freelancers %}
+        <button type="button" class="sr-tab-btn" onclick="switchFilterTab('talent', this)">
+            Freelancers & Talent <span class="sr-tab-count">{{ freelancers|length }}</span>
+        </button>
+        {% endif %}
     </div>
     {% endif %}
-   
 
-</div>
+    <!-- PROJECTS SECTION -->
+    <div class="sr-section" id="sectionProjects">
+        <div class="sr-section-header">
+            <h2 class="sr-section-title">Projects & Jobs</h2>
+            <span class="sr-section-badge">{{ projects|length }}</span>
+        </div>
+
+        {% if projects %}
+        <div class="sr-projects-list">
+            {% for project in projects %}
+            <div class="sr-project-card" data-url="{% url 'client:job_detail' project.id %}">
+                
+                <div class="sr-card-top-row">
+                    <span class="sr-posted-time">
+                        <i class="far fa-clock"></i> Posted {{ project.created_at|timesince }} ago
+                    </span>
+                    <span class="sr-budget-badge">
+                        <i class="fas fa-rupee-sign"></i> ₹{{ project.budget }}
+                    </span>
+                </div>
+
+                <a href="{% url 'client:job_detail' project.id %}" class="sr-project-title-link">
+                    {{ project.title }}
+                </a>
+
+                <div class="sr-meta-row">
+                    <span class="sr-meta-item">
+                        <i class="fas fa-tag" style="color: var(--sr-primary);"></i> Fixed-price
+                    </span>
+                    <span class="sr-meta-item sr-level-badge">
+                        <i class="fas fa-signal"></i> {{ project.experience_level|default:"Intermediate" }}
+                    </span>
+                    <span class="sr-meta-item">
+                        <i class="fas fa-paper-plane" style="color: var(--sr-primary);"></i> {{ project.job_proposals.count }} proposal{{ project.job_proposals.count|pluralize }}
+                    </span>
+                </div>
+
+                <div class="sr-description">
+                    {{ project.description|truncatewords:45 }}
+                </div>
+
+                {% if project.skills_list %}
+                <div class="sr-skills-wrap">
+                    {% for skill in project.skills_list %}
+                    <span class="sr-skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="sr-card-footer">
+                    <div class="sr-client-meta">
+                        <div class="sr-client-avatar">
+                            {{ project.client.username|slice:":1"|upper }}
+                        </div>
+                        <span>Client: <strong>{{ project.client.get_full_name|default:project.client.username }}</strong></span>
+                        <i class="fas fa-check-circle sr-verified-icon" title="Verified Client"></i>
+                    </div>
+
+                    <div class="sr-actions-group">
+                        <a href="{% url 'client:job_detail' project.id %}" class="btn-view-details">
+                            View Details <i class="fas fa-arrow-right"></i>
+                        </a>
+
+                        {% if request.user.is_authenticated and request.user.role == 'freelancer' %}
+                            {% if project.has_applied %}
+                                <span class="badge-applied-pill">
+                                    <i class="fas fa-check"></i> Applied
+                                </span>
+                            {% else %}
+                                <a href="{% url 'submit_proposal' project.id %}" class="btn-apply-primary">
+                                    Apply Now
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="sr-empty-card" style="padding: 2rem 1rem;">
+            <p style="color: var(--sr-muted); font-size: 14px;">No projects found matching "{{ query }}".</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- FREELANCERS / TALENT SECTION -->
+    {% if freelancers %}
+    <div class="sr-section" id="sectionTalent">
+        <div class="sr-section-header">
+            <h2 class="sr-section-title">Freelancers & Talent</h2>
+            <span class="sr-section-badge">{{ freelancers|length }}</span>
+        </div>
+
+        <div class="sr-talent-grid">
+            {% for f in freelancers %}
+            <div class="sr-talent-card" data-url="{% url 'accounts:view_profile' f.id %}">
+                <div class="sr-talent-top">
+                    <div class="sr-talent-avatar">
+                        {% if f.get_profile_picture %}
+                            <img src="{{ f.get_profile_picture }}" alt="{{ f.username }}">
+                        {% else %}
+                            {{ f.username|slice:":1"|upper }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <a href="{% url 'accounts:view_profile' f.id %}" class="sr-talent-name">
+                            {{ f.get_full_name|default:f.username }}
+                        </a>
+                        <div class="sr-talent-role">
+                            {{ f.freelancerprofile.title|default:"Freelancer" }}
+                        </div>
+                    </div>
+                </div>
+
+                {% if f.freelancerprofile.hourly_rate %}
+                <div class="sr-talent-rate">
+                    <i class="fas fa-rupee-sign"></i> {{ f.freelancerprofile.hourly_rate }}/hr
+                </div>
+                {% endif %}
+
+                <div class="sr-talent-bio">
+                    {{ f.freelancerprofile.bio|default:"No bio provided yet."|truncatewords:20 }}
+                </div>
+
+                {% if f.skills_list %}
+                <div class="sr-skills-wrap">
+                    {% for skill in f.skills_list|slice:":4" %}
+                    <span class="sr-skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div style="margin-top: auto; padding-top: 10px;">
+                    <a href="{% url 'accounts:view_profile' f.id %}" class="btn-view-details" style="width: 100%; justify-content: center;">
+                        View Profile
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- OVERALL EMPTY STATE -->
+    {% if total_count == 0 %}
+    <div class="sr-empty-card">
+        <div class="sr-empty-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h2 class="sr-empty-title">No results found for "{{ query }}"</h2>
+        <p class="sr-empty-desc">
+            We couldn't find any projects or freelancers matching your search terms.<br>
+            Try searching for broader keywords like <strong>React</strong>, <strong>Python</strong>, <strong>Web</strong>, or browse all listings.
+        </p>
+        {% if request.user.role == 'client' %}
+            <a href="{% url 'client:client_dashboard' %}" class="sr-btn-browse-all">Browse Talent & Dashboard</a>
+        {% else %}
+            <a href="{% url 'freelancer:freelancer_home' %}" class="sr-btn-browse-all">Browse Job Feed</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</main>
+
 {% include 'includes/footer.html' %}
+
+<script>
+    // Tab switching logic
+    function switchFilterTab(tab, btn) {
+        document.querySelectorAll('.sr-tab-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const secProjects = document.getElementById('sectionProjects');
+        const secTalent = document.getElementById('sectionTalent');
+
+        if (tab === 'all') {
+            if (secProjects) secProjects.style.display = 'block';
+            if (secTalent) secTalent.style.display = 'block';
+        } else if (tab === 'projects') {
+            if (secProjects) secProjects.style.display = 'block';
+            if (secTalent) secTalent.style.display = 'none';
+        } else if (tab === 'talent') {
+            if (secProjects) secProjects.style.display = 'none';
+            if (secTalent) secTalent.style.display = 'block';
+        }
+    }
+
+    // Make entire project and talent cards clickable
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.sr-project-card[data-url], .sr-talent-card[data-url]').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                // If user clicked directly on a link or button, allow normal link navigation
+                if (e.target.closest('a') || e.target.closest('button')) {
+                    return;
+                }
+                var targetUrl = card.getAttribute('data-url');
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>

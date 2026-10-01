@@ -15,6 +15,7 @@ class FreelancerProfileForm(forms.ModelForm):
         ]
         fields = [
             "profile_picture",
+            "banner_image",
             "title",
             "bio",
             "experience_level",

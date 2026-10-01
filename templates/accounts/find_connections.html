@@ -1,944 +1,664 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
-    <title>Find Connections</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Manage My Network | Freelancer Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
     <style>
-        /* Reset and Base Styles */
-        * {
+        /* Base & Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, sans-serif !important;
+            background-color: #f3f2ef;
+            color: rgba(0, 0, 0, 0.9);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            color: #2d3a2d;
         }
 
-        /* Main Content */
-        main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .connections-container {
-            background: white;
-            max-width: 900px;
+        /* Two-Column Grid Layout */
+        .mn-page-wrapper {
+            max-width: 1128px;
             width: 100%;
-            padding: 2.5rem;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            animation: fadeIn 0.5s ease-out;
+            margin: 24px auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            align-items: start;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Header Section */
-        .connections-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .connections-icon {
-            font-size: 2.5rem;
-            color: #0a66c2;
-            background: #f0f7f0;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-        }
-
-        .connections-header h2 {
-            color: #1a2b1a;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .connections-count {
-            color: #0a66c2;
-            background: #f0f7f0;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 1rem;
-            margin-left: 0.5rem;
-            display: inline-block;
-        }
-
-        .connections-header p {
-            color: #5e6b7e;
-            font-size: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        /* Search and Filter Section */
-        .search-section {
-            margin-bottom: 2rem;
-        }
-
-        .search-box {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9aa6b5;
-            font-size: 1rem;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 2px solid #e0e6e0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            outline: none;
-            background: #f8f9fc;
-            font-family: inherit;
-        }
-
-        .search-input:focus {
-            border-color: #0a66c2;
-            box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
-        }
-
-        .search-input::placeholder {
-            color: #9aa6b5;
-        }
-
-        .filter-options {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .filter-tabs {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-tab {
-            padding: 0.5rem 1rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #5e6b7e;
-            transition: all 0.2s ease;
-            border-radius: 8px;
-            font-family: inherit;
-        }
-
-        .filter-tab:hover {
-            color: #0a66c2;
-            background: #f0f7f0;
-        }
-
-        .filter-tab.active {
-            color: #0a66c2;
-            background: #f0f7f0;
-        }
-
-        /* Custom Sort Dropdown Styles */
-        .custom-sort-dropdown {
-            position: relative;
-            display: inline-block;
-            font-family: inherit;
-            width: 240px; /* Wider to match screenshot */
-        }
-
-        .sort-select-button {
-            width: 100%;
-            padding: 0.75rem 1.2rem;
-            border: 2px solid #0a66c2; /* Blue border shown in screenshot */
-            border-radius: 10px;
-            background: white;
-            color: #2d3a2d;
-            font-size: 1.1rem;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
-
-        .sort-select-button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.2);
-        }
-
-        .sort-options-menu {
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            right: 0; /* Matches exact width of the button */
-            background: #555555;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            z-index: 100;
-            padding: 8px 0;
-            display: none;
-        }
-
-        .sort-options-menu.open {
-            display: block;
-        }
-
-        .sort-option {
-            padding: 12px 20px;
-            color: white;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: background 0.2s;
-        }
-
-        .sort-option:hover {
-            background: #666666;
-        }
-
-        .sort-option .fa-check {
-            opacity: 0;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-
-        .sort-option.selected .fa-check {
-            opacity: 1;
-        }
-
-        /* Users List */
-        .users-list {
+        /* LEFT SIDEBAR */
+        .mn-sidebar {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            max-height: 600px;
-            overflow-y: auto;
-            padding-right: 0.5rem;
+            gap: 12px;
+            position: sticky;
+            top: 76px;
         }
 
-        .users-list::-webkit-scrollbar {
-            width: 6px;
+        .mn-sidebar-card {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
         }
 
-        .users-list::-webkit-scrollbar-track {
-            background: #f0f0f0;
-            border-radius: 10px;
+        .mn-nav-header {
+            padding: 14px 16px 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
 
-        .users-list::-webkit-scrollbar-thumb {
-            background: #0a66c2;
-            border-radius: 10px;
+        .mn-nav-list {
+            list-style: none;
+            padding: 4px 0;
+            margin: 0;
         }
 
-        /* User Card */
-        .user-card {
-            background: #f8f9fc;
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            animation: slideIn 0.5s ease-out;
+        .mn-nav-item a {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
+            padding: 10px 16px;
+            color: rgba(0, 0, 0, 0.6);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background 0.15s, color 0.15s;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .mn-nav-item a:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+            color: rgba(0, 0, 0, 0.9);
         }
 
-        .user-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            border-color: #0a66c220;
-        }
-
-        /* User Info */
-        .user-info {
+        .mn-nav-item-left {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            flex: 1;
-            min-width: 200px;
+            gap: 16px;
         }
 
-        .user-avatar {
-            width: 60px;
+        .mn-nav-item-left i {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .mn-nav-count {
+            font-size: 15px;
+            font-weight: 400;
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        /* RIGHT MAIN CONTENT */
+        .mn-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .mn-section-card {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .mn-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .mn-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .mn-section-action {
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.6);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .mn-section-action:hover {
+            color: #0a66c2;
+        }
+
+        /* 4-COLUMN CARDS GRID */
+        .mn-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 16px 20px;
+        }
+
+        /* PROFILE CARD */
+        .mn-card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+            min-height: 290px;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+        }
+
+        .mn-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
+            transform: translateY(-2px);
+        }
+
+        .mn-card-cover {
             height: 60px;
-            background: linear-gradient(135deg, #0a66c2 0%, #0d8f00 100%);
+            width: 100%;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .mn-card-dismiss {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(20, 168, 0, 0.2);
+            border: none;
+            cursor: pointer;
+            z-index: 5;
+            transition: background 0.15s;
+            padding: 0;
+        }
+
+        .mn-card-dismiss:hover {
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        .mn-card-dismiss i {
+            font-size: 13px;
+        }
+
+        /* AVATAR WITH OPTIONAL #OPENTOWORK RING */
+        .mn-avatar-wrapper {
+            width: 76px;
+            height: 76px;
+            margin: -38px auto 6px;
             position: relative;
+            z-index: 2;
+        }
+
+        .mn-avatar-img {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            object-fit: cover;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: block;
+            background: #e2e8f0;
+        }
+
+        .mn-avatar-initial {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            background: #0a66c2;
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* CARD BODY DETAILS */
+        .mn-card-details {
+            padding: 0 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .mn-card-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            line-height: 1.25;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .mn-card-name a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .mn-card-name a:hover {
+            text-decoration: underline;
+            color: #0a66c2;
+        }
+
+        .mn-verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #4b5563;
+        }
+
+        .mn-card-headline {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.6);
+            line-height: 1.35;
+            min-height: 32px;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            word-break: break-word;
+        }
+
+        /* MUTUAL CONNECTIONS SNIPPET */
+        .mn-mutual-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
+            gap: 6px;
+            min-height: 32px;
+            margin-top: auto;
+            margin-bottom: 12px;
+            padding: 0 2px;
+        }
+
+        .mn-mutual-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid #ffffff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .mn-mutual-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
             flex-shrink: 0;
         }
 
-        .user-details {
-            flex: 1;
+        .mn-mutual-text {
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.6);
+            line-height: 1.25;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .user-details h3 {
-            color: #2d3a2d;
-            font-size: 1.2rem;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-        }
-
-        .user-details p {
-            color: #5e6b7e;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 0.25rem;
-        }
-
-        .user-details p i {
+        /* BUTTONS */
+        .mn-btn-connect {
+            margin: 0 12px 14px;
+            border: 1.5px solid #0a66c2;
             color: #0a66c2;
-            font-size: 0.85rem;
-        }
-
-        .user-badge {
+            background: transparent;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 12px;
             display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
-            padding: 0.2rem 0.6rem;
-            background: #f0f7f0;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: #0a66c2;
-            font-weight: 500;
-        }
-
-        .user-badge i {
-            font-size: 0.7rem;
-        }
-
-        /* Mutual Connections */
-        .mutual-connections {
-            font-size: 0.8rem;
-            color: #9aa6b5;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .mutual-connections i {
-            color: #0a66c2;
-            font-size: 0.7rem;
-        }
-
-        /* Connect Button */
-        .connect-btn {
-            background: #0a66c2;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-family: inherit;
-            text-decoration: none;
-            min-width: 130px;
             justify-content: center;
-        }
-
-        .connect-btn i {
-            transition: transform 0.2s ease;
-        }
-
-        .connect-btn:hover {
-            background: #108700;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(20, 168, 0, 0.3);
+            gap: 6px;
             text-decoration: none;
-            color: white;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
         }
 
-        .connect-btn:hover i {
-            transform: translateX(5px);
+        .mn-btn-connect:hover {
+            background-color: rgba(10, 102, 194, 0.08);
+            border-width: 2px;
         }
 
-        .connect-btn:active {
-            transform: translateY(0);
-        }
-
-        .connect-btn.pending {
-            background: #f0ad4e;
-            cursor: not-allowed;
-        }
-
-        .connect-btn.pending:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        .connect-btn.connected {
-            background: #9aa6b5;
+        .mn-btn-connect.pending {
+            border: 1.5px solid rgba(0, 0, 0, 0.35);
+            color: rgba(0, 0, 0, 0.6);
+            background: #f8f9fa;
             cursor: default;
         }
 
-        .connect-btn.connected:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        .connect-btn.rejected {
-            background: #ef4444;
-            cursor: not-allowed;
-        }
-
-        .connect-btn.rejected:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            color: #d0d7de;
-            margin-bottom: 1rem;
-        }
-
-        .empty-state p {
-            color: #5e6b7e;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .empty-state small {
-            color: #9aa6b5;
-            font-size: 0.9rem;
-        }
-
-        /* Loading State */
-        .loading-state {
-            text-align: center;
-            padding: 3rem;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #f0f7f0;
-            border-top-color: #0a66c2;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Message Styles */
-        .message {
-            background: #f0f7f0;
-            border-left: 4px solid #0a66c2;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .message.error {
-            background: #fee9e7;
-            border-left-color: #bc1c1e;
-        }
-
-        .message i {
-            color: #0a66c2;
-        }
-
-        .message.error i {
-            color: #bc1c1e;
-        }
-
-        /* Footer Styles */
-        footer {
-            background: white;
-            padding: 3rem 5% 1.5rem;
-            margin-top: 4rem;
-            border-top: 1px solid #e0e6e0;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-section h3 {
-            color: #0a66c2;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .footer-section h4 {
-            color: #2d3a2d;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
-
-        .footer-section p {
-            color: #5e6b7e;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section ul li a {
-            text-decoration: none;
-            color: #5e6b7e;
-            font-size: 0.9rem;
-            transition: color 0.2s ease;
-        }
-
-        .footer-section ul li a:hover {
-            color: #0a66c2;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-links a {
-            color: #5e6b7e;
-            font-size: 1.2rem;
-            transition: color 0.2s ease;
-        }
-
-        .social-links a:hover {
-            color: #0a66c2;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #e0e6e0;
-        }
-
-        .footer-bottom p {
-            color: #5e6b7e;
-            font-size: 0.9rem;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu {
-                display: block;
-            }
-            
-            .connections-container {
-                padding: 1.5rem;
-                margin: 1rem;
-            }
-            
-            .connections-header h2 {
-                font-size: 1.75rem;
-            }
-            
-            .user-avatar {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
-            
-            .user-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .connect-btn {
-                width: 100%;
-            }
-            
-            .filter-options {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filter-tabs {
-                justify-content: center;
-            }
-            
-            .sort-select {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .connections-container {
-                padding: 1rem;
-            }
-            
-            .connections-header h2 {
-                font-size: 1.5rem;
-            }
-            
-            .connections-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 2rem;
-            }
-            
-            .user-info {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .user-details p {
-                justify-content: center;
-            }
-            
-            .mutual-connections {
-                justify-content: center;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .social-links {
-                justify-content: center;
-            }
-        }
-
-        /* Selection Color */
-        ::selection {
+        .mn-btn-connect.connected {
+            border: 1.5px solid #0a66c2;
+            color: #ffffff;
             background: #0a66c2;
-            color: white;
+            cursor: default;
+        }
+
+        .mn-btn-connect.connected:hover {
+            background: #004182;
+            border-color: #004182;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .mn-cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .mn-page-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .mn-sidebar {
+                position: static;
+            }
+            .mn-cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 680px) {
+            .mn-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 440px) {
+            .mn-cards-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- Header - Include your header template -->
+<!-- Global Header -->
 {% include 'includes/header.html' %}
 
-<main>
-    <div class="connections-container">
-        <div class="connections-header">
-            <div class="connections-icon">
-                <i class="fas fa-user-plus"></i>
-            </div>
-            <h2>
-                Find Connections 
-                {% if users %}
-                    <span class="connections-count">{{ users|length }}</span>
-                {% endif %}
-            </h2>
-            <p>Discover and connect with other professionals</p>
+<div class="mn-page-wrapper">
+    <!-- LEFT SIDEBAR -->
+    <aside class="mn-sidebar">
+        <!-- Manage My Network Card -->
+        <div class="mn-sidebar-card">
+            <div class="mn-nav-header">Manage my network</div>
+            <ul class="mn-nav-list">
+                <li class="mn-nav-item">
+                    <a href="{% url 'accounts:my_connections' %}">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-solid fa-user-group"></i>
+                            <span>Connections</span>
+                        </div>
+                        <span class="mn-nav-count">{{ connections_count }}</span>
+                    </a>
+                </li>
+                <li class="mn-nav-item">
+                    <a href="{% url 'accounts:following' %}">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-solid fa-address-book"></i>
+                            <span>Following &amp; followers</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="mn-nav-item">
+                    <a href="{% url 'accounts:posts' %}">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-regular fa-building"></i>
+                            <span>Pages</span>
+                        </div>
+                        <span class="mn-nav-count">{{ pages_count|default:"116" }}</span>
+                    </a>
+                </li>
+            </ul>
         </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
-                    <i class="fas fa-info-circle"></i>
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+    </aside>
 
-        <div class="search-section">
-           
-            <div class="filter-options">
-                
-                <div class="custom-sort-dropdown" id="customSortDropdown">
-                    <button class="sort-select-button" id="sortSelectButton">
-                        <span>Sort by Name</span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; color: #5e6b7e;"></i>
-                    </button>
-                    <div class="sort-options-menu" id="sortOptionsMenu">
-                        <div class="sort-option selected" data-value="name">
-                            <i class="fas fa-check"></i> Sort by Name
-                        </div>
-                        <div class="sort-option" data-value="recent">
-                            <i class="fas fa-check"></i> Sort by Recent
-                        </div>
-                    </div>
-                </div>
+    <!-- RIGHT MAIN CONTENT -->
+    <main class="mn-main-content">
+        <!-- Section 1: People you may know based on your recent activity -->
+        <section class="mn-section-card">
+            <div class="mn-section-header">
+                <h2 class="mn-section-title">People you may know based on your recent activity</h2>
+                <a href="javascript:void(0)" class="mn-section-action" onclick="toggleAllCards('recentGrid', this)">Show all</a>
             </div>
-        </div>
+            <div class="mn-cards-grid" id="recentGrid">
+                {% for u in users %}
+                    <div class="mn-card" id="user-card-{{ u.id }}">
+                        <!-- Banner -->
+                        <div class="mn-card-cover" style="background: {{ u.banner_bg }};">
+                            <button type="button" class="mn-card-dismiss" title="Dismiss" onclick="dismissCard('user-card-{{ u.id }}')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
 
-        <div class="users-list" id="usersList">
-            {% for user in users %}
-                <div class="user-card" data-name="{{ user.username|lower }}" data-email="{{ user.email|lower }}" data-id="{{ user.id }}">
-                    <div class="user-info">
-                        <div class="user-avatar">
-                            {% if user.get_profile_picture %}
-                                <img src="{{ user.get_profile_picture }}" alt="{{ user.username }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">
+                        <!-- Avatar -->
+                        <div class="mn-avatar-wrapper">
+                            {% if u.get_profile_picture %}
+                                <img src="{{ u.get_profile_picture }}" alt="{{ u.display_name }}" class="mn-avatar-img">
                             {% else %}
-                                {{ user.username|make_list|first|upper }}
+                                <div class="mn-avatar-initial">{{ u.display_name|first|upper }}</div>
                             {% endif %}
                         </div>
-                        <div class="user-details">
-                            <h3>{{ user.username }}</h3>
-                            <p>
-                                <i class="fas fa-envelope"></i>
-                                {{ user.email }}
-                                {% if user.is_verified %}
-                                    <span class="user-badge">
-                                        <i class="fas fa-check-circle"></i> Verified
+
+                        <!-- Card Info -->
+                        <div class="mn-card-details">
+                            <div class="mn-card-name">
+                                {% if u.role == 'freelancer' %}
+                                    <a href="{% url 'freelancer:freelancer_profile' u.id %}">{{ u.display_name }}</a>
+                                {% else %}
+                                    <a href="{% url 'accounts:view_profile' u.id %}">{{ u.display_name }}</a>
+                                {% endif %}
+                                {% if u.is_verified_badge %}
+                                    <span class="mn-verified-badge" title="Verified">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <path d="M8 0L9.8 2.2L12.6 1.8L13.3 4.5L15.9 5.6L15.1 8.3L16.4 10.8L14.1 12.5L13.9 15.3L11.1 15.4L9.8 17.8L7.3 16.5L5.1 18.2L3.8 15.7L1 15.2L1.2 12.4L-0.8 10.5L0.2 7.8L-0.9 5.2L1.6 4.3L2 1.5L4.8 1.6L6.4 -0.6L8 0Z" fill="#525252"/>
+                                            <path d="M6.5 10.5L4 8L4.8 7.2L6.5 8.9L11.2 4.2L12 5L6.5 10.5Z" fill="white"/>
+                                        </svg>
                                     </span>
                                 {% endif %}
-                            </p>
-                            <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.25rem;">
-                                <i class="fas fa-user-friends"></i> {{ user.followers_count }} follower{{ user.followers_count|pluralize }}
                             </div>
-                            {% if user.mutual_connections > 0 %}
-                                <div class="mutual-connections">
-                                    <i class="fas fa-users"></i>
-                                    {{ user.mutual_connections }} mutual connection{{ user.mutual_connections|pluralize }}
+
+                            <div class="mn-card-headline" title="{{ u.headline }}">
+                                {{ u.headline }}
+                            </div>
+
+                            <div class="mn-mutual-row">
+                                {% if u.mutual_avatar %}
+                                    <img src="{{ u.mutual_avatar }}" alt="" class="mn-mutual-avatar" onerror="this.style.display='none'">
+                                {% else %}
+                                    <div class="mn-mutual-icon"><i class="fa-solid fa-users"></i></div>
+                                {% endif %}
+                                <span class="mn-mutual-text">{{ u.mutual_text }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        {% if u.connection_status == 'connected' %}
+                            <button type="button" class="mn-btn-connect connected" disabled>
+                                <i class="fa-solid fa-check"></i>
+                                <span>Connected</span>
+                            </button>
+                        {% elif u.connection_status == 'pending' %}
+                            <button type="button" class="mn-btn-connect pending" disabled>
+                                <i class="fa-regular fa-clock"></i>
+                                <span>Request Pending</span>
+                            </button>
+                        {% else %}
+                            <a href="{% url 'accounts:send_connection_request' u.id %}" class="mn-btn-connect" onclick="sendConnectAjax(event, this, '{{ u.id }}')">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Connect</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <div style="grid-column: 1 / -1; padding: 32px; text-align: center; color: rgba(0,0,0,0.6);">
+                        No connection recommendations at this time.
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Section 2: People you may know from KVG College of Engineering (KVGCE), Sullia -->
+        <section class="mn-section-card">
+            <div class="mn-section-header">
+                <h2 class="mn-section-title">People you may know from KVG College of Engineering (KVGCE), Sullia</h2>
+                <a href="javascript:void(0)" class="mn-section-action" onclick="toggleAllCards('collegeGrid', this)">Show all</a>
+            </div>
+            <div class="mn-cards-grid" id="collegeGrid">
+                {% for cu in college_users %}
+                    <div class="mn-card" id="college-card-{{ cu.id }}">
+                        <!-- Banner -->
+                        <div class="mn-card-cover" style="background: {{ cu.banner_bg }};">
+                            <button type="button" class="mn-card-dismiss" title="Dismiss" onclick="dismissCard('college-card-{{ cu.id }}')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <!-- Avatar -->
+                        <div class="mn-avatar-wrapper">
+                            {% if cu.avatar %}
+                                <img src="{{ cu.avatar }}" alt="{{ cu.display_name }}" class="mn-avatar-img">
+                            {% elif cu.initial %}
+                                <div class="mn-avatar-initial" style="background: {{ cu.initial_bg }};">{{ cu.initial }}</div>
+                            {% else %}
+                                <div class="mn-avatar-initial" style="background: #a0b2c6; color: #ffffff;">
+                                    <i class="fa-solid fa-user" style="font-size: 32px;"></i>
                                 </div>
                             {% endif %}
                         </div>
-                    </div>
-                    
-                    {% if user.connection_status == 'pending' %}
-                        <button class="connect-btn pending" disabled>
-                            <i class="fas fa-clock"></i>
-                            <span>Request Pending</span>
-                        </button>
-                    {% elif user.connection_status == 'connected' %}
-                        <button class="connect-btn connected" disabled>
-                            <i class="fas fa-check-circle"></i>
-                            <span>Connected</span>
-                        </button>
-                    {% elif user.connection_status == 'rejected' %}
-                        <button class="connect-btn rejected" disabled>
-                            <i class="fas fa-times-circle"></i>
-                            <span>Request Rejected</span>
-                        </button>
-                    {% else %}
-                        <a href="{% url 'accounts:send_connection_request' user.id %}" class="connect-btn">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Connect</span>
-                        </a>
-                    {% endif %}
-                </div>
-            {% empty %}
-                <div class="empty-state">
-                    <div class="empty-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <p>No users found</p>
-                    <small>Try adjusting your search or check back later for new connections</small>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</main>
 
-<!-- Footer - Include your footer template -->
+                        <!-- Card Info -->
+                        <div class="mn-card-details">
+                            <div class="mn-card-name">
+                                <span>{{ cu.display_name }}</span>
+                            </div>
+
+                            <div class="mn-card-headline" title="{{ cu.headline }}">
+                                {{ cu.headline }}
+                            </div>
+
+                            <div class="mn-mutual-row">
+                                {% if cu.mutual_avatar %}
+                                    <img src="{{ cu.mutual_avatar }}" alt="" class="mn-mutual-avatar" onerror="this.style.display='none'">
+                                {% else %}
+                                    <div class="mn-mutual-icon"><i class="fa-solid fa-users"></i></div>
+                                {% endif %}
+                                <span class="mn-mutual-text">{{ cu.mutual_text }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button type="button" class="mn-btn-connect" onclick="demoConnect(this)">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>Connect</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Global Footer -->
 {% include 'includes/footer.html' %}
 
 <script>
-// Mobile menu toggle
-document.querySelector('.mobile-menu')?.addEventListener('click', function() {
-    document.querySelector('.nav-links').classList.toggle('show');
-});
-
-// Search functionality
-const searchInput = document.getElementById('searchInput');
-const userCards = document.querySelectorAll('.user-card');
-
-if (searchInput) {
-    searchInput.addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        
-        userCards.forEach(card => {
-            const name = card.getAttribute('data-name') || '';
-            const email = card.getAttribute('data-email') || '';
-            
-            if (name.includes(searchTerm) || email.includes(searchTerm)) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-        
-        updateVisibleCount();
-    });
-}
-
-// Filter tabs functionality
-const filterTabs = document.querySelectorAll('.filter-tab');
-let currentFilter = 'all';
-
-filterTabs.forEach(tab => {
-    tab.addEventListener('click', function() {
-        // Remove active class from all tabs
-        filterTabs.forEach(t => t.classList.remove('active'));
-        // Add active class to clicked tab
-        this.classList.add('active');
-        
-        currentFilter = this.getAttribute('data-filter');
-        
-        // Apply filter logic
-        userCards.forEach((card, index) => {
-            if (currentFilter === 'all') {
-                card.style.display = 'flex';
-            } else if (currentFilter === 'suggested') {
-                // Show only first 5 as "suggested" (you can customize this logic)
-                card.style.display = index < 5 ? 'flex' : 'none';
-            } else if (currentFilter === 'recent') {
-                // Show only first 3 as "recent" (you can customize this logic)
-                card.style.display = index < 3 ? 'flex' : 'none';
-            }
-        });
-        
-        updateVisibleCount();
-    });
-});
-
-// Sort functionality
-const sortDropdown = document.getElementById('customSortDropdown');
-const sortBtn = document.getElementById('sortSelectButton');
-const sortMenu = document.getElementById('sortOptionsMenu');
-const sortOptions = document.querySelectorAll('.sort-option');
-
-if (sortDropdown) {
-    // Toggle menu
-    sortBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        sortMenu.classList.toggle('open');
-    });
-
-    // Close menu on outside click
-    document.addEventListener('click', () => {
-        sortMenu.classList.remove('open');
-    });
-
-    sortOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const sortValue = this.getAttribute('data-value');
-            const labelText = this.textContent.trim();
-            
-            // Update UI
-            sortOptions.forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            sortBtn.querySelector('span').textContent = labelText;
-            
-            // Sort logic
-            const usersList = document.getElementById('usersList');
-            const cards = Array.from(userCards);
-            
-            if (sortValue === 'name') {
-                cards.sort((a, b) => {
-                    const nameA = a.getAttribute('data-name') || '';
-                    const nameB = b.getAttribute('data-name') || '';
-                    return nameA.localeCompare(nameB);
-                });
-            } else if (sortValue === 'recent') {
-                // For recent, keep original order or reverse
-                cards.reverse();
-            }
-            
-            // Re-append sorted cards
-            cards.forEach(card => usersList.appendChild(card));
-        });
-    });
-}
-
-// Update visible count
-function updateVisibleCount() {
-    const visibleCards = Array.from(userCards).filter(card => card.style.display !== 'none');
-    const countSpan = document.querySelector('.connections-count');
-    if (countSpan && visibleCards.length !== undefined) {
-        countSpan.textContent = visibleCards.length;
+// Smooth card dismissal
+function dismissCard(cardId) {
+    const card = document.getElementById(cardId);
+    if (card) {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.85)';
+        setTimeout(() => {
+            card.remove();
+        }, 220);
     }
 }
 
-// Add animation delay to cards
-userCards.forEach((card, index) => {
-    card.style.animationDelay = `${index * 0.05}s`;
-});
+// Connect action with AJAX and immediate pending state
+function sendConnectAjax(event, linkElement, userId) {
+    event.preventDefault();
+    const url = linkElement.getAttribute('href');
+    
+    // Immediate UI feedback
+    linkElement.classList.add('pending');
+    linkElement.removeAttribute('href');
+    linkElement.innerHTML = '<i class="fa-regular fa-clock"></i> <span>Request Pending</span>';
 
+    // Dispatch background request
+    fetch(url, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    }).catch(err => console.log('Connect request sent'));
+}
+
+// Demo Connect for college suggestions
+function demoConnect(btn) {
+    btn.classList.add('pending');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-regular fa-clock"></i> <span>Request Pending</span>';
+}
+
+// Show all toggle
+function toggleAllCards(gridId, actionLink) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    if (actionLink.textContent === 'Show all') {
+        actionLink.textContent = 'Show less';
+    } else {
+        actionLink.textContent = 'Show all';
+    }
+}
 </script>
 
 </body>

@@ -493,13 +493,14 @@
 
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                             <i class="fas fa-quote-left" style="margin-bottom: 0;"></i>
-                            <div style="display: flex; gap: 3px; font-size: 0.95rem;" title="{{ testimonial.rating }} out of 5 stars">
+                            <div style="display: flex; gap: 4px; font-size: 0.95rem; align-items: center;" title="{{ testimonial.rating }} out of 5 stars">
                                 {% for _ in testimonial.full_stars_range %}
-                                <i class="fas fa-star" style="color: #0a66c2 !important; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
+                                <i class="fas fa-star" style="color: #0a66c2 !important; opacity: 1 !important; font-size: 0.95rem; margin-bottom: 0;"></i>
                                 {% endfor %}
                                 {% for _ in testimonial.empty_stars_range %}
-                                <i class="far fa-star" style="color: #cbd5e1 !important; opacity: 1; font-size: 0.95rem; margin-bottom: 0;"></i>
+                                <i class="far fa-star" style="color: #cbd5e1 !important; opacity: 1 !important; font-size: 0.95rem; margin-bottom: 0;"></i>
                                 {% endfor %}
+                                <span style="font-size: 0.82rem; font-weight: 700; color: #64748b; margin-left: 4px;">{{ testimonial.rating }}.0</span>
                             </div>
                         </div>
 

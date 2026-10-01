@@ -1,0 +1,1669 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contractor Payouts & History | Freelancer Portal</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        :root {
+            --primary: #0a66c2;
+            --primary-dark: #004182;
+            --primary-light: #e8f3ff;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, input, textarea, button, select {
+            font-family: var(--font-family-base);
+        }
+
+        body {
+            background-color: #f3f4f6;
+            color: var(--slate-800);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fa, .fas, .fa-solid {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+            font-weight: 900 !important;
+            font-style: normal !important;
+        }
+
+        .far, .fa-regular {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
+        }
+
+        .fab, .fa-brands {
+            font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+        }
+
+        .header-title-wrap h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--slate-900);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-wrap p {
+            color: var(--slate-600);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.65rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: #ffffff;
+            color: var(--slate-700);
+            border: 1px solid var(--slate-300);
+        }
+
+        .btn-outline:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-400);
+        }
+
+        /* Flash Messages */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: var(--success-light);
+            color: #14532d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: var(--danger-light);
+            color: #7f1d1d;
+            border: 1px solid #fecaca;
+        }
+
+        /* KPI Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            padding: 1.4rem 1.5rem;
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.45rem;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.green {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .stat-icon.blue {
+            background: #e0f2fe;
+            color: var(--primary);
+        }
+
+        .stat-icon.purple {
+            background: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .stat-icon.amber {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--slate-600);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-number {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--slate-900);
+            line-height: 1.1;
+        }
+
+        /* Layout Columns */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 1.75rem;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card Container */
+        .card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--slate-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1.5px solid var(--slate-300);
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+            color: var(--slate-900);
+            background: #ffffff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.12);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.85rem center;
+            background-size: 1.1em;
+            padding-right: 2.5rem;
+        }
+
+        /* ================= CUSTOM SELECT DROPDOWN COMPONENT ================= */
+        .custom-select-group {
+            position: relative;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            min-height: 48px;
+            padding: 0.55rem 0.95rem;
+            background: #ffffff;
+            border: 1.5px solid var(--slate-300, #cbd5e1);
+            border-radius: var(--radius-sm, 8px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .custom-select-trigger:hover {
+            border-color: #94a3b8;
+            background: #f8fafc;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger,
+        .custom-select-trigger:focus {
+            border-color: var(--primary, #0a66c2);
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.15);
+            background: #ffffff;
+        }
+
+        .custom-select-trigger.is-invalid {
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+        }
+
+        .trigger-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .trigger-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #eef3f8;
+            color: #0a66c2;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid #d0e1f9;
+        }
+
+        .trigger-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trigger-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .trigger-placeholder {
+            color: #64748b;
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        .trigger-selected-name {
+            color: #0f172a;
+            font-size: 0.93rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .trigger-subtext {
+            color: #0a66c2;
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+
+        .trigger-arrow {
+            color: #64748b;
+            font-size: 0.85rem;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .custom-select-wrapper.open .trigger-arrow {
+            transform: rotate(180deg);
+            color: var(--primary, #0a66c2);
+        }
+
+        /* Dropdown Panel */
+        .custom-select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.16), 0 4px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1050;
+            overflow: hidden;
+            display: none;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .custom-select-wrapper.open .custom-select-dropdown {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Search input inside dropdown */
+        .custom-dropdown-search {
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-dropdown-search i {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .custom-dropdown-search input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 0.88rem;
+            color: #0f172a;
+            outline: none;
+            font-family: inherit;
+        }
+
+        /* Options list */
+        .custom-options-list {
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 6px;
+            overscroll-behavior: contain;
+        }
+
+        .custom-options-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-options-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Individual Option */
+        .custom-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            gap: 12px;
+        }
+
+        .custom-option:hover {
+            background: #f1f5f9;
+        }
+
+        .custom-option.selected {
+            background: #ebf4fd;
+        }
+
+        .option-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .option-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #eef3f8;
+            color: #0a66c2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #d0e1f9;
+        }
+
+        .option-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .option-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .option-name {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #0f172a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .custom-option.selected .option-name {
+            color: #0a66c2;
+        }
+
+        .option-meta {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.78rem;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .option-handle {
+            color: #64748b;
+        }
+
+        .option-dot {
+            color: #cbd5e1;
+        }
+
+        .option-title {
+            color: #64748b;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .option-check {
+            color: #0a66c2;
+            font-size: 0.88rem;
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .custom-option.selected .option-check {
+            display: block;
+        }
+
+        .custom-option-empty {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.88rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+
+        /* Payment Method Tabs */
+        .method-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 1rem;
+            background: var(--slate-100);
+            padding: 4px;
+            border-radius: var(--radius-md);
+        }
+
+        .method-tab-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.65rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--slate-600);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .method-tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Amount Input with Currency Symbol */
+        .amount-input-wrap {
+            position: relative;
+        }
+
+        .amount-prefix {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--slate-600);
+        }
+
+        .amount-input-wrap .form-control {
+            padding-left: 2rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--slate-900);
+        }
+
+        /* Quick Amount Chips */
+        .amount-chips {
+            display: flex;
+            gap: 6px;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--slate-100);
+            color: var(--slate-700);
+            border: 1px solid var(--slate-200);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .chip:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: #bfdbfe;
+        }
+
+        /* Auto-detected Profile Banner */
+        .detected-banner {
+            background: var(--primary-light);
+            border: 1px solid #bfdbfe;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.82rem;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Submit Button */
+        .btn-submit-payout {
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+            margin-top: 1rem;
+        }
+
+        .btn-submit-payout:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(22, 163, 74, 0.35);
+        }
+
+        .btn-submit-payout:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Table Filter Bar */
+        .table-filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--slate-50);
+            border-bottom: 1px solid var(--slate-200);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 280px;
+            width: 100%;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--slate-400);
+            font-size: 0.85rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.55rem 0.85rem 0.55rem 2.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--slate-300);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Table Styling */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table.history-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        table.history-table th {
+            padding: 0.9rem 1.1rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--slate-600);
+            background: var(--slate-50);
+            border-bottom: 1.5px solid var(--slate-200);
+            white-space: nowrap;
+        }
+
+        table.history-table td {
+            padding: 1.05rem 1.1rem;
+            border-bottom: 1px solid var(--slate-100);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        table.history-table tr:hover td {
+            background: #fafafa;
+        }
+
+        /* Contractor Cell */
+        .contractor-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contractor-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .contractor-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .contractor-info .name {
+            font-weight: 600;
+            color: var(--slate-900);
+            font-size: 0.92rem;
+        }
+
+        .contractor-info .handle {
+            font-size: 0.78rem;
+            color: var(--slate-600);
+        }
+
+        /* Transaction ID Monospace Chip */
+        .txn-chip {
+            background: var(--slate-100);
+            border: 1px solid var(--slate-200);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.8rem;
+            color: var(--slate-800);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Method Badge */
+        .method-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--slate-700);
+            font-weight: 500;
+        }
+
+        .method-badge i {
+            color: var(--primary);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+
+        .status-badge.completed {
+            background: var(--success-light);
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-badge.processing {
+            background: var(--warning-light);
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .status-badge.failed {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid #fecaca;
+        }
+
+        /* Amount cell */
+        .amount-cell {
+            font-weight: 800;
+            color: var(--success);
+            font-size: 1.05rem;
+            white-space: nowrap;
+        }
+
+        /* Receipt Action Button */
+        .btn-receipt-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 11px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-light);
+            border: 1px solid #bfdbfe;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-receipt-action:hover {
+            background: #dbeafe;
+            border-color: var(--primary);
+        }
+
+        /* Shared CSS from Contractor Payout Specification */
+        .payout-card, .history-card { margin-bottom: 2rem; }
+        .channel-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #f1f5f9; padding: 4px; border-radius: 8px; margin-bottom: 0.8rem; }
+        .tab-btn { padding: 0.6rem; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: #64748b; background: transparent; transition: all 0.2s; }
+        .tab-btn.active { background: #ffffff; color: #0a66c2; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+        .amount-group { position: relative; }
+        .currency-tag { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-weight: 700; color: #64748b; font-size: 1.1rem; }
+        .amount-input { padding-left: 2rem !important; font-size: 1.15rem !important; font-weight: 700; }
+        .btn-payout { width: 100%; padding: 0.85rem; border-radius: 8px; background: #16a34a; color: #ffffff; font-weight: 700; font-size: 0.95rem; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 1rem; transition: background 0.2s; }
+        .btn-payout:hover { background: #15803d; }
+        .autofill-banner { background: #e0f2fe; color: #0369a1; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+        .date-main { font-weight: 600; color: #0f172a; }
+        .date-sub { font-size: 0.75rem; color: #64748b; }
+        .contractor-info { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; background: #0a66c2; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; }
+        .contractor-name { font-weight: 600; color: #0f172a; }
+        .contractor-handle { font-size: 0.75rem; color: #64748b; }
+        .project-title { font-weight: 600; color: #1e293b; }
+        .beneficiary-sub { font-size: 0.75rem; color: #64748b; }
+        .destination-badge { font-size: 0.82rem; color: #334155; display: inline-flex; align-items: center; gap: 6px; }
+        .amount-text { font-weight: 800; color: #16a34a; font-size: 1.05rem; }
+        .status-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; background: #dcfce7; color: #15803d; }
+        .status-pill.processing { background: #fef3c7; color: #b45309; }
+        .status-pill.pending { background: #f1f5f9; color: #475569; }
+        .status-pill.failed { background: #fee2e2; color: #dc2626; }
+        .btn-receipt { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: #0a66c2; background: #e0f2fe; text-decoration: none; border: 1px solid #bfdbfe; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s; }
+        .btn-receipt:hover { background: #dbeafe; }
+        .btn-delete-payout { padding: 4px 9px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: #b91c1c; background: #fee2e2; text-decoration: none; border: 1px solid #fecaca; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: all 0.2s; }
+        .btn-delete-payout:hover { background: #fca5a5; color: #7f1d1d; border-color: #f87171; }
+        .badge-count { font-size: 0.85rem; color: #64748b; font-weight: 600; }
+        .empty-state { text-align: center; padding: 3rem 1.5rem; color: #64748b; }
+    </style>
+</head>
+<body>
+
+{% include 'includes/header.html' %}
+
+<main>
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-title-wrap">
+                <h1><i class="fas fa-money-check-alt" style="color: #16a34a;"></i> Contractor Payout System</h1>
+                <p>Initiate direct payouts to freelancers via UPI or Bank Account and track historical disbursement logs.</p>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'client:client_dashboard' %}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+                <a href="{% url 'payments:payment_methods' %}" class="btn btn-outline">
+                    <i class="fas fa-credit-card"></i> Payment Methods
+                </a>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Executive KPI Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Total Paid to Contractors</div>
+                    <div class="stat-number">₹{{ total_paid_out|default:"0.00"|floatformat:2 }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Disbursements Executed</div>
+                    <div class="stat-number">{{ total_payout_count|default:"0" }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Active Contractors Paid</div>
+                    <div class="stat-number">{{ active_contractors_count|default:"0" }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon amber">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Settlement Security</div>
+                    <div class="stat-number" style="font-size: 1.25rem;">100% Escrow Verified</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Layout: Payout Form on Left + History Table on Right -->
+        <div class="dashboard-layout">
+
+            <!-- 1. PAYMENT FORM INTERFACE -->
+            <div class="card payout-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-paper-plane" style="color: var(--primary);"></i> Initiate Contractor Payout</h2>
+                </div>
+                
+                <div class="card-body">
+                    <form method="POST" id="payoutForm" action="{% url 'payments:admin_contractor_payouts' %}">
+                        {% csrf_token %}
+
+                        <!-- 1. Freelancer Selector (Custom Styled Dropdown) -->
+                        <div class="form-group custom-select-group">
+                            <label class="form-label" for="customSelectTrigger">Select Freelancer / Contractor <span class="required">*</span></label>
+                            
+                            <!-- Hidden Native Select (maintains form submission, validation & event listening) -->
+                            <select name="freelancer_id" id="freelancerSelect" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;" required>
+                                <option value="" disabled selected>-- Select a Contractor --</option>
+                                {% for f in freelancers %}
+                                <option value="{{ f.id }}" data-username="{{ f.username }}" data-name="{{ f.get_full_name|default:f.username }}" data-avatar="{{ f.get_profile_picture|default:'' }}" data-title="{{ f.freelancerprofile.title|default:'' }}">
+                                    {{ f.get_full_name|default:f.username }} (@{{ f.username }})
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <!-- Custom Trigger Button -->
+                            <div class="custom-select-wrapper" id="customSelectWrapper">
+                                <button type="button" class="custom-select-trigger" id="customSelectTrigger" onclick="toggleCustomSelect(event)" aria-haspopup="listbox" aria-expanded="false">
+                                    <div class="trigger-content" id="triggerContent">
+                                        <div class="trigger-avatar" id="triggerAvatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="trigger-text-wrapper">
+                                            <span class="trigger-placeholder" id="triggerLabel">-- Select a Contractor --</span>
+                                            <span class="trigger-subtext" id="triggerSubtext" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-chevron-down trigger-arrow" id="triggerArrow"></i>
+                                </button>
+
+                                <!-- Custom Dropdown Menu -->
+                                <div class="custom-select-dropdown" id="customSelectDropdown" role="listbox">
+                                    {% if freelancers|length > 3 %}
+                                    <div class="custom-dropdown-search">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" id="contractorSearchInput" placeholder="Filter by name or username..." autocomplete="off">
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="custom-options-list" id="customOptionsList">
+                                        {% for f in freelancers %}
+                                        <div class="custom-option" role="option" data-value="{{ f.id }}" data-name="{{ f.get_full_name|default:f.username }}" data-username="{{ f.username }}" data-avatar="{{ f.get_profile_picture|default:'' }}" data-title="{{ f.freelancerprofile.title|default:'' }}" onclick="selectContractor('{{ f.id }}')">
+                                            <div class="option-left">
+                                                <div class="option-avatar">
+                                                    {% if f.get_profile_picture %}
+                                                        <img src="{{ f.get_profile_picture }}" alt="{{ f.username }}">
+                                                    {% else %}
+                                                        <span>{{ f.username|slice:":1"|upper }}</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="option-info">
+                                                    <div class="option-name">{{ f.get_full_name|default:f.username }}</div>
+                                                    <div class="option-meta">
+                                                        <span class="option-handle">@{{ f.username }}</span>
+                                                        {% if f.freelancerprofile.title %}
+                                                        <span class="option-dot">•</span>
+                                                        <span class="option-title">{{ f.freelancerprofile.title }}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <i class="fas fa-check option-check" id="check_{{ f.id }}"></i>
+                                        </div>
+                                        {% empty %}
+                                        <div class="custom-option-empty">
+                                            <i class="fas fa-user-slash"></i>
+                                            <span>No contractors found</span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Auto-fill Alert Banner -->
+                        <div id="autofillNotice" class="autofill-banner" style="display: none;">
+                            <i class="fas fa-check-circle"></i> Saved payout credentials auto-populated.
+                        </div>
+
+                        <!-- 2. Project Specification -->
+                        <div class="form-group">
+                            <label class="form-label">Project / Milestone *</label>
+                            <input type="text" name="project_title" id="projectTitle" class="form-control" placeholder="e.g. Website Backend API Development" required>
+                        </div>
+
+                        <!-- 3. Channel Tabs -->
+                        <div class="form-group">
+                            <label class="form-label">Payout Channel *</label>
+                            <div class="channel-tabs">
+                                <button type="button" class="tab-btn active" id="tabUpi" onclick="setChannel('upi')">
+                                    <i class="fas fa-mobile-alt"></i> UPI / VPA
+                                </button>
+                                <button type="button" class="tab-btn" id="tabBank" onclick="setChannel('bank')">
+                                    <i class="fas fa-university"></i> Bank Account
+                                </button>
+                            </div>
+                            <input type="hidden" name="payout_method" id="payoutMethod" value="upi">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Beneficiary Account Name *</label>
+                            <input type="text" name="account_holder_name" id="accountName" class="form-control" placeholder="Name as per Bank / UPI" required>
+                        </div>
+
+                        <!-- UPI Inputs -->
+                        <div id="upiFields">
+                            <div class="form-group">
+                                <label class="form-label">UPI ID / VPA *</label>
+                                <input type="text" name="upi_id" id="upiId" class="form-control" placeholder="e.g. alex@okhdfcbank">
+                            </div>
+                        </div>
+
+                        <!-- Bank Inputs -->
+                        <div id="bankFields" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Bank Name *</label>
+                                <input type="text" name="bank_name" id="bankName" class="form-control" placeholder="e.g. HDFC Bank">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Account Number *</label>
+                                <input type="text" name="account_number" id="accountNum" class="form-control" placeholder="Account Number">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">IFSC Code *</label>
+                                <input type="text" name="ifsc_code" id="ifscCode" class="form-control" placeholder="e.g. HDFC0001234">
+                            </div>
+                        </div>
+
+                        <!-- 4. Payout Amount -->
+                        <div class="form-group">
+                            <label class="form-label">Payout Amount (INR) *</label>
+                            <div class="amount-group">
+                                <span class="currency-tag">₹</span>
+                                <input type="number" step="0.01" min="1" name="amount" id="amount" class="form-control amount-input" placeholder="0.00" required>
+                            </div>
+                            <div class="amount-chips">
+                                <span class="chip" onclick="setAmount(2000)">₹2,000</span>
+                                <span class="chip" onclick="setAmount(5000)">₹5,000</span>
+                                <span class="chip" onclick="setAmount(10000)">₹10,000</span>
+                                <span class="chip" onclick="setAmount(25000)">₹25,000</span>
+                                <span class="chip" onclick="setAmount(50000)">₹50,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Internal Notes -->
+                        <div class="form-group">
+                            <label class="form-label">Disbursement Reference / Notes (Optional)</label>
+                            <textarea name="notes" id="notes" class="form-control" rows="2" placeholder="e.g. Milestone 2 approved by client, released from escrow."></textarea>
+                        </div>
+
+                        <input type="hidden" name="status" value="completed">
+
+                        <!-- 5. Submit Button -->
+                        <button type="submit" id="submitBtn" class="btn-payout">
+                            <i class="fas fa-lock"></i> Authorize & Release Payout
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 2. CONTRACTOR PAYMENT HISTORY TABLE -->
+            <div class="card history-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> Contractor Payment History</h2>
+                    <span class="badge-count">{{ payouts|length }} Records</span>
+                </div>
+
+                <!-- Table Filter & Search Bar -->
+                <div class="table-filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="tableSearchInput" placeholder="Search contractor, TXN ID...">
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-outline" onclick="filterStatus('all')" style="padding: 4px 12px; font-size: 0.8rem;">All</button>
+                        <button type="button" class="btn btn-outline" onclick="filterStatus('completed')" style="padding: 4px 12px; font-size: 0.8rem; color: #16a34a;">Completed</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="history-table" id="payoutHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Contractor / Freelancer</th>
+                                <th>Project / Job Title</th>
+                                <th>Payout Destination</th>
+                                <th>Transaction Ref</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in payouts %}
+                            <tr data-status="{{ p.status }}" data-search="{{ p.freelancer.username }} {{ p.freelancer.get_full_name }} {{ p.transaction_id }} {{ p.project_title }}">
+                                <td>
+                                    <div class="date-main">{{ p.created_at|date:"M d, Y" }}</div>
+                                    <div class="date-sub">{{ p.created_at|date:"h:i A" }}</div>
+                                </td>
+                                <td>
+                                    <div class="contractor-info">
+                                        <div class="avatar">{{ p.freelancer.username|slice:":1"|upper }}</div>
+                                        <div>
+                                            <div class="contractor-name">{{ p.freelancer.get_full_name|default:p.freelancer.username }}</div>
+                                            <div class="contractor-handle">@{{ p.freelancer.username }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="project-title">{{ p.project_title }}</div>
+                                    {% if p.account_holder_name %}
+                                    <div class="beneficiary-sub">Beneficiary: {{ p.account_holder_name }}</div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="destination-badge">
+                                        {% if p.payout_method == 'upi' %}
+                                            <i class="fas fa-mobile-alt" style="color: #0284c7;"></i>
+                                        {% else %}
+                                            <i class="fas fa-university" style="color: #7c3aed;"></i>
+                                        {% endif %}
+                                        {{ p.recipient_detail }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="txn-chip">{{ p.transaction_id }}</span>
+                                </td>
+                                <td>
+                                    <span class="amount-text">₹{{ p.amount|floatformat:2 }}</span>
+                                </td>
+                                <td>
+                                    <span class="status-pill {{ p.status }}">
+                                        <i class="fas fa-check-circle"></i> {{ p.status|capfirst }}
+                                    </span>
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <a href="{% url 'payments:contractor_payout_receipt' p.transaction_id %}" target="_blank" class="btn-receipt" title="View Official Receipt">Receipt</a>
+                                        <button type="button" class="btn-delete-payout" onclick="openDeletePayoutModal('{{ p.id }}', '{{ p.transaction_id|escapejs }}', '{{ p.freelancer.get_full_name|default:p.freelancer.username|escapejs }}', '{{ p.amount|floatformat:2 }}')" title="Delete payout record">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="empty-state">No contractor payouts recorded yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- DELETE PAYOUT CONFIRMATION MODAL -->
+<div id="deletePayoutModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 16px; max-width: 440px; width: 100%; padding: 2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 1.25rem;">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700;">Delete Payout Record?</h3>
+        <p style="color: #64748b; font-size: 0.92rem; line-height: 1.5; margin-bottom: 1.5rem;">
+            Are you sure you want to permanently delete payout record <strong id="deletePayoutTxn" style="color: #0f172a; font-family: monospace;"></strong> for <strong id="deletePayoutFreelancer" style="color: #0f172a;"></strong> (<strong id="deletePayoutAmount" style="color: #16a34a;"></strong>)? This action cannot be undone.
+        </p>
+        <form id="deletePayoutForm" method="POST" action="">
+            {% csrf_token %}
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" onclick="closeDeletePayoutModal()" style="padding: 0.65rem 1.4rem; border-radius: 20px; border: 1px solid #cbd5e1; background: white; color: #475569; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    Cancel
+                </button>
+                <button type="submit" style="padding: 0.65rem 1.4rem; border-radius: 20px; border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    Yes, Delete Record
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% include 'includes/footer.html' %}
+
+<!-- JAVASCRIPT LOGIC -->
+<script>
+    // Channel Switcher (UPI vs Bank)
+    function setChannel(channel) {
+        const methodInput = document.getElementById('payoutMethod');
+        if (methodInput) methodInput.value = channel;
+        const tabUpi = document.getElementById('tabUpi');
+        const tabBank = document.getElementById('tabBank');
+        if (tabUpi) tabUpi.classList.toggle('active', channel === 'upi');
+        if (tabBank) tabBank.classList.toggle('active', channel === 'bank');
+        
+        const upiFields = document.getElementById('upiFields');
+        const bankFields = document.getElementById('bankFields');
+        if (upiFields) upiFields.style.display = channel === 'upi' ? 'block' : 'none';
+        if (bankFields) bankFields.style.display = channel === 'bank' ? 'block' : 'none';
+
+        const upiId = document.getElementById('upiId');
+        const bankName = document.getElementById('bankName');
+        const accountNum = document.getElementById('accountNum');
+        const ifscCode = document.getElementById('ifscCode');
+
+        if (channel === 'upi') {
+            if (upiId) upiId.setAttribute('required', 'required');
+            if (bankName) bankName.removeAttribute('required');
+            if (accountNum) accountNum.removeAttribute('required');
+            if (ifscCode) ifscCode.removeAttribute('required');
+        } else {
+            if (upiId) upiId.removeAttribute('required');
+            if (bankName) bankName.setAttribute('required', 'required');
+            if (accountNum) accountNum.setAttribute('required', 'required');
+            if (ifscCode) ifscCode.setAttribute('required', 'required');
+        }
+    }
+
+    function selectPayoutMethod(channel) {
+        setChannel(channel);
+    }
+
+    function setAmount(val) {
+        const amt = document.getElementById('amount');
+        if (amt) amt.value = val.toFixed(2);
+    }
+
+    // Dynamic Auto-fill on Freelancer Select
+    const freelancerSelect = document.getElementById('freelancerSelect');
+    if (freelancerSelect) {
+        freelancerSelect.addEventListener('change', function() {
+            const freelancerId = this.value;
+            if (!freelancerId) return;
+
+            fetch(`/contractor-payouts/api/freelancer/${freelancerId}/`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const accName = document.getElementById('accountName');
+                    if (accName && data.account_holder_name) {
+                        accName.value = data.account_holder_name;
+                    }
+                    const notice = document.getElementById('autofillNotice');
+                    if (data.has_profile || data.has_payout_profile) {
+                        if (notice) notice.style.display = 'block';
+                        setChannel(data.preferred_method || 'upi');
+                        if (data.preferred_method === 'upi') {
+                            const upiInput = document.getElementById('upiId');
+                            if (upiInput) upiInput.value = data.upi_id || '';
+                        } else {
+                            const bName = document.getElementById('bankName');
+                            const aNum = document.getElementById('accountNum');
+                            const ifsc = document.getElementById('ifscCode');
+                            if (bName) bName.value = data.bank_name || '';
+                            if (aNum) aNum.value = data.account_number || '';
+                            if (ifsc) ifsc.value = data.ifsc_code || '';
+                        }
+                    } else {
+                        if (notice) notice.style.display = 'none';
+                    }
+
+                    // Pre-fill project title if available from freelancer's active projects
+                    const projTitle = document.getElementById('projectTitle');
+                    if (projTitle && data.jobs && data.jobs.length > 0 && !projTitle.value) {
+                        projTitle.value = data.jobs[0].title;
+                    }
+                }
+            })
+            .catch(err => console.error("Error auto-filling contractor credentials:", err));
+        });
+    }
+
+    // Custom Dropdown JS Functions
+    function toggleCustomSelect(event) {
+        if (event) event.stopPropagation();
+        const wrapper = document.getElementById('customSelectWrapper');
+        const trigger = document.getElementById('customSelectTrigger');
+        if (!wrapper) return;
+        const isOpen = wrapper.classList.contains('open');
+        if (isOpen) {
+            closeCustomSelect();
+        } else {
+            wrapper.classList.add('open');
+            if (trigger) trigger.setAttribute('aria-expanded', 'true');
+            const searchInput = document.getElementById('contractorSearchInput');
+            if (searchInput) {
+                setTimeout(() => searchInput.focus(), 60);
+            }
+        }
+    }
+
+    function closeCustomSelect() {
+        const wrapper = document.getElementById('customSelectWrapper');
+        const trigger = document.getElementById('customSelectTrigger');
+        if (wrapper) wrapper.classList.remove('open');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    function selectContractor(freelancerId) {
+        const nativeSelect = document.getElementById('freelancerSelect');
+        const trigger = document.getElementById('customSelectTrigger');
+        if (!nativeSelect) return;
+
+        nativeSelect.value = freelancerId;
+        if (trigger) trigger.classList.remove('is-invalid');
+        
+        // Find matching option data
+        const option = nativeSelect.querySelector(`option[value="${freelancerId}"]`);
+        if (option) {
+            const name = option.getAttribute('data-name') || option.textContent.trim();
+            const username = option.getAttribute('data-username') || '';
+            const avatar = option.getAttribute('data-avatar') || '';
+            const title = option.getAttribute('data-title') || '';
+
+            // Update trigger UI
+            const triggerLabel = document.getElementById('triggerLabel');
+            const triggerSubtext = document.getElementById('triggerSubtext');
+            const triggerAvatar = document.getElementById('triggerAvatar');
+
+            if (triggerLabel) {
+                triggerLabel.className = 'trigger-selected-name';
+                triggerLabel.textContent = name;
+            }
+            if (triggerSubtext) {
+                triggerSubtext.style.display = 'block';
+                triggerSubtext.textContent = `@${username}` + (title ? ` • ${title}` : '');
+            }
+            if (triggerAvatar) {
+                if (avatar) {
+                    triggerAvatar.innerHTML = `<img src="${avatar}" alt="${username}">`;
+                } else {
+                    triggerAvatar.innerHTML = `<span>${(username || name).charAt(0).toUpperCase()}</span>`;
+                }
+            }
+
+            // Highlight selected option in list
+            document.querySelectorAll('.custom-option').forEach(el => {
+                el.classList.toggle('selected', el.getAttribute('data-value') === String(freelancerId));
+            });
+
+            // Trigger native change event so auto-fill AJAX runs seamlessly!
+            nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        closeCustomSelect();
+    }
+
+    // Close on outside click
+    document.addEventListener('click', function(e) {
+        const wrapper = document.getElementById('customSelectWrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeCustomSelect();
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeCustomSelect();
+        }
+    });
+
+    // Keyboard support on Trigger
+    const customTrigger = document.getElementById('customSelectTrigger');
+    if (customTrigger) {
+        customTrigger.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                toggleCustomSelect(e);
+            }
+        });
+    }
+
+    // Search filter
+    const contractorSearchInput = document.getElementById('contractorSearchInput');
+    if (contractorSearchInput) {
+        contractorSearchInput.addEventListener('input', function(e) {
+            const q = this.value.toLowerCase().trim();
+            const options = document.querySelectorAll('.custom-options-list .custom-option');
+            options.forEach(opt => {
+                const name = (opt.getAttribute('data-name') || '').toLowerCase();
+                const username = (opt.getAttribute('data-username') || '').toLowerCase();
+                const title = (opt.getAttribute('data-title') || '').toLowerCase();
+                if (!q || name.includes(q) || username.includes(q) || title.includes(q)) {
+                    opt.style.display = 'flex';
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // Form Submission Prompt & Spinner
+    const payoutForm = document.getElementById('payoutForm');
+    if (payoutForm) {
+        payoutForm.addEventListener('submit', function(e) {
+            const freelancerSelect = document.getElementById('freelancerSelect');
+            if (!freelancerSelect || !freelancerSelect.value) {
+                e.preventDefault();
+                const trigger = document.getElementById('customSelectTrigger');
+                if (trigger) {
+                    trigger.classList.add('is-invalid');
+                    trigger.focus();
+                }
+                alert('Please select a freelancer / contractor to proceed.');
+                return;
+            }
+
+            const amtInput = document.getElementById('amount');
+            const amt = amtInput ? amtInput.value : '0';
+            const numAmt = parseFloat(amt) || 0;
+            if (!confirm(`Confirm releasing payout of ₹${numAmt.toFixed(2)}?`)) {
+                e.preventDefault();
+                return;
+            }
+            const btn = document.getElementById('submitBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Payout...';
+            }
+        });
+    }
+
+    // Table Search Filter
+    const searchInput = document.getElementById('tableSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#payoutHistoryTable tbody tr');
+
+            rows.forEach(row => {
+                const searchData = row.getAttribute('data-search') || '';
+                if (searchData.toLowerCase().includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // Table Status Filter
+    function filterStatus(status) {
+        const rows = document.querySelectorAll('#payoutHistoryTable tbody tr');
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            if (status === 'all' || rowStatus === status) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Delete Payout Modal Functions
+    function openDeletePayoutModal(payoutId, txnId, freelancerName, amount) {
+        document.getElementById('deletePayoutTxn').textContent = txnId;
+        document.getElementById('deletePayoutFreelancer').textContent = freelancerName;
+        document.getElementById('deletePayoutAmount').textContent = '₹' + amount;
+        document.getElementById('deletePayoutForm').action = `/contractor-payouts/delete/${payoutId}/`;
+        const modal = document.getElementById('deletePayoutModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeDeletePayoutModal() {
+        const modal = document.getElementById('deletePayoutModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDeletePayoutModal();
+    });
+
+    const delPayoutModal = document.getElementById('deletePayoutModal');
+    if (delPayoutModal) {
+        delPayoutModal.addEventListener('click', function(e) {
+            if (e.target === this) closeDeletePayoutModal();
+        });
+    }
+</script>
+
+</body>
+</html>

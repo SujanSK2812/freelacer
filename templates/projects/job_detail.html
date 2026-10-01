@@ -11,7 +11,7 @@
 <style>
 
 body{
-font-family: Arial, sans-serif;
+font-family: var(--font-family-base) !important;
 background:#f6f7f9;
 margin:0;
 }
@@ -140,9 +140,15 @@ margin-bottom:10px;
 
 </div>
 
+{% if not job.is_active or job.is_expired_or_completed %}
+<span class="apply-btn" style="background: #94a3b8; cursor: not-allowed; text-align: center; display: block;">
+Project Completed
+</span>
+{% else %}
 <a href="{% url 'submit_proposal' job.id %}" class="apply-btn">
 Apply for this Job
 </a>
+{% endif %}
 
 </div>
 

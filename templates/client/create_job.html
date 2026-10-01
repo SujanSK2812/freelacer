@@ -16,7 +16,7 @@
     }
 
     body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-family-base) !important;
       background: #f3f2ef;
       color: #191919;
       line-height: 1.5;
@@ -156,21 +156,138 @@
       line-height: 1.6;
     }
 
-    .select-wrapper {
+    /* CUSTOM CSS DROPDOWN COMPONENT */
+    .custom-select-wrapper {
       position: relative;
+      width: 100%;
     }
 
-    .select-wrapper::after {
-      content: "\f078";
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      font-size: 0.75rem;
+    .custom-select-trigger {
+      width: 100%;
+      padding: 0.8rem 1.1rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      color: #191919;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .custom-select-trigger:hover {
+      border-color: #94a3b8;
+      background: #f8fafc;
+    }
+
+    .custom-select-wrapper.open .custom-select-trigger,
+    .custom-select-trigger:focus {
+      outline: none;
+      border-color: #0a66c2;
+      box-shadow: 0 0 0 3.5px rgba(10, 102, 194, 0.15);
+      background: #ffffff;
+    }
+
+    .custom-select-arrow {
+      font-size: 0.8rem;
       color: #0a66c2;
+      transition: transform 0.25s ease;
+    }
+
+    .custom-select-wrapper.open .custom-select-arrow {
+      transform: rotate(180deg);
+    }
+
+    .custom-select-dropdown {
       position: absolute;
-      right: 1.1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+      padding: 6px;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      animation: selectDropdownSlide 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes selectDropdownSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .custom-select-wrapper.open .custom-select-dropdown {
+      display: flex;
+    }
+
+    .custom-select-option {
+      padding: 0.75rem 1rem;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: #ffffff;
+    }
+
+    .custom-select-option:hover {
+      background: #f1f5f9;
+    }
+
+    .custom-select-option.selected {
+      background: #f0f7ff;
+    }
+
+    .custom-select-option.selected .option-main-title {
+      color: #0a66c2;
+      font-weight: 700;
+    }
+
+    .option-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .option-main-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .option-sub-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .option-check-icon {
+      color: #0a66c2;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .custom-select-option.selected .option-check-icon {
+      opacity: 1;
+    }
+
+    select {
+      color-scheme: light;
     }
 
     .file-upload-wrapper {
@@ -361,6 +478,134 @@
         justify-content: center;
       }
     }
+
+    /* Upload Status Modal Overlay */
+    .upload-status-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 1.5rem;
+      animation: fadeInModal 0.25s ease-out;
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .upload-status-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      animation: scaleInCard 0.25s ease-out;
+    }
+
+    @keyframes scaleInCard {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .status-icon-wrap {
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .custom-spinner {
+      width: 56px;
+      height: 56px;
+      border: 4px solid #e2e8f0;
+      border-top-color: #0a66c2;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .success-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #dcfce7;
+      color: #16a34a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .error-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .status-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-subtitle {
+      font-size: 0.92rem;
+      color: #64748b;
+      margin-bottom: 1.25rem;
+      line-height: 1.45;
+    }
+
+    .countdown-bar-wrap {
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .countdown-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+      width: 0%;
+      transition: width 3s linear;
+    }
+
+    .status-dismiss-btn {
+      background: #0a66c2;
+      color: white;
+      border: none;
+      padding: 0.65rem 1.4rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -401,12 +646,46 @@
 
         <div class="form-group">
           <label for="experience_level"><i class="fas fa-layer-group"></i>Experience Level</label>
-          <div class="select-wrapper">
-            <select id="experience_level" name="experience_level">
+          <div class="custom-select-wrapper" id="customExpWrapper">
+            <!-- Hidden native select for form submission -->
+            <select id="experience_level" name="experience_level" style="display: none;">
               <option value="Entry Level">Entry Level</option>
               <option value="Intermediate" selected>Intermediate</option>
               <option value="Expert">Expert</option>
             </select>
+
+            <!-- Custom CSS Trigger -->
+            <button type="button" class="custom-select-trigger" id="customExpTrigger" aria-haspopup="listbox" aria-expanded="false">
+              <span id="customExpDisplay" style="font-weight: 600; color: #0f172a;">Intermediate</span>
+              <i class="fas fa-chevron-down custom-select-arrow"></i>
+            </button>
+
+            <!-- Custom CSS Options Menu -->
+            <div class="custom-select-dropdown" id="customExpDropdown" role="listbox">
+              <div class="custom-select-option" data-value="Entry Level" role="option">
+                <div class="option-text-wrap">
+                  <span class="option-main-title">Entry Level</span>
+                  <span class="option-sub-desc">Basic experience, junior freelancers</span>
+                </div>
+                <i class="fas fa-check option-check-icon"></i>
+              </div>
+
+              <div class="custom-select-option selected" data-value="Intermediate" role="option">
+                <div class="option-text-wrap">
+                  <span class="option-main-title">Intermediate</span>
+                  <span class="option-sub-desc">Substantial experience and proven track record</span>
+                </div>
+                <i class="fas fa-check option-check-icon"></i>
+              </div>
+
+              <div class="custom-select-option" data-value="Expert" role="option">
+                <div class="option-text-wrap">
+                  <span class="option-main-title">Expert</span>
+                  <span class="option-sub-desc">Deep specialized expertise and complex leadership</span>
+                </div>
+                <i class="fas fa-check option-check-icon"></i>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -438,7 +717,7 @@
         </div>
 
         <div class="form-actions job-form-full">
-          <a href="/" class="btn-cancel">Cancel</a>
+          <a href="{% url 'client:client_home' %}" class="btn-cancel">Cancel</a>
           <button type="submit" class="post-job-btn">
             <i class="fas fa-paper-plane"></i> Post Work
           </button>
@@ -487,7 +766,204 @@
       document.getElementById('posterPreview').src = '';
     });
   }
+
+  // Custom CSS dropdown for Experience Level
+  const expWrapper = document.getElementById('customExpWrapper');
+  const expTrigger = document.getElementById('customExpTrigger');
+  const expDisplay = document.getElementById('customExpDisplay');
+  const nativeSelect = document.getElementById('experience_level');
+  const expOptions = document.querySelectorAll('.custom-select-option');
+
+  if (expWrapper && expTrigger) {
+    expTrigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isOpen = expWrapper.classList.toggle('open');
+      expTrigger.setAttribute('aria-expanded', isOpen);
+    });
+
+    expOptions.forEach(opt => {
+      opt.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const val = this.getAttribute('data-value');
+        if (nativeSelect) {
+          nativeSelect.value = val;
+          nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        if (expDisplay) {
+          expDisplay.textContent = val;
+        }
+        expOptions.forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        expWrapper.classList.remove('open');
+        expTrigger.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!expWrapper.contains(e.target)) {
+        expWrapper.classList.remove('open');
+        expTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && expWrapper.classList.contains('open')) {
+        expWrapper.classList.remove('open');
+        expTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Upload Status Modal and 3-Second Delay Submission Handling
+  const jobForm = document.querySelector('.job-form');
+  const postBtn = jobForm ? jobForm.querySelector('.post-job-btn') : null;
+  const modal = document.getElementById('uploadStatusModal');
+  const spinnerWrap = document.getElementById('uploadSpinnerContainer');
+  const successWrap = document.getElementById('uploadSuccessContainer');
+  const errorWrap = document.getElementById('uploadErrorContainer');
+  const statusTitle = document.getElementById('uploadStatusTitle');
+  const statusSubtitle = document.getElementById('uploadStatusSubtitle');
+  const countdownWrap = document.getElementById('uploadCountdownWrap');
+  const countdownBar = document.getElementById('uploadCountdownBar');
+  const dismissBtn = document.getElementById('uploadDismissBtn');
+
+  let isSubmittingJob = false;
+
+  if (jobForm) {
+    jobForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // 1. Validate the form
+      if (!jobForm.checkValidity()) {
+        jobForm.reportValidity();
+        return;
+      }
+
+      if (isSubmittingJob) return; // Prevent duplicate posts
+      isSubmittingJob = true;
+
+      // Disable post button to prevent duplicate clicks
+      if (postBtn) {
+        postBtn.disabled = true;
+        postBtn.style.opacity = '0.6';
+        postBtn.style.cursor = 'not-allowed';
+      }
+
+      // 2. Show loading indicator with message "Uploading your post..."
+      spinnerWrap.style.display = 'flex';
+      successWrap.style.display = 'none';
+      errorWrap.style.display = 'none';
+      countdownWrap.style.display = 'none';
+      dismissBtn.style.display = 'none';
+      countdownBar.style.transition = 'none';
+      countdownBar.style.width = '0%';
+      statusTitle.textContent = "Uploading your post...";
+      statusSubtitle.textContent = "Please wait while we upload your work details.";
+      modal.style.display = 'flex';
+
+      // 3. Upload the post immediately (no delay before upload starts)
+      const formData = new FormData(jobForm);
+
+      fetch(jobForm.action || window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(async (response) => {
+        let data = {};
+        try {
+          data = await response.json();
+        } catch (err) {
+          data = { status: 'error', message: 'Server communication error.' };
+        }
+
+        if (!response.ok || data.status !== 'success') {
+          // Upload failed: Do NOT show success message!
+          spinnerWrap.style.display = 'none';
+          errorWrap.style.display = 'flex';
+          statusTitle.textContent = "Upload Failed";
+          statusSubtitle.textContent = data.message || "An error occurred while uploading your work. Please try again.";
+          dismissBtn.style.display = 'inline-block';
+          
+          if (postBtn) {
+            postBtn.disabled = false;
+            postBtn.style.opacity = '1';
+            postBtn.style.cursor = 'pointer';
+          }
+          isSubmittingJob = false;
+          return;
+        }
+
+        // 4. Successful upload! Display success message: "Post uploaded successfully!"
+        spinnerWrap.style.display = 'none';
+        successWrap.style.display = 'flex';
+        statusTitle.textContent = "Post uploaded successfully!";
+        statusSubtitle.textContent = "Redirecting to your feed in 3 seconds...";
+        countdownWrap.style.display = 'block';
+
+        // Animate countdown bar over 3 seconds
+        requestAnimationFrame(() => {
+          countdownBar.style.transition = 'width 3s linear';
+          countdownBar.style.width = '100%';
+        });
+
+        // 5. Wait exactly 3 seconds before redirecting to the correct page
+        setTimeout(() => {
+          window.location.href = data.redirect_url || "{% url 'client:client_home' %}";
+        }, 3000);
+      })
+      .catch((err) => {
+        spinnerWrap.style.display = 'none';
+        errorWrap.style.display = 'flex';
+        statusTitle.textContent = "Upload Error";
+        statusSubtitle.textContent = "Network error while uploading. Please check your connection and try again.";
+        dismissBtn.style.display = 'inline-block';
+        if (postBtn) {
+          postBtn.disabled = false;
+          postBtn.style.opacity = '1';
+          postBtn.style.cursor = 'pointer';
+        }
+        isSubmittingJob = false;
+      });
+    });
+  }
+
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+  }
 </script>
+
+<!-- Upload Status Modal Overlay -->
+<div id="uploadStatusModal" class="upload-status-overlay" style="display: none;">
+  <div class="upload-status-card">
+    <div id="uploadSpinnerContainer" class="status-icon-wrap">
+      <div class="custom-spinner"></div>
+    </div>
+    <div id="uploadSuccessContainer" class="status-icon-wrap" style="display: none;">
+      <div class="success-icon-circle">
+        <i class="fas fa-check"></i>
+      </div>
+    </div>
+    <div id="uploadErrorContainer" class="status-icon-wrap" style="display: none;">
+      <div class="error-icon-circle">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+    </div>
+    
+    <h3 id="uploadStatusTitle" class="status-title">Uploading your post...</h3>
+    <p id="uploadStatusSubtitle" class="status-subtitle">Please wait while we save your work details.</p>
+    
+    <div id="uploadCountdownWrap" class="countdown-bar-wrap" style="display: none;">
+      <div id="uploadCountdownBar" class="countdown-bar-fill"></div>
+    </div>
+    
+    <button type="button" id="uploadDismissBtn" class="status-dismiss-btn" style="display: none;">Close & Try Again</button>
+  </div>
+</div>
 
 {% include 'includes/footer.html' %}
 

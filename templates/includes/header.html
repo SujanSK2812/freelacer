@@ -1,107 +1,118 @@
 {% load static %}
+<!-- Global Google Fonts: Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Global Centralized Typography System -->
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
 
 <header class="upwork-header">
   <div class="upwork-header-container">
     <!-- LEFT: Logo & Nav Links -->
     <div class="upwork-header-left">
       {% if request.user.is_authenticated %}
-        {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
-          <a href="{% url 'accounts:admin_home' %}" class="upwork-logo">
+      {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
+      <a href="{% url 'accounts:admin_home' %}" class="upwork-logo">
         {% elif request.user.role == 'client' %}
-          <a href="{% url 'client:client_home' %}" class="upwork-logo">
-        {% else %}
+        <a href="{% url 'client:client_home' %}" class="upwork-logo">
+          {% else %}
           <a href="{% url 'freelancer:freelancer_home' %}" class="upwork-logo">
-        {% endif %}
-      {% else %}
-        <a href="{% url 'home' %}" class="upwork-logo">
-      {% endif %}
-        <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal Logo" class="brand-logo-img">
-        <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
-      </a>
+            {% endif %}
+            {% else %}
+            <a href="{% url 'home' %}" class="upwork-logo">
+              {% endif %}
+              <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal Logo" class="brand-logo-img">
+              <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
+            </a>
 
-      {% if request.user.is_authenticated %}
-      <div class="upwork-nav-menu">
-        
-        {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
-        <!-- ADMIN NAVIGATION -->
-        <a href="{% url 'accounts:admin_home' %}"
-          class="nav-link {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}">
-          <i class="fas fa-tachometer-alt"></i> Admin Dashboard
-        </a>
-        <a href="{% url 'accounts:admin_users' %}"
-          class="nav-link {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">
-          <i class="fas fa-users-cog"></i> Users Management
-        </a>
-        <a href="{% url 'accounts:admin_connection_requests' %}"
-          class="nav-link {% if request.resolver_match.url_name == 'admin_connection_requests' %}active{% endif %}">
-          <i class="fas fa-user-friends"></i> Requests
-        </a>
-        <a href="/admin/" class="nav-link" target="_blank">
-          <i class="fas fa-tools"></i> Django Admin
-        </a>
+            {% if request.user.is_authenticated %}
+            <div class="upwork-nav-menu">
 
-        {% elif request.user.role == 'client' %}
-        <!-- CLIENT NAVIGATION -->
-        <div class="nav-dropdown-item">
-          <a href="{% url 'client:client_home' %}"
-            class="nav-link {% if request.resolver_match.url_name == 'client_home' %}active{% endif %}">
-            Find Talent <i class="fas fa-chevron-down nav-arrow"></i>
-          </a>
-          <div class="dropdown-popover">
-            <a href="{% url 'client:client_home' %}"><i class="fas fa-search"></i> Search for Freelancers</a>
-            <a href="{% url 'client:all_freelancers' %}"><i class="fas fa-users"></i> All Freelancers</a>
-          </div>
-        </div>
+              {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
+              <!-- ADMIN NAVIGATION -->
+              <a href="{% url 'accounts:admin_home' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}">
+                <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+              </a>
+              <a href="{% url 'accounts:admin_users' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">
+                <i class="fas fa-users-cog"></i> Users Management
+              </a>
+              <a href="{% url 'accounts:admin_connection_requests' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'admin_connection_requests' %}active{% endif %}">
+                <i class="fas fa-user-friends"></i> Requests
+              </a>
+              <a href="/admin/" class="nav-link" target="_blank">
+                <i class="fas fa-tools"></i> Django Admin
+              </a>
 
-        <div class="nav-dropdown-item">
-          <a href="{% url 'client:client_dashboard' %}"
-            class="nav-link {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
-            My Projects <i class="fas fa-chevron-down nav-arrow"></i>
-          </a>
-          <div class="dropdown-popover">
-            <a href="{% url 'client:client_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Client Dashboard</a>
-            <a href="{% url 'client:create_job' %}"><i class="fas fa-plus"></i> Post a Job</a>
-          </div>
-        </div>
+              {% elif request.user.role == 'client' %}
+              <!-- CLIENT NAVIGATION -->
+              <div class="nav-dropdown-item">
+                <a href="{% url 'client:client_home' %}"
+                  class="nav-link {% if request.resolver_match.url_name == 'client_home' %}active{% endif %}">
+                  Find Talent <i class="fas fa-chevron-down nav-arrow"></i>
+                </a>
+                <div class="dropdown-popover">
+                  <a href="{% url 'client:client_home' %}"><i class="fas fa-search"></i> Search for Freelancers</a>
+                  <a href="{% url 'client:all_freelancers' %}"><i class="fas fa-users"></i> All Freelancers</a>
+                </div>
+              </div>
+
+              <div class="nav-dropdown-item">
+                <a href="{% url 'client:client_dashboard' %}"
+                  class="nav-link {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+                  My Projects <i class="fas fa-chevron-down nav-arrow"></i>
+                </a>
+                <div class="dropdown-popover">
+                  <a href="{% url 'client:client_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Client
+                    Dashboard</a>
+                  <a href="{% url 'client:create_job' %}"><i class="fas fa-plus"></i> Post a Job</a>
+                </div>
+              </div>
 
 
 
-        {% else %}
-        <!-- FREELANCER NAVIGATION -->
-        <div class="nav-dropdown-item">
-          <a href="{% url 'freelancer:freelancer_home' %}"
-            class="nav-link {% if request.resolver_match.url_name == 'freelancer_home' %}active{% endif %}">
-            Find Work <i class="fas fa-chevron-down nav-arrow"></i>
-          </a>
-          <div class="dropdown-popover">
+              {% else %}
+              <!-- FREELANCER NAVIGATION -->
+              <div class="nav-dropdown-item">
+                <a href="{% url 'freelancer:freelancer_home' %}"
+                  class="nav-link {% if request.resolver_match.url_name == 'freelancer_home' %}active{% endif %}">
+                  Find Work <i class="fas fa-chevron-down nav-arrow"></i>
+                </a>
+                <div class="dropdown-popover">
 
-            <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-contract"></i> Saved Jobs & Proposals</a>
-            <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-user-circle"></i> Profile & Skills</a>
-          </div>
-        </div>
+                  <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-contract"></i> Saved Jobs &
+                    Proposals</a>
+                  <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-user-circle"></i> Profile &
+                    Skills</a>
+                </div>
+              </div>
 
-        <div class="nav-dropdown-item">
-          <a href="{% url 'freelancer:freelancer_dashboard' %}"
-            class="nav-link {% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
-            My Jobs <i class="fas fa-chevron-down nav-arrow"></i>
-          </a>
-          <div class="dropdown-popover">
-            <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Freelancer Dashboard</a>
-            <a href="{% url 'freelancer:freelancer_dashboard' %}#active-contracts"><i class="fas fa-tasks"></i> Active Contracts</a>
-            <a href="{% url 'freelancer:freelancer_connections' %}"><i class="fas fa-users"></i> Client Network</a>
-          </div>
-        </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'freelancer:freelancer_dashboard' %}"
+                  class="nav-link {% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}">
+                  My Jobs <i class="fas fa-chevron-down nav-arrow"></i>
+                </a>
+                <div class="dropdown-popover">
+                  <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Freelancer
+                    Dashboard</a>
+                  <a href="{% url 'freelancer:active_contracts' %}"><i class="fas fa-tasks"></i> Active Contracts</a>
+                  <a href="{% url 'freelancer:freelancer_connections' %}"><i class="fas fa-users"></i> Client
+                    Network</a>
+                </div>
+              </div>
 
-        <a href="{% url 'freelancer:my_proposals' %}"
-          class="nav-link {% if request.resolver_match.url_name == 'my_proposals' %}active{% endif %}">Proposals</a>
-        {% endif %}
+              <a href="{% url 'freelancer:my_proposals' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'my_proposals' %}active{% endif %}">Proposals</a>
+              {% endif %}
 
-        <a href="{% url 'chat_home' %}"
-          class="nav-link {% if request.resolver_match.url_name == 'chat_home' %}active{% endif %}">
-          Messages <span class="nav-unread-dot"></span>
-        </a>
-      </div>
-      {% endif %}
+              <a href="{% url 'chat_home' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'chat_home' %}active{% endif %}">
+                Messages <span class="nav-unread-dot"></span>
+              </a>
+            </div>
+            {% endif %}
     </div>
 
     <!-- RIGHT: Search, Connects, Notifications & Profile -->
@@ -115,10 +126,12 @@
         </form>
       </div>
 
-      <!-- CONNECTS BADGE -->
+      <!-- CONNECTS BADGE (Freelancers Only) -->
+      {% if request.user.role == 'freelancer' %}
       <a href="{% url 'freelancer:freelancer_dashboard' %}" class="connects-pill" title="Available Bidding Connects">
         <i class="fas fa-bolt"></i> Connects
       </a>
+      {% endif %}
 
       <!-- POST WORK / POST TALENT BUTTON BASED ON ROLE -->
       {% if request.user.role == 'client' %}
@@ -150,27 +163,38 @@
             <div class="notif-title">
               <i class="fas fa-bell" style="color: #0a66c2;"></i> Notifications
             </div>
-            {% if unread_notifications_count > 0 %}
-            <button type="button" class="mark-read-btn" id="markAllReadBtn" onclick="markAllNotificationsRead(event)">Mark all read</button>
-            {% else %}
-            <button type="button" class="mark-read-btn" id="markAllReadBtn" style="display: none;" onclick="markAllNotificationsRead(event)">Mark all read</button>
-            {% endif %}
+            <div class="notif-header-actions" style="display: flex; align-items: center; gap: 8px;">
+              {% if unread_notifications_count > 0 %}
+              <button type="button" class="mark-read-btn" id="markAllReadBtn"
+                onclick="markAllNotificationsRead(event)">Mark all read</button>
+              {% else %}
+              <button type="button" class="mark-read-btn" id="markAllReadBtn" style="display: none;"
+                onclick="markAllNotificationsRead(event)">Mark all read</button>
+              {% endif %}
+              <button type="button" class="clear-all-notifs-btn" id="clearAllNotifsBtn" {% if not notifications %}style="display: none;"{% endif %} title="Delete all notifications"
+                onclick="clearAllNotifications(event)">
+                <i class="fas fa-trash-alt" style="font-size: 11px;"></i> Clear all
+              </button>
+            </div>
           </div>
 
-          <div class="notif-list">
+          <div class="notif-list" id="notifListContainer">
             {% for notification in notifications %}
-              <a href="{{ notification.link|default:'#' }}" class="notif-item {% if not notification.is_read %}unread{% endif %}">
-                <div class="notif-icon-box {% if request.user.role == 'client' %}client-bg{% elif request.user.role == 'freelancer' %}freelancer-bg{% else %}admin-bg{% endif %}">
+            <div class="notif-item-row {% if not notification.is_read %}unread{% endif %}"
+              id="notifRow_{{ notification.id }}">
+              <a href="{{ notification.link|default:'javascript:void(0);' }}" class="notif-item-link" {% if not notification.link %}onclick="event.preventDefault();"{% endif %}>
+                <div
+                  class="notif-icon-box {% if request.user.role == 'client' %}client-bg{% elif request.user.role == 'freelancer' %}freelancer-bg{% else %}admin-bg{% endif %}">
                   {% if notification.notification_type == 'proposal_view' %}
-                    <i class="fas fa-eye"></i>
+                  <i class="fas fa-eye"></i>
                   {% elif notification.notification_type == 'proposal_status' %}
-                    <i class="fas fa-check-circle"></i>
+                  <i class="fas fa-check-circle"></i>
                   {% elif notification.notification_type == 'new_project' %}
-                    <i class="fas fa-briefcase"></i>
+                  <i class="fas fa-briefcase"></i>
                   {% elif notification.notification_type == 'message' %}
-                    <i class="fas fa-comments"></i>
+                  <i class="fas fa-comments"></i>
                   {% else %}
-                    <i class="fas fa-bell"></i>
+                  <i class="fas fa-bell"></i>
                   {% endif %}
                 </div>
                 <div class="notif-content">
@@ -178,15 +202,29 @@
                   <div class="notif-time"><i class="far fa-clock"></i> {{ notification.created_at|timesince }} ago</div>
                 </div>
               </a>
+              <button type="button" class="notif-delete-single-btn" title="Delete notification"
+                onclick="deleteNotification(event, '{{ notification.id }}')">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
             {% empty %}
-              <div style="padding: 2rem 1rem; text-align: center; color: #5e6b7c;">
-                <i class="fas fa-bell-slash" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem;"></i>
-                <p>You have no notifications.</p>
-              </div>
+            <div class="notif-empty-state" id="notifEmptyState"
+              style="padding: 2rem 1rem; text-align: center; color: #5e6b7c;">
+              <i class="fas fa-bell-slash"
+                style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+              <p>You have no notifications.</p>
+            </div>
             {% endfor %}
+            <div class="notif-empty-state" id="notifEmptyStateDynamic"
+              style="display: none; padding: 2rem 1rem; text-align: center; color: #5e6b7c;">
+              <i class="fas fa-bell-slash"
+                style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+              <p>You have no notifications.</p>
+            </div>
           </div>
           <div class="notif-footer">
-            <span style="font-size: 12px; color: #64748b;">Role: <strong>{{ request.user.role|default:"User"|title }}</strong> Notifications</span>
+            <span style="font-size: 12px; color: #64748b;">Role: <strong>{{ request.user.role|default:"User"|title
+                }}</strong> Notifications</span>
           </div>
         </div>
       </div>
@@ -194,9 +232,11 @@
 
       <!-- PROFILE MENU TOGGLE -->
       <div class="upwork-user-menu" onclick="toggleUpworkMenu(event)">
-        <div class="user-avatar-circle" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; background: #0a66c2; color: white;">
+        <div class="user-avatar-circle"
+          style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; background: #0a66c2; color: white;">
           {% if request.user.get_profile_picture %}
-          <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}"
+            style="width: 100%; height: 100%; object-fit: cover;">
           {% else %}
           {{ request.user.username|slice:":1"|upper }}
           {% endif %}
@@ -204,16 +244,19 @@
         <span class="online-status-dot"></span>
 
         <!-- PROFILE DROPDOWN MENU -->
-        <div class="upwork-dropdown" id="upworkMenu">
-          <div class="upwork-menu-header">
-            <div class="menu-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; background: #0a66c2; color: white;">
+        <div class="upwork-dropdown" id="upworkMenu" onclick="event.stopPropagation()">
+          <a href="{% if request.user.role == 'freelancer' %}{% url 'freelancer:freelancer_profile' request.user.id %}{% elif request.user.role == 'client' %}{% url 'client:client_profile' %}{% else %}{% url 'accounts:view_profile' request.user.id %}{% endif %}"
+            class="upwork-menu-header" title="View Profile" onclick="window.location.href=this.href;">
+            <div class="menu-avatar"
+              style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; background: #0a66c2; color: white;">
               {% if request.user.get_profile_picture %}
-              <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}"
+                style="width: 100%; height: 100%; object-fit: cover;">
               {% else %}
               {{ request.user.username|slice:":1"|upper }}
               {% endif %}
             </div>
-            <div>
+            <div style="flex: 1; min-width: 0;">
               <div class="menu-name">{{ request.user.username }}</div>
               {% if request.user.is_superuser %}
               <div class="menu-badge"><i class="fas fa-user-shield"></i> Admin</div>
@@ -221,11 +264,13 @@
               <div class="menu-badge"><i class="fas fa-award"></i> Top Rated</div>
               {% endif %}
             </div>
-          </div>
+            <i class="fas fa-chevron-right" style="color: #94a3b8; font-size: 12px; margin-left: 6px;"></i>
+          </a>
 
           {% if request.user.role == 'freelancer' and request.user.freelancerprofile %}
           <div class="availability-toggle-box">
-            <span class="avail-label"><i class="fas fa-circle avail-dot" id="header-avail-dot" {% if not request.user.freelancerprofile.is_available %}style="color:#cbd5e1;"{% endif %}></i> Available for work</span>
+            <span class="avail-label"><i class="fas fa-circle avail-dot" id="header-avail-dot" {% if not request.user.freelancerprofile.is_available %}style="color:#cbd5e1;"{% endif %}></i> Available for
+              work</span>
             <label class="switch-toggle">
               <input type="checkbox" id="header-avail-toggle" {% if request.user.freelancerprofile.is_available %}checked{% endif %}>
               <span class="slider-round"></span>
@@ -237,19 +282,23 @@
 
           {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
           <a href="{% url 'accounts:admin_home' %}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+
           <a href="{% url 'accounts:admin_users' %}"><i class="fas fa-users-cog"></i> Users Management</a>
-          <a href="{% url 'accounts:admin_connection_requests' %}"><i class="fas fa-user-friends"></i> Connection Requests</a>
+          <a href="{% url 'accounts:admin_connection_requests' %}"><i class="fas fa-user-friends"></i> Connection
+            Requests</a>
           <a href="/admin/"><i class="fas fa-user-shield"></i> Django Admin</a>
           <a href="{% url 'accounts:testimonials' %}"><i class="fas fa-quote-left"></i> Testimonials</a>
           {% elif request.user.role == 'client' %}
           <a href="{% url 'client:client_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Client Dashboard</a>
-          <a href="{% url 'client:client_profile' %}"><i class="fas fa-building"></i> Profile & Company Info</a>
-          <a href="{% url 'client:edit_client_profile' %}"><i class="fas fa-cog"></i> Account Settings</a>
+          <a href="{% url 'payments:payment_methods' %}"><i class="fas fa-credit-card"></i> Payment Methods</a>
           <a href="{% url 'client:client_proposals' %}"><i class="fas fa-file-invoice"></i> Received Proposals</a>
+          <a href="{% url 'client:edit_client_profile' %}"><i class="fas fa-cog"></i> Account Settings</a>
           <a href="{% url 'accounts:testimonials' %}"><i class="fas fa-quote-left"></i> Testimonials</a>
           {% else %}
           <a href="{% url 'freelancer:freelancer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-          <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-id-badge"></i> Profile & Skills</a>
+          <a href="{% url 'payments:freelancer_payment_history' %}"><i class="fas fa-wallet"></i> Earnings &
+            Payments</a>
+          <a href="{% url 'freelancer:create_profile' %}"><i class="fas fa-id-badge"></i> Edit Profile & Skills</a>
           <a href="{% url 'freelancer:edit_profile' %}"><i class="fas fa-cog"></i> Account Settings</a>
           <a href="{% url 'freelancer:my_proposals' %}"><i class="fas fa-file-invoice"></i> Bids & Proposals</a>
           <a href="{% url 'accounts:testimonials' %}"><i class="fas fa-quote-left"></i> Testimonials</a>
@@ -257,7 +306,8 @@
 
           <hr class="upwork-hr">
 
-          <a href="{% url 'accounts:logout' %}" class="upwork-logout-btn custom-logout-trigger"><i class="fas fa-sign-out-alt"></i> Log
+          <a href="{% url 'accounts:logout' %}" class="upwork-logout-btn custom-logout-trigger"><i
+              class="fas fa-sign-out-alt"></i> Log
             Out</a>
         </div>
       </div>
@@ -268,7 +318,8 @@
       {% endif %}
 
       <!-- MOBILE MENU HAMBURGER BUTTON -->
-      <button type="button" class="mobile-nav-toggle-btn" id="mobileNavToggle" aria-label="Toggle navigation menu" onclick="toggleMobileNav(event)">
+      <button type="button" class="mobile-nav-toggle-btn" id="mobileNavToggle" aria-label="Toggle navigation menu"
+        onclick="toggleMobileNav(event)">
         <i class="fas fa-bars"></i>
       </button>
     </div>
@@ -292,7 +343,9 @@
   <div class="mobile-drawer-body">
     {% if request.user.is_authenticated %}
     <!-- USER PROFILE CARD IN DRAWER -->
-    <div class="mobile-user-card">
+    <a href="{% if request.user.role == 'freelancer' %}{% url 'freelancer:freelancer_profile' request.user.id %}{% elif request.user.role == 'client' %}{% url 'client:client_profile' %}{% else %}{% url 'accounts:view_profile' request.user.id %}{% endif %}"
+      class="mobile-user-card" onclick="closeMobileNav()"
+      style="text-decoration: none; color: inherit; display: flex; align-items: center; cursor: pointer;">
       <div class="mobile-user-avatar">
         {% if request.user.get_profile_picture %}
         <img src="{{ request.user.get_profile_picture }}" alt="{{ request.user.username }}">
@@ -312,7 +365,7 @@
           {% endif %}
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- QUICK ACTIONS IN DRAWER -->
     <div class="mobile-drawer-actions">
@@ -343,73 +396,118 @@
       <div class="mobile-drawer-section-title">Navigation</div>
 
       {% if request.user.is_superuser or request.user.is_staff or request.user.role == 'admin' %}
-      <a href="{% url 'accounts:admin_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'accounts:admin_home' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-tachometer-alt"></i> Admin Dashboard
       </a>
-      <a href="{% url 'accounts:admin_users' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'accounts:admin_users' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-users-cog"></i> Users Management
       </a>
-      <a href="{% url 'accounts:admin_connection_requests' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_connection_requests' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'accounts:admin_connection_requests' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'admin_connection_requests' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-user-friends"></i> Connection Requests
       </a>
       <a href="/admin/" class="mobile-nav-item" target="_blank" onclick="closeMobileNav()">
         <i class="fas fa-tools"></i> Django Admin
       </a>
-      <a href="{% url 'accounts:testimonials' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'accounts:testimonials' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-quote-left"></i> Testimonials
       </a>
 
       {% elif request.user.role == 'client' %}
-      <a href="{% url 'client:client_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_home' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'client:client_home' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'client_home' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-search"></i> Find Talent
       </a>
-      <a href="{% url 'client:all_freelancers' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'all_freelancers' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'client:all_freelancers' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'all_freelancers' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-users"></i> All Freelancers
       </a>
-      <a href="{% url 'client:client_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'client:client_dashboard' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-tachometer-alt"></i> Client Dashboard
       </a>
-      <a href="{% url 'client:create_job' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'create_job' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'client:create_job' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'create_job' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-plus-circle"></i> Post a Job
       </a>
-      <a href="{% url 'client:client_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_profile' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'client:client_profile' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'client_profile' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-building"></i> Profile & Company Info
       </a>
-      <a href="{% url 'client:edit_client_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'edit_client_profile' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'client:edit_client_profile' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'edit_client_profile' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-cog"></i> Account Settings
       </a>
-      <a href="{% url 'client:client_proposals' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'client_proposals' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'client:client_proposals' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'client_proposals' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-file-invoice"></i> Received Proposals
       </a>
-      <a href="{% url 'accounts:testimonials' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'accounts:testimonials' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-quote-left"></i> Testimonials
       </a>
 
       {% else %}
-      <a href="{% url 'freelancer:freelancer_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_home' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'freelancer:freelancer_home' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_home' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-briefcase"></i> Find Work & Jobs
       </a>
-      <a href="{% url 'freelancer:freelancer_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'freelancer:freelancer_dashboard' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_dashboard' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-tachometer-alt"></i> Freelancer Dashboard
       </a>
-      <a href="{% url 'freelancer:my_proposals' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'my_proposals' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'freelancer:active_contracts' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'active_contracts' %}active{% endif %}"
+        onclick="closeMobileNav()">
+        <i class="fas fa-tasks"></i> Active Contracts
+      </a>
+      <a href="{% url 'freelancer:my_proposals' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'my_proposals' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-file-contract"></i> My Proposals & Bids
       </a>
-      <a href="{% url 'freelancer:create_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'create_profile' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'freelancer:create_profile' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'create_profile' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-user-circle"></i> Profile & Skills
       </a>
-      <a href="{% url 'freelancer:edit_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'freelancer:edit_profile' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-cog"></i> Account Settings
       </a>
-      <a href="{% url 'freelancer:freelancer_connections' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_connections' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'freelancer:freelancer_connections' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'freelancer_connections' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-network-wired"></i> Client Network
       </a>
-      <a href="{% url 'accounts:testimonials' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'accounts:testimonials' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'testimonials' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-quote-left"></i> Testimonials
       </a>
       {% endif %}
 
-      <a href="{% url 'chat_home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'chat_home' %}active{% endif %}" onclick="closeMobileNav()">
+      <a href="{% url 'chat_home' %}"
+        class="mobile-nav-item {% if request.resolver_match.url_name == 'chat_home' %}active{% endif %}"
+        onclick="closeMobileNav()">
         <i class="fas fa-comments"></i> Messages
       </a>
     </div>
@@ -456,7 +554,7 @@
 
   body {
     background-color: #f9fafb;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-family-base) !important;
     color: #001e00;
   }
 
@@ -480,6 +578,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-sizing: border-box;
   }
 
   .upwork-header-left {
@@ -758,6 +857,21 @@
     align-items: center;
     gap: 12px;
     margin-bottom: 12px;
+    padding: 6px 8px;
+    margin: -6px -8px 8px -8px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease;
+    cursor: pointer;
+  }
+
+  .upwork-menu-header:hover {
+    background: #f1f5f9;
+  }
+
+  .upwork-menu-header:hover .menu-name {
+    color: #0a66c2;
   }
 
   .menu-avatar {
@@ -902,12 +1016,15 @@
   .upwork-btn-primary {
     background: #0a66c2;
     color: #ffffff;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 700;
+    font-size: 13px;
     text-decoration: none;
-    padding: 8px 20px;
+    padding: 7px 16px;
     border-radius: 20px;
     transition: background 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .upwork-btn-primary:hover {
@@ -931,8 +1048,15 @@
   }
 
   @keyframes notifFadeIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .notif-header {
@@ -970,26 +1094,87 @@
   }
 
   .notif-list {
-    max-height: 340px;
+    max-height: 360px;
     overflow-y: auto;
   }
 
-  .notif-item {
+  .notif-item-row {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 18px;
-    text-decoration: none;
+    align-items: center;
+    justify-content: space-between;
     border-bottom: 1px solid #f8fafc;
     transition: background 0.15s ease;
+    position: relative;
   }
 
-  .notif-item:hover {
+  .notif-item-row:hover {
     background: #f8fafc;
   }
 
-  .notif-item.unread {
+  .notif-item-row.unread {
     background: #f0f7ff;
+  }
+
+  .notif-item-row.unread:hover {
+    background: #e6f0fa;
+  }
+
+  .notif-item-link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 8px 13px 16px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .notif-delete-single-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    padding: 8px 10px;
+    margin-right: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 13px;
+    opacity: 0.45;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .notif-item-row:hover .notif-delete-single-btn {
+    opacity: 1;
+    color: #64748b;
+  }
+
+  .notif-delete-single-btn:hover {
+    color: #dc2626 !important;
+    background: rgba(220, 38, 38, 0.08);
+  }
+
+  .clear-all-notifs-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .clear-all-notifs-btn:hover {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
   }
 
   .notif-icon-box {
@@ -1003,10 +1188,25 @@
     flex-shrink: 0;
   }
 
-  .client-bg { background: #eef3f8; color: #0a66c2; }
-  .freelancer-bg { background: #eef3f8; color: #0a66c2; }
-  .admin-bg { background: #fef3c7; color: #b45309; }
-  .admin-bg { background: #fef3c7; color: #b45309; }
+  .client-bg {
+    background: #eef3f8;
+    color: #0a66c2;
+  }
+
+  .freelancer-bg {
+    background: #eef3f8;
+    color: #0a66c2;
+  }
+
+  .admin-bg {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  .admin-bg {
+    background: #fef3c7;
+    color: #b45309;
+  }
 
   .notif-content {
     flex: 1;
@@ -1290,12 +1490,14 @@
     font-size: 15px;
   }
 
-  .mobile-nav-item:hover, .mobile-nav-item.active {
+  .mobile-nav-item:hover,
+  .mobile-nav-item.active {
     background: #f0f7ff;
     color: #0a66c2;
   }
 
-  .mobile-nav-item:hover i, .mobile-nav-item.active i {
+  .mobile-nav-item:hover i,
+  .mobile-nav-item.active i {
     color: #0a66c2;
   }
 
@@ -1404,7 +1606,8 @@
       display: none !important;
     }
 
-    .notif-dropdown, .upwork-dropdown {
+    .notif-dropdown,
+    .upwork-dropdown {
       position: fixed !important;
       top: 64px !important;
       left: 12px !important;
@@ -1433,7 +1636,7 @@
 <script>
   function markAllNotificationsRead(e) {
     if (e) e.stopPropagation();
-    
+
     fetch('{% url "accounts:mark_notifications_read" %}', {
       method: 'POST',
       headers: {
@@ -1444,15 +1647,131 @@
       if (data.status === 'success') {
         const badge = document.getElementById("notifBadge");
         if (badge) badge.style.display = "none";
-        
+
         const btn = document.getElementById("markAllReadBtn");
         if (btn) btn.style.display = "none";
-        
+
         document.querySelectorAll(".notif-item.unread").forEach(item => {
           item.classList.remove("unread");
         });
       }
     });
+  }
+
+  function deleteNotification(e, notifId) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    const row = document.getElementById("notifRow_" + notifId);
+    if (row) {
+      row.style.opacity = '0.3';
+      row.style.pointerEvents = 'none';
+    }
+
+    const deleteUrl = "{% url 'accounts:delete_notification' 0 %}".replace('/0/', '/' + notifId + '/');
+
+    fetch(deleteUrl, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken'),
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(data => {
+      if (data.status === 'success') {
+        if (row) {
+          row.style.transition = 'all 0.2s ease';
+          row.style.height = row.offsetHeight + 'px';
+          row.style.overflow = 'hidden';
+          setTimeout(() => {
+            row.style.height = '0px';
+            row.style.padding = '0px';
+            row.style.opacity = '0';
+            setTimeout(() => {
+              row.remove();
+              checkEmptyNotifs();
+            }, 200);
+          }, 10);
+        }
+
+        const badge = document.getElementById("notifBadge");
+        if (badge) {
+          if (data.unread_count > 0) {
+            badge.textContent = data.unread_count;
+            badge.style.display = "inline-block";
+          } else {
+            badge.style.display = "none";
+          }
+        }
+
+        if (data.unread_count === 0) {
+          const btn = document.getElementById("markAllReadBtn");
+          if (btn) btn.style.display = "none";
+        }
+
+        if (data.total_count === 0) {
+          const clearBtn = document.getElementById("clearAllNotifsBtn");
+          if (clearBtn) clearBtn.style.display = "none";
+        }
+      } else {
+        if (row) {
+          row.style.opacity = '1';
+          row.style.pointerEvents = 'auto';
+        }
+      }
+    }).catch(err => {
+      if (row) {
+        row.style.opacity = '1';
+        row.style.pointerEvents = 'auto';
+      }
+    });
+  }
+
+  function clearAllNotifications(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    if (!confirm('Are you sure you want to clear all notifications?')) {
+      return;
+    }
+
+    fetch('{% url "accounts:clear_all_notifications" %}', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken'),
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(data => {
+      if (data.status === 'success') {
+        document.querySelectorAll(".notif-item-row").forEach(row => row.remove());
+
+        const badge = document.getElementById("notifBadge");
+        if (badge) badge.style.display = "none";
+
+        const markBtn = document.getElementById("markAllReadBtn");
+        if (markBtn) markBtn.style.display = "none";
+
+        const clearBtn = document.getElementById("clearAllNotifsBtn");
+        if (clearBtn) clearBtn.style.display = "none";
+
+        checkEmptyNotifs();
+      }
+    });
+  }
+
+  function checkEmptyNotifs() {
+    const remainingRows = document.querySelectorAll(".notif-item-row");
+    if (remainingRows.length === 0) {
+      const dynamicEmpty = document.getElementById("notifEmptyStateDynamic");
+      if (dynamicEmpty) dynamicEmpty.style.display = "block";
+      const clearBtn = document.getElementById("clearAllNotifsBtn");
+      if (clearBtn) clearBtn.style.display = "none";
+      const markBtn = document.getElementById("markAllReadBtn");
+      if (markBtn) markBtn.style.display = "none";
+    }
   }
 
   function toggleUpworkMenu(e) {
@@ -1513,16 +1832,16 @@
     document.body.classList.remove("modal-open");
   }
 
-  document.addEventListener("keydown", function(e) {
+  document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       closeMobileNav();
     }
   });
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const headerAvailToggle = document.getElementById('header-avail-toggle');
     if (headerAvailToggle) {
-      headerAvailToggle.addEventListener('change', function() {
+      headerAvailToggle.addEventListener('change', function () {
         fetch('/freelancer/toggle-availability/', {
           method: 'POST',
           headers: {
@@ -1533,13 +1852,13 @@
           if (data.status === 'success') {
             const availDot = document.getElementById('header-avail-dot');
             if (availDot) {
-                if (data.is_available) {
-                  availDot.style.color = '#108a00';
-                } else {
-                  availDot.style.color = '#cbd5e1';
-                }
+              if (data.is_available) {
+                availDot.style.color = '#108a00';
+              } else {
+                availDot.style.color = '#cbd5e1';
+              }
             }
-            
+
             const homeBadgeText = document.getElementById('home-avail-badge-text');
             const homeBadgeStatus = document.getElementById('home-avail-badge-status');
             if (homeBadgeText && homeBadgeStatus) {
@@ -1574,7 +1893,8 @@
 </script>
 
 <!-- Custom Logout Modal -->
-<div id="logoutModalOverlay" class="logout-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="logoutModalTitle" aria-modal="true">
+<div id="logoutModalOverlay" class="logout-modal-overlay" aria-hidden="true" role="dialog"
+  aria-labelledby="logoutModalTitle" aria-modal="true">
   <div class="logout-modal" role="document">
     <h3 id="logoutModalTitle">Log out</h3>
     <p>Are you sure you want to log out?</p>
@@ -1602,7 +1922,7 @@
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
   }
-  
+
   .logout-modal-overlay.active {
     opacity: 1;
     visibility: visible;
@@ -1646,7 +1966,8 @@
     gap: 12px;
   }
 
-  .logout-btn-secondary, .logout-btn-primary {
+  .logout-btn-secondary,
+  .logout-btn-primary {
     padding: 10px 20px;
     border-radius: 20px;
     font-size: 0.95rem;
@@ -1669,7 +1990,7 @@
   .logout-btn-secondary:hover {
     background-color: #f3f4f6;
   }
-  
+
   .logout-btn-secondary:focus-visible {
     box-shadow: 0 0 0 2px #108a00;
   }
@@ -1683,11 +2004,11 @@
     background-color: #14a800;
     color: #ffffff;
   }
-  
+
   .logout-btn-primary:focus-visible {
     box-shadow: 0 0 0 2px #fff, 0 0 0 4px #108a00;
   }
-  
+
   /* Prevent scroll on body when modal is open */
   body.modal-open {
     overflow: hidden;
@@ -1695,7 +2016,7 @@
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const logoutBtns = document.querySelectorAll('.custom-logout-trigger');
     const modalOverlay = document.getElementById('logoutModalOverlay');
     const cancelBtn = document.getElementById('cancelLogoutBtn');
@@ -1704,7 +2025,7 @@
 
     if (logoutBtns.length > 0 && modalOverlay) {
       logoutBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
           e.preventDefault();
           lastFocusedElement = document.activeElement;
           modalOverlay.classList.add('active');
@@ -1724,14 +2045,14 @@
       cancelBtn.addEventListener('click', closeModal);
 
       // Close on clicking outside modal
-      modalOverlay.addEventListener('click', function(e) {
+      modalOverlay.addEventListener('click', function (e) {
         if (e.target === modalOverlay) {
           closeModal();
         }
       });
 
       // Escape key to close
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
           closeModal();
         }

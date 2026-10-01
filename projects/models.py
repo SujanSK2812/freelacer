@@ -157,6 +157,36 @@ class Job(models.Model):
     image = SafeImageField(upload_to=client_job_path, blank=True, null=True)
     poster = SafeImageField(upload_to=client_poster_path, blank=True, null=True)
 
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('expired', 'Expired'),
+    ]
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='open'
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Designates whether this project can receive bids and appears in active listings."
+    )
+
+    accepted_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp when the client accepted a freelancer's bid."
+    )
+
+    expected_completion_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Target completion date based on accepted bid's delivery days."
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Count reactions
@@ -169,6 +199,19 @@ class Job(models.Model):
     @property
     def has_accepted_proposal(self):
         return self.job_proposals.filter(status="accepted").exists()
+
+    @property
+    def accepted_proposal(self):
+        return self.job_proposals.filter(status="accepted").first()
+
+    @property
+    def estimated_days(self):
+        ap = self.accepted_proposal
+        return ap.delivery_days if ap else None
+
+    @property
+    def is_expired_or_completed(self):
+        return not self.is_active or self.status in ['completed', 'expired']
 
     def __str__(self):
         return self.title

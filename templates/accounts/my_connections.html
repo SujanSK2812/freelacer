@@ -1,0 +1,1676 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <title>My Connections | Freelancer Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        /* Base & Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, sans-serif !important;
+            background-color: #f3f2ef;
+            color: rgba(0, 0, 0, 0.9);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Two-Column Grid Layout */
+        .mn-page-wrapper {
+            max-width: 1128px;
+            width: 100%;
+            margin: 24px auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* LEFT SIDEBAR */
+        .mn-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: sticky;
+            top: 76px;
+        }
+
+        .mn-sidebar-card {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .mn-nav-header {
+            padding: 14px 16px 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .mn-nav-list {
+            list-style: none;
+            padding: 4px 0;
+            margin: 0;
+        }
+
+        .mn-nav-item a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            color: rgba(0, 0, 0, 0.6);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background 0.15s, color 0.15s;
+            position: relative;
+        }
+
+        .mn-nav-item a:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .mn-nav-item.active a,
+        .mn-nav-item a.active {
+            color: #0a66c2;
+            font-weight: 600;
+            background-color: rgba(10, 102, 194, 0.06);
+        }
+
+        .mn-nav-item.active a::before,
+        .mn-nav-item a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #0a66c2;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .mn-nav-item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mn-nav-item-left i {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .mn-nav-item.active .mn-nav-item-left i,
+        .mn-nav-item a.active .mn-nav-item-left i {
+            color: #0a66c2;
+        }
+
+        .mn-nav-count {
+            font-size: 15px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .mn-nav-item.active .mn-nav-count,
+        .mn-nav-item a.active .mn-nav-count {
+            color: #0a66c2;
+            font-weight: 600;
+        }
+
+        /* Sidebar Promo / Grow Network Box */
+        .mn-sidebar-grow {
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+
+        .mn-sidebar-grow h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            margin-bottom: 6px;
+        }
+
+        .mn-sidebar-grow p {
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.6);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .btn-grow-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1.5px solid #0a66c2;
+            background: transparent;
+            color: #0a66c2;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-grow-link:hover {
+            background-color: rgba(10, 102, 194, 0.08);
+            border-color: #004182;
+            color: #004182;
+        }
+
+        /* MAIN CONNECTIONS CARD */
+        .mn-main-card {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .mn-card-header {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .mn-card-title-wrap h1 {
+            font-size: 19px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            letter-spacing: -0.01em;
+        }
+
+        .mn-toolbar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Search input */
+        .mn-search-wrap {
+            position: relative;
+            min-width: 220px;
+        }
+
+        .mn-search-wrap i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .mn-search-input {
+            width: 100%;
+            padding: 7px 12px 7px 34px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            font-size: 14px;
+            background: #ffffff;
+            color: rgba(0, 0, 0, 0.9);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .mn-search-input:focus {
+            border-color: #0a66c2;
+            box-shadow: 0 0 0 1px #0a66c2;
+        }
+
+        /* Custom Sort Dropdown (Pure CSS - replaces browser native select) */
+        .mn-sort-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .mn-sort-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.6);
+            white-space: nowrap;
+        }
+
+        .custom-sort-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .custom-sort-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            font-size: 13px;
+            font-weight: 600;
+            background: #ffffff;
+            color: rgba(0, 0, 0, 0.85);
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+            min-width: 140px;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+        }
+
+        .custom-sort-btn:hover {
+            border-color: rgba(0, 0, 0, 0.5);
+            background-color: #f8fafc;
+        }
+
+        .custom-sort-btn:focus-visible,
+        .custom-sort-dropdown.open .custom-sort-btn {
+            border-color: #0a66c2;
+            box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.18);
+            background: #ffffff;
+        }
+
+        .custom-sort-arrow {
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.55);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s;
+        }
+
+        .custom-sort-dropdown.open .custom-sort-arrow {
+            transform: rotate(180deg);
+            color: #0a66c2;
+        }
+
+        /* Custom Dropdown Menu Popup - Styled entirely with CSS */
+        .custom-sort-menu {
+            position: absolute;
+            top: calc(100% + 5px);
+            right: 0;
+            min-width: 170px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+            padding: 5px;
+            margin: 0;
+            list-style: none;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px) scale(0.98);
+            transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s;
+            pointer-events: none;
+        }
+
+        .custom-sort-dropdown.open .custom-sort-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .custom-sort-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.85);
+            cursor: pointer;
+            transition: background-color 0.12s ease, color 0.12s ease;
+            user-select: none;
+        }
+
+        .custom-sort-option:hover {
+            background-color: #f1f5f9;
+            color: #0a66c2;
+        }
+
+        .custom-sort-option.selected {
+            background-color: #eff6ff;
+            color: #0a66c2;
+            font-weight: 600;
+        }
+
+        .custom-sort-option .opt-check {
+            font-size: 12px;
+            color: #0a66c2;
+            opacity: 0;
+            transform: scale(0.7);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        .custom-sort-option.selected .opt-check {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* CONNECTIONS LIST */
+        .connections-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .connection-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            transition: background-color 0.12s ease;
+            position: relative;
+        }
+
+        .connection-item:last-child {
+            border-bottom: none;
+        }
+
+        .connection-item:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .connection-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        /* Avatar */
+        .conn-avatar-wrap {
+            position: relative;
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+        }
+
+        .conn-avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: #e2e8f0;
+            display: block;
+        }
+
+        .conn-avatar-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .conn-online-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background-color: #059669;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+
+        /* Details */
+        .conn-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .conn-name-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2px;
+        }
+
+        .conn-name-link {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .conn-name-link:hover {
+            color: #0a66c2;
+            text-decoration: underline;
+        }
+
+        .conn-badge-verified {
+            color: #0a66c2;
+            font-size: 13px;
+        }
+
+        .conn-headline {
+            font-size: 13.5px;
+            color: rgba(0, 0, 0, 0.6);
+            line-height: 1.35;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .conn-time {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Actions on right */
+        .connection-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .btn-message-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 1.5px solid #0a66c2;
+            background: transparent;
+            color: #0a66c2;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-message-pill:hover {
+            background-color: rgba(10, 102, 194, 0.08);
+            border-color: #004182;
+            color: #004182;
+            text-decoration: none;
+        }
+
+        /* Dropdown Menu */
+        .conn-menu-wrap {
+            position: relative;
+        }
+
+        .btn-conn-menu {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .btn-conn-menu:hover {
+            background-color: rgba(0, 0, 0, 0.08);
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .conn-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 42px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+            min-width: 170px;
+            padding: 6px 0;
+            z-index: 100;
+            display: none;
+        }
+
+        .conn-dropdown-menu.show {
+            display: block;
+        }
+
+        .conn-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 8px 16px;
+            font-size: 13.5px;
+            color: rgba(0, 0, 0, 0.75);
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.12s;
+            text-decoration: none;
+        }
+
+        .conn-dropdown-item:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .conn-dropdown-item.danger {
+            color: #dc2626;
+        }
+
+        .conn-dropdown-item.danger:hover {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* EMPTY STATES */
+        .empty-connections-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background-color: rgba(10, 102, 194, 0.08);
+            color: #0a66c2;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .empty-connections-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            margin-bottom: 8px;
+        }
+
+        .empty-connections-state p {
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.6);
+            max-width: 440px;
+            margin: 0 auto 20px;
+            line-height: 1.5;
+        }
+
+        .btn-find-now {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 22px;
+            background-color: #0a66c2;
+            color: #ffffff;
+            border-radius: 24px;
+            font-size: 14.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.15s ease;
+        }
+
+        .btn-find-now:hover {
+            background-color: #004182;
+            color: #ffffff;
+        }
+
+        /* MODAL */
+        .custom-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .custom-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .custom-modal-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem 1.75rem;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e0e0e0;
+        }
+
+        .modal-btn-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .btn-modal-cancel {
+            padding: 7px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(0,0,0,0.6);
+            background: transparent;
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            color: rgba(0,0,0,0.75);
+            transition: all 0.15s;
+        }
+
+        .btn-modal-cancel:hover {
+            background: rgba(0,0,0,0.04);
+            color: rgba(0,0,0,0.9);
+        }
+
+        .btn-modal-confirm-danger {
+            padding: 7px 20px;
+            border-radius: 20px;
+            border: none;
+            background: #dc2626;
+            color: white;
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-modal-confirm-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* SUGGESTIONS CAROUSEL CARD (IMAGE 2) */
+        .suggestions-carousel-card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-top: 16px;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .carousel-card-header {
+            padding: 16px 20px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .carousel-title-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .carousel-author-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .carousel-title-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.9);
+            letter-spacing: -0.01em;
+        }
+
+        .carousel-controls-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .carousel-show-all-link {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0a66c2;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.15s;
+        }
+
+        .carousel-show-all-link:hover {
+            background-color: rgba(10, 102, 194, 0.08);
+            text-decoration: underline;
+        }
+
+        .carousel-arrow-btn,
+        .carousel-dismiss-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            background: #ffffff;
+            color: rgba(0, 0, 0, 0.75);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .carousel-arrow-btn:hover,
+        .carousel-dismiss-btn:hover {
+            background: #f1f5f9;
+            color: #000000;
+            border-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .carousel-arrow-btn.disabled,
+        .carousel-arrow-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+            pointer-events: none;
+            background: #f8fafc;
+        }
+
+        /* CAROUSEL TRACK */
+        .carousel-viewport {
+            padding: 16px 20px 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 4px;
+        }
+
+        .carousel-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* SUGGESTION ITEM CARD */
+        .sugg-card {
+            flex: 0 0 216px;
+            width: 216px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+        }
+
+        .sugg-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .sugg-banner {
+            height: 60px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #2b7a78;
+        }
+
+        .sugg-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .sugg-card-dismiss {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            color: #ffffff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            z-index: 2;
+        }
+
+        .sugg-card-dismiss:hover {
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        .sugg-avatar-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: -36px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sugg-avatar-img {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            object-fit: cover;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            background: #ffffff;
+        }
+
+        .sugg-content {
+            padding: 8px 12px 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .sugg-name-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 2px;
+        }
+
+        .sugg-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.9);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sugg-verified-badge {
+            color: #525252;
+            font-size: 13px;
+        }
+
+        .sugg-headline {
+            font-size: 12.5px;
+            color: rgba(0, 0, 0, 0.6);
+            line-height: 1.35;
+            height: 34px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 12px;
+        }
+
+        .sugg-mutual-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.55);
+            text-align: left;
+            margin-top: auto;
+            margin-bottom: 12px;
+            min-height: 24px;
+        }
+
+        .sugg-mutual-avatar {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .sugg-mutual-text {
+            line-height: 1.25;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .btn-sugg-connect {
+            width: 100%;
+            margin-top: auto;
+            margin-bottom: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1.5px solid #0a66c2;
+            background: transparent;
+            color: #0a66c2;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn-sugg-connect:hover {
+            background-color: rgba(10, 102, 194, 0.08);
+            border-width: 2px;
+        }
+
+        .btn-sugg-connect.pending {
+            border-color: #64748b;
+            color: #475569;
+            background: #f1f5f9;
+            cursor: default;
+        }
+
+        @media (max-width: 860px) {
+            .mn-page-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .mn-sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Global Header -->
+{% include 'includes/header.html' %}
+
+<div class="mn-page-wrapper">
+    <!-- LEFT SIDEBAR -->
+    <aside class="mn-sidebar">
+        <!-- Manage My Network Card -->
+        <div class="mn-sidebar-card">
+            <div class="mn-nav-header">Manage my network</div>
+            <ul class="mn-nav-list">
+                <li class="mn-nav-item active">
+                    <a href="{% url 'accounts:my_connections' %}" class="active">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-solid fa-user-group"></i>
+                            <span>Connections</span>
+                        </div>
+                        <span class="mn-nav-count">{{ connections_count }}</span>
+                    </a>
+                </li>
+                <li class="mn-nav-item">
+                    <a href="{% url 'accounts:following' %}">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-solid fa-address-book"></i>
+                            <span>Following &amp; followers</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="mn-nav-item">
+                    <a href="{% url 'accounts:posts' %}">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-regular fa-building"></i>
+                            <span>Pages</span>
+                        </div>
+                        <span class="mn-nav-count">{{ pages_count|default:"116" }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Grow Card -->
+        <div class="mn-sidebar-grow">
+            <h4>Expand your network</h4>
+            <p>Connect with people you may know to discover new jobs and collaboration opportunities.</p>
+            <a href="{% url 'accounts:find_connections' %}" class="btn-grow-link">
+                <i class="fa-solid fa-user-plus"></i> Find Connections
+            </a>
+        </div>
+    </aside>
+
+    <!-- RIGHT MAIN CONTENT -->
+    <main class="mn-main-content">
+        <div class="mn-main-card">
+            <div class="mn-card-header">
+                <div class="mn-card-title-wrap">
+                    <h1 id="connHeaderTitle">{{ connections_count }} Connection{{ connections_count|pluralize }}</h1>
+                </div>
+
+                <div class="mn-toolbar-wrap">
+                    <div class="mn-search-wrap">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="connectionsSearchInput" class="mn-search-input" placeholder="Search by name...">
+                    </div>
+
+                    <div class="mn-sort-wrap">
+                        <span class="mn-sort-label">Sort by:</span>
+                        <div class="custom-sort-dropdown" id="customSortDropdown">
+                            <button type="button" class="custom-sort-btn" id="customSortBtn" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="custom-sort-selected-text" id="customSortSelectedText">Recently added</span>
+                                <i class="fa-solid fa-chevron-down custom-sort-arrow"></i>
+                            </button>
+                            <ul class="custom-sort-menu" id="customSortMenu" role="listbox">
+                                <li class="custom-sort-option selected" data-value="recent" role="option" aria-selected="true">
+                                    <span class="opt-label">Recently added</span>
+                                    <i class="fa-solid fa-check opt-check"></i>
+                                </li>
+                                <li class="custom-sort-option" data-value="first" role="option" aria-selected="false">
+                                    <span class="opt-label">First name</span>
+                                    <i class="fa-solid fa-check opt-check"></i>
+                                </li>
+                                <li class="custom-sort-option" data-value="last" role="option" aria-selected="false">
+                                    <span class="opt-label">Last name</span>
+                                    <i class="fa-solid fa-check opt-check"></i>
+                                </li>
+                            </ul>
+                            <input type="hidden" id="connectionsSortInput" value="recent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONNECTIONS LIST -->
+            <ul class="connections-list" id="connectionsList">
+                {% for item in connections %}
+                <li class="connection-item"
+                    id="connection-item-{{ item.user.id }}"
+                    data-name="{{ item.display_name|lower }}"
+                    data-headline="{{ item.headline|lower }}"
+                    data-firstname="{{ item.user.first_name|default:item.user.username|lower }}"
+                    data-lastname="{{ item.user.last_name|lower }}"
+                    data-date="{{ item.connected_at|date:'U'|default:'0' }}">
+                    
+                    <div class="connection-left">
+                        <a href="{% url 'accounts:view_profile' item.user.id %}" class="conn-avatar-wrap">
+                            {% if item.avatar %}
+                                <img src="{{ item.avatar }}" alt="{{ item.display_name }}" class="conn-avatar-img">
+                            {% else %}
+                                <div class="conn-avatar-fallback">{{ item.display_name|slice:":1" }}</div>
+                            {% endif %}
+                            <span class="conn-online-dot"></span>
+                        </a>
+
+                        <div class="conn-details">
+                            <div class="conn-name-row">
+                                <a href="{% url 'accounts:view_profile' item.user.id %}" class="conn-name-link">
+                                    {{ item.display_name }}
+                                </a>
+                                {% if item.user.is_verified %}
+                                    <i class="fa-solid fa-circle-check conn-badge-verified" title="Verified Member"></i>
+                                {% endif %}
+                            </div>
+                            <div class="conn-headline" title="{{ item.headline }}">
+                                {{ item.headline }}
+                            </div>
+                            <div class="conn-time">
+                                {% if item.connected_at %}
+                                    Connected {{ item.connected_at|timesince }} ago
+                                {% else %}
+                                    Connected recently
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="connection-right">
+                        <a href="{% url 'chat_detail' item.user.id %}" class="btn-message-pill" title="Message {{ item.display_name }}">
+                            <i class="far fa-comment-dots"></i> Message
+                        </a>
+
+                        <div class="conn-menu-wrap">
+                            <button type="button" class="btn-conn-menu" title="More options" onclick="toggleConnMenu(event, '{{ item.user.id }}')">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                            <div class="conn-dropdown-menu" id="connMenu-{{ item.user.id }}">
+                                <a href="{% url 'accounts:view_profile' item.user.id %}" class="conn-dropdown-item">
+                                    <i class="far fa-user"></i> View Profile
+                                </a>
+                                <button type="button" class="conn-dropdown-item danger" onclick="openRemoveModal('{{ item.user.id }}', '{{ item.display_name|escapejs }}')">
+                                    <i class="far fa-trash-alt"></i> Remove Connection
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="empty-connections-state" id="emptyStateDefault">
+                    <div class="empty-icon-circle">
+                        <i class="fa-solid fa-user-group"></i>
+                    </div>
+                    <h3>No connections yet</h3>
+                    <p>When you connect with other freelancers and clients, they'll be listed here with options to message and collaborate.</p>
+                    <a href="{% url 'accounts:find_connections' %}" class="btn-find-now">
+                        <i class="fa-solid fa-user-plus"></i> Find Connections
+                    </a>
+                </li>
+                {% endfor %}
+
+                <!-- No Search Results (hidden by default) -->
+                <li class="empty-connections-state" id="emptyStateSearch" style="display: none;">
+                    <div class="empty-icon-circle" style="background-color: rgba(0,0,0,0.04); color: rgba(0,0,0,0.4);">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>No matching connections</h3>
+                    <p>We couldn't find any connections matching your search query.</p>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ========================================================
+             CARD 2: CONNECTIONS YOU MAY KNOW CAROUSEL (MATCHES IMAGE 2)
+             ======================================================== -->
+        <div class="suggestions-carousel-card" id="suggestionsCarouselCard">
+            <div class="carousel-card-header">
+                <div class="carousel-title-left">
+                    <img src="/media/profiles/muhammed_avatar.png" alt="muhammed" class="carousel-author-avatar" onerror="this.src='/static/images/logo.png'">
+                    <div class="carousel-title-text">
+                        muhammed’s connections you may know
+                    </div>
+                </div>
+
+                <div class="carousel-controls-right">
+                    <a href="{% url 'accounts:find_connections' %}" class="carousel-show-all-link">Show all</a>
+                    <button type="button" class="carousel-arrow-btn" id="carouselPrevBtn" title="Previous" onclick="slideCarousel(-1)">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="carousel-arrow-btn" id="carouselNextBtn" title="Next" onclick="slideCarousel(1)">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <button type="button" class="carousel-dismiss-btn" title="Dismiss" onclick="dismissEntireCarousel()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="carousel-viewport">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- CARD 1: Lavanya Bhat -->
+                    <div class="sugg-card" id="sugg-card-1">
+                        <div class="sugg-banner">
+                            <img src="/media/profiles/banner_lavanya.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #f59e0b, #0a66c2)'">
+                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-1')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="sugg-avatar-wrap">
+                            <img src="/media/profiles/av_lavanya.png" alt="Lavanya Bhat" class="sugg-avatar-img">
+                        </div>
+                        <div class="sugg-content">
+                            <div class="sugg-name-row">
+                                <div class="sugg-name" title="Lavanya Bhat">Lavanya Bhat</div>
+                            </div>
+                            <div class="sugg-headline" title="Student at KVG College of Engineering, Sullia| ..">
+                                Student at KVG College of Engineering, Sullia| ..
+                            </div>
+                            <div class="sugg-mutual-row">
+                                <img src="/media/profiles/mutual_harsha.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
+                                <span class="sugg-mutual-text">Harsha and 15 other mutual connections</span>
+                            </div>
+                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
+                                <i class="fa-solid fa-user-plus"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: Manyashree.L. Achar -->
+                    <div class="sugg-card" id="sugg-card-2">
+                        <div class="sugg-banner">
+                            <img src="/media/profiles/banner_manyashree.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #0f766e, #94a3b8)'">
+                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-2')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="sugg-avatar-wrap">
+                            <img src="/media/profiles/av_manyashree.png" alt="Manyashree.L. Achar" class="sugg-avatar-img">
+                        </div>
+                        <div class="sugg-content">
+                            <div class="sugg-name-row">
+                                <div class="sugg-name" title="Manyashree.L. Achar">Manyashree.L. Achar</div>
+                            </div>
+                            <div class="sugg-headline" title="Attended Visvesvaraya Technological University">
+                                Attended Visvesvaraya Technological University
+                            </div>
+                            <div class="sugg-mutual-row">
+                                <img src="/media/profiles/mutual_darshan.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
+                                <span class="sugg-mutual-text">Darshan and 21 other mutual connections</span>
+                            </div>
+                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
+                                <i class="fa-solid fa-user-plus"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 3: Chinmay S H -->
+                    <div class="sugg-card" id="sugg-card-3">
+                        <div class="sugg-banner">
+                            <img src="/media/profiles/banner_chinmay.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #0f172a, #1e3a8a)'">
+                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-3')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="sugg-avatar-wrap">
+                            <img src="/media/profiles/av_chinmay.png" alt="Chinmay S H" class="sugg-avatar-img">
+                        </div>
+                        <div class="sugg-content">
+                            <div class="sugg-name-row">
+                                <div class="sugg-name" title="Chinmay S H">Chinmay S H</div>
+                                <i class="fa-solid fa-circle-check sugg-verified-badge" title="Verified Member"></i>
+                            </div>
+                            <div class="sugg-headline" title="Entry-Level Software Engineer | Java | Full ..">
+                                Entry-Level Software Engineer | Java | Full ..
+                            </div>
+                            <div class="sugg-mutual-row">
+                                <img src="/media/profiles/mutual_harsha.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
+                                <span class="sugg-mutual-text">Harsha and 43 other mutual connections</span>
+                            </div>
+                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
+                                <i class="fa-solid fa-user-plus"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 4: Akshaya M -->
+                    <div class="sugg-card" id="sugg-card-4">
+                        <div class="sugg-banner">
+                            <img src="/media/profiles/banner_akshaya.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #334155, #64748b)'">
+                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-4')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="sugg-avatar-wrap">
+                            <img src="/media/profiles/av_akshaya.png" alt="Akshaya M" class="sugg-avatar-img">
+                        </div>
+                        <div class="sugg-content">
+                            <div class="sugg-name-row">
+                                <div class="sugg-name" title="Akshaya M">Akshaya M</div>
+                            </div>
+                            <div class="sugg-headline" title="CSE (AI &amp; ML) Student | Aspiring AI &amp; Data ..">
+                                CSE (AI &amp; ML) Student | Aspiring AI &amp; Data ..
+                            </div>
+                            <div class="sugg-mutual-row">
+                                <img src="/media/profiles/mutual_darshan.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
+                                <span class="sugg-mutual-text">Darshan and 31 other mutual connections</span>
+                            </div>
+                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
+                                <i class="fa-solid fa-user-plus"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 5: Manoj Kumar -->
+                    <div class="sugg-card" id="sugg-card-5">
+                        <div class="sugg-banner" style="background: linear-gradient(135deg, #a0b4b7, #b8c8cb);">
+                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-5')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="sugg-avatar-wrap">
+                            <img src="/media/profiles/manoj_avatar.png" alt="Manoj Kumar" class="sugg-avatar-img" onerror="this.src='/static/images/logo.png'">
+                        </div>
+                        <div class="sugg-content">
+                            <div class="sugg-name-row">
+                                <div class="sugg-name" title="Manoj Kumar">Manoj Kumar</div>
+                            </div>
+                            <div class="sugg-headline" title="Attended KVG College of Engineering (KVGC...">
+                                Attended KVG College of Engineering (KVGC...
+                            </div>
+                            <div class="sugg-mutual-row">
+                                <img src="/media/profiles/mutual_1.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
+                                <span class="sugg-mutual-text">Karthik and 30 other mutual connections</span>
+                            </div>
+                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
+                                <i class="fa-solid fa-user-plus"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 6: Yashas Rai -->
+                    <div class="sugg-card" id="sugg-card-6">
+                        <div class="sugg-banner" style="background: linear-gradient(135deg, #1e3a8a, #0a66c2);">
+                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-6')">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="sugg-avatar-wrap">
+                            <img src="/media/profiles/yashas_avatar.png" alt="Yashas Rai" class="sugg-avatar-img" onerror="this.src='/static/images/logo.png'">
+                        </div>
+                        <div class="sugg-content">
+                            <div class="sugg-name-row">
+                                <div class="sugg-name" title="Yashas Rai">Yashas Rai</div>
+                                <i class="fa-solid fa-circle-check sugg-verified-badge" title="Verified Member"></i>
+                            </div>
+                            <div class="sugg-headline" title="Student Ambassador @Google | Aspiring ...">
+                                Student Ambassador @Google | Aspiring ...
+                            </div>
+                            <div class="sugg-mutual-row">
+                                <img src="/media/profiles/mutual_harsha.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
+                                <span class="sugg-mutual-text">Sachin and 90 other mutual connections</span>
+                            </div>
+                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
+                                <i class="fa-solid fa-user-plus"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Remove Connection Confirmation Modal -->
+<div id="removeModal" class="custom-modal-overlay">
+    <div class="custom-modal-card">
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">Remove Connection?</h3>
+        <p id="removeModalDesc" style="color: #64748b; font-size: 0.95rem; line-height: 1.5;">
+            Are you sure you want to remove this connection?
+        </p>
+        <div class="modal-btn-row">
+            <button type="button" class="btn-modal-cancel" onclick="closeRemoveModal()">Cancel</button>
+            <form id="removeConnForm" method="POST" action="">
+                {% csrf_token %}
+                <button type="submit" class="btn-modal-confirm-danger">Remove</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Global Footer -->
+{% include 'includes/footer.html' %}
+
+<script>
+    // Live Search Filter
+    const searchInput = document.getElementById('connectionsSearchInput');
+    const sortSelect = document.getElementById('connectionsSortSelect');
+    const connList = document.getElementById('connectionsList');
+    const emptySearch = document.getElementById('emptyStateSearch');
+
+    function filterAndSortConnections() {
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        const items = Array.from(document.querySelectorAll('.connection-item'));
+        if (items.length === 0) return;
+
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const name = item.getAttribute('data-name') || '';
+            const headline = item.getAttribute('data-headline') || '';
+            const matches = !query || name.includes(query) || headline.includes(query);
+
+            if (matches) {
+                item.style.display = 'flex';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        if (emptySearch) {
+            emptySearch.style.display = (visibleCount === 0 && query !== '') ? 'block' : 'none';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filterAndSortConnections);
+    }
+
+    // Live Sorting function
+    function applySort(mode) {
+        const items = Array.from(document.querySelectorAll('.connection-item'));
+        if (items.length <= 1 || !connList) return;
+
+        items.sort((a, b) => {
+            if (mode === 'first') {
+                const nameA = a.getAttribute('data-firstname') || '';
+                const nameB = b.getAttribute('data-firstname') || '';
+                return nameA.localeCompare(nameB);
+            } else if (mode === 'last') {
+                const lastA = a.getAttribute('data-lastname') || a.getAttribute('data-firstname') || '';
+                const lastB = b.getAttribute('data-lastname') || b.getAttribute('data-firstname') || '';
+                return lastA.localeCompare(lastB);
+            } else {
+                // recent (timestamp descending)
+                const dateA = parseInt(a.getAttribute('data-date') || '0', 10);
+                const dateB = parseInt(b.getAttribute('data-date') || '0', 10);
+                return dateB - dateA;
+            }
+        });
+
+        items.forEach(item => connList.appendChild(item));
+    }
+
+    // Custom CSS Sort Dropdown handling (Pure CSS & JS - No OS default dropdown)
+    const customSortDropdown = document.getElementById('customSortDropdown');
+    const customSortBtn = document.getElementById('customSortBtn');
+    const customSortSelectedText = document.getElementById('customSortSelectedText');
+    const customSortOptions = document.querySelectorAll('.custom-sort-option');
+    const sortHiddenInput = document.getElementById('connectionsSortInput');
+
+    if (customSortBtn && customSortDropdown) {
+        customSortBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isOpen = customSortDropdown.classList.contains('open');
+            document.querySelectorAll('.conn-dropdown-menu').forEach(m => m.classList.remove('show'));
+            customSortDropdown.classList.toggle('open', !isOpen);
+            customSortBtn.setAttribute('aria-expanded', String(!isOpen));
+        });
+
+        customSortOptions.forEach(opt => {
+            opt.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const val = this.getAttribute('data-value');
+                const label = this.querySelector('.opt-label').textContent.trim();
+
+                customSortOptions.forEach(o => {
+                    o.classList.remove('selected');
+                    o.setAttribute('aria-selected', 'false');
+                });
+                this.classList.add('selected');
+                this.setAttribute('aria-selected', 'true');
+
+                if (customSortSelectedText) {
+                    customSortSelectedText.textContent = label;
+                }
+                if (sortHiddenInput) {
+                    sortHiddenInput.value = val;
+                }
+
+                customSortDropdown.classList.remove('open');
+                customSortBtn.setAttribute('aria-expanded', 'false');
+
+                applySort(val);
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#customSortDropdown')) {
+                customSortDropdown.classList.remove('open');
+                customSortBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && customSortDropdown.classList.contains('open')) {
+                customSortDropdown.classList.remove('open');
+                customSortBtn.setAttribute('aria-expanded', 'false');
+                customSortBtn.focus();
+            }
+        });
+    }
+
+    // Dropdown menu toggle
+    function toggleConnMenu(event, userId) {
+        event.stopPropagation();
+        const menu = document.getElementById('connMenu-' + userId);
+        const allMenus = document.querySelectorAll('.conn-dropdown-menu');
+        allMenus.forEach(m => {
+            if (m !== menu) m.classList.remove('show');
+        });
+        if (menu) {
+            menu.classList.toggle('show');
+        }
+    }
+
+    // Close menus on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.conn-menu-wrap')) {
+            document.querySelectorAll('.conn-dropdown-menu').forEach(m => m.classList.remove('show'));
+        }
+    });
+
+    // Remove Confirmation Modal
+    let targetUserId = null;
+    function openRemoveModal(userId, displayName) {
+        targetUserId = userId;
+        const modal = document.getElementById('removeModal');
+        const desc = document.getElementById('removeModalDesc');
+        const form = document.getElementById('removeConnForm');
+
+        if (desc) {
+            desc.innerHTML = `Are you sure you want to remove <strong>${displayName}</strong> from your connections?`;
+        }
+        if (form) {
+            form.action = `/accounts/remove-connection/${userId}/`;
+        }
+        if (modal) {
+            modal.classList.add('active');
+        }
+        document.querySelectorAll('.conn-dropdown-menu').forEach(m => m.classList.remove('show'));
+    }
+
+    function closeRemoveModal() {
+        const modal = document.getElementById('removeModal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeRemoveModal();
+        }
+    });
+
+    // ==========================================
+    // CAROUSEL INTERACTIONS (MATCHES IMAGE 2)
+    // ==========================================
+    function slideCarousel(direction) {
+        const track = document.getElementById('carouselTrack');
+        if (!track) return;
+        const scrollAmount = 464; // ~2 cards with gap
+        track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+
+    function updateCarouselButtons() {
+        const track = document.getElementById('carouselTrack');
+        const prevBtn = document.getElementById('carouselPrevBtn');
+        const nextBtn = document.getElementById('carouselNextBtn');
+        if (!track || !prevBtn || !nextBtn) return;
+
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        prevBtn.disabled = track.scrollLeft <= 5;
+        prevBtn.classList.toggle('disabled', track.scrollLeft <= 5);
+        nextBtn.disabled = track.scrollLeft >= maxScroll - 5;
+        nextBtn.classList.toggle('disabled', track.scrollLeft >= maxScroll - 5);
+    }
+
+    const trackElem = document.getElementById('carouselTrack');
+    if (trackElem) {
+        trackElem.addEventListener('scroll', updateCarouselButtons);
+        window.addEventListener('resize', updateCarouselButtons);
+        setTimeout(updateCarouselButtons, 100);
+    }
+
+    function dismissSuggCard(cardId) {
+        const card = document.getElementById(cardId);
+        if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.85)';
+            setTimeout(() => {
+                card.remove();
+                updateCarouselButtons();
+            }, 200);
+        }
+    }
+
+    function dismissEntireCarousel() {
+        const card = document.getElementById('suggestionsCarouselCard');
+        if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                card.remove();
+            }, 250);
+        }
+    }
+
+    function handleConnectClick(btn) {
+        if (btn.classList.contains('pending')) return;
+        btn.classList.add('pending');
+        btn.innerHTML = '<i class="fa-solid fa-clock"></i> Pending';
+    }
+</script>
+
+</body>
+</html>

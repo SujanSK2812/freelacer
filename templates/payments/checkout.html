@@ -13,7 +13,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+        }
+
+        body, input, textarea, button, select {
+            font-family: var(--font-family-base);
         }
 
         body {
@@ -22,6 +25,24 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        .fa, .fas, .fa-solid {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+            font-weight: 900 !important;
+            font-style: normal !important;
+        }
+
+        .far, .fa-regular {
+            font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
+        }
+
+        .fab, .fa-brands {
+            font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
         }
 
         main {
@@ -313,6 +334,24 @@
                             <div style="font-size: 0.82rem; color: #64748b;">Hired Freelancer</div>
                         </div>
                     </div>
+
+                    {% if freelancer_payout %}
+                    <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 0.9rem 1rem; margin-top: 1rem;">
+                        <div style="font-size: 0.78rem; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                            <i class="fas fa-check-circle" style="color: #16a34a;"></i> Verified Beneficiary Payout Account
+                        </div>
+                        <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">
+                            {{ freelancer_payout.account_holder_name }}
+                        </div>
+                        <div style="font-size: 0.88rem; color: #334155; margin-top: 3px;">
+                            {% if freelancer_payout.preferred_method == 'upi' %}
+                                <i class="fas fa-mobile-alt" style="color: #16a34a;"></i> UPI: <code style="background: #ffffff; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0; font-weight: 700; color: #15803d;">{{ freelancer_payout.upi_id }}</code>
+                            {% else %}
+                                <i class="fas fa-landmark" style="color: #0284c7;"></i> {{ freelancer_payout.bank_name }} &bull; A/C: <code>{{ freelancer_payout.masked_account_number }}</code> (IFSC: {{ freelancer_payout.ifsc_code }})
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
 
                 <div class="cost-breakdown">
@@ -346,13 +385,87 @@
                 <form method="POST" action="{% url 'payments:checkout' proposal.id %}" id="checkoutForm">
                     {% csrf_token %}
 
+                    <!-- Freelancer's Account Direct Payment Option (Recommended) -->
+                    {% if freelancer_payout %}
+                    <div style="margin-bottom: 1.5rem;">
+                        <span style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: #16a34a; display: flex; align-items: center; gap: 6px; margin-bottom: 0.6rem;">
+                            <i class="fas fa-bolt"></i> Recommended: Pay to Freelancer's Account
+                        </span>
+
+                        <div class="option-group">
+                            <input type="radio" name="payment_source" id="opt_freelancer_account" value="freelancer_account" checked style="display: none;" onchange="togglePaymentInputs('freelancer_account')">
+                            <label for="opt_freelancer_account" class="option-label" style="border-color: #16a34a; background: #f0fdf4;">
+                                <i class="fas {% if freelancer_payout.preferred_method == 'upi' %}fa-mobile-alt{% else %}fa-university{% endif %}" style="color: #16a34a; font-size: 1.25rem;"></i>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">
+                                        {% if freelancer_payout.preferred_method == 'upi' %}
+                                            Pay via UPI ({{ freelancer_payout.upi_id }})
+                                        {% else %}
+                                            Direct Bank Transfer ({{ freelancer_payout.bank_name }})
+                                        {% endif %}
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: #15803d; font-weight: 500;">
+                                        Beneficiary: {{ freelancer_payout.account_holder_name }} &bull; 100% Escrow
+                                    </div>
+                                </div>
+                                <span style="font-size: 0.72rem; background: #16a34a; color: white; padding: 3px 8px; border-radius: 12px; font-weight: 700;">FAST</span>
+                            </label>
+                        </div>
+
+                        <!-- Details Box for Freelancer Account -->
+                        <div id="freelancerAccountFields" style="display: block; padding: 1.1rem; background: #f0fdf4; border-radius: 12px; margin-top: 0.5rem; margin-bottom: 1.25rem; border: 1.5px solid #86efac;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.8rem; font-weight: 700; color: #166534; text-transform: uppercase;">
+                                    {% if freelancer_payout.preferred_method == 'upi' %}Freelancer UPI Payment Details{% else %}Freelancer Bank Account Details{% endif %}
+                                </span>
+                                <span style="font-size: 0.78rem; color: #15803d; font-weight: 700;"><i class="fas fa-shield-alt"></i> Verified Account</span>
+                            </div>
+
+                            <div style="background: white; border: 1px solid #dcfce7; border-radius: 8px; padding: 0.85rem; margin-bottom: 0.75rem;">
+                                <div style="font-size: 0.8rem; color: #64748b;">Account Holder Name:</div>
+                                <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px;">{{ freelancer_payout.account_holder_name }}</div>
+
+                                {% if freelancer_payout.preferred_method == 'upi' %}
+                                    <div style="font-size: 0.8rem; color: #64748b;">Freelancer UPI ID:</div>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 3px;">
+                                        <code style="font-size: 1.05rem; font-weight: 800; color: #15803d; background: #f8fafc; padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">{{ freelancer_payout.upi_id }}</code>
+                                        <button type="button" onclick="navigator.clipboard.writeText('{{ freelancer_payout.upi_id }}'); alert('UPI ID copied!');" style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.8rem; cursor: pointer; color: #0a66c2; font-weight: 600;" title="Copy UPI ID">
+                                            <i class="fas fa-copy"></i> Copy
+                                        </button>
+                                    </div>
+                                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 6px;">
+                                        Pay via any UPI app (GPay, PhonePe, Paytm, BHIM).
+                                    </div>
+                                {% else %}
+                                    <div style="font-size: 0.8rem; color: #64748b;">Bank Name:</div>
+                                    <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">{{ freelancer_payout.bank_name }}</div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+                                        <div>
+                                            <div style="font-size: 0.78rem; color: #64748b;">Account Number:</div>
+                                            <code style="font-weight: 700; color: #0f172a;">{{ freelancer_payout.account_number }}</code>
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 0.78rem; color: #64748b;">IFSC Code:</div>
+                                            <code style="font-weight: 700; color: #0f172a;">{{ freelancer_payout.ifsc_code }}</code>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <p style="font-size: 0.82rem; color: #166534; line-height: 1.4; margin: 0;">
+                                <i class="fas fa-check-circle"></i> Funds will be deposited to this beneficiary account under secure platform escrow.
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <!-- If Saved Methods Exist -->
                     {% if saved_methods %}
                     <div style="margin-bottom: 1.25rem;">
                         <span style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: #64748b; display: block; margin-bottom: 0.6rem;">Saved Methods</span>
                         {% for m in saved_methods %}
                         <div class="option-group">
-                            <input type="radio" name="payment_source" id="saved_{{ m.id }}" value="saved" {% if forloop.first %}checked{% endif %} style="display: none;" onchange="togglePaymentInputs('saved', '{{ m.id }}')">
+                            <input type="radio" name="payment_source" id="saved_{{ m.id }}" value="saved" {% if not freelancer_payout and forloop.first %}checked{% endif %} style="display: none;" onchange="togglePaymentInputs('saved', '{{ m.id }}')">
                             <label for="saved_{{ m.id }}" class="option-label">
                                 <i class="fas {% if m.method_type == 'card' %}fa-credit-card{% elif m.method_type == 'upi' %}fa-mobile-alt{% else %}fa-university{% endif %}" style="color: #0a66c2;"></i>
                                 <span style="flex: 1;">
@@ -377,7 +490,7 @@
 
                     <!-- Card Option -->
                     <div class="option-group">
-                        <input type="radio" name="payment_source" id="opt_new_card" value="new_card" {% if not saved_methods %}checked{% endif %} style="display: none;" onchange="togglePaymentInputs('new_card')">
+                        <input type="radio" name="payment_source" id="opt_new_card" value="new_card" {% if not saved_methods and not freelancer_payout %}checked{% endif %} style="display: none;" onchange="togglePaymentInputs('new_card')">
                         <label for="opt_new_card" class="option-label">
                             <i class="fas fa-credit-card" style="color: #0a66c2;"></i>
                             <span>Credit or Debit Card</span>
@@ -476,6 +589,10 @@
 
 <script>
     function togglePaymentInputs(source, savedId) {
+        const flFields = document.getElementById('freelancerAccountFields');
+        if (flFields) {
+            flFields.style.display = (source === 'freelancer_account') ? 'block' : 'none';
+        }
         document.getElementById('newCardFields').style.display = (source === 'new_card') ? 'block' : 'none';
         document.getElementById('upiFields').style.display = (source === 'upi') ? 'block' : 'none';
         document.getElementById('netbankingFields').style.display = (source === 'netbanking') ? 'block' : 'none';

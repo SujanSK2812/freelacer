@@ -82,7 +82,7 @@
 
         body {
             background-color: #f9fafb;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--font-family-base) !important;
             color: #001e00;
             line-height: 1.5;
         }
@@ -537,16 +537,16 @@
         <main>
             <div class="feed-card-box">
                 <div class="feed-tabs-header">
-                    <button class="feed-tab active" onclick="switchHomeTab('client-posts', this)">
+                    <button class="feed-tab {% if active_tab != 'freelancer-posts' %}active{% endif %}" onclick="switchHomeTab('client-posts', this)">
                         <i class="fas fa-user-tie" style="margin-right:6px;"></i> Client Posts
                     </button>
-                    <button class="feed-tab" onclick="switchHomeTab('freelancer-posts', this)">
+                    <button class="feed-tab {% if active_tab == 'freelancer-posts' %}active{% endif %}" onclick="switchHomeTab('freelancer-posts', this)">
                         <i class="fas fa-star" style="margin-right:6px;"></i> Freelancer Posts
                     </button>
                 </div>
 
                 <!-- CLIENT POSTS TAB -->
-                <div id="client-posts" class="tab-content-pane" style="display: block;">
+                <div id="client-posts" class="tab-content-pane" style="display: {% if active_tab == 'freelancer-posts' %}none{% else %}block{% endif %};">
                     {% for job in jobs %}
                     <article class="job-feed-item">
                         <!-- Author Name & Role Banner -->
@@ -725,7 +725,7 @@
                 </div>
 
                 <!-- FREELANCER POSTS TAB -->
-                <div id="freelancer-posts" class="tab-content-pane" style="display: none;">
+                <div id="freelancer-posts" class="tab-content-pane" style="display: {% if active_tab == 'freelancer-posts' %}block{% else %}none{% endif %};">
                     {% for post in freelancer_posts %}
                     <article class="job-feed-item">
                         <!-- Author Name & Role Banner -->
@@ -982,11 +982,22 @@
 <script>
     function switchHomeTab(tabId, btn) {
         document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
-        btn.classList.add('active');
+        if (btn) btn.classList.add('active');
         document.querySelectorAll('.tab-content-pane').forEach(pane => pane.style.display = 'none');
         const activePane = document.getElementById(tabId);
         if (activePane) activePane.style.display = 'block';
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab === 'freelancer-posts' || window.location.hash === '#freelancer-posts') {
+            const tabs = document.querySelectorAll('.feed-tab');
+            if (tabs.length >= 2) {
+                switchHomeTab('freelancer-posts', tabs[1]);
+            }
+        }
+    });
 
     function toggleComments(boxId) {
         const box = document.getElementById(boxId);

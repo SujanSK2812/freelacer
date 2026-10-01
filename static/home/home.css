@@ -7,8 +7,8 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.6;
+    font-family: var(--font-family-base) !important;
+    line-height: var(--line-height-base);
     color: #191919;
     background: #f3f2ef;
     min-height: 100vh;
@@ -43,15 +43,15 @@ main {
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: var(--font-size-h1);
     font-weight: 700;
     color: #004182;
     margin-bottom: 1rem;
-    line-height: 1.2;
+    line-height: var(--line-height-tight);
 }
 
 .hero p {
-    font-size: 1.25rem;
+    font-size: var(--font-size-body);
     color: #5e6b7e;
     max-width: 600px;
     margin: 0 auto;
@@ -76,7 +76,7 @@ main {
 }
 
 .dashboard-box h3 {
-    font-size: 1.8rem;
+    font-size: var(--font-size-h3);
     color: #004182;
     margin-bottom: 2rem;
     font-weight: 700;
@@ -95,11 +95,11 @@ main {
 /* Button Styles */
 .btn {
     display: inline-block;
-    padding: 0.9rem 2.5rem;
+    padding: 0.85rem 2.2rem;
     border-radius: 40px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: var(--font-size-btn, 15px);
     transition: all 0.3s ease;
     margin: 0 0.5rem;
     border: none;
@@ -161,7 +161,7 @@ main {
 }
 
 .features-section h2 {
-    font-size: 2.5rem;
+    font-size: var(--font-size-h2);
     color: #004182;
     margin-bottom: 3rem;
 }
@@ -199,7 +199,7 @@ main {
 }
 
 .feature-card h3 {
-    font-size: 1.3rem;
+    font-size: var(--font-size-h3);
     margin-bottom: 0.5rem;
     color: #004182;
 }
@@ -248,7 +248,7 @@ main {
 }
 
 .testimonials-section h2 {
-    font-size: 2.5rem;
+    font-size: var(--font-size-h2);
     color: #004182;
     margin-bottom: 3rem;
 }
@@ -274,7 +274,7 @@ main {
     box-shadow: 0 15px 30px rgba(10, 102, 194, 0.15);
 }
 
-.testimonial-card i {
+.testimonial-card i.fa-quote-left {
     color: #0a66c2;
     font-size: 2rem;
     opacity: 0.3;

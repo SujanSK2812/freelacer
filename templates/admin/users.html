@@ -21,14 +21,7 @@
       }
 
       body {
-        font-family:
-          system-ui,
-          "Segoe UI",
-          "Inter",
-          -apple-system,
-          BlinkMacSystemFont,
-          Roboto,
-          sans-serif;
+        font-family: var(--font-family-base) !important;
         background-color: #f8fafc;
         color: #1e293b;
         line-height: 1.5;
@@ -214,10 +207,87 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+      .user-list {
+        padding: 0.25rem 0;
+        max-height: 290px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: #0a66c2 #f1f5f9;
+        transition: max-height 0.3s ease;
       }
 
-      .user-list {
-        padding: 0.5rem 0;
+      /* Custom sleek modern scrollbar */
+      .user-list::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      .user-list::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 8px;
+        margin: 4px 0;
+      }
+
+      .user-list::-webkit-scrollbar-thumb {
+        background: #0a66c2;
+        border-radius: 8px;
+      }
+
+      .user-list::-webkit-scrollbar-thumb:hover {
+        background: #004182;
+      }
+
+      .user-list.expanded {
+        max-height: none !important;
+        overflow-y: visible !important;
+      }
+
+      .stat-chip[data-target] {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+
+      .stat-chip[data-target]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(10, 102, 194, 0.12);
+        border-color: #0a66c2;
+      }
+
+      .nav-pill-btn {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .nav-pill-btn:hover {
+        background: #0a66c2;
+        color: white;
+        border-color: #0a66c2;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(10, 102, 194, 0.15);
+      }
+
+      .scroll-indicator-badge {
+        font-size: 0.74rem;
+        color: #0a66c2;
+        background: #e6f0ff;
+        padding: 3px 9px;
+        border-radius: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
       }
 
       .user-row {
@@ -309,6 +379,32 @@
         background: #fff3e6;
       }
 
+      .post-thumb-img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      }
+      .post-thumb-placeholder {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+      .badge-post-status {
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+      }
+
       .empty-state {
         padding: 2rem;
         text-align: center;
@@ -395,36 +491,82 @@
         >
       </div>
 
+      {% if messages %}
+      <div style="margin-bottom: 1.5rem;">
+        {% for message in messages %}
+          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" style="padding: 12px 18px; border-radius: 10px; margin-bottom: 10px; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; {% if message.tags == 'success' %}background: #ecfdf5; color: #065f46; border-left: 4px solid #10b981;{% elif message.tags == 'error' %}background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444;{% else %}background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6;{% endif %}">
+            <span>{{ message }}</span>
+            <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit; line-height: 1;">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
       <!-- Quick stats + actions -->
       <div class="stats-row-mini">
-        <div class="stat-chip">
+        <div class="stat-chip" data-target="clientsSection" title="Jump to Clients">
           <span id="clientCount">{{client_count}}</span>
           <span><i class="fas fa-briefcase"></i> Clients</span>
         </div>
-        <div class="stat-chip">
+        <div class="stat-chip" data-target="freelancersSection" title="Jump to Freelancers">
           <span id="freelancerCount">{{freelancer_count}}</span>
           <span><i class="fas fa-laptop-code"></i> Freelancers</span>
         </div>
-        <div class="stat-chip">
-        <span>{{ project_count }}</span>
-        <span><i class="fas fa-folder"></i> Projects</span>
-    </div>
+        <div class="stat-chip" data-target="clientJobsSection" title="Jump to Client Jobs">
+          <span>{{ client_jobs_count }}</span>
+          <span><i class="fas fa-tasks"></i> Client Jobs</span>
+        </div>
+        <div class="stat-chip" data-target="freelancerPostsSection" title="Jump to Freelancer Posts">
+          <span>{{ freelancer_posts_count }}</span>
+          <span><i class="fas fa-photo-video"></i> Freelancer Posts</span>
+        </div>
         <div class="stat-chip">
           <span id="totalUsers">{{total_count}}</span>
           <span><i class="fas fa-users"></i> Total Users</span>
         </div>
-        
+      </div>
+
+      <!-- Quick Navigation Bar -->
+      <div class="quick-nav-bar" style="display: flex; gap: 0.6rem; margin-bottom: 1.8rem; flex-wrap: wrap; align-items: center; background: white; padding: 0.75rem 1.25rem; border-radius: 12px; border: 1px solid #eef2ff;">
+        <span style="font-size: 0.82rem; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 5px;">
+          <i class="fas fa-compass" style="color: #0a66c2;"></i> Jump to:
+        </span>
+        <button type="button" class="nav-pill-btn" onclick="scrollToSection('clientsSection')">
+          <i class="fas fa-briefcase"></i> Clients ({{ client_count }})
+        </button>
+        <button type="button" class="nav-pill-btn" onclick="scrollToSection('freelancersSection')">
+          <i class="fas fa-laptop-code"></i> Freelancers ({{ freelancer_count }})
+        </button>
+        <button type="button" class="nav-pill-btn" onclick="scrollToSection('clientJobsSection')">
+          <i class="fas fa-tasks"></i> Client Jobs ({{ client_jobs.count }})
+        </button>
+        <button type="button" class="nav-pill-btn" onclick="scrollToSection('freelancerPostsSection')">
+          <i class="fas fa-photo-video"></i> Freelancer Posts ({{ freelancer_posts.count }})
+        </button>
+        {% if client_posts %}
+        <button type="button" class="nav-pill-btn" onclick="scrollToSection('clientCommunityPostsSection')">
+          <i class="fas fa-bullhorn"></i> Community Posts ({{ client_posts.count }})
+        </button>
+        {% endif %}
       </div>
 
       <!-- CLIENTS SECTION -->
-      <div class="user-card-section">
+      <div class="user-card-section" id="clientsSection">
         <div class="section-header">
-          <h2><i class="fas fa-briefcase"></i> Clients</h2>
-          <button class="btn-outline-sm" id="exportClientsBtn">
-            <i class="fas fa-download"></i> Export list
-          </button>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2><i class="fas fa-briefcase"></i> Clients ({{ client_count }})</h2>
+            <span class="scroll-indicator-badge"><i class="fas fa-arrows-alt-v"></i> Scrollable</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="btn-outline-sm" style="padding: 0.25rem 0.75rem; font-size: 0.78rem;" onclick="toggleSectionExpand(this, 'clientsList')">
+              <i class="fas fa-expand-alt"></i> Expand
+            </button>
+            <button class="btn-outline-sm" id="exportClientsBtn">
+              <i class="fas fa-download"></i> Export list
+            </button>
+          </div>
         </div>
-        <div class="user-list">
+        <div class="user-list" id="clientsList">
           {% for user in clients %}
           <div class="user-row">
             <div class="user-info">
@@ -437,8 +579,10 @@
             </div>
 
             <div class="user-actions">
-              <button class="icon-btn edit"><i class="fas fa-edit"></i></button>
-              <button class="icon-btn delete">
+              <button type="button" class="icon-btn edit" title="Edit Client" onclick="openEditUserModal({{ user.id }}, '{{ user.username|escapejs }}', '{{ user.email|escapejs }}', '{{ user.phone|default:''|escapejs }}', '{{ user.role }}', {{ user.is_active|yesno:'true,false' }})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="icon-btn delete" title="Delete Client" onclick="openDeleteUserModal({{ user.id }}, '{{ user.username|escapejs }}', '{{ user.email|escapejs }}')">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -450,14 +594,22 @@
       </div>
 
       <!-- FREELANCERS SECTION -->
-      <div class="user-card-section">
+      <div class="user-card-section" id="freelancersSection">
         <div class="section-header">
-          <h2><i class="fas fa-laptop-code"></i> Freelancers</h2>
-          <button class="btn-outline-sm" id="exportFreelancersBtn">
-            <i class="fas fa-download"></i> Export list
-          </button>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2><i class="fas fa-laptop-code"></i> Freelancers ({{ freelancer_count }})</h2>
+            <span class="scroll-indicator-badge"><i class="fas fa-arrows-alt-v"></i> Scrollable</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="btn-outline-sm" style="padding: 0.25rem 0.75rem; font-size: 0.78rem;" onclick="toggleSectionExpand(this, 'freelancersList')">
+              <i class="fas fa-expand-alt"></i> Expand
+            </button>
+            <button class="btn-outline-sm" id="exportFreelancersBtn">
+              <i class="fas fa-download"></i> Export list
+            </button>
+          </div>
         </div>
-        <div class="user-list">
+        <div class="user-list" id="freelancersList">
           {% for user in freelancers %}
           <div class="user-row">
             <div class="user-info">
@@ -476,8 +628,10 @@
             </div>
 
             <div class="user-actions">
-              <button class="icon-btn edit"><i class="fas fa-edit"></i></button>
-              <button class="icon-btn delete">
+              <button type="button" class="icon-btn edit" title="Edit Freelancer" onclick="openEditUserModal({{ user.id }}, '{{ user.username|escapejs }}', '{{ user.email|escapejs }}', '{{ user.phone|default:''|escapejs }}', '{{ user.role }}', {{ user.is_active|yesno:'true,false' }})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="icon-btn delete" title="Delete Freelancer" onclick="openDeleteUserModal({{ user.id }}, '{{ user.username|escapejs }}', '{{ user.email|escapejs }}')">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
@@ -487,210 +641,457 @@
           {% endfor %}
         </div>
       </div>
-      <!-- PROJECTS SECTION -->
-<div class="user-card-section">
-    <div class="section-header">
-        <h2><i class="fas fa-folder"></i> Projects</h2>
-    </div>
-
-    <div class="user-list">
-        {% for project in projects %}
-        <div class="user-row">
-            <div class="user-info">
-                <div class="user-name">
-                    {{ project.title }}
-                    <span class="user-badge">{{ project.status }}</span>
-                </div>
-
-                <div class="user-email">
-                    Budget: ₹{{ project.budget }}
-                </div>
-
-                <div style="font-size:0.7rem; color:#475569;">
-                    Client: {{ project.client.username }}
-                </div>
-            </div>
+      <!-- CLIENT JOBS & PROJECTS SECTION -->
+      <div class="user-card-section" id="clientJobsSection">
+        <div class="section-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2><i class="fas fa-briefcase"></i> Client Job Posts & Projects ({{ client_jobs.count }})</h2>
+            <span class="scroll-indicator-badge"><i class="fas fa-arrows-alt-v"></i> Scrollable</span>
+          </div>
+          <button type="button" class="btn-outline-sm" style="padding: 0.25rem 0.75rem; font-size: 0.78rem;" onclick="toggleSectionExpand(this, 'clientJobsList')">
+            <i class="fas fa-expand-alt"></i> Expand
+          </button>
         </div>
-        {% empty %}
-        <div class="empty-state">No projects found</div>
-        {% endfor %}
+        <div class="user-list" id="clientJobsList">
+          {% for job in client_jobs %}
+          <div class="user-row" style="align-items: flex-start; padding: 1.1rem 1.5rem;">
+            <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 260px;">
+              {% if job.poster %}
+                <img src="{{ job.poster.url }}" alt="Job Poster" class="post-thumb-img" />
+              {% elif job.image %}
+                <img src="{{ job.image.url }}" alt="Job Image" class="post-thumb-img" />
+              {% else %}
+                <div class="post-thumb-placeholder" style="background: #e0f2fe; color: #0284c7;">
+                  <i class="fas fa-briefcase"></i>
+                </div>
+              {% endif %}
+              <div class="user-info">
+                <div class="user-name">
+                  <span style="font-size: 1.05rem;">{{ job.title }}</span>
+                  <span class="user-badge client">Client Job</span>
+                  <span class="badge-post-status" style="background: {% if job.status == 'open' %}#dcfce7; color: #15803d;{% elif job.status == 'completed' %}#e0e7ff; color: #4338ca;{% else %}#fef3c7; color: #b45309;{% endif %};">
+                    {{ job.status|title }}
+                  </span>
+                </div>
+
+                <div style="font-size: 0.85rem; color: #475569; margin-top: 4px;">
+                  <strong>Client:</strong>
+                  <a href="{% url 'accounts:view_profile' job.client.id %}" target="_blank" style="color: #0a66c2; text-decoration: none; font-weight: 600;">{{ job.client.username }}</a>
+                  <span style="margin: 0 6px; color: #cbd5e1;">•</span>
+                  <strong>Budget:</strong> ₹{{ job.budget }}
+                  <span style="margin: 0 6px; color: #cbd5e1;">•</span>
+                  <strong>Posted:</strong> {{ job.created_at|date:"M d, Y" }}
+                </div>
+
+                {% if job.skills %}
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">
+                  <i class="fas fa-tags" style="color: #94a3b8;"></i> Skills: {{ job.skills }}
+                </div>
+                {% endif %}
+
+                <div style="font-size: 0.83rem; color: #64748b; margin-top: 6px; line-height: 1.45; max-width: 680px;">
+                  {{ job.description|truncatewords:28 }}
+                </div>
+              </div>
+            </div>
+
+            <div class="user-actions" style="margin-top: 4px;">
+              <a href="{% url 'client:job_detail' job.id %}" target="_blank" class="btn-outline-sm" title="View Job Details" style="text-decoration: none;">
+                <i class="fas fa-eye"></i> View
+              </a>
+              <button type="button" class="icon-btn delete" title="Delete Fake / Unrelated Post" onclick="openDeletePostModal('job', {{ job.id }}, '{{ job.title|escapejs }}', '{{ job.client.username|escapejs }}', 'Client')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state">No client job posts found</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- FREELANCER POSTS & SHOWCASES SECTION -->
+      <div class="user-card-section" id="freelancerPostsSection">
+        <div class="section-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2><i class="fas fa-photo-video"></i> Freelancer Posts & Showcases ({{ freelancer_posts.count }})</h2>
+            <span class="scroll-indicator-badge"><i class="fas fa-arrows-alt-v"></i> Scrollable</span>
+          </div>
+          <button type="button" class="btn-outline-sm" style="padding: 0.25rem 0.75rem; font-size: 0.78rem;" onclick="toggleSectionExpand(this, 'freelancerPostsList')">
+            <i class="fas fa-expand-alt"></i> Expand
+          </button>
+        </div>
+        <div class="user-list" id="freelancerPostsList">
+          {% for post in freelancer_posts %}
+          <div class="user-row" style="align-items: flex-start; padding: 1.1rem 1.5rem;">
+            <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 260px;">
+              {% if post.poster %}
+                <img src="{{ post.poster.url }}" alt="Showcase Poster" class="post-thumb-img" />
+              {% elif post.image %}
+                <img src="{{ post.image.url }}" alt="Showcase Image" class="post-thumb-img" />
+              {% else %}
+                <div class="post-thumb-placeholder" style="background: #ecfdf5; color: #059669;">
+                  <i class="fas fa-laptop-code"></i>
+                </div>
+              {% endif %}
+              <div class="user-info">
+                <div class="user-name">
+                  <span style="font-size: 1.05rem;">{{ post.title }}</span>
+                  <span class="user-badge" style="background: #e6f7e6; color: #0a66c2;">Freelancer Showcase</span>
+                </div>
+
+                <div style="font-size: 0.85rem; color: #475569; margin-top: 4px;">
+                  <strong>Freelancer:</strong>
+                  <a href="{% url 'accounts:view_profile' post.client.id %}" target="_blank" style="color: #0a66c2; text-decoration: none; font-weight: 600;">{{ post.client.username }}</a>
+                  <span style="margin: 0 6px; color: #cbd5e1;">•</span>
+                  <strong>Posted:</strong> {{ post.created_at|date:"M d, Y" }}
+                </div>
+
+                <div style="font-size: 0.83rem; color: #64748b; margin-top: 6px; line-height: 1.45; max-width: 680px;">
+                  {{ post.description|truncatewords:28 }}
+                </div>
+              </div>
+            </div>
+
+            <div class="user-actions" style="margin-top: 4px;">
+              <a href="{% url 'accounts:view_profile' post.client.id %}" target="_blank" class="btn-outline-sm" title="View Freelancer Profile" style="text-decoration: none;">
+                <i class="fas fa-user"></i> Profile
+              </a>
+              <button type="button" class="icon-btn delete" title="Delete Fake / Unrelated Post" onclick="openDeletePostModal('showcase', {{ post.id }}, '{{ post.title|escapejs }}', '{{ post.client.username|escapejs }}', 'Freelancer')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state">No freelancer posts found</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- CLIENT COMMUNITY POSTS (IF ANY) -->
+      {% if client_posts %}
+      <div class="user-card-section" id="clientCommunityPostsSection">
+        <div class="section-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2><i class="fas fa-bullhorn"></i> Client Community Posts ({{ client_posts.count }})</h2>
+            <span class="scroll-indicator-badge"><i class="fas fa-arrows-alt-v"></i> Scrollable</span>
+          </div>
+          <button type="button" class="btn-outline-sm" style="padding: 0.25rem 0.75rem; font-size: 0.78rem;" onclick="toggleSectionExpand(this, 'clientCommunityPostsList')">
+            <i class="fas fa-expand-alt"></i> Expand
+          </button>
+        </div>
+        <div class="user-list" id="clientCommunityPostsList">
+          {% for post in client_posts %}
+          <div class="user-row" style="align-items: flex-start; padding: 1.1rem 1.5rem;">
+            <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 260px;">
+              {% if post.poster %}
+                <img src="{{ post.poster.url }}" alt="Post Poster" class="post-thumb-img" />
+              {% elif post.image %}
+                <img src="{{ post.image.url }}" alt="Post Image" class="post-thumb-img" />
+              {% else %}
+                <div class="post-thumb-placeholder" style="background: #eef2ff; color: #4338ca;">
+                  <i class="fas fa-bullhorn"></i>
+                </div>
+              {% endif %}
+              <div class="user-info">
+                <div class="user-name">
+                  <span style="font-size: 1.05rem;">{{ post.title }}</span>
+                  <span class="user-badge client">Client Post</span>
+                </div>
+
+                <div style="font-size: 0.85rem; color: #475569; margin-top: 4px;">
+                  <strong>Client:</strong>
+                  <a href="{% url 'accounts:view_profile' post.client.id %}" target="_blank" style="color: #0a66c2; text-decoration: none; font-weight: 600;">{{ post.client.username }}</a>
+                  <span style="margin: 0 6px; color: #cbd5e1;">•</span>
+                  <strong>Posted:</strong> {{ post.created_at|date:"M d, Y" }}
+                </div>
+
+                <div style="font-size: 0.83rem; color: #64748b; margin-top: 6px; line-height: 1.45; max-width: 680px;">
+                  {{ post.description|truncatewords:28 }}
+                </div>
+              </div>
+            </div>
+
+            <div class="user-actions" style="margin-top: 4px;">
+              <a href="{% url 'accounts:view_profile' post.client.id %}" target="_blank" class="btn-outline-sm" title="View Client Profile" style="text-decoration: none;">
+                <i class="fas fa-user"></i> Profile
+              </a>
+              <button type="button" class="icon-btn delete" title="Delete Fake / Unrelated Post" onclick="openDeletePostModal('showcase', {{ post.id }}, '{{ post.title|escapejs }}', '{{ post.client.username|escapejs }}', 'Client')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state">No client community posts found</div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
     </div>
-</div>
+
+    <!-- EDIT USER MODAL -->
+    <div id="editUserModalBackdrop" class="admin-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+      <div class="admin-modal-card" style="background: white; border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+          <h3 style="margin: 0; font-size: 1.15rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-user-edit" style="color: #0a66c2;"></i> Edit User Details
+          </h3>
+          <button type="button" onclick="closeEditUserModal()" style="background: none; border: none; font-size: 1.25rem; color: #64748b; cursor: pointer;">&times;</button>
+        </div>
+        <form method="POST" id="editUserForm" action="" style="padding: 1.5rem;">
+          {% csrf_token %}
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem;">Username</label>
+            <input type="text" name="username" id="editUsername" required style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem;">Email</label>
+            <input type="email" name="email" id="editEmail" required style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem;">Phone</label>
+            <input type="text" name="phone" id="editPhone" style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem;">Role</label>
+            <select name="role" id="editRole" style="width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none; background: white;">
+              <option value="client">Client</option>
+              <option value="freelancer">Freelancer</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" name="is_active" id="editIsActive" value="1" style="width: 18px; height: 18px; cursor: pointer; accent-color: #0a66c2;">
+            <label for="editIsActive" style="font-size: 0.9rem; font-weight: 600; color: #334155; cursor: pointer;">Account Active</label>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="closeEditUserModal()" style="padding: 0.55rem 1.2rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; color: #475569; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button type="submit" style="padding: 0.55rem 1.4rem; border-radius: 8px; border: none; background: #0a66c2; color: white; font-weight: 600; cursor: pointer;">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- DELETE USER MODAL -->
+    <div id="deleteUserModalBackdrop" class="admin-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+      <div class="admin-modal-card" style="background: white; border-radius: 16px; width: 100%; max-width: 440px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fef2f2;">
+          <h3 style="margin: 0; font-size: 1.15rem; color: #991b1b; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-trash-alt"></i> Delete User Account?
+          </h3>
+          <button type="button" onclick="closeDeleteUserModal()" style="background: none; border: none; font-size: 1.25rem; color: #991b1b; cursor: pointer;">&times;</button>
+        </div>
+        <form method="POST" id="deleteUserForm" action="" style="padding: 1.5rem;">
+          {% csrf_token %}
+          <p style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.25rem;">
+            Are you sure you want to permanently delete user <strong id="deleteUserDisplayName" style="color: #0f172a;"></strong> (<span id="deleteUserDisplayEmail"></span>)?
+          </p>
+          <div style="background: #fff1f2; border-left: 4px solid #ef4444; padding: 10px 14px; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.85rem; color: #9f1239;">
+            <i class="fas fa-exclamation-triangle"></i> This action is permanent and will remove all their associated records.
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="closeDeleteUserModal()" style="padding: 0.55rem 1.2rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; color: #475569; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button type="submit" style="padding: 0.55rem 1.4rem; border-radius: 8px; border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer;">Delete User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- DELETE POST MODAL -->
+    <div id="deletePostModalBackdrop" class="admin-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+      <div class="admin-modal-card" style="background: white; border-radius: 16px; width: 100%; max-width: 460px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fef2f2;">
+          <h3 style="margin: 0; font-size: 1.15rem; color: #991b1b; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-exclamation-triangle"></i> Delete Post / Showcase?
+          </h3>
+          <button type="button" onclick="closeDeletePostModal()" style="background: none; border: none; font-size: 1.25rem; color: #991b1b; cursor: pointer;">&times;</button>
+        </div>
+        <form method="POST" id="deletePostForm" action="" style="padding: 1.5rem;">
+          {% csrf_token %}
+          <p style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 1rem;">
+            Are you sure you want to permanently delete post <strong id="deletePostTitle" style="color: #0f172a;"></strong> published by <strong id="deletePostAuthor"></strong> (<span id="deletePostRole"></span>)?
+          </p>
+          <div style="background: #fff1f2; border-left: 4px solid #ef4444; padding: 10px 14px; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.85rem; color: #9f1239;">
+            <i class="fas fa-shield-alt"></i> If this post is fake, spam, or unrelated, deleting it will immediately remove it from all feeds, search listings, and profiles along with associated media.
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="closeDeletePostModal()" style="padding: 0.55rem 1.2rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; color: #475569; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button type="submit" style="padding: 0.55rem 1.4rem; border-radius: 8px; border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer;">Delete Post</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     {% include 'includes/footer.html'%}
 
     <script>
-      /* ---------------------------------------------------------------
-        SIMULATED DATASET (clients & freelancers matching Django context)
-        In real Django template you would loop over `clients` and `freelancers`.
-        Here we replicate the exact same data structure with enhanced actions.
-    --------------------------------------------------------------- */
-      // Mock dataset representing users from backend
+      // Real Data for CSV Export
+      const clientsData = [
+        {% for u in clients %}
+        {
+          id: {{ u.id }},
+          username: "{{ u.username|escapejs }}",
+          email: "{{ u.email|escapejs }}",
+          phone: "{{ u.phone|default:''|escapejs }}",
+          status: "{% if u.is_active %}Active{% else %}Suspended{% endif %}",
+          joined: "{{ u.date_joined|date:'Y-m-d H:i' }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
 
-      
+      const freelancersData = [
+        {% for u in freelancers %}
+        {
+          id: {{ u.id }},
+          username: "{{ u.username|escapejs }}",
+          email: "{{ u.email|escapejs }}",
+          phone: "{{ u.phone|default:''|escapejs }}",
+          status: "{% if u.is_active %}Active{% else %}Suspended{% endif %}",
+          joined: "{{ u.date_joined|date:'Y-m-d H:i' }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
 
-      // Simple XSS protection
-      function escapeHtml(str) {
-        if (!str) return "";
-        return str
-          .replace(/[&<>]/g, function (m) {
-            if (m === "&") return "&amp;";
-            if (m === "<") return "&lt;";
-            if (m === ">") return "&gt;";
-            return m;
-          })
-          .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function (c) {
-            return c;
-          });
+      function exportToCSV(filename, rows) {
+        if (!rows || rows.length === 0) {
+          alert("No records to export.");
+          return;
+        }
+        const headers = ["ID", "Username", "Email", "Phone", "Status", "Date Joined"];
+        const keys = ["id", "username", "email", "phone", "status", "joined"];
+        const csvRows = [
+          headers.join(","),
+          ...rows.map(row => keys.map(k => `"${(row[k] || '').toString().replace(/"/g, '""')}"`).join(","))
+        ];
+
+        const blob = new Blob([csvRows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
 
-      // Action functions (simulate admin operations)
-      
+      document.getElementById("exportClientsBtn")?.addEventListener("click", function() {
+        exportToCSV("clients_export.csv", clientsData);
+      });
 
-      window.toggleSuspend = function (id, role) {
-        let userArray = role === "client" ? mockClients : mockFreelancers;
-        let user = userArray.find((u) => u.id === id);
-        if (user) {
-          if (user.status === "active") {
-            user.status = "suspended";
-            alert(`⛔ ${user.username} has been suspended.`);
-          } else {
-            user.status = "active";
-            alert(`✅ ${user.username} has been activated.`);
-          }
-          if (role === "client") renderClients();
-          else renderFreelancers();
-        }
-      };
+      document.getElementById("exportFreelancersBtn")?.addEventListener("click", function() {
+        exportToCSV("freelancers_export.csv", freelancersData);
+      });
 
-      
+      function openEditUserModal(id, username, email, phone, role, isActive) {
+        const modal = document.getElementById("editUserModalBackdrop");
+        const form = document.getElementById("editUserForm");
+        form.action = `/accounts/admin/users/${id}/edit/`;
+        document.getElementById("editUsername").value = username || "";
+        document.getElementById("editEmail").value = email || "";
+        document.getElementById("editPhone").value = phone || "";
+        document.getElementById("editRole").value = role || "client";
+        document.getElementById("editIsActive").checked = !!isActive;
+        modal.style.display = "flex";
+      }
 
-      // Add new user (dynamic)
-      document.getElementById("addUserBtn")?.addEventListener("click", () => {
-        let role = prompt('Select role: type "client" or "freelancer"');
-        if (!role) return;
-        role = role.toLowerCase();
-        if (role !== "client" && role !== "freelancer") {
-          alert('Invalid role. Please enter "client" or "freelancer".');
-          return;
+      function closeEditUserModal() {
+        document.getElementById("editUserModalBackdrop").style.display = "none";
+      }
+
+      function openDeleteUserModal(id, username, email) {
+        const modal = document.getElementById("deleteUserModalBackdrop");
+        const form = document.getElementById("deleteUserForm");
+        form.action = `/accounts/admin/users/${id}/delete/`;
+        document.getElementById("deleteUserDisplayName").textContent = username || "";
+        document.getElementById("deleteUserDisplayEmail").textContent = email || "";
+        modal.style.display = "flex";
+      }
+
+      function closeDeleteUserModal() {
+        document.getElementById("deleteUserModalBackdrop").style.display = "none";
+      }
+
+      function openDeletePostModal(postType, postId, title, author, role) {
+        const modal = document.getElementById("deletePostModalBackdrop");
+        const form = document.getElementById("deletePostForm");
+        form.action = `/accounts/admin/posts/${postType}/${postId}/delete/`;
+        document.getElementById("deletePostTitle").textContent = `"${title}"`;
+        document.getElementById("deletePostAuthor").textContent = author || "User";
+        document.getElementById("deletePostRole").textContent = role || "";
+        modal.style.display = "flex";
+      }
+
+      function closeDeletePostModal() {
+        const modal = document.getElementById("deletePostModalBackdrop");
+        if (modal) modal.style.display = "none";
+      }
+
+      function scrollToSection(sectionId) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          el.style.transition = "box-shadow 0.3s ease";
+          el.style.boxShadow = "0 0 0 3px rgba(10, 102, 194, 0.4)";
+          setTimeout(() => {
+            el.style.boxShadow = "";
+          }, 1400);
         }
-        let username = prompt("Enter username:");
-        if (!username) return;
-        let email = prompt("Enter email address:");
-        if (!email || !email.includes("@")) {
-          alert("Valid email required.");
-          return;
-        }
-        const newId =
-          role === "client"
-            ? Math.max(...mockClients.map((c) => c.id), 0) + 1
-            : Math.max(...mockFreelancers.map((f) => f.id), 0) + 1;
-        const newUser = {
-          id: newId,
-          username: username.trim(),
-          email: email.trim(),
-          role: role,
-          status: "active",
-          joined: new Date().toISOString().slice(0, 10),
-        };
-        if (role === "client") {
-          mockClients.push(newUser);
-          renderClients();
-          alert(`Client ${username} added successfully!`);
+      }
+
+      function toggleSectionExpand(btn, listId) {
+        const list = document.getElementById(listId);
+        if (!list) return;
+        if (list.classList.contains("expanded")) {
+          list.classList.remove("expanded");
+          btn.innerHTML = '<i class="fas fa-expand-alt"></i> Expand';
         } else {
-          // additional skills field for freelancer
-          let skills = prompt(
-            "Enter skills (comma separated):",
-            "JavaScript, Communication",
-          );
-          newUser.skills = skills || "General";
-          mockFreelancers.push(newUser);
-          renderFreelancers();
-          alert(`Freelancer ${username} added successfully!`);
-        }
-      });
-
-      // Export functionality
-      document
-        .getElementById("exportClientsBtn")
-        ?.addEventListener("click", () => {
-          let data = mockClients
-            .map((c) => `${c.username},${c.email},${c.status},${c.joined}`)
-            .join("\n");
-          let blob = new Blob(["Username,Email,Status,Joined\n" + data], {
-            type: "text/csv",
-          });
-          let a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = "clients_export.csv";
-          a.click();
-          URL.revokeObjectURL(a.href);
-          alert("📁 Clients exported to CSV");
-        });
-
-      document
-        .getElementById("exportFreelancersBtn")
-        ?.addEventListener("click", () => {
-          let data = mockFreelancers
-            .map(
-              (f) =>
-                `${f.username},${f.email},${f.status},${f.skills},${f.joined}`,
-            )
-            .join("\n");
-          let blob = new Blob(
-            ["Username,Email,Status,Skills,Joined\n" + data],
-            { type: "text/csv" },
-          );
-          let a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = "freelancers_export.csv";
-          a.click();
-          URL.revokeObjectURL(a.href);
-          alert("📁 Freelancers exported to CSV");
-        });
-
-      // Mobile & profile menu toggle (exactly same logic as original)
-      function toggleProfileMenu() {
-        const menu = document.getElementById("profileMenu");
-        if (menu) {
-          menu.style.display =
-            menu.style.display === "block" ? "none" : "block";
+          list.classList.add("expanded");
+          btn.innerHTML = '<i class="fas fa-compress-alt"></i> Scrollable';
         }
       }
-      document.addEventListener("click", function (e) {
-        const profileSection = document.querySelector(".profile-section");
-        const menu = document.getElementById("profileMenu");
-        if (profileSection && menu && !profileSection.contains(e.target)) {
-          menu.style.display = "none";
-        }
-        const mobileMenu = document.querySelector(".mobile-menu");
-        const navLinks = document.querySelector(".nav-links");
-        if (
-          mobileMenu &&
-          navLinks &&
-          !mobileMenu.contains(e.target) &&
-          !navLinks.contains(e.target)
-        ) {
-          navLinks.classList.remove("show");
+
+      document.querySelectorAll(".stat-chip[data-target]").forEach(chip => {
+        chip.addEventListener("click", function() {
+          const targetId = this.getAttribute("data-target");
+          scrollToSection(targetId);
+        });
+      });
+
+      window.addEventListener("click", function(e) {
+        const editBackdrop = document.getElementById("editUserModalBackdrop");
+        const deleteBackdrop = document.getElementById("deleteUserModalBackdrop");
+        const deletePostBackdrop = document.getElementById("deletePostModalBackdrop");
+        if (e.target === editBackdrop) closeEditUserModal();
+        if (e.target === deleteBackdrop) closeDeleteUserModal();
+        if (e.target === deletePostBackdrop) closeDeletePostModal();
+      });
+
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+          closeEditUserModal();
+          closeDeleteUserModal();
+          closeDeletePostModal();
         }
       });
-      document
-        .querySelector(".mobile-menu")
-        ?.addEventListener("click", function (e) {
-          e.stopPropagation();
-          document.querySelector(".nav-links")?.classList.toggle("show");
-        });
-      document
-        .querySelector("#profileMenu a")
-        ?.addEventListener("click", (e) => {
-          e.preventDefault();
-          alert("🚪 Logout simulation. Session ended.");
-        });
 
-      // Initial render
-      renderClients();
-      renderFreelancers();
+      // Floating Back-to-Top
+      const backToTopBtn = document.createElement("button");
+      backToTopBtn.type = "button";
+      backToTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+      backToTopBtn.title = "Scroll to top";
+      backToTopBtn.style.cssText = "display: none; position: fixed; bottom: 28px; right: 28px; width: 44px; height: 44px; border-radius: 50%; background: #0a66c2; color: white; border: none; box-shadow: 0 4px 14px rgba(10, 102, 194, 0.35); cursor: pointer; z-index: 999; align-items: center; justify-content: center; font-size: 1.1rem; transition: transform 0.2s ease, opacity 0.2s ease;";
+      document.body.appendChild(backToTopBtn);
+
+      window.addEventListener("scroll", function() {
+        if (window.scrollY > 300) {
+          backToTopBtn.style.display = "flex";
+        } else {
+          backToTopBtn.style.display = "none";
+        }
+      });
+      backToTopBtn.addEventListener("click", function() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
     </script>
   </body>
 </html>

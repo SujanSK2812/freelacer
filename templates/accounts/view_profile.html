@@ -2,18 +2,20 @@
 {% load static %}
 
 {% block title %}
-    {% if profile.company_name %}{{ profile.company_name }}{% else %}{{ profile_user.username }}{% endif %} - Client Profile | FreelanceHub
+{% if profile.company_name %}{{ profile.company_name }}{% else %}{{ profile_user.username }}{% endif %} - Client Profile
+| FreelanceHub
 {% endblock %}
 
 {% block extra_css %}
 <style>
     /* =========================================================
-       PREMIUM CLIENT PROFILE STYLES
+       CLEAN CLIENT PROFILE DESIGN SYSTEM
        ========================================================= */
     :root {
-        --cp-primary: #2563eb;
-        --cp-primary-hover: #1d4ed8;
+        --cp-primary: #0a66c2;
+        --cp-primary-hover: #004182;
         --cp-primary-light: #eff6ff;
+        --cp-primary-border: #bfdbfe;
         --cp-dark: #0f172a;
         --cp-slate: #334155;
         --cp-muted: #64748b;
@@ -21,23 +23,56 @@
         --cp-card-bg: #ffffff;
         --cp-emerald: #059669;
         --cp-emerald-light: #ecfdf5;
-        --cp-radius: 16px;
-        --cp-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+        --cp-radius: 20px;
+        --cp-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
     }
 
     body {
         background-color: #f8fafc;
         color: var(--cp-dark);
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-family-base) !important;
     }
 
     .client-profile-page {
-        max-width: 1200px;
+        max-width: 1280px;
         margin: 2rem auto 4rem auto;
         padding: 0 1.5rem;
     }
 
-    /* Back Navigation Bar */
+    /* Force sensible heading sizes against global.css !important overrides */
+    .client-profile-page h1,
+    .client-profile-page .client-company-title {
+        font-size: 1.75rem !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
+        letter-spacing: -0.02em !important;
+        margin: 0 !important;
+    }
+
+    .client-profile-page h2,
+    .client-profile-page .box-title {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+        letter-spacing: -0.01em !important;
+        margin: 0 !important;
+    }
+
+    .client-profile-page h3,
+    .client-profile-page .widget-heading {
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+    }
+
+    .client-profile-page .job-headline a {
+        font-size: 1.12rem !important;
+        font-weight: 700 !important;
+        line-height: 1.35 !important;
+    }
+
+    /* Top Action Bar */
     .top-action-bar {
         display: flex;
         justify-content: space-between;
@@ -49,29 +84,41 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: white;
+        background: #ffffff;
         border: 1px solid var(--cp-border);
-        border-radius: 10px;
-        padding: 0.55rem 1.1rem;
+        border-radius: 50px;
+        padding: 0.55rem 1.15rem;
         color: var(--cp-slate);
-        font-weight: 500;
-        font-size: 0.9rem;
+        font-weight: 600;
+        font-size: 0.88rem;
         text-decoration: none;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
     .btn-back-link:hover {
-        background: #f1f5f9;
+        background: #eff6ff;
         color: var(--cp-primary);
-        border-color: #cbd5e1;
+        border-color: var(--cp-primary-border);
         transform: translateX(-2px);
     }
 
-    /* Profile Header Banner & Card */
+    .breadcrumb-text {
+        font-size: 0.88rem;
+        color: var(--cp-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .breadcrumb-text strong {
+        color: var(--cp-dark);
+    }
+
+    /* Profile Hero Card */
     .profile-hero-card {
         background: var(--cp-card-bg);
-        border-radius: var(--cp-radius);
+        border-radius: 24px;
         border: 1px solid var(--cp-border);
         box-shadow: var(--cp-shadow);
         overflow: hidden;
@@ -80,8 +127,8 @@
     }
 
     .profile-cover-gradient {
-        height: 200px;
-        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #38bdf8 100%);
+        height: 220px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0a66c2 100%);
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
@@ -92,7 +139,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(to bottom, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.45) 100%);
+        background: linear-gradient(to bottom, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.55) 100%);
     }
 
     .profile-cover-gradient.no-banner::after {
@@ -100,8 +147,8 @@
         position: absolute;
         inset: 0;
         background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-        background-size: 16px 16px;
-        opacity: 0.7;
+        background-size: 20px 20px;
+        opacity: 0.6;
     }
 
     .btn-change-banner {
@@ -109,30 +156,31 @@
         top: 16px;
         right: 20px;
         z-index: 10;
-        background: rgba(15, 23, 42, 0.75);
+        background: rgba(15, 23, 42, 0.65);
         color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.25);
         backdrop-filter: blur(8px);
-        padding: 0.55rem 1.15rem;
-        border-radius: 9px;
-        font-size: 0.88rem;
+        -webkit-backdrop-filter: blur(8px);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.82rem;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.55rem;
+        gap: 0.5rem;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
     }
 
     .btn-change-banner:hover {
-        background: rgba(15, 23, 42, 0.95);
-        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(15, 23, 42, 0.9);
+        border-color: rgba(255, 255, 255, 0.5);
         transform: translateY(-1px);
     }
 
     .profile-hero-content {
-        padding: 0 2.5rem 2rem 2.5rem;
+        padding: 0 2.25rem 2rem 2.25rem;
         position: relative;
         display: flex;
         align-items: flex-end;
@@ -141,38 +189,20 @@
         flex-wrap: wrap;
     }
 
-    @media (max-width: 850px) {
-        .profile-hero-content {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 0 1.5rem 1.5rem 1.5rem;
-        }
-    }
-
     .profile-identity-group {
         display: flex;
         align-items: flex-end;
-        gap: 2rem;
-        margin-top: -65px;
-    }
-
-    @media (max-width: 850px) {
-        .profile-identity-group {
-            flex-direction: column;
-            align-items: center;
-            margin-top: -60px;
-            gap: 1.2rem;
-        }
+        gap: 1.75rem;
+        margin-top: -60px;
     }
 
     .profile-avatar-frame {
-        width: 140px;
-        height: 140px;
-        border-radius: 24px;
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
         background: #ffffff;
-        padding: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        padding: 5px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         flex-shrink: 0;
         position: relative;
         z-index: 2;
@@ -181,9 +211,9 @@
     .profile-avatar-inner {
         width: 100%;
         height: 100%;
-        border-radius: 18px;
+        border-radius: 50%;
         overflow: hidden;
-        background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+        background: linear-gradient(135deg, #0a66c2 0%, #0284c7 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -193,99 +223,107 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
     }
 
     .profile-avatar-fallback {
-        font-size: 3.5rem;
-        color: var(--cp-primary);
+        font-size: 2.8rem;
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    .online-indicator-dot {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #22c55e;
+        border: 3.5px solid #ffffff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
     }
 
     .profile-title-block {
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.35rem;
     }
 
     .client-company-title {
-        font-size: 1.85rem;
-        font-weight: 800;
         color: var(--cp-dark);
-        margin: 0 0 0.35rem 0;
-        letter-spacing: -0.02em;
+        margin: 0 0 0.35rem 0 !important;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.65rem;
         flex-wrap: wrap;
     }
 
     .badge-client-role {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        padding: 0.25rem 0.65rem;
-        background: #f1f5f9;
-        color: #475569;
+        padding: 0.2rem 0.65rem;
+        background: #eff6ff;
+        color: var(--cp-primary);
         border-radius: 20px;
-        border: 1px solid var(--cp-border);
+        border: 1px solid var(--cp-primary-border);
     }
 
     .badge-verified-client {
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         font-weight: 600;
-        padding: 0.25rem 0.7rem;
+        padding: 0.2rem 0.65rem;
         background: var(--cp-emerald-light);
         color: var(--cp-emerald);
         border-radius: 20px;
-        border: 1px solid rgba(5, 150, 105, 0.2);
+        border: 1px solid rgba(5, 150, 105, 0.25);
     }
 
     .client-subhead {
         color: var(--cp-muted);
-        font-size: 1rem;
+        font-size: 0.95rem;
         margin: 0 0 0.75rem 0;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        font-weight: 500;
     }
 
     .client-meta-row {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 1.25rem;
-        color: var(--cp-slate);
-        font-size: 0.92rem;
+        gap: 0.65rem;
     }
 
-    @media (max-width: 850px) {
-        .client-meta-row {
-            justify-content: center;
-            gap: 0.85rem;
-        }
-    }
-
-    .meta-tag {
+    .meta-pill {
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
+        background: #f8fafc;
+        border: 1px solid var(--cp-border);
+        border-radius: 50px;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.82rem;
+        color: var(--cp-slate);
+        font-weight: 500;
     }
 
-    .meta-tag i {
+    .meta-pill i {
         color: var(--cp-primary);
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
 
-    .meta-tag a {
+    .meta-pill a {
         color: var(--cp-primary);
         text-decoration: none;
-        font-weight: 500;
-        transition: color 0.15s ease;
+        font-weight: 600;
     }
 
-    .meta-tag a:hover {
-        color: var(--cp-primary-hover);
+    .meta-pill a:hover {
         text-decoration: underline;
     }
 
@@ -294,61 +332,56 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.35rem;
         flex-wrap: wrap;
-    }
-
-    @media (max-width: 850px) {
-        .profile-hero-actions {
-            width: 100%;
-            justify-content: center;
-            margin-top: 0.5rem;
-        }
     }
 
     .btn-action-primary {
         display: inline-flex;
         align-items: center;
-        gap: 0.55rem;
+        gap: 0.5rem;
         background: var(--cp-primary);
         color: #ffffff !important;
         font-weight: 600;
-        font-size: 0.92rem;
-        padding: 0.7rem 1.4rem;
-        border-radius: 10px;
+        font-size: 0.88rem;
+        padding: 0.65rem 1.35rem;
+        border-radius: 50px;
         text-decoration: none;
         border: 1px solid transparent;
-        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
-        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(10, 102, 194, 0.25);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .btn-action-primary:hover {
         background: var(--cp-primary-hover);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(10, 102, 194, 0.35);
     }
 
     .btn-action-outline {
         display: inline-flex;
         align-items: center;
-        gap: 0.55rem;
+        gap: 0.5rem;
         background: #ffffff;
         color: var(--cp-slate) !important;
         font-weight: 600;
-        font-size: 0.92rem;
-        padding: 0.7rem 1.3rem;
-        border-radius: 10px;
+        font-size: 0.88rem;
+        padding: 0.65rem 1.35rem;
+        border-radius: 50px;
         text-decoration: none;
         border: 1px solid var(--cp-border);
-        transition: all 0.2s ease;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .btn-action-outline:hover {
         background: #f8fafc;
         border-color: #cbd5e1;
         color: var(--cp-dark) !important;
+        transform: translateY(-2px);
     }
 
     .btn-action-connected {
@@ -369,10 +402,10 @@
         cursor: default;
     }
 
-    /* Key Statistics Strip */
+    /* Key Statistics Grid */
     .profile-stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 1.25rem;
         margin-bottom: 2rem;
     }
@@ -380,8 +413,8 @@
     .stat-card {
         background: var(--cp-card-bg);
         border: 1px solid var(--cp-border);
-        border-radius: var(--cp-radius);
-        padding: 1.35rem 1.5rem;
+        border-radius: 20px;
+        padding: 1.25rem 1.5rem;
         box-shadow: var(--cp-shadow);
         display: flex;
         align-items: center;
@@ -391,13 +424,14 @@
 
     .stat-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px -2px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+        border-color: #cbd5e1;
     }
 
     .stat-icon-wrapper {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -405,10 +439,25 @@
         flex-shrink: 0;
     }
 
-    .stat-icon-blue { background: #eff6ff; color: #2563eb; }
-    .stat-icon-green { background: #ecfdf5; color: #059669; }
-    .stat-icon-purple { background: #faf5ff; color: #7c3aed; }
-    .stat-icon-amber { background: #fffbeb; color: #d97706; }
+    .stat-icon-blue {
+        background: #eff6ff;
+        color: var(--cp-primary);
+    }
+
+    .stat-icon-green {
+        background: #ecfdf5;
+        color: var(--cp-emerald);
+    }
+
+    .stat-icon-purple {
+        background: #faf5ff;
+        color: #7c3aed;
+    }
+
+    .stat-icon-amber {
+        background: #fffbeb;
+        color: #d97706;
+    }
 
     .stat-meta {
         display: flex;
@@ -419,104 +468,34 @@
         font-size: 1.45rem;
         font-weight: 800;
         color: var(--cp-dark);
-        line-height: 1.2;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
     }
 
     .stat-label {
-        font-size: 0.83rem;
-        font-weight: 500;
+        font-size: 0.78rem;
+        font-weight: 600;
         color: var(--cp-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
         margin-top: 0.2rem;
     }
 
-    /* Two-Column Layout */
+    /* Main Content Two-Column Layout */
     .profile-main-layout {
         display: grid;
-        grid-template-columns: 1fr 340px;
+        grid-template-columns: minmax(0, 1fr) 340px;
         gap: 2rem;
         align-items: start;
-    }
-
-    @media (max-width: 980px) {
-        .profile-main-layout {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 640px) {
-        .client-profile-page {
-            margin: 1rem auto 2rem auto;
-            padding: 0 12px;
-        }
-
-        .profile-cover-gradient {
-            height: 140px;
-        }
-
-        .profile-identity-group {
-            margin-top: -50px;
-            gap: 1rem;
-        }
-
-        .profile-avatar-frame {
-            width: 96px;
-            height: 96px;
-            border-radius: 18px;
-            padding: 4px;
-        }
-
-        .profile-hero-content {
-            padding: 0 1rem 1.25rem 1rem;
-            gap: 1.25rem;
-        }
-
-        .btn-change-banner {
-            top: 10px;
-            right: 10px;
-            padding: 0.4rem 0.8rem;
-            font-size: 0.78rem;
-        }
-
-        .content-box {
-            padding: 1.25rem 1rem;
-            margin-bottom: 1.25rem;
-            border-radius: 12px;
-        }
-
-        .box-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .top-action-bar {
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .client-profile-page {
-            padding: 0 8px;
-        }
-
-        .profile-cover-gradient {
-            height: 120px;
-        }
-
-        .profile-avatar-frame {
-            width: 84px;
-            height: 84px;
-        }
     }
 
     /* Content Cards */
     .content-box {
         background: var(--cp-card-bg);
         border: 1px solid var(--cp-border);
-        border-radius: var(--cp-radius);
+        border-radius: 24px;
         box-shadow: var(--cp-shadow);
-        padding: 2rem;
+        padding: 1.75rem 2rem;
         margin-bottom: 2rem;
     }
 
@@ -524,16 +503,13 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 1.35rem;
-        padding-bottom: 1rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.85rem;
         border-bottom: 1px solid var(--cp-border);
     }
 
     .box-title {
-        font-size: 1.25rem;
-        font-weight: 700;
         color: var(--cp-dark);
-        margin: 0;
         display: flex;
         align-items: center;
         gap: 0.65rem;
@@ -545,23 +521,24 @@
     }
 
     .box-badge {
-        font-size: 0.8rem;
-        font-weight: 600;
-        background: #f1f5f9;
-        color: var(--cp-slate);
-        padding: 0.25rem 0.65rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        background: #eff6ff;
+        color: var(--cp-primary);
+        padding: 0.25rem 0.75rem;
         border-radius: 20px;
+        border: 1px solid var(--cp-primary-border);
     }
 
     .about-body-text {
-        font-size: 1rem;
+        font-size: 0.98rem;
         line-height: 1.7;
         color: #475569;
         margin: 0;
         white-space: pre-line;
     }
 
-    /* Job Listings Section */
+    /* Job Listings Feed */
     .jobs-feed-list {
         display: flex;
         flex-direction: column;
@@ -570,19 +547,19 @@
 
     .job-card-item {
         border: 1px solid var(--cp-border);
-        border-radius: 12px;
-        padding: 1.5rem;
+        border-radius: 18px;
+        padding: 1.4rem;
         background: #ffffff;
-        transition: all 0.2s ease;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.85rem;
     }
 
     .job-card-item:hover {
-        border-color: #cbd5e1;
-        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
-        transform: translateY(-1px);
+        border-color: #93c5fd;
+        box-shadow: 0 10px 25px -4px rgba(10, 102, 194, 0.1);
+        transform: translateY(-2px);
     }
 
     .job-card-top {
@@ -590,15 +567,10 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 1rem;
-    }
-
-    .job-headline {
-        margin: 0;
+        flex-wrap: wrap;
     }
 
     .job-headline a {
-        font-size: 1.15rem;
-        font-weight: 700;
         color: var(--cp-dark);
         text-decoration: none;
         transition: color 0.15s ease;
@@ -609,18 +581,18 @@
     }
 
     .job-post-date {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         color: var(--cp-muted);
         display: flex;
         align-items: center;
         gap: 0.4rem;
-        margin-top: 0.35rem;
+        margin-top: 0.3rem;
     }
 
     .job-meta-badges {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.65rem;
+        gap: 0.5rem;
         align-items: center;
     }
 
@@ -628,10 +600,10 @@
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        font-size: 0.83rem;
+        font-size: 0.78rem;
         font-weight: 600;
-        padding: 0.3rem 0.75rem;
-        border-radius: 8px;
+        padding: 0.25rem 0.7rem;
+        border-radius: 50px;
     }
 
     .j-badge-budget {
@@ -653,7 +625,7 @@
     }
 
     .job-desc-snippet {
-        font-size: 0.94rem;
+        font-size: 0.92rem;
         color: #64748b;
         line-height: 1.6;
         margin: 0;
@@ -667,8 +639,8 @@
 
     .skill-chip {
         font-size: 0.78rem;
-        font-weight: 500;
-        background: #f1f5f9;
+        font-weight: 600;
+        background: #f8fafc;
         color: #334155;
         padding: 0.25rem 0.65rem;
         border-radius: 6px;
@@ -682,6 +654,7 @@
         gap: 0.75rem;
         padding-top: 0.75rem;
         border-top: 1px solid #f1f5f9;
+        flex-wrap: wrap;
     }
 
     .btn-job-apply {
@@ -690,10 +663,10 @@
         gap: 0.4rem;
         background: var(--cp-primary);
         color: #ffffff !important;
-        font-size: 0.86rem;
+        font-size: 0.85rem;
         font-weight: 600;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
+        padding: 0.45rem 1rem;
+        border-radius: 50px;
         text-decoration: none;
         transition: background 0.15s ease;
     }
@@ -708,10 +681,10 @@
         gap: 0.4rem;
         background: #f8fafc;
         color: var(--cp-slate) !important;
-        font-size: 0.86rem;
+        font-size: 0.85rem;
         font-weight: 600;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
+        padding: 0.45rem 1rem;
+        border-radius: 50px;
         text-decoration: none;
         border: 1px solid var(--cp-border);
         transition: all 0.15s ease;
@@ -728,10 +701,10 @@
         gap: 0.4rem;
         background: #f0fdf4;
         color: #166534;
-        font-size: 0.84rem;
+        font-size: 0.82rem;
         font-weight: 600;
-        padding: 0.45rem 0.9rem;
-        border-radius: 8px;
+        padding: 0.4rem 0.85rem;
+        border-radius: 50px;
         border: 1px solid #bbf7d0;
     }
 
@@ -742,10 +715,10 @@
         background: #fef2f2;
         color: #dc2626;
         border: 1px solid #fecaca;
-        font-size: 0.84rem;
+        font-size: 0.82rem;
         font-weight: 600;
-        padding: 0.5rem 0.9rem;
-        border-radius: 8px;
+        padding: 0.45rem 0.85rem;
+        border-radius: 50px;
         cursor: pointer;
         transition: all 0.15s ease;
     }
@@ -759,39 +732,46 @@
         text-align: center;
         padding: 3rem 1.5rem;
         background: #f8fafc;
-        border: 1px dashed var(--cp-border);
-        border-radius: 12px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 18px;
         color: var(--cp-muted);
     }
 
     .empty-jobs-banner i {
         font-size: 2.75rem;
-        color: #cbd5e1;
+        color: #94a3b8;
         margin-bottom: 0.85rem;
+        display: block;
     }
 
     .empty-jobs-banner h4 {
         margin: 0 0 0.35rem 0;
         color: var(--cp-dark);
-        font-weight: 600;
+        font-weight: 700;
         font-size: 1.1rem;
     }
 
-    /* Sidebar Widgets */
+    /* Sidebar Column */
+    .sidebar-column {
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 85px;
+        align-self: start;
+    }
+
     .sidebar-widget {
         background: var(--cp-card-bg);
         border: 1px solid var(--cp-border);
-        border-radius: var(--cp-radius);
+        border-radius: 24px;
         box-shadow: var(--cp-shadow);
-        padding: 1.75rem;
+        padding: 1.5rem 1.75rem;
         margin-bottom: 1.75rem;
     }
 
     .widget-heading {
-        font-size: 1.1rem;
-        font-weight: 700;
         color: var(--cp-dark);
-        margin: 0 0 1.25rem 0;
+        margin: 0 0 1.25rem 0 !important;
         padding-bottom: 0.75rem;
         border-bottom: 1px solid var(--cp-border);
         display: flex;
@@ -814,7 +794,7 @@
         display: flex;
         align-items: flex-start;
         gap: 0.75rem;
-        font-size: 0.92rem;
+        font-size: 0.9rem;
     }
 
     .trust-item i {
@@ -822,18 +802,24 @@
         margin-top: 0.15rem;
     }
 
-    .trust-item.verified i { color: var(--cp-emerald); }
-    .trust-item.unverified i { color: #94a3b8; }
+    .trust-item.verified i {
+        color: var(--cp-emerald);
+    }
+
+    .trust-item.unverified i {
+        color: #94a3b8;
+    }
 
     .trust-label {
-        font-weight: 600;
+        font-weight: 700;
         color: var(--cp-dark);
         display: block;
         margin-bottom: 0.1rem;
+        font-size: 0.88rem;
     }
 
     .trust-subtext {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--cp-muted);
         display: block;
     }
@@ -842,7 +828,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.85rem;
-        font-size: 0.92rem;
+        font-size: 0.9rem;
     }
 
     .info-kv-row {
@@ -850,30 +836,39 @@
         justify-content: space-between;
         align-items: center;
         gap: 0.5rem;
+        padding-bottom: 0.65rem;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    .info-kv-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
     }
 
     .info-k {
         color: var(--cp-muted);
-        font-size: 0.88rem;
+        font-size: 0.85rem;
     }
 
     .info-v {
         font-weight: 600;
         color: var(--cp-dark);
         text-align: right;
-        word-break: break-all;
+        word-break: break-word;
+        font-size: 0.88rem;
     }
 
-    /* Modal Styles */
+    /* Modal Backdrop & Dialog */
     .delete-modal-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(4px);
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
         display: none;
         align-items: center;
         justify-content: center;
-        z-index: 9999;
+        z-index: 99999;
         opacity: 0;
         transition: opacity 0.2s ease;
     }
@@ -885,17 +880,18 @@
 
     .delete-modal-box {
         background: #ffffff;
-        border-radius: 16px;
+        border-radius: 20px;
         padding: 2rem;
-        max-width: 440px;
+        max-width: 460px;
         width: 90%;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-        transform: scale(0.95);
-        transition: transform 0.2s ease;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+        border: 1px solid var(--cp-border);
+        transform: scale(0.96) translateY(10px);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .delete-modal-backdrop.active .delete-modal-box {
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 
     .modal-head-danger {
@@ -911,7 +907,7 @@
     .modal-desc-text {
         font-size: 0.94rem;
         color: var(--cp-muted);
-        line-height: 1.5;
+        line-height: 1.55;
         margin-bottom: 1.75rem;
     }
 
@@ -924,10 +920,11 @@
     .modal-btn-cancel {
         background: #f1f5f9;
         color: var(--cp-slate);
-        border: none;
+        border: 1px solid var(--cp-border);
         padding: 0.6rem 1.25rem;
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 600;
+        font-size: 0.88rem;
         cursor: pointer;
         transition: background 0.15s;
     }
@@ -940,96 +937,200 @@
         background: #dc2626;
         color: #ffffff;
         border: none;
-        padding: 0.6rem 1.25rem;
-        border-radius: 8px;
+        padding: 0.6rem 1.35rem;
+        border-radius: 10px;
         font-weight: 600;
+        font-size: 0.88rem;
         cursor: pointer;
         transition: background 0.15s;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
     }
 
     .modal-btn-confirm-delete:hover {
         background: #b91c1c;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .profile-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .profile-main-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar-widget {
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .client-profile-page {
+            margin: 1.25rem auto 2.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-cover-gradient {
+            height: 150px;
+        }
+
+        .profile-identity-group {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-top: -50px;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .profile-avatar-frame {
+            width: 100px;
+            height: 100px;
+        }
+
+        .profile-hero-content {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 1.25rem 1.5rem;
+            gap: 1.25rem;
+        }
+
+        .client-company-title {
+            justify-content: center;
+        }
+
+        .client-subhead {
+            justify-content: center;
+        }
+
+        .client-meta-row {
+            justify-content: center;
+        }
+
+        .profile-hero-actions {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .content-box {
+            padding: 1.25rem 1.25rem;
+            border-radius: 18px;
+        }
+
+        .box-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .profile-stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .job-card-top {
+            flex-direction: column;
+        }
+
+        .profile-hero-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .profile-hero-actions>* {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="client-profile-page">
-    
-    <!-- Navigation Bar -->
+
+    <!-- Top Action Bar -->
     <div class="top-action-bar">
         <a href="javascript:history.back()" class="btn-back-link">
             <i class="fas fa-arrow-left"></i> Back
         </a>
-        <div style="font-size: 0.88rem; color: #64748b;">
-            Client Directory &bull; <strong>{{ profile_user.username }}</strong>
+        <div class="breadcrumb-text">
+            <span>Client Directory</span>
+            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #94a3b8;"></i>
+            <strong>{{ profile_user.username }}</strong>
         </div>
     </div>
 
     <!-- Hero Card -->
     <div class="profile-hero-card">
-        <div class="profile-cover-gradient {% if profile.banner_image %}has-banner{% else %}no-banner{% endif %}"
-             {% if profile.banner_image %}style="background-image: url('{{ profile.banner_image.url }}');"{% endif %}>
+        <div class="profile-cover-gradient {% if profile.banner_image %}has-banner{% else %}no-banner{% endif %}" {% if profile.banner_image %}style="background-image: url('{{ profile.banner_image.url }}');"{% endif %}>
             {% if is_owner %}
-                <button type="button" class="btn-change-banner" onclick="openBannerModal()" title="Customize your profile banner">
-                    <i class="fas fa-camera"></i> <span>{% if profile.banner_image %}Change Banner{% else %}Add Banner{% endif %}</span>
-                </button>
+            <button type="button" class="btn-change-banner" onclick="openBannerModal()"
+                title="Customize your profile banner">
+                <i class="fas fa-camera"></i> <span>{% if profile.banner_image %}Change Banner{% else %}Add Banner{% endif %}</span>
+            </button>
             {% endif %}
         </div>
+
         <div class="profile-hero-content">
             <div class="profile-identity-group">
                 <!-- Avatar Frame -->
                 <div class="profile-avatar-frame">
                     <div class="profile-avatar-inner">
                         {% if profile.profile_picture %}
-                            <img src="{{ profile.profile_picture.url }}" alt="{{ profile_user.username }}">
+                        <img src="{{ profile.profile_picture.url }}" alt="{{ profile_user.username }}">
                         {% elif profile_user.get_profile_picture %}
-                            <img src="{{ profile_user.get_profile_picture }}" alt="{{ profile_user.username }}">
+                        <img src="{{ profile_user.get_profile_picture }}" alt="{{ profile_user.username }}">
                         {% else %}
-                            <div class="profile-avatar-fallback">
-                                <i class="fas fa-building"></i>
-                            </div>
+                        <div class="profile-avatar-fallback">
+                            {{ profile_user.username|first|upper }}
+                        </div>
                         {% endif %}
                     </div>
+                    <span class="online-indicator-dot" title="Active"></span>
                 </div>
 
                 <!-- Info Block -->
                 <div class="profile-title-block">
                     <h1 class="client-company-title">
                         {% if profile.company_name %}
-                            {{ profile.company_name }}
+                        {{ profile.company_name }}
                         {% elif profile_user.first_name %}
-                            {{ profile_user.first_name }} {{ profile_user.last_name }}
+                        {{ profile_user.first_name }} {{ profile_user.last_name }}
                         {% else %}
-                            {{ profile_user.username }}
+                        {{ profile_user.username }}
                         {% endif %}
                         <span class="badge-client-role">Client</span>
                         <span class="badge-verified-client"><i class="fas fa-check-circle"></i> Verified</span>
                     </h1>
+
                     <div class="client-subhead">
                         <span>@{{ profile_user.username }}</span>
                         {% if profile.company_name and profile_user.first_name %}
-                            &bull; <span>{{ profile_user.first_name }} {{ profile_user.last_name }}</span>
+                        &bull; <span>{{ profile_user.first_name }} {{ profile_user.last_name }}</span>
                         {% endif %}
                     </div>
+
                     <div class="client-meta-row">
                         {% if profile.city or profile.country %}
-                            <span class="meta-tag">
-                                <i class="fas fa-map-marker-alt"></i>
-                                {% if profile.city %}{{ profile.city }}{% endif %}{% if profile.city and profile.country %}, {% endif %}{% if profile.country %}{{ profile.country }}{% endif %}
-                            </span>
+                        <span class="meta-pill">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {% if profile.city %}{{ profile.city }}{% endif %}{% if profile.city and profile.country %}, {% endif %}{% if profile.country %}{{ profile.country }}{% endif %}
+                        </span>
                         {% endif %}
 
                         {% if profile.website %}
-                            <span class="meta-tag">
-                                <i class="fas fa-globe"></i>
-                                <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">
-                                    {{ profile.website }}
-                                </a>
-                            </span>
+                        <span class="meta-pill">
+                            <i class="fas fa-globe"></i>
+                            <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">
+                                {{ profile.website }}
+                            </a>
+                        </span>
                         {% endif %}
 
-                        <span class="meta-tag">
+                        <span class="meta-pill">
                             <i class="far fa-calendar-alt"></i>
                             Member since {{ profile_user.date_joined|date:"M Y" }}
                         </span>
@@ -1040,33 +1141,34 @@
             <!-- Actions Group -->
             <div class="profile-hero-actions">
                 {% if is_owner %}
-                    <a href="{% url 'client:edit_client_profile' %}" class="btn-action-primary">
-                        <i class="fas fa-edit"></i> Edit Profile
-                    </a>
-                    <a href="{% url 'client:create_job' %}" class="btn-action-outline">
-                        <i class="fas fa-plus-circle"></i> Post New Job
-                    </a>
+                <a href="{% url 'client:edit_client_profile' %}" class="btn-action-outline">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </a>
+                <a href="{% url 'client:create_job' %}" class="btn-action-primary">
+                    <i class="fas fa-plus-circle"></i> Post New Job
+                </a>
                 {% elif request.user.is_authenticated %}
-                    <a href="{% url 'chat_detail' profile_user.id %}" class="btn-action-primary">
-                        <i class="fas fa-comment-dots"></i> Message Client
-                    </a>
-                    {% if is_connected %}
-                        <button type="button" class="btn-action-outline btn-action-connected" onclick="openDisconnectModal()" title="Click to disconnect">
-                            <i class="fas fa-check"></i> Connected
-                        </button>
-                    {% elif is_requested %}
-                        <span class="btn-action-outline btn-action-pending">
-                            <i class="fas fa-clock"></i> Request Pending
-                        </span>
-                    {% else %}
-                        <a href="{% url 'accounts:send_connection_request' profile_user.id %}" class="btn-action-outline">
-                            <i class="fas fa-user-plus"></i> Connect
-                        </a>
-                    {% endif %}
+                <a href="{% url 'chat_detail' profile_user.id %}" class="btn-action-primary">
+                    <i class="fas fa-comment-dots"></i> Message Client
+                </a>
+                {% if is_connected %}
+                <button type="button" class="btn-action-outline btn-action-connected" onclick="openDisconnectModal()"
+                    title="Click to disconnect">
+                    <i class="fas fa-check"></i> Connected
+                </button>
+                {% elif is_requested %}
+                <span class="btn-action-outline btn-action-pending">
+                    <i class="fas fa-clock"></i> Request Pending
+                </span>
                 {% else %}
-                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-action-primary">
-                        <i class="fas fa-sign-in-alt"></i> Sign in to Contact
-                    </a>
+                <a href="{% url 'accounts:send_connection_request' profile_user.id %}" class="btn-action-outline">
+                    <i class="fas fa-user-plus"></i> Connect
+                </a>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-action-primary">
+                    <i class="fas fa-sign-in-alt"></i> Sign in to Contact
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -1114,10 +1216,10 @@
 
     <!-- Main Content Layout -->
     <div class="profile-main-layout">
-        
+
         <!-- Left / Main Column -->
         <div class="main-column">
-            
+
             <!-- About Company -->
             <div class="content-box">
                 <div class="box-header">
@@ -1127,9 +1229,10 @@
                 </div>
                 <div class="about-body-text">
                     {% if profile.bio %}
-                        {{ profile.bio|linebreaks }}
+                    {{ profile.bio|linebreaks }}
                     {% else %}
-                        <p style="color: #94a3b8; font-style: italic; margin: 0;">This client has not added a detailed company overview yet.</p>
+                    <p style="color: #94a3b8; font-style: italic; margin: 0;">This client has not added a detailed
+                        company overview yet.</p>
                     {% endif %}
                 </div>
             </div>
@@ -1138,83 +1241,83 @@
             <div class="content-box">
                 <div class="box-header">
                     <h2 class="box-title">
-                        <i class="fas fa-list-alt"></i> Posted Jobs
+                        <i class="fas fa-briefcase"></i> Posted Jobs
                     </h2>
                     <span class="box-badge">{{ jobs|length }} Available</span>
                 </div>
 
                 {% if jobs %}
-                    <div class="jobs-feed-list">
-                        {% for job in jobs %}
-                            <div class="job-card-item">
-                                <div class="job-card-top">
-                                    <div>
-                                        <h3 class="job-headline">
-                                            <a href="{% url 'client:job_detail' job.id %}">{{ job.title }}</a>
-                                        </h3>
-                                        <div class="job-post-date">
-                                            <i class="far fa-clock"></i> Posted {{ job.created_at|date:"M d, Y" }}
-                                        </div>
-                                    </div>
-                                    <div class="job-meta-badges">
-                                        <span class="j-badge j-badge-budget">
-                                            <i class="fas fa-rupee-sign"></i> ₹{{ job.budget }}
-                                        </span>
-                                        {% if job.experience_level %}
-                                            <span class="j-badge j-badge-level">
-                                                <i class="fas fa-layer-group"></i> {{ job.experience_level }}
-                                            </span>
-                                        {% endif %}
-                                        <span class="j-badge j-badge-proposals">
-                                            <i class="fas fa-paper-plane"></i> {{ job.proposals_count }} proposals
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {% if job.description %}
-                                    <p class="job-desc-snippet">{{ job.description|truncatewords:35 }}</p>
-                                {% endif %}
-
-                                {% if job.skill_list %}
-                                    <div class="job-skills-container">
-                                        {% for skill in job.skill_list %}
-                                            <span class="skill-chip">{{ skill }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-
-                                <div class="job-actions-strip">
-                                    {% if is_owner %}
-                                        <a href="{% url 'client:job_detail' job.id %}" class="btn-job-view">
-                                            <i class="fas fa-eye"></i> View Details
-                                        </a>
-                                        <button type="button" class="btn-job-delete" onclick="openDeleteJobModal({{ job.id }})">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </button>
-                                    {% else %}
-                                        {% if job.id in applied_job_ids %}
-                                            <span class="badge-job-applied">
-                                                <i class="fas fa-check-circle"></i> Proposal Submitted
-                                            </span>
-                                        {% elif request.user.is_authenticated and request.user.role == 'freelancer' %}
-                                            <a href="{% url 'submit_proposal' job.id %}" class="btn-job-apply">
-                                                <i class="fas fa-paper-plane"></i> Submit Proposal
-                                            </a>
-                                        {% endif %}
-                                        <a href="{% url 'client:job_detail' job.id %}" class="btn-job-view">
-                                            View Details <i class="fas fa-arrow-right"></i>
-                                        </a>
-                                    {% endif %}
+                <div class="jobs-feed-list">
+                    {% for job in jobs %}
+                    <div class="job-card-item">
+                        <div class="job-card-top">
+                            <div>
+                                <h3 class="job-headline">
+                                    <a href="{% url 'client:job_detail' job.id %}">{{ job.title }}</a>
+                                </h3>
+                                <div class="job-post-date">
+                                    <i class="far fa-clock"></i> Posted {{ job.created_at|date:"M d, Y" }}
                                 </div>
                             </div>
-                        {% endfor %}
+                            <div class="job-meta-badges">
+                                <span class="j-badge j-badge-budget">
+                                    <i class="fas fa-rupee-sign"></i> ₹{{ job.budget }}
+                                </span>
+                                {% if job.experience_level %}
+                                <span class="j-badge j-badge-level">
+                                    <i class="fas fa-layer-group"></i> {{ job.experience_level }}
+                                </span>
+                                {% endif %}
+                                <span class="j-badge j-badge-proposals">
+                                    <i class="fas fa-paper-plane"></i> {{ job.proposals_count }} proposals
+                                </span>
+                            </div>
+                        </div>
+
+                        {% if job.description %}
+                        <p class="job-desc-snippet">{{ job.description|truncatewords:35 }}</p>
+                        {% endif %}
+
+                        {% if job.skill_list %}
+                        <div class="job-skills-container">
+                            {% for skill in job.skill_list %}
+                            <span class="skill-chip">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="job-actions-strip">
+                            {% if is_owner %}
+                            <a href="{% url 'client:job_detail' job.id %}" class="btn-job-view">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <button type="button" class="btn-job-delete" onclick="openDeleteJobModal({{ job.id }})">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                            {% else %}
+                            {% if job.id in applied_job_ids %}
+                            <span class="badge-job-applied">
+                                <i class="fas fa-check-circle"></i> Proposal Submitted
+                            </span>
+                            {% elif request.user.is_authenticated and request.user.role == 'freelancer' %}
+                            <a href="{% url 'submit_proposal' job.id %}" class="btn-job-apply">
+                                <i class="fas fa-paper-plane"></i> Submit Proposal
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'client:job_detail' job.id %}" class="btn-job-view">
+                                View Details <i class="fas fa-arrow-right"></i>
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
+                    {% endfor %}
+                </div>
                 {% else %}
-                    <div class="empty-jobs-banner">
-                        <i class="fas fa-briefcase"></i>
-                        <h4>No Active Job Postings</h4>
-                        <p style="margin: 0;">This client currently has no active job postings available.</p>
-                    </div>
+                <div class="empty-jobs-banner">
+                    <i class="fas fa-briefcase"></i>
+                    <h4>No Active Job Postings</h4>
+                    <p style="margin: 0;">This client currently has no active job postings available.</p>
+                </div>
                 {% endif %}
             </div>
 
@@ -1222,7 +1325,7 @@
 
         <!-- Right / Sidebar Column -->
         <div class="sidebar-column">
-            
+
             <!-- Trust & Verification -->
             <div class="sidebar-widget">
                 <h3 class="widget-heading">
@@ -1244,13 +1347,13 @@
                         </div>
                     </div>
                     {% if profile_user.phone %}
-                        <div class="trust-item verified">
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <span class="trust-label">Phone Verified</span>
-                                <span class="trust-subtext">Secure contact registered</span>
-                            </div>
+                    <div class="trust-item verified">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <span class="trust-label">Phone Verified</span>
+                            <span class="trust-subtext">Secure contact registered</span>
                         </div>
+                    </div>
                     {% endif %}
                     <div class="trust-item verified">
                         <i class="fas fa-check-circle"></i>
@@ -1281,14 +1384,15 @@
                         <span class="info-v">{{ profile_user.date_joined|date:"M d, Y" }}</span>
                     </div>
                     {% if profile.website %}
-                        <div class="info-kv-row">
-                            <span class="info-k">Website</span>
-                            <span class="info-v">
-                                <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer" style="color: var(--cp-primary); text-decoration: none;">
-                                    Visit Site <i class="fas fa-external-link-alt" style="font-size: 0.75rem;"></i>
-                                </a>
-                            </span>
-                        </div>
+                    <div class="info-kv-row">
+                        <span class="info-k">Website</span>
+                        <span class="info-v">
+                            <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer"
+                                style="color: var(--cp-primary); text-decoration: none; font-weight: 600;">
+                                Visit Site <i class="fas fa-external-link-alt" style="font-size: 0.75rem;"></i>
+                            </a>
+                        </span>
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -1302,47 +1406,57 @@
 <div id="bannerModalBackdrop" class="delete-modal-backdrop">
     <div class="delete-modal-box" style="max-width: 500px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-            <div style="display: flex; align-items: center; gap: 0.65rem; font-size: 1.25rem; font-weight: 700; color: var(--cp-dark);">
+            <div
+                style="display: flex; align-items: center; gap: 0.65rem; font-size: 1.25rem; font-weight: 700; color: var(--cp-dark);">
                 <i class="fas fa-panorama" style="color: var(--cp-primary);"></i>
                 <span>{% if profile.banner_image %}Change Banner Image{% else %}Add Banner Image{% endif %}</span>
             </div>
-            <button type="button" onclick="closeBannerModal()" style="background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
+            <button type="button" onclick="closeBannerModal()"
+                style="background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
         </div>
 
-        <form method="POST" action="{% url 'client:update_client_banner' %}" enctype="multipart/form-data" id="bannerUploadForm">
+        <form method="POST" action="{% url 'client:update_client_banner' %}" enctype="multipart/form-data"
+            id="bannerUploadForm">
             {% csrf_token %}
-            
+
             <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.25rem; line-height: 1.5;">
                 Upload a custom cover banner for your company profile page (JPG, PNG, or WEBP recommended).
             </p>
 
-            <div style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 1.5rem; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.2s ease;" 
-                 onclick="document.getElementById('bannerFileInput').click()"
-                 id="bannerDropZone">
-                <input type="file" name="banner_image" id="bannerFileInput" accept="image/*" style="display: none;" onchange="previewBannerFile(this)">
+            <div style="border: 2px dashed #cbd5e1; border-radius: 16px; padding: 1.75rem 1.5rem; text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.2s ease;"
+                onclick="document.getElementById('bannerFileInput').click()" id="bannerDropZone">
+                <input type="file" name="banner_image" id="bannerFileInput" accept="image/*" style="display: none;"
+                    onchange="previewBannerFile(this)">
                 <div id="bannerUploadPlaceholder">
-                    <i class="fas fa-cloud-upload-alt" style="font-size: 2.25rem; color: var(--cp-primary); margin-bottom: 0.5rem; display: block;"></i>
-                    <span style="font-weight: 600; color: var(--cp-dark); font-size: 0.95rem; display: block;">Click to choose an image</span>
+                    <i class="fas fa-cloud-upload-alt"
+                        style="font-size: 2.25rem; color: var(--cp-primary); margin-bottom: 0.5rem; display: block;"></i>
+                    <span style="font-weight: 600; color: var(--cp-dark); font-size: 0.95rem; display: block;">Click to
+                        choose an image</span>
                     <span style="font-size: 0.82rem; color: #94a3b8;">or select a file from your computer</span>
                 </div>
                 <div id="bannerPreviewContainer" style="display: none;">
-                    <img id="bannerImagePreview" src="" alt="Banner Preview" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <span id="bannerFileName" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: #475569; font-weight: 500;"></span>
+                    <img id="bannerImagePreview" src="" alt="Banner Preview"
+                        style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <span id="bannerFileName"
+                        style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: #475569; font-weight: 500;"></span>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; flex-wrap: wrap; gap: 0.75rem;">
                 {% if profile.banner_image %}
-                    <button type="submit" name="action" value="delete" class="modal-btn-cancel" style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca;">
-                        <i class="fas fa-trash-alt"></i> Remove Banner
-                    </button>
+                <button type="submit" name="action" value="delete" class="modal-btn-cancel"
+                    style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca;">
+                    <i class="fas fa-trash-alt"></i> Remove Banner
+                </button>
                 {% else %}
-                    <div></div>
+                <div></div>
                 {% endif %}
 
                 <div style="display: flex; gap: 0.75rem;">
                     <button type="button" class="modal-btn-cancel" onclick="closeBannerModal()">Cancel</button>
-                    <button type="submit" class="btn-action-primary" style="border: none; padding: 0.6rem 1.4rem; font-size: 0.92rem;">
+                    <button type="submit" class="btn-action-primary"
+                        style="border: none; padding: 0.6rem 1.4rem; font-size: 0.92rem;">
                         <i class="fas fa-save"></i> Save Banner
                     </button>
                 </div>
@@ -1359,7 +1473,8 @@
             <span>Delete Job Posting?</span>
         </div>
         <p class="modal-desc-text">
-            Are you sure you want to permanently delete this job? All submitted proposals and job details will be removed. This action cannot be undone.
+            Are you sure you want to permanently delete this job? All submitted proposals and job details will be
+            removed. This action cannot be undone.
         </p>
         <div class="modal-actions-group">
             <button type="button" class="modal-btn-cancel" onclick="closeDeleteJobModal()">Cancel</button>
@@ -1381,11 +1496,13 @@
             <span>Disconnect from {{ profile_user.username }}?</span>
         </div>
         <p class="modal-desc-text">
-            Are you sure you want to disconnect from <strong>{{ profile_user.username }}</strong>? You will no longer follow each other's updates.
+            Are you sure you want to disconnect from <strong>{{ profile_user.username }}</strong>? You will no longer
+            follow each other's updates.
         </p>
         <div class="modal-actions-group">
             <button type="button" class="modal-btn-cancel" onclick="closeDisconnectModal()">Cancel</button>
-            <form method="POST" action="{% url 'accounts:remove_connection' profile_user.id %}" style="display: inline;">
+            <form method="POST" action="{% url 'accounts:remove_connection' profile_user.id %}"
+                style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="modal-btn-confirm-delete">Yes, Disconnect</button>
             </form>
@@ -1425,7 +1542,7 @@
         if (input.files && input.files[0]) {
             const file = input.files[0];
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 document.getElementById('bannerImagePreview').src = e.target.result;
                 document.getElementById('bannerFileName').textContent = file.name;
                 document.getElementById('bannerUploadPlaceholder').style.display = 'none';
@@ -1451,7 +1568,7 @@
     }
 
     // Close modal on backdrop click or Escape
-    window.addEventListener('click', function(e) {
+    window.addEventListener('click', function (e) {
         const deleteModal = document.getElementById('deleteModalBackdrop');
         if (e.target === deleteModal) {
             closeDeleteJobModal();
@@ -1466,7 +1583,7 @@
         }
     });
 
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closeDisconnectModal();
             closeDeleteJobModal();
