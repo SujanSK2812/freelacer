@@ -440,21 +440,35 @@
                         <span class="mn-nav-count">{{ connections_count }}</span>
                     </a>
                 </li>
+                {% if pending_requests_count > 0 %}
+                <li class="mn-nav-item">
+                    <a href="{% url 'accounts:pending_requests' %}">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-solid fa-user-clock"></i>
+                            <span>Invitations</span>
+                        </div>
+                        <span class="mn-nav-count" style="background:#0a66c2; color:#fff; padding:2px 8px; border-radius:12px; font-weight:600; font-size:12px;">{{ pending_requests_count }}</span>
+                    </a>
+                </li>
+                {% endif %}
                 <li class="mn-nav-item">
                     <a href="{% url 'accounts:following' %}">
                         <div class="mn-nav-item-left">
                             <i class="fa-solid fa-address-book"></i>
                             <span>Following &amp; followers</span>
                         </div>
+                        {% if followers_count %}
+                        <span class="mn-nav-count">{{ followers_count }}</span>
+                        {% endif %}
                     </a>
                 </li>
                 <li class="mn-nav-item">
                     <a href="{% url 'accounts:posts' %}">
                         <div class="mn-nav-item-left">
-                            <i class="fa-regular fa-building"></i>
-                            <span>Pages</span>
+                            <i class="fa-regular fa-newspaper"></i>
+                            <span>{{ posts_label|default:"Posts" }}</span>
                         </div>
-                        <span class="mn-nav-count">{{ pages_count|default:"116" }}</span>
+                        <span class="mn-nav-count">{{ posts_count|default:"0" }}</span>
                     </a>
                 </li>
             </ul>

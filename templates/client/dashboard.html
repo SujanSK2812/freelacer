@@ -1062,16 +1062,6 @@
                 <span>Settings</span>
             </a>
         </div>
-
-        <!-- Available Connects -->
-        <div class="connects-card">
-            <div class="connects-header">
-                <h4><i class="fas fa-bolt"></i> Available Connects</h4>
-            </div>
-            <div class="connects-count">{{ request.user.available_connects|default:"80" }}</div>
-            <p>Used {{ request.user.used_connects|default:"20" }} this month</p>
-            <a href="#" class="get-connects">Get more connects <i class="fas fa-arrow-right"></i></a>
-        </div>
     </aside>
 
     <!-- MAIN CONTENT -->

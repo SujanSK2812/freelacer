@@ -172,7 +172,7 @@
                 onclick="markAllNotificationsRead(event)">Mark all read</button>
               {% endif %}
               <button type="button" class="clear-all-notifs-btn" id="clearAllNotifsBtn" {% if not notifications %}style="display: none;"{% endif %} title="Delete all notifications"
-                onclick="clearAllNotifications(event)">
+                onclick="openClearNotifsModal(event)">
                 <i class="fas fa-trash-alt" style="font-size: 11px;"></i> Clear all
               </button>
             </div>
@@ -1728,14 +1728,37 @@
     });
   }
 
-  function clearAllNotifications(e) {
+  function openClearNotifsModal(e) {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
+    const modal = document.getElementById('clearNotifsModalOverlay');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.classList.add('modal-open');
+      const cancelBtn = document.getElementById('cancelClearNotifsBtn');
+      if (cancelBtn) cancelBtn.focus();
+    }
+  }
 
-    if (!confirm('Are you sure you want to clear all notifications?')) {
-      return;
+  function closeClearNotifsModal() {
+    const modal = document.getElementById('clearNotifsModalOverlay');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.classList.remove('modal-open');
+    }
+  }
+
+  function clearAllNotifications(e) {
+    openClearNotifsModal(e);
+  }
+
+  function executeClearAllNotifications() {
+    const confirmBtn = document.getElementById('confirmClearNotifsBtn');
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Clearing...';
     }
 
     fetch('{% url "accounts:clear_all_notifications" %}', {
@@ -1745,6 +1768,12 @@
         'Content-Type': 'application/json'
       }
     }).then(res => res.json()).then(data => {
+      closeClearNotifsModal();
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fas fa-trash-alt" style="margin-right: 6px; font-size: 12px;"></i> Clear all';
+      }
+
       if (data.status === 'success') {
         document.querySelectorAll(".notif-item-row").forEach(row => row.remove());
 
@@ -1758,6 +1787,12 @@
         if (clearBtn) clearBtn.style.display = "none";
 
         checkEmptyNotifs();
+      }
+    }).catch(err => {
+      closeClearNotifsModal();
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fas fa-trash-alt" style="margin-right: 6px; font-size: 12px;"></i> Clear all';
       }
     });
   }
@@ -1905,6 +1940,24 @@
   </div>
 </div>
 
+<!-- Custom Clear All Notifications Confirmation Modal -->
+<div id="clearNotifsModalOverlay" class="custom-clear-notifs-overlay" aria-hidden="true" role="dialog"
+  aria-labelledby="clearNotifsModalTitle" aria-modal="true">
+  <div class="custom-clear-notifs-card" role="document">
+    <div class="custom-clear-notifs-icon">
+      <i class="fas fa-trash-alt"></i>
+    </div>
+    <h3 id="clearNotifsModalTitle">Clear all notifications?</h3>
+    <p>Are you sure you want to clear all notifications? This action cannot be undone.</p>
+    <div class="custom-clear-notifs-actions">
+      <button id="cancelClearNotifsBtn" type="button" class="btn-clear-notifs-cancel" onclick="closeClearNotifsModal()">Cancel</button>
+      <button id="confirmClearNotifsBtn" type="button" class="btn-clear-notifs-confirm" onclick="executeClearAllNotifications()">
+        <i class="fas fa-trash-alt" style="margin-right: 6px; font-size: 12px;"></i> Clear all
+      </button>
+    </div>
+  </div>
+</div>
+
 <style>
   /* Logout Modal Styles */
   .logout-modal-overlay {
@@ -2009,6 +2062,127 @@
     box-shadow: 0 0 0 2px #fff, 0 0 0 4px #108a00;
   }
 
+  /* Custom Clear Notifications Modal Styles */
+  .custom-clear-notifs-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s ease;
+  }
+
+  .custom-clear-notifs-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .custom-clear-notifs-card {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    padding: 26px 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.06);
+    transform: scale(0.92) translateY(8px);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+  }
+
+  .custom-clear-notifs-overlay.active .custom-clear-notifs-card {
+    transform: scale(1) translateY(0);
+  }
+
+  .custom-clear-notifs-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #fee2e2;
+    color: #dc2626;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 0 8px #fef2f2;
+  }
+
+  .custom-clear-notifs-card h3 {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    color: #0f172a;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .custom-clear-notifs-card p {
+    margin: 0 0 24px;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .custom-clear-notifs-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .btn-clear-notifs-cancel,
+  .btn-clear-notifs-confirm {
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border: none;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-clear-notifs-cancel {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    flex: 1;
+  }
+
+  .btn-clear-notifs-cancel:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+  }
+
+  .btn-clear-notifs-confirm {
+    background-color: #dc2626;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.25);
+    flex: 1;
+  }
+
+  .btn-clear-notifs-confirm:hover {
+    background-color: #b91c1c;
+    box-shadow: 0 6px 14px rgba(220, 38, 38, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .btn-clear-notifs-confirm:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   /* Prevent scroll on body when modal is open */
   body.modal-open {
     overflow: hidden;
@@ -2055,6 +2229,20 @@
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
           closeModal();
+        }
+      });
+    }
+
+    const clearNotifsModal = document.getElementById('clearNotifsModalOverlay');
+    if (clearNotifsModal) {
+      clearNotifsModal.addEventListener('click', function (e) {
+        if (e.target === clearNotifsModal) {
+          closeClearNotifsModal();
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && clearNotifsModal.classList.contains('active')) {
+          closeClearNotifsModal();
         }
       });
     }

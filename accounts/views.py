@@ -18,6 +18,7 @@ from freelancer.models import Project
 from .models import EmailOTP, Testimonial
 from .utils import send_portal_email
 from freelancer.models import FreelancerProfile
+from projects.models import Job, JobPost
 
 User = get_user_model()
 
@@ -636,6 +637,9 @@ def send_connection_request(request, user_id):
             link=reverse('accounts:pending_requests')
         )
 
+    if request.headers.get("x-requested-with") == "XMLHttpRequest" or request.GET.get("ajax") == "1":
+        return JsonResponse({"status": "success", "message": "Connection request sent"})
+
     return redirect(request.META.get("HTTP_REFERER") or "/")
 
 
@@ -956,11 +960,25 @@ def find_connections(request):
     connected_ids = (sent_ids | received_ids) - {request.user.id}
     connections_count = len(connected_ids)
 
+    from projects.models import Job, JobPost
+    if getattr(request.user, 'role', '') == 'client':
+        posts_count = Job.objects.filter(client=request.user).count()
+        posts_label = "My Job Posts"
+    else:
+        posts_count = JobPost.objects.filter(client=request.user).count()
+        posts_label = "My Showcases"
+
+    pending_requests_count = ConnectionRequest.objects.filter(receiver=request.user, status='pending').count()
+    followers_count = request.user.followers.count() if hasattr(request.user, 'followers') else 0
+
     return render(request, "accounts/find_connections.html", {
         "users": all_users,
         "college_users": college_users,
         "connections_count": connections_count,
-        "pages_count": 116,
+        "pending_requests_count": pending_requests_count,
+        "followers_count": followers_count,
+        "posts_count": posts_count,
+        "posts_label": posts_label,
     })
 
 
@@ -993,11 +1011,57 @@ def my_connections(request):
     # Sort recently added first
     connections_list.sort(key=lambda x: x['connected_at'] or timezone.now(), reverse=True)
 
+    # Pending connection requests count (invitations received)
+    pending_requests_count = ConnectionRequest.objects.filter(receiver=request.user, status='pending').count()
+
+    # Following & followers count
+    following_count = request.user.following.count() if hasattr(request.user, 'following') else 0
+    followers_count = request.user.followers.count() if hasattr(request.user, 'followers') else 0
+
+    # Real user post count for sidebar
+    if getattr(request.user, 'role', '') == 'client':
+        posts_count = Job.objects.filter(client=request.user).count()
+        posts_label = "My Job Posts"
+    else:
+        posts_count = JobPost.objects.filter(client=request.user).count()
+        posts_label = "My Showcases"
+
+    # Real Suggested Connections (platform users not yet connected or self)
+    pending_sent_ids = set(ConnectionRequest.objects.filter(sender=request.user, status='pending').values_list('receiver_id', flat=True))
+    excluded_ids = connected_ids | {request.user.id}
+    other_users = User.objects.exclude(id__in=excluded_ids).filter(is_active=True, role__in=['freelancer', 'client']).order_by('-date_joined')
+
+    suggestions = []
+    for u in other_users:
+        prof = getattr(u, 'freelancerprofile', None) or getattr(u, 'clientprofile', None)
+        headline = getattr(prof, 'title', None) or getattr(prof, 'company_name', None) or (u.role.title() if getattr(u, 'role', None) else 'Member')
+        
+        banner_url = None
+        if hasattr(u, 'get_banner_image') and u.get_banner_image:
+            banner_url = u.get_banner_image
+        elif prof and getattr(prof, 'banner_image', None):
+            banner_url = getattr(prof.banner_image, 'url', None)
+
+        suggestions.append({
+            'user': u,
+            'display_name': u.get_full_name() or u.username,
+            'headline': headline,
+            'avatar': u.get_profile_picture,
+            'banner_url': banner_url,
+            'is_pending': u.id in pending_sent_ids,
+            'role': getattr(u, 'role', ''),
+        })
+
     return render(request, "accounts/my_connections.html", {
         "connections": connections_list,
         "connected_users": connected_users,
         "connections_count": connections_count,
-        "pages_count": 116,
+        "pending_requests_count": pending_requests_count,
+        "following_count": following_count,
+        "followers_count": followers_count,
+        "posts_count": posts_count,
+        "posts_label": posts_label,
+        "suggestions": suggestions,
     })
 
 

@@ -1017,7 +1017,7 @@
                         <a href="{% url 'chat_detail' user.id %}" 
                            class="conversation-card-item {% if other_user and other_user.id == user.id %}active{% endif %}"
                            data-user-id="{{ user.id }}"
-                           data-search="{{ user.get_full_name|lower }} {{ user.username|lower }} {{ user.last_message.message|lower }}"
+                           data-search="{{ user.get_full_name|lower }} {{ user.username|lower }} {% if user.last_message %}{{ user.last_message.message|lower }}{% else %}connected connection 1st{% endif %}"
                            data-unread="{% if user.unread_count > 0 %}true{% else %}false{% endif %}"
                            data-jobs="{% if user.has_jobs %}true{% else %}false{% endif %}"
                            data-connection="{% if user.is_connection %}true{% else %}false{% endif %}"
@@ -1040,6 +1040,8 @@
                                     <div style="display: flex; align-items: center; gap: 6px;">
                                         {% if user.last_message %}
                                         <span class="conv-date">{{ user.last_message.timestamp|date:"M d" }}</span>
+                                        {% elif user.is_connection %}
+                                        <span class="conv-date" style="color: #057642; font-size: 11px; font-weight: 600; background: #e8f5e9; padding: 1px 6px; border-radius: 8px;">1st</span>
                                         {% endif %}
                                         <button type="button" class="conv-star-btn" title="Star conversation" onclick="toggleConvStar(event, '{{ user.id }}')">
                                             <i class="far fa-star"></i>
@@ -1053,6 +1055,8 @@
                                     {% endif %}
                                     {% if user.last_message %}
                                         {% if user.last_message.sender == request.user %}You: {% else %}{{ user.username }}: {% endif %}{{ user.last_message.message|default:"Attachment"|truncatechars:28 }}
+                                    {% elif user.is_connection %}
+                                        <span style="color: #057642; font-size: 12.5px; font-weight: 500;"><i class="fas fa-handshake" style="margin-right: 4px;"></i> Connected · Say hello!</span>
                                     {% else %}
                                         <span style="color: #94a3b8; font-style: italic;">No messages yet</span>
                                     {% endif %}
@@ -1734,16 +1738,42 @@
         });
     }
 
+    function checkUrlFilter() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const filterParam = (urlParams.get('filter') || urlParams.get('tab') || '').toLowerCase();
+        if (filterParam) {
+            const pillMap = {
+                'connections': document.getElementById('pillConnections'),
+                'jobs': document.getElementById('pillJobs'),
+                'unread': document.getElementById('pillUnread'),
+                'inmail': document.getElementById('pillInMail'),
+                'starred': document.getElementById('pillStarred')
+            };
+            if (pillMap[filterParam]) {
+                filterTab(filterParam, pillMap[filterParam]);
+                return true;
+            } else if (filterParam === 'all') {
+                selectFocusedOption('all', 'All Messages', null);
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Initialize state on load
     document.addEventListener('DOMContentLoaded', function() {
         initStarredCards();
         updateUnreadBadge();
-        applyCurrentFilter();
+        if (!checkUrlFilter()) {
+            applyCurrentFilter();
+        }
     });
     // In case DOM is already loaded
     initStarredCards();
     updateUnreadBadge();
-    applyCurrentFilter();
+    if (!checkUrlFilter()) {
+        applyCurrentFilter();
+    }
 </script>
 
 </body>

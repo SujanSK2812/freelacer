@@ -759,6 +759,19 @@
             gap: 12px;
         }
 
+        .carousel-title-icon-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(10, 102, 194, 0.1);
+            color: #0a66c2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
         .carousel-author-avatar {
             width: 34px;
             height: 34px;
@@ -914,6 +927,11 @@
             z-index: 1;
         }
 
+        .sugg-avatar-wrap a {
+            text-decoration: none;
+            display: inline-block;
+        }
+
         .sugg-avatar-img {
             width: 72px;
             height: 72px;
@@ -922,6 +940,37 @@
             object-fit: cover;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
             background: #ffffff;
+        }
+
+        .sugg-avatar-fallback {
+            background: linear-gradient(135deg, #0a66c2, #004182);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .sugg-role-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .sugg-role-badge.client {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .sugg-role-badge.freelancer {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
         }
 
         .sugg-content {
@@ -948,6 +997,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .sugg-name:hover {
+            color: #0a66c2;
+            text-decoration: underline;
         }
 
         .sugg-verified-badge {
@@ -1059,21 +1114,35 @@
                         <span class="mn-nav-count">{{ connections_count }}</span>
                     </a>
                 </li>
+                {% if pending_requests_count > 0 %}
+                <li class="mn-nav-item">
+                    <a href="{% url 'accounts:pending_requests' %}">
+                        <div class="mn-nav-item-left">
+                            <i class="fa-solid fa-user-clock"></i>
+                            <span>Invitations</span>
+                        </div>
+                        <span class="mn-nav-count" style="background:#0a66c2; color:#fff; padding:2px 8px; border-radius:12px; font-weight:600; font-size:12px;">{{ pending_requests_count }}</span>
+                    </a>
+                </li>
+                {% endif %}
                 <li class="mn-nav-item">
                     <a href="{% url 'accounts:following' %}">
                         <div class="mn-nav-item-left">
                             <i class="fa-solid fa-address-book"></i>
                             <span>Following &amp; followers</span>
                         </div>
+                        {% if followers_count %}
+                        <span class="mn-nav-count">{{ followers_count }}</span>
+                        {% endif %}
                     </a>
                 </li>
                 <li class="mn-nav-item">
                     <a href="{% url 'accounts:posts' %}">
                         <div class="mn-nav-item-left">
-                            <i class="fa-regular fa-building"></i>
-                            <span>Pages</span>
+                            <i class="fa-regular fa-newspaper"></i>
+                            <span>{{ posts_label|default:"Posts" }}</span>
                         </div>
-                        <span class="mn-nav-count">{{ pages_count|default:"116" }}</span>
+                        <span class="mn-nav-count">{{ posts_count|default:"0" }}</span>
                     </a>
                 </li>
             </ul>
@@ -1218,14 +1287,17 @@
         </div>
 
         <!-- ========================================================
-             CARD 2: CONNECTIONS YOU MAY KNOW CAROUSEL (MATCHES IMAGE 2)
+             CARD 2: CONNECTIONS YOU MAY KNOW CAROUSEL
              ======================================================== -->
+        {% if suggestions %}
         <div class="suggestions-carousel-card" id="suggestionsCarouselCard">
             <div class="carousel-card-header">
                 <div class="carousel-title-left">
-                    <img src="/media/profiles/muhammed_avatar.png" alt="muhammed" class="carousel-author-avatar" onerror="this.src='/static/images/logo.png'">
+                    <div class="carousel-title-icon-circle">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
                     <div class="carousel-title-text">
-                        muhammed’s connections you may know
+                        People you may know
                     </div>
                 </div>
 
@@ -1245,176 +1317,48 @@
 
             <div class="carousel-viewport">
                 <div class="carousel-track" id="carouselTrack">
-                    <!-- CARD 1: Lavanya Bhat -->
-                    <div class="sugg-card" id="sugg-card-1">
-                        <div class="sugg-banner">
-                            <img src="/media/profiles/banner_lavanya.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #f59e0b, #0a66c2)'">
-                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-1')">
+                    {% for sugg in suggestions %}
+                    <div class="sugg-card" id="sugg-card-{{ sugg.user.id }}">
+                        <div class="sugg-banner" {% if sugg.banner_url %}style="background-image: url('{{ sugg.banner_url }}'); background-size: cover; background-position: center;"{% else %}style="background: linear-gradient(135deg, #0a66c2 0%, #1e3a8a 100%);"{% endif %}>
+                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-{{ sugg.user.id }}')">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
                         <div class="sugg-avatar-wrap">
-                            <img src="/media/profiles/av_lavanya.png" alt="Lavanya Bhat" class="sugg-avatar-img">
+                            <a href="{% url 'accounts:view_profile' sugg.user.id %}">
+                                {% if sugg.avatar %}
+                                    <img src="{{ sugg.avatar }}" alt="{{ sugg.display_name }}" class="sugg-avatar-img">
+                                {% else %}
+                                    <div class="sugg-avatar-img sugg-avatar-fallback">{{ sugg.display_name|slice:":1"|upper }}</div>
+                                {% endif %}
+                            </a>
                         </div>
                         <div class="sugg-content">
                             <div class="sugg-name-row">
-                                <div class="sugg-name" title="Lavanya Bhat">Lavanya Bhat</div>
+                                <a href="{% url 'accounts:view_profile' sugg.user.id %}" class="sugg-name" title="{{ sugg.display_name }}">{{ sugg.display_name }}</a>
+                                {% if sugg.role %}
+                                    <span class="sugg-role-badge {{ sugg.role }}">{{ sugg.role|title }}</span>
+                                {% endif %}
                             </div>
-                            <div class="sugg-headline" title="Student at KVG College of Engineering, Sullia| ..">
-                                Student at KVG College of Engineering, Sullia| ..
+                            <div class="sugg-headline" title="{{ sugg.headline }}">
+                                {{ sugg.headline }}
                             </div>
-                            <div class="sugg-mutual-row">
-                                <img src="/media/profiles/mutual_harsha.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
-                                <span class="sugg-mutual-text">Harsha and 15 other mutual connections</span>
-                            </div>
-                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
+                            {% if sugg.is_pending %}
+                            <button type="button" class="btn-sugg-connect pending" disabled>
+                                <i class="fa-solid fa-clock"></i> Pending
+                            </button>
+                            {% else %}
+                            <button type="button" class="btn-sugg-connect" onclick="handleRealConnect(this, {{ sugg.user.id }})">
                                 <i class="fa-solid fa-user-plus"></i> Connect
                             </button>
+                            {% endif %}
                         </div>
                     </div>
-
-                    <!-- CARD 2: Manyashree.L. Achar -->
-                    <div class="sugg-card" id="sugg-card-2">
-                        <div class="sugg-banner">
-                            <img src="/media/profiles/banner_manyashree.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #0f766e, #94a3b8)'">
-                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-2')">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="sugg-avatar-wrap">
-                            <img src="/media/profiles/av_manyashree.png" alt="Manyashree.L. Achar" class="sugg-avatar-img">
-                        </div>
-                        <div class="sugg-content">
-                            <div class="sugg-name-row">
-                                <div class="sugg-name" title="Manyashree.L. Achar">Manyashree.L. Achar</div>
-                            </div>
-                            <div class="sugg-headline" title="Attended Visvesvaraya Technological University">
-                                Attended Visvesvaraya Technological University
-                            </div>
-                            <div class="sugg-mutual-row">
-                                <img src="/media/profiles/mutual_darshan.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
-                                <span class="sugg-mutual-text">Darshan and 21 other mutual connections</span>
-                            </div>
-                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
-                                <i class="fa-solid fa-user-plus"></i> Connect
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- CARD 3: Chinmay S H -->
-                    <div class="sugg-card" id="sugg-card-3">
-                        <div class="sugg-banner">
-                            <img src="/media/profiles/banner_chinmay.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #0f172a, #1e3a8a)'">
-                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-3')">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="sugg-avatar-wrap">
-                            <img src="/media/profiles/av_chinmay.png" alt="Chinmay S H" class="sugg-avatar-img">
-                        </div>
-                        <div class="sugg-content">
-                            <div class="sugg-name-row">
-                                <div class="sugg-name" title="Chinmay S H">Chinmay S H</div>
-                                <i class="fa-solid fa-circle-check sugg-verified-badge" title="Verified Member"></i>
-                            </div>
-                            <div class="sugg-headline" title="Entry-Level Software Engineer | Java | Full ..">
-                                Entry-Level Software Engineer | Java | Full ..
-                            </div>
-                            <div class="sugg-mutual-row">
-                                <img src="/media/profiles/mutual_harsha.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
-                                <span class="sugg-mutual-text">Harsha and 43 other mutual connections</span>
-                            </div>
-                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
-                                <i class="fa-solid fa-user-plus"></i> Connect
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- CARD 4: Akshaya M -->
-                    <div class="sugg-card" id="sugg-card-4">
-                        <div class="sugg-banner">
-                            <img src="/media/profiles/banner_akshaya.png" alt="" onerror="this.parentElement.style.background='linear-gradient(135deg, #334155, #64748b)'">
-                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-4')">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="sugg-avatar-wrap">
-                            <img src="/media/profiles/av_akshaya.png" alt="Akshaya M" class="sugg-avatar-img">
-                        </div>
-                        <div class="sugg-content">
-                            <div class="sugg-name-row">
-                                <div class="sugg-name" title="Akshaya M">Akshaya M</div>
-                            </div>
-                            <div class="sugg-headline" title="CSE (AI &amp; ML) Student | Aspiring AI &amp; Data ..">
-                                CSE (AI &amp; ML) Student | Aspiring AI &amp; Data ..
-                            </div>
-                            <div class="sugg-mutual-row">
-                                <img src="/media/profiles/mutual_darshan.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
-                                <span class="sugg-mutual-text">Darshan and 31 other mutual connections</span>
-                            </div>
-                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
-                                <i class="fa-solid fa-user-plus"></i> Connect
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- CARD 5: Manoj Kumar -->
-                    <div class="sugg-card" id="sugg-card-5">
-                        <div class="sugg-banner" style="background: linear-gradient(135deg, #a0b4b7, #b8c8cb);">
-                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-5')">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="sugg-avatar-wrap">
-                            <img src="/media/profiles/manoj_avatar.png" alt="Manoj Kumar" class="sugg-avatar-img" onerror="this.src='/static/images/logo.png'">
-                        </div>
-                        <div class="sugg-content">
-                            <div class="sugg-name-row">
-                                <div class="sugg-name" title="Manoj Kumar">Manoj Kumar</div>
-                            </div>
-                            <div class="sugg-headline" title="Attended KVG College of Engineering (KVGC...">
-                                Attended KVG College of Engineering (KVGC...
-                            </div>
-                            <div class="sugg-mutual-row">
-                                <img src="/media/profiles/mutual_1.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
-                                <span class="sugg-mutual-text">Karthik and 30 other mutual connections</span>
-                            </div>
-                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
-                                <i class="fa-solid fa-user-plus"></i> Connect
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- CARD 6: Yashas Rai -->
-                    <div class="sugg-card" id="sugg-card-6">
-                        <div class="sugg-banner" style="background: linear-gradient(135deg, #1e3a8a, #0a66c2);">
-                            <button type="button" class="sugg-card-dismiss" title="Dismiss" onclick="dismissSuggCard('sugg-card-6')">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="sugg-avatar-wrap">
-                            <img src="/media/profiles/yashas_avatar.png" alt="Yashas Rai" class="sugg-avatar-img" onerror="this.src='/static/images/logo.png'">
-                        </div>
-                        <div class="sugg-content">
-                            <div class="sugg-name-row">
-                                <div class="sugg-name" title="Yashas Rai">Yashas Rai</div>
-                                <i class="fa-solid fa-circle-check sugg-verified-badge" title="Verified Member"></i>
-                            </div>
-                            <div class="sugg-headline" title="Student Ambassador @Google | Aspiring ...">
-                                Student Ambassador @Google | Aspiring ...
-                            </div>
-                            <div class="sugg-mutual-row">
-                                <img src="/media/profiles/mutual_harsha.png" alt="" class="sugg-mutual-avatar" onerror="this.style.display='none'">
-                                <span class="sugg-mutual-text">Sachin and 90 other mutual connections</span>
-                            </div>
-                            <button type="button" class="btn-sugg-connect" onclick="handleConnectClick(this)">
-                                <i class="fa-solid fa-user-plus"></i> Connect
-                            </button>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
+        {% endif %}
     </main>
 </div>
 
@@ -1663,6 +1607,29 @@
                 card.remove();
             }, 250);
         }
+    }
+
+    function handleRealConnect(btn, userId) {
+        if (btn.classList.contains('pending')) return;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
+
+        fetch(`/accounts/connect/${userId}/?ajax=1`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.classList.add('pending');
+            btn.innerHTML = '<i class="fa-solid fa-clock"></i> Pending';
+        })
+        .catch(err => {
+            console.error('Error sending connect request:', err);
+            btn.classList.add('pending');
+            btn.innerHTML = '<i class="fa-solid fa-clock"></i> Pending';
+        });
     }
 
     function handleConnectClick(btn) {

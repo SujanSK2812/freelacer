@@ -1,586 +1,759 @@
 {% load static %}
 <!doctype html>
 <html>
-  <head>
-    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
-    <title>Contact Us - Freelancer Portal</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      body {
-        font-family: var(--font-family-base) !important;
-        background: #f8fafc;
-        color: #1e293b;
-        line-height: 1.6;
-      }
+<head>
+  <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+  <title>Contact Us - Freelancer Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      /* Header */
-      nav {
-        background: white;
-        padding: 1rem 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-      }
+    body {
+      font-family: var(--font-family-base) !important;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
 
-      nav h2 {
-        color: #0a66c2;
-        font-size: 1.5rem;
-        font-weight: 700;
-      }
+    /* Header */
+    nav {
+      background: white;
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-      }
+    nav h2 {
+      color: #0a66c2;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
 
-      .nav-links a {
-        text-decoration: none;
-        color: #475569;
-        font-weight: 500;
-      }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
 
-      .nav-links a:hover,
-      .nav-links a.active {
-        color: #0a66c2;
-      }
+    .nav-links a {
+      text-decoration: none;
+      color: #475569;
+      font-weight: 500;
+    }
 
-      /* Main Container */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 3rem 1.5rem;
-      }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #0a66c2;
+    }
 
-      /* Page Header */
-      .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
-      }
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
 
-      .page-header h1 {
-        font-size: 2.5rem;
-        color: #0f172a;
-        margin-bottom: 1rem;
-      }
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
 
-      .page-header p {
-        color: #64748b;
-        font-size: 1.1rem;
-      }
+    .page-header h1 {
+      font-size: 2.5rem;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
 
-      /* Contact Grid */
+    .page-header p {
+      color: #64748b;
+      font-size: 1.1rem;
+    }
+
+    /* Contact Grid */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Contact Info Cards */
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .info-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .info-card:hover {
+      border-color: #0a66c2;
+      box-shadow: 0 10px 30px rgba(20, 168, 0, 0.1);
+      transform: translateY(-3px);
+    }
+
+    .info-icon {
+      width: 50px;
+      height: 50px;
+      background: #f0fdf4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .info-icon i {
+      font-size: 1.5rem;
+      color: #0a66c2;
+    }
+
+    .info-card h3 {
+      font-size: 1.2rem;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-card p {
+      color: #475569;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-card a {
+      color: #0a66c2;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .info-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* Contact Form */
+    .contact-form {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .contact-form h2 {
+      font-size: 1.8rem;
+      color: #0f172a;
+      margin-bottom: 2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #0a66c2;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #0a66c2;
+      box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.12);
+    }
+
+    /* CUSTOM SELECT COMPONENT STYLES */
+    .custom-select-wrapper {
+      position: relative;
+      width: 100%;
+      user-select: none;
+    }
+
+    .custom-select-trigger {
+      width: 100%;
+      padding: 0.95rem 1.2rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #0f172a;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: left;
+      box-sizing: border-box;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .custom-select-trigger:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    .custom-select-wrapper.open .custom-select-trigger,
+    .custom-select-trigger:focus {
+      outline: none;
+      border-color: #0a66c2;
+      box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.14);
+      background: #ffffff;
+    }
+
+    .custom-select-trigger.is-invalid {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .custom-select-trigger span.placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    .custom-select-trigger span.selected-value {
+      color: #0f172a;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .custom-select-trigger span.selected-value .option-icon-box {
+      width: 28px;
+      height: 28px;
+      font-size: 0.85rem;
+      border-radius: 7px;
+    }
+
+    .custom-select-arrow {
+      font-size: 0.85rem;
+      color: #64748b;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+      margin-left: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .custom-select-wrapper.open .custom-select-arrow {
+      transform: rotate(180deg);
+      color: #0a66c2;
+    }
+
+    .custom-select-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.16), 0 4px 12px rgba(15, 23, 42, 0.05);
+      padding: 8px;
+      z-index: 1050;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      animation: selectDropdownSlide 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    @keyframes selectDropdownSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .custom-select-wrapper.open .custom-select-dropdown {
+      display: flex;
+    }
+
+    .custom-select-option {
+      padding: 0.75rem 0.9rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: #ffffff;
+    }
+
+    .custom-select-option:hover {
+      background: #f8fafc;
+      transform: translateX(2px);
+    }
+
+    .custom-select-option.selected {
+      background: #eff6ff;
+    }
+
+    .custom-select-option.selected .option-main-title {
+      color: #0a66c2;
+      font-weight: 600;
+    }
+
+    .option-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .custom-select-option:hover .option-icon-box {
+      transform: scale(1.08);
+    }
+
+    .option-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: left;
+    }
+
+    .option-main-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #0f172a;
+    }
+
+    .option-sub-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .option-check-icon {
+      color: #0a66c2;
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .custom-select-option.selected .option-check-icon {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .btn {
+      background: #0a66c2;
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background: #108700;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(20, 168, 0, 0.3);
+    }
+
+    /* Map Section */
+    .map-section {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid #e2e8f0;
+      margin: 3rem 0;
+    }
+
+    .map-section h2 {
+      font-size: 1.5rem;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+    }
+
+    .map-placeholder {
+      background: #f1f5f9;
+      height: 400px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      border: 2px dashed #cbd5e1;
+    }
+
+    /* Business Hours */
+    .hours-section {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .hours-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .hours-item {
+      text-align: center;
+    }
+
+    .hours-item .day {
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .hours-item .time {
+      color: #64748b;
+    }
+
+    .hours-item .status {
+      color: #0a66c2;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Creator Card */
+    .creator-card {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem;
+      margin-top: 3rem;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+      background: linear-gradient(145deg, white, #f8fafc);
+    }
+
+    .creator-avatar {
+      width: 100px;
+      height: 100px;
+      background: #f0fdf4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      border: 3px solid #0a66c2;
+    }
+
+    .creator-avatar i {
+      font-size: 3rem;
+      color: #0a66c2;
+    }
+
+    .creator-card h3 {
+      font-size: 1.8rem;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
+    }
+
+    .creator-title {
+      color: #0a66c2;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .creator-social {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .creator-social a {
+      width: 40px;
+      height: 40px;
+      background: #f1f5f9;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #475569;
+      transition: all 0.2s;
+    }
+
+    .creator-social a:hover {
+      background: #0a66c2;
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    /* Footer */
+    footer {
+      background: white;
+      padding: 3rem 5% 1.5rem;
+      margin-top: 4rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-section h3 {
+      color: #0a66c2;
+      margin-bottom: 1rem;
+    }
+
+    .footer-section h4 {
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-section ul li a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .footer-section ul li a:hover {
+      color: #0a66c2;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .social-links a {
+      color: #64748b;
+      font-size: 1.2rem;
+    }
+
+    .social-links a:hover {
+      color: #0a66c2;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e2e8f0;
+      color: #64748b;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
       .contact-grid {
-        display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: 2.5rem;
-        margin-bottom: 3rem;
-      }
-
-      /* Contact Info Cards */
-      .contact-info {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-
-      .info-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 20px;
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s;
-      }
-
-      .info-card:hover {
-        border-color: #0a66c2;
-        box-shadow: 0 10px 30px rgba(20, 168, 0, 0.1);
-        transform: translateY(-3px);
-      }
-
-      .info-icon {
-        width: 50px;
-        height: 50px;
-        background: #f0fdf4;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1rem;
-      }
-
-      .info-icon i {
-        font-size: 1.5rem;
-        color: #0a66c2;
-      }
-
-      .info-card h3 {
-        font-size: 1.2rem;
-        color: #0f172a;
-        margin-bottom: 0.5rem;
-      }
-
-      .info-card p {
-        color: #475569;
-        margin-bottom: 0.25rem;
-      }
-
-      .info-card a {
-        color: #0a66c2;
-        text-decoration: none;
-        font-weight: 500;
-      }
-
-      .info-card a:hover {
-        text-decoration: underline;
-      }
-
-      /* Contact Form */
-      .contact-form {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 24px;
-        border: 1px solid #e2e8f0;
-      }
-
-      .contact-form h2 {
-        font-size: 1.8rem;
-        color: #0f172a;
-        margin-bottom: 2rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid #0a66c2;
-      }
-
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #334155;
-        font-weight: 500;
-      }
-
-      .form-group input,
-      .form-group textarea,
-      .form-group select {
-        width: 100%;
-        padding: 1rem 1.2rem;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        font-size: 1rem;
-        transition: all 0.2s;
-        font-family: inherit;
-      }
-
-      .form-group input:focus,
-      .form-group textarea:focus,
-      .form-group select:focus {
-        outline: none;
-        border-color: #0a66c2;
-        box-shadow: 0 0 0 4px rgba(20, 168, 0, 0.1);
-      }
-
-      .form-group textarea {
-        min-height: 150px;
-        resize: vertical;
+        grid-template-columns: 1fr;
       }
 
       .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-header h1 {
+        font-size: 2rem;
       }
 
-      .btn {
-        background: #0a66c2;
-        color: white;
-        padding: 1rem 2rem;
-        border: none;
-        border-radius: 40px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        width: 100%;
+      .contact-form {
+        padding: 1.5rem;
       }
+    }
 
-      .btn:hover {
-        background: #108700;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 20px rgba(20, 168, 0, 0.3);
-      }
-
-      /* Map Section */
-      .map-section {
-        background: white;
-        border-radius: 24px;
-        padding: 2rem;
-        border: 1px solid #e2e8f0;
-        margin: 3rem 0;
-      }
-
-      .map-section h2 {
-        font-size: 1.5rem;
-        color: #0f172a;
-        margin-bottom: 1.5rem;
-      }
-
-      .map-placeholder {
-        background: #f1f5f9;
-        height: 400px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #64748b;
-        border: 2px dashed #cbd5e1;
-      }
-
-      /* Business Hours */
-      .hours-section {
-        background: white;
-        border-radius: 24px;
-        padding: 2rem;
-        border: 1px solid #e2e8f0;
+    @media (max-width: 480px) {
+      .container {
+        padding: 2rem 1rem;
       }
 
       .hours-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-        margin-top: 1.5rem;
+        grid-template-columns: 1fr;
       }
+    }
+  </style>
+</head>
 
-      .hours-item {
-        text-align: center;
-      }
+<body>
+  {% include 'includes/header.html' %}
 
-      .hours-item .day {
-        font-weight: 600;
-        color: #0f172a;
-        margin-bottom: 0.5rem;
-      }
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Contact Us</h1>
+      <p>Get in touch with our team — we're here to help</p>
+    </div>
 
-      .hours-item .time {
-        color: #64748b;
-      }
-
-      .hours-item .status {
-        color: #0a66c2;
-        font-size: 0.9rem;
-        margin-top: 0.25rem;
-      }
-
-      /* Creator Card */
-      .creator-card {
-        background: white;
-        border-radius: 24px;
-        padding: 2.5rem;
-        margin-top: 3rem;
-        border: 1px solid #e2e8f0;
-        text-align: center;
-        background: linear-gradient(145deg, white, #f8fafc);
-      }
-
-      .creator-avatar {
-        width: 100px;
-        height: 100px;
-        background: #f0fdf4;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-        border: 3px solid #0a66c2;
-      }
-
-      .creator-avatar i {
-        font-size: 3rem;
-        color: #0a66c2;
-      }
-
-      .creator-card h3 {
-        font-size: 1.8rem;
-        color: #0f172a;
-        margin-bottom: 0.5rem;
-      }
-
-      .creator-title {
-        color: #0a66c2;
-        font-weight: 500;
-        margin-bottom: 1rem;
-      }
-
-      .creator-social {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        margin-top: 1.5rem;
-      }
-
-      .creator-social a {
-        width: 40px;
-        height: 40px;
-        background: #f1f5f9;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #475569;
-        transition: all 0.2s;
-      }
-
-      .creator-social a:hover {
-        background: #0a66c2;
-        color: white;
-        transform: translateY(-3px);
-      }
-
-      /* Footer */
-      footer {
-        background: white;
-        padding: 3rem 5% 1.5rem;
-        margin-top: 4rem;
-        border-top: 1px solid #e2e8f0;
-      }
-
-      .footer-content {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      .footer-section h3 {
-        color: #0a66c2;
-        margin-bottom: 1rem;
-      }
-
-      .footer-section h4 {
-        color: #0f172a;
-        margin-bottom: 1rem;
-      }
-
-      .footer-section ul {
-        list-style: none;
-      }
-
-      .footer-section ul li {
-        margin-bottom: 0.5rem;
-      }
-
-      .footer-section ul li a {
-        color: #64748b;
-        text-decoration: none;
-        font-size: 0.9rem;
-      }
-
-      .footer-section ul li a:hover {
-        color: #0a66c2;
-      }
-
-      .social-links {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-
-      .social-links a {
-        color: #64748b;
-        font-size: 1.2rem;
-      }
-
-      .social-links a:hover {
-        color: #0a66c2;
-      }
-
-      .footer-bottom {
-        text-align: center;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid #e2e8f0;
-        color: #64748b;
-      }
-
-      /* Responsive */
-      @media (max-width: 992px) {
-        .contact-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .page-header h1 {
-          font-size: 2rem;
-        }
-
-        .contact-form {
-          padding: 1.5rem;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .container {
-          padding: 2rem 1rem;
-        }
-
-        .hours-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    {% include 'includes/header.html' %}
-
-    <div class="container">
-      <!-- Page Header -->
-      <div class="page-header">
-        <h1>Contact Us</h1>
-        <p>Get in touch with our team — we're here to help</p>
-      </div>
-
-      <!-- Contact Grid -->
-      <div class="contact-grid">
-        <!-- Contact Information -->
-        <div class="contact-info">
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <h3>Visit Us</h3>
-            <p>Vadvanhoshalli, Konanur Road</p>
-            <p>Arkalgud, Hassan - 573102</p>
-            <p>Karnataka, India</p>
+    <!-- Contact Grid -->
+    <div class="contact-grid">
+      <!-- Contact Information -->
+      <div class="contact-info">
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-map-marker-alt"></i>
           </div>
-
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-phone-alt"></i>
-            </div>
-            <h3>Call Us</h3>
-            <p>
-              <strong>Mobile:</strong>
-              <a href="tel:+919148937633">+91 91489 37633</a>
-            </p>
-            <p><strong>Support:</strong> Available 24/7</p>
-            <p><strong>Office Hours:</strong> Mon-Sat, 9AM - 6PM</p>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <h3>Email Us</h3>
-            <p>
-              <strong>General:</strong>
-              <a href="mailto:sujanshettySK28@gmail.com"
-                >sujanshettySK28@gmail.com</a
-              >
-            </p>
-            <p><strong>Support:</strong> support@freelancerportal.com</p>
-            <p><strong>Careers:</strong> careers@freelancerportal.com</p>
-          </div>
-
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-globe"></i>
-            </div>
-            <h3>Social Media</h3>
-            <div style="display: flex; gap: 1rem; margin-top: 0.5rem">
-              <a href="#" style="color: #3b5998"
-                ><i class="fab fa-facebook fa-2x"></i
-              ></a>
-              <a href="#" style="color: #1da1f2"
-                ><i class="fab fa-twitter fa-2x"></i
-              ></a>
-              <a href="#" style="color: #0a66c2"
-                ><i class="fab fa-linkedin fa-2x"></i
-              ></a>
-              <a href="#" style="color: #e4405f"
-                ><i class="fab fa-instagram fa-2x"></i
-              ></a>
-              <a href="#" style="color: #ff0000"
-                ><i class="fab fa-youtube fa-2x"></i
-              ></a>
-            </div>
-          </div>
+          <h3>Visit Us</h3>
+          <p>Vadvanhoshalli, Konanur Road</p>
+          <p>Arkalgud, Hassan - 573102</p>
+          <p>Karnataka, India</p>
         </div>
 
-        <!-- Contact Form -->
-        <div class="contact-form">
-          <h2>Send a Message</h2>
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-phone-alt"></i>
+          </div>
+          <h3>Call Us</h3>
+          <p>
+            <strong>Mobile:</strong>
+            <a href="tel:+919148937633">+91 91489 37633</a>
+          </p>
+          <p><strong>Support:</strong> Available 24/7</p>
+          <p><strong>Office Hours:</strong> Mon-Sat, 9AM - 6PM</p>
+        </div>
 
-          <form method="POST">
-            {% csrf_token %}
-             {% if error_message %}
-             <div style="padding: 12px; margin-bottom: 15px; border-radius: 10px; font-weight: 500; background: #fee2e2; color: #991b1b;">
-               {{ error_message }}
-             </div>
-             {% endif %}
-             
-             {% if success_message %}
-             <div style="padding: 12px; margin-bottom: 15px; border-radius: 10px; font-weight: 500; background: #dcfce7; color: #166534;">
-               {{ success_message }}
-             </div>
-             {% endif %}
-            <div class="form-row">
-              <div class="form-group">
-                <label>First Name *</label>
-                <input
-                  type="text"
-                  name="first_name"
-                  placeholder="Enter your first name"
-                  required />
-              </div>
-              <div class="form-group">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  name="last_name"
-                  placeholder="Enter your last name" />
-              </div>
-            </div>
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <h3>Email Us</h3>
+          <p>
+            <strong>General:</strong>
+            <a href="mailto:sujanshettySK28@gmail.com">sujanshettySK28@gmail.com</a>
+          </p>
 
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <h3>Social Media</h3>
+          <div style="display: flex; gap: 1rem; margin-top: 0.5rem">
+
+            <a href="#" style="color: #1da1f2"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="#" style="color: #0a66c2"><i class="fab fa-linkedin fa-2x"></i></a>
+            <a href="#" style="color: #e4405f"><i class="fab fa-instagram fa-2x"></i></a>
+            <a href="#" style="color: #ff0000"><i class="fab fa-youtube fa-2x"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form">
+        <h2>Send a Message</h2>
+
+        <form method="POST">
+          {% csrf_token %}
+          {% if error_message %}
+          <div
+            style="padding: 12px; margin-bottom: 15px; border-radius: 10px; font-weight: 500; background: #fee2e2; color: #991b1b;">
+            {{ error_message }}
+          </div>
+          {% endif %}
+
+          {% if success_message %}
+          <div
+            style="padding: 12px; margin-bottom: 15px; border-radius: 10px; font-weight: 500; background: #dcfce7; color: #166534;">
+            {{ success_message }}
+          </div>
+          {% endif %}
+          <div class="form-row">
             <div class="form-group">
-              <label>Email *</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your email address"
-                required />
+              <label>First Name *</label>
+              <input type="text" name="first_name" placeholder="Enter your first name" required />
             </div>
-
             <div class="form-group">
-              <label>Phone Number</label>
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Enter your phone number" />
+              <label>Last Name</label>
+              <input type="text" name="last_name" placeholder="Enter your last name" />
             </div>
+          </div>
 
-            <div class="form-group">
-              <label>Subject *</label>
-              <select name="subject" required>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" placeholder="Enter your email address" required />
+          </div>
+
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" name="phone" placeholder="Enter your phone number" />
+          </div>
+
+          <div class="form-group">
+            <label>Subject *</label>
+            <div class="custom-select-wrapper" id="customSubjectWrapper">
+              <!-- Native select preserved for form submission & validation -->
+              <select name="subject" id="subjectSelect" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; bottom: 0; left: 50%;" required>
                 <option value="">Select a subject</option>
                 <option value="general">General Inquiry</option>
                 <option value="support">Technical Support</option>
@@ -588,25 +761,97 @@
                 <option value="partnership">Partnership Opportunity</option>
                 <option value="feedback">Feedback</option>
               </select>
-            </div>
 
-            <div class="form-group">
-              <label>Message *</label>
-              <textarea
-                name="message"
-                placeholder="Write your message here..."
-                required></textarea>
-            </div>
+              <!-- Custom CSS Trigger -->
+              <button type="button" class="custom-select-trigger" id="customSubjectTrigger" aria-haspopup="listbox" aria-expanded="false">
+                <span id="customSubjectDisplay" class="placeholder">Select a subject</span>
+                <i class="fas fa-chevron-down custom-select-arrow"></i>
+              </button>
 
-            <button type="submit" class="btn">
-              <i class="fas fa-paper-plane"></i> Send Message
-            </button>
-          </form>
-        </div>
+              <!-- Custom CSS Dropdown Menu -->
+              <div class="custom-select-dropdown" id="customSubjectDropdown" role="listbox">
+                <div class="custom-select-option" data-value="general" role="option">
+                  <div class="option-content">
+                    <div class="option-icon-box" style="background: #e0f2fe; color: #0284c7;">
+                      <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="option-text-wrap">
+                      <span class="option-main-title">General Inquiry</span>
+                      <span class="option-sub-desc">Questions about our platform, services, or getting started</span>
+                    </div>
+                  </div>
+                  <i class="fas fa-check option-check-icon"></i>
+                </div>
+
+                <div class="custom-select-option" data-value="support" role="option">
+                  <div class="option-content">
+                    <div class="option-icon-box" style="background: #fef3c7; color: #d97706;">
+                      <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="option-text-wrap">
+                      <span class="option-main-title">Technical Support</span>
+                      <span class="option-sub-desc">Assistance with account access, bugs, or site errors</span>
+                    </div>
+                  </div>
+                  <i class="fas fa-check option-check-icon"></i>
+                </div>
+
+                <div class="custom-select-option" data-value="billing" role="option">
+                  <div class="option-content">
+                    <div class="option-icon-box" style="background: #dcfce7; color: #16a34a;">
+                      <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="option-text-wrap">
+                      <span class="option-main-title">Billing Question</span>
+                      <span class="option-sub-desc">Invoices, payments, escrow, deposits, or refund requests</span>
+                    </div>
+                  </div>
+                  <i class="fas fa-check option-check-icon"></i>
+                </div>
+
+                <div class="custom-select-option" data-value="partnership" role="option">
+                  <div class="option-content">
+                    <div class="option-icon-box" style="background: #f3e8ff; color: #9333ea;">
+                      <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="option-text-wrap">
+                      <span class="option-main-title">Partnership Opportunity</span>
+                      <span class="option-sub-desc">Collaborations, enterprise integrations, or press queries</span>
+                    </div>
+                  </div>
+                  <i class="fas fa-check option-check-icon"></i>
+                </div>
+
+                <div class="custom-select-option" data-value="feedback" role="option">
+                  <div class="option-content">
+                    <div class="option-icon-box" style="background: #ffe4e6; color: #e11d48;">
+                      <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="option-text-wrap">
+                      <span class="option-main-title">Feedback</span>
+                      <span class="option-sub-desc">Feature suggestions, UI improvements, or share your thoughts</span>
+                    </div>
+                  </div>
+                  <i class="fas fa-check option-check-icon"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Message *</label>
+            <textarea name="message" placeholder="Write your message here..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+        </form>
       </div>
+    </div>
 
-      <!-- Map Section -->
-      <!-- <div class="map-section">
+    <!-- Map Section -->
+    <!-- <div class="map-section">
         <h2><i class="fas fa-map-marked-alt"></i> Our Location</h2>
         <div class="map-placeholder">
             <div style="text-align: center;">
@@ -618,8 +863,8 @@
         </div>
     </div> -->
 
-      <!-- Business Hours -->
-      <!-- <div class="hours-section">
+    <!-- Business Hours -->
+    <!-- <div class="hours-section">
         <h2><i class="fas fa-clock"></i> Business Hours</h2>
         <div class="hours-grid">
             <div class="hours-item">
@@ -645,41 +890,83 @@
         </div>
     </div> -->
 
-      <!-- Creator Card - Based on your resume -->
-      <div class="creator-card">
-        <div class="creator-avatar">
-          <i class="fas fa-user"></i>
-        </div>
-        <h3>Sujan V L</h3>
-        <div class="creator-title">Founder & Lead Developer</div>
-        <p style="max-width: 600px; margin: 0 auto; color: #475569">
-          Aspiring Software Developer with strong foundation in Python and
-          Django. Building scalable web applications and continuously enhancing
-          technical expertise.
-        </p>
-        <div class="creator-social">
-          <a href="#"><i class="fab fa-github"></i></a>
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="mailto:sujanshettySK28@gmail.com"
-            ><i class="fas fa-envelope"></i
-          ></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
-        </div>
-        <div
-          style="
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e2e8f0;
-          ">
-          <p>
-            <i class="fas fa-phone"></i> +91 91489 37633 |
-            <i class="fas fa-map-marker-alt"></i> Arkalgud, Hassan
-          </p>
-        </div>
-      </div>
-    </div>
+    <!-- Creator Card - Based on your resume -->
 
-    {% include 'includes/footer.html' %}
-  </body>
+  </div>
+
+  {% include 'includes/footer.html' %}
+
+  <script>
+    (function() {
+      const wrapper = document.getElementById('customSubjectWrapper');
+      const trigger = document.getElementById('customSubjectTrigger');
+      const display = document.getElementById('customSubjectDisplay');
+      const nativeSelect = document.getElementById('subjectSelect');
+      const options = document.querySelectorAll('.custom-select-option');
+
+      if (wrapper && trigger && nativeSelect) {
+        trigger.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const isOpen = wrapper.classList.toggle('open');
+          trigger.setAttribute('aria-expanded', isOpen);
+        });
+
+        options.forEach(opt => {
+          opt.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const val = this.getAttribute('data-value');
+            const titleEl = this.querySelector('.option-main-title');
+            const iconEl = this.querySelector('.option-icon-box');
+            const titleText = titleEl ? titleEl.textContent : val;
+
+            nativeSelect.value = val;
+            nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // Update trigger display with icon + title
+            display.className = 'selected-value';
+            display.innerHTML = (iconEl ? iconEl.outerHTML : '') + '<span>' + titleText + '</span>';
+
+            options.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+
+            wrapper.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.classList.remove('is-invalid');
+          });
+        });
+
+        document.addEventListener('click', function(e) {
+          if (!wrapper.contains(e.target)) {
+            wrapper.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && wrapper.classList.contains('open')) {
+            wrapper.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.focus();
+          }
+        });
+
+        const form = wrapper.closest('form');
+        if (form) {
+          form.addEventListener('submit', function(e) {
+            if (!nativeSelect.value) {
+              e.preventDefault();
+              trigger.classList.add('is-invalid');
+              wrapper.classList.add('open');
+              trigger.setAttribute('aria-expanded', 'true');
+              trigger.focus();
+              trigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          });
+        }
+      }
+    })();
+  </script>
+</body>
+
 </html>

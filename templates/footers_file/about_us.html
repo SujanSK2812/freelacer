@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <title>About Us - Freelancer Portal</title>
@@ -27,7 +28,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -50,7 +51,8 @@
             font-weight: 500;
         }
 
-        .nav-links a:hover, .nav-links a.active {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: #0a66c2;
         }
 
@@ -108,7 +110,7 @@
             padding: 2.5rem;
             margin-bottom: 2rem;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .content-card h2 {
@@ -429,15 +431,15 @@
                 align-items: center;
                 text-align: center;
             }
-            
+
             .founder-details {
                 grid-template-columns: 1fr;
             }
-            
+
             .stats-section {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .values-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -447,11 +449,11 @@
             .page-header h1 {
                 font-size: 2rem;
             }
-            
+
             .hero-section {
                 padding: 2rem;
             }
-            
+
             .values-grid {
                 grid-template-columns: 1fr;
             }
@@ -461,91 +463,55 @@
             .stats-section {
                 grid-template-columns: 1fr;
             }
-            
+
             .education-table {
                 font-size: 0.9rem;
             }
-            
+
             .skills-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
 
-{% include 'includes/header.html' %}
+    {% include 'includes/header.html' %}
 
-<div class="container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div style="text-align: center; margin-bottom: 1.25rem;">
-            <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal" style="height: 60px; width: auto; max-width: 85px; object-fit: contain; border-radius: 14px; box-shadow: 0 4px 14px rgba(10, 102, 194, 0.15); background: white; padding: 4px;">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div style="text-align: center; margin-bottom: 1.25rem;">
+                <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal"
+                    style="height: 60px; width: auto; max-width: 85px; object-fit: contain; border-radius: 14px; box-shadow: 0 4px 14px rgba(10, 102, 194, 0.15); background: white; padding: 4px;">
+            </div>
+            <h1>About Freelancer Portal</h1>
+            <p>Connecting talented freelancers with amazing clients since 2025</p>
         </div>
-        <h1>About Freelancer Portal</h1>
-        <p>Connecting talented freelancers with amazing clients since 2025</p>
-    </div>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <h2>Our Story</h2>
-        <p>
-            Freelancer Portal was founded by <strong>Sujan V L</strong>, an aspiring software developer 
-            with a vision to create a seamless platform where talented professionals can find meaningful work 
-            and businesses can access top-tier talent effortlessly.
-        </p>
-        <p>
-            Built with Python and Django, our platform combines technical excellence with user-friendly design 
-            to deliver the best freelance experience.
-        </p>
-    </div>
-
-    <!-- Founder Section -->
-    <div class="founder-card">
-        <div class="founder-avatar">
-            <i class="fas fa-user"></i>
-        </div>
-        <div class="founder-info">
-            <h3>Sujan V L</h3>
-            <div class="founder-title">Founder & Lead Developer</div>
-            <p style="color: #475569;">
-                Aspiring Software Developer with strong foundation in Python and Django. 
-                Seeking to build scalable web applications and continuously enhance technical expertise.
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h2>Our Story</h2>
+            <p>
+                Freelancer Portal was founded by <strong>Sujan V L</strong>, an aspiring software developer
+                with a vision to create a seamless platform where talented professionals can find meaningful work
+                and businesses can access top-tier talent effortlessly.
             </p>
-            
-            <div class="founder-details">
-                <div class="detail-item">
-                    <i class="fas fa-phone"></i>
-                    <span>+91 91489 37633</span>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-envelope"></i>
-                    <span>sujanshettySK28@gmail.com</span>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Arkalgud, Hassan, Karnataka</span>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-birthday-cake"></i>
-                    <span>28 April 2005</span>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                <a href="#" style="color: #3b5998;"><i class="fab fa-facebook fa-2x"></i></a>
-                <a href="#" style="color: #1da1f2;"><i class="fab fa-twitter fa-2x"></i></a>
-                <a href="#" style="color: #0a66c2;"><i class="fab fa-linkedin fa-2x"></i></a>
-                <a href="#" style="color: #333;"><i class="fab fa-github fa-2x"></i></a>
-                <a href="#" style="color: #ff0000;"><i class="fab fa-youtube fa-2x"></i></a>
-            </div>
+            <p>
+                Built with Python and Django, our platform combines technical excellence with user-friendly design
+                to deliver the best freelance experience.
+            </p>
         </div>
+
+        <!-- Founder Section -->
+
+
+
     </div>
 
-   
-</div>
-
-{% include 'includes/footer.html' %}
+    {% include 'includes/footer.html' %}
 
 </body>
+
 </html>

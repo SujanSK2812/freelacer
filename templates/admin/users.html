@@ -207,6 +207,8 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+      }
+
       .user-list {
         padding: 0.25rem 0;
         max-height: 290px;
@@ -380,13 +382,16 @@
       }
 
       .post-thumb-img {
-        width: 64px;
-        height: 64px;
-        object-fit: cover;
+        width: 64px !important;
+        height: 64px !important;
+        max-width: 64px !important;
+        max-height: 64px !important;
+        object-fit: cover !important;
         border-radius: 10px;
         border: 1px solid #e2e8f0;
         flex-shrink: 0;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        display: block;
       }
       .post-thumb-placeholder {
         width: 64px;
@@ -569,16 +574,55 @@
         <div class="user-list" id="clientsList">
           {% for user in clients %}
           <div class="user-row">
-            <div class="user-info">
-              <div class="user-name">
-                {{ user.username }}
-                <span class="user-badge client">Client</span>
-              </div>
+            <div style="display: flex; align-items: center; gap: 14px; flex: 2; min-width: 220px;">
+              {% if user.get_profile_picture %}
+                <img src="{{ user.get_profile_picture }}" alt="{{ user.username }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1.5px solid #e2e8f0; flex-shrink: 0;" />
+              {% else %}
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #0a66c2, #0284c7); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
+                  {{ user.username|slice:":1"|upper }}
+                </div>
+              {% endif %}
+              <div class="user-info">
+                <div class="user-name">
+                  <a href="{% url 'accounts:view_profile' user.id %}" target="_blank" style="color: #0f172a; text-decoration: none; font-weight: 600;">{{ user.username }}</a>
+                  {% if user.get_full_name %}
+                    <span style="font-size: 0.85rem; color: #64748b; font-weight: 400;">({{ user.get_full_name }})</span>
+                  {% endif %}
+                  <span class="user-badge client">Client</span>
+                  {% if user.is_verified %}
+                    <span style="color: #0a66c2; font-size: 0.85rem;" title="Verified"><i class="fas fa-check-circle"></i></span>
+                  {% endif %}
+                  {% if not user.is_active %}
+                    <span class="badge-post-status" style="background: #fee2e2; color: #b91c1c;">Inactive</span>
+                  {% endif %}
+                </div>
 
-              <div class="user-email">{{ user.email }}</div>
+                <div class="user-email" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <span><i class="far fa-envelope" style="color: #94a3b8; margin-right: 4px;"></i>{{ user.email }}</span>
+                  {% if user.phone %}
+                    <span style="color: #cbd5e1;">•</span>
+                    <span><i class="fas fa-phone-alt" style="color: #94a3b8; margin-right: 4px;"></i>{{ user.phone }}</span>
+                  {% endif %}
+                  <span style="color: #cbd5e1;">•</span>
+                  <span style="color: #94a3b8; font-size: 0.76rem;">Joined {{ user.date_joined|date:"M d, Y" }}</span>
+                </div>
+                {% if user.clientprofile.company_name or user.clientprofile.title %}
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+                  <i class="fas fa-building" style="color: #94a3b8; margin-right: 3px;"></i>
+                  {% if user.clientprofile.company_name %}
+                    <strong>{{ user.clientprofile.company_name }}</strong>
+                  {% endif %}
+                  {% if user.clientprofile.company_name and user.clientprofile.title %} • {% endif %}
+                  {{ user.clientprofile.title }}
+                </div>
+                {% endif %}
+              </div>
             </div>
 
             <div class="user-actions">
+              <a href="{% url 'accounts:view_profile' user.id %}" target="_blank" class="btn-outline-sm" title="View Profile" style="text-decoration: none; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
+                <i class="fas fa-external-link-alt"></i> Profile
+              </a>
               <button type="button" class="icon-btn edit" title="Edit Client" onclick="openEditUserModal({{ user.id }}, '{{ user.username|escapejs }}', '{{ user.email|escapejs }}', '{{ user.phone|default:''|escapejs }}', '{{ user.role }}', {{ user.is_active|yesno:'true,false' }})">
                 <i class="fas fa-edit"></i>
               </button>
@@ -612,22 +656,57 @@
         <div class="user-list" id="freelancersList">
           {% for user in freelancers %}
           <div class="user-row">
-            <div class="user-info">
-              <div class="user-name">
-                {{ user.username }}
-                <span class="user-badge">Freelancer</span>
-              </div>
-
-              <div class="user-email">{{ user.email }}</div>
-
-              {% if user.skills %}
-              <div style="font-size: 0.7rem; color: #475569">
-                Skills: {{ user.skills }}
-              </div>
+            <div style="display: flex; align-items: center; gap: 14px; flex: 2; min-width: 220px;">
+              {% if user.get_profile_picture %}
+                <img src="{{ user.get_profile_picture }}" alt="{{ user.username }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1.5px solid #e2e8f0; flex-shrink: 0;" />
+              {% else %}
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
+                  {{ user.username|slice:":1"|upper }}
+                </div>
               {% endif %}
+              <div class="user-info">
+                <div class="user-name">
+                  <a href="{% url 'accounts:view_profile' user.id %}" target="_blank" style="color: #0f172a; text-decoration: none; font-weight: 600;">{{ user.username }}</a>
+                  {% if user.get_full_name %}
+                    <span style="font-size: 0.85rem; color: #64748b; font-weight: 400;">({{ user.get_full_name }})</span>
+                  {% endif %}
+                  <span class="user-badge" style="background: #e6f7e6; color: #16a34a;">Freelancer</span>
+                  {% if user.is_verified %}
+                    <span style="color: #0a66c2; font-size: 0.85rem;" title="Verified"><i class="fas fa-check-circle"></i></span>
+                  {% endif %}
+                  {% if not user.is_active %}
+                    <span class="badge-post-status" style="background: #fee2e2; color: #b91c1c;">Inactive</span>
+                  {% endif %}
+                </div>
+
+                <div class="user-email" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <span><i class="far fa-envelope" style="color: #94a3b8; margin-right: 4px;"></i>{{ user.email }}</span>
+                  {% if user.phone %}
+                    <span style="color: #cbd5e1;">•</span>
+                    <span><i class="fas fa-phone-alt" style="color: #94a3b8; margin-right: 4px;"></i>{{ user.phone }}</span>
+                  {% endif %}
+                  <span style="color: #cbd5e1;">•</span>
+                  <span style="color: #94a3b8; font-size: 0.76rem;">Joined {{ user.date_joined|date:"M d, Y" }}</span>
+                </div>
+
+                {% if user.freelancerprofile.title or user.freelancerprofile.skills %}
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+                  {% if user.freelancerprofile.title %}
+                    <strong>{{ user.freelancerprofile.title }}</strong>
+                  {% endif %}
+                  {% if user.freelancerprofile.title and user.freelancerprofile.skills %} • {% endif %}
+                  {% if user.freelancerprofile.skills %}
+                    <span><i class="fas fa-tags" style="color: #94a3b8; margin-right: 3px;"></i>{{ user.freelancerprofile.skills }}</span>
+                  {% endif %}
+                </div>
+                {% endif %}
+              </div>
             </div>
 
             <div class="user-actions">
+              <a href="{% url 'accounts:view_profile' user.id %}" target="_blank" class="btn-outline-sm" title="View Profile" style="text-decoration: none; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
+                <i class="fas fa-external-link-alt"></i> Profile
+              </a>
               <button type="button" class="icon-btn edit" title="Edit Freelancer" onclick="openEditUserModal({{ user.id }}, '{{ user.username|escapejs }}', '{{ user.email|escapejs }}', '{{ user.phone|default:''|escapejs }}', '{{ user.role }}', {{ user.is_active|yesno:'true,false' }})">
                 <i class="fas fa-edit"></i>
               </button>
@@ -657,9 +736,9 @@
           <div class="user-row" style="align-items: flex-start; padding: 1.1rem 1.5rem;">
             <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 260px;">
               {% if job.poster %}
-                <img src="{{ job.poster.url }}" alt="Job Poster" class="post-thumb-img" />
+                <img src="{{ job.poster.url }}" alt="Job Poster" class="post-thumb-img" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px; object-fit: cover; border-radius: 10px; flex-shrink: 0;" />
               {% elif job.image %}
-                <img src="{{ job.image.url }}" alt="Job Image" class="post-thumb-img" />
+                <img src="{{ job.image.url }}" alt="Job Image" class="post-thumb-img" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px; object-fit: cover; border-radius: 10px; flex-shrink: 0;" />
               {% else %}
                 <div class="post-thumb-placeholder" style="background: #e0f2fe; color: #0284c7;">
                   <i class="fas fa-briefcase"></i>
@@ -726,9 +805,9 @@
           <div class="user-row" style="align-items: flex-start; padding: 1.1rem 1.5rem;">
             <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 260px;">
               {% if post.poster %}
-                <img src="{{ post.poster.url }}" alt="Showcase Poster" class="post-thumb-img" />
+                <img src="{{ post.poster.url }}" alt="Showcase Poster" class="post-thumb-img" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px; object-fit: cover; border-radius: 10px; flex-shrink: 0;" />
               {% elif post.image %}
-                <img src="{{ post.image.url }}" alt="Showcase Image" class="post-thumb-img" />
+                <img src="{{ post.image.url }}" alt="Showcase Image" class="post-thumb-img" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px; object-fit: cover; border-radius: 10px; flex-shrink: 0;" />
               {% else %}
                 <div class="post-thumb-placeholder" style="background: #ecfdf5; color: #059669;">
                   <i class="fas fa-laptop-code"></i>
@@ -785,9 +864,9 @@
           <div class="user-row" style="align-items: flex-start; padding: 1.1rem 1.5rem;">
             <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 260px;">
               {% if post.poster %}
-                <img src="{{ post.poster.url }}" alt="Post Poster" class="post-thumb-img" />
+                <img src="{{ post.poster.url }}" alt="Post Poster" class="post-thumb-img" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px; object-fit: cover; border-radius: 10px; flex-shrink: 0;" />
               {% elif post.image %}
-                <img src="{{ post.image.url }}" alt="Post Image" class="post-thumb-img" />
+                <img src="{{ post.image.url }}" alt="Post Image" class="post-thumb-img" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px; object-fit: cover; border-radius: 10px; flex-shrink: 0;" />
               {% else %}
                 <div class="post-thumb-placeholder" style="background: #eef2ff; color: #4338ca;">
                   <i class="fas fa-bullhorn"></i>

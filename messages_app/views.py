@@ -7,10 +7,102 @@ from .models import Message
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
-from accounts.models import Connection
+from accounts.models import Connection, ConnectionRequest
 from proposals.models import Proposal
 
 User = get_user_model()
+
+
+def get_chat_partners_list(current_user, active_partner=None):
+    from django.utils import timezone
+
+    # 1. Partner IDs from exchanged messages
+    partner_ids = Message.objects.filter(
+        Q(sender=current_user) | Q(receiver=current_user)
+    ).values_list('sender_id', 'receiver_id')
+    
+    chat_partner_ids = set()
+    for s_id, r_id in partner_ids:
+        if s_id != current_user.id:
+            chat_partner_ids.add(s_id)
+        if r_id != current_user.id:
+            chat_partner_ids.add(r_id)
+
+    # 2. Add all Connection partners (connections where current_user is sender or receiver)
+    conn_pairs = Connection.objects.filter(
+        Q(sender=current_user) | Q(receiver=current_user)
+    ).values_list('sender_id', 'receiver_id')
+    for s_id, r_id in conn_pairs:
+        if s_id != current_user.id:
+            chat_partner_ids.add(s_id)
+        if r_id != current_user.id:
+            chat_partner_ids.add(r_id)
+
+    # 3. Add all accepted ConnectionRequests
+    cr_pairs = ConnectionRequest.objects.filter(
+        (Q(sender=current_user) | Q(receiver=current_user)),
+        status='accepted'
+    ).values_list('sender_id', 'receiver_id')
+    for s_id, r_id in cr_pairs:
+        if s_id != current_user.id:
+            chat_partner_ids.add(s_id)
+        if r_id != current_user.id:
+            chat_partner_ids.add(r_id)
+
+    # 4. Include active partner if provided
+    if active_partner and active_partner.id != current_user.id:
+        chat_partner_ids.add(active_partner.id)
+
+    if not chat_partner_ids:
+        return []
+
+    users_qs = User.objects.filter(id__in=chat_partner_ids)
+    user_list = list(users_qs)
+
+    for u in user_list:
+        last_msg = Message.objects.filter(
+            Q(sender=current_user, receiver=u, deleted_by_sender=False) |
+            Q(sender=u, receiver=current_user, deleted_by_receiver=False)
+        ).order_by('-timestamp').first()
+        u.last_message = last_msg
+
+        # Filter metrics
+        u.unread_count = Message.objects.filter(
+            sender=u, receiver=current_user, is_read=False, deleted_by_receiver=False
+        ).count()
+
+        u.is_connection = Connection.objects.filter(
+            (Q(sender=current_user, receiver=u) | Q(sender=u, receiver=current_user))
+        ).exists() or ConnectionRequest.objects.filter(
+            (Q(sender=current_user, receiver=u) | Q(sender=u, receiver=current_user)),
+            status='accepted'
+        ).exists()
+
+        has_proposal = Proposal.objects.filter(
+            (Q(job__client=current_user, freelancer=u) | Q(job__client=u, freelancer=current_user))
+        ).exists()
+        has_msg_job = Message.objects.filter(
+            (Q(sender=u, receiver=current_user) | Q(sender=current_user, receiver=u)),
+            proposal__isnull=False
+        ).exists()
+        u.has_jobs = has_proposal or has_msg_job
+
+        u.is_inmail = not u.is_connection
+
+        u.is_focused = u.is_connection or u.has_jobs or (u.last_message is not None)
+
+    # Sort users:
+    # 1. Users with messages sorted by most recent timestamp
+    # 2. Connections without messages sorted by date_joined
+    epoch = timezone.now().replace(year=2000)
+    user_list.sort(
+        key=lambda u: (
+            1 if (getattr(u, 'last_message', None) and u.last_message) else 0,
+            u.last_message.timestamp if (getattr(u, 'last_message', None) and u.last_message) else (getattr(u, 'date_joined', None) or epoch),
+        ),
+        reverse=True
+    )
+    return user_list
 
 
 @login_required
@@ -25,17 +117,7 @@ def chat_home(request):
         except User.DoesNotExist:
             pass
 
-    # Find users with whom request.user has exchanged messages
-    partner_ids = Message.objects.filter(
-        Q(sender=request.user) | Q(receiver=request.user)
-    ).values_list('sender_id', 'receiver_id')
-    
-    chat_partner_ids = set()
-    for s_id, r_id in partner_ids:
-        if s_id != request.user.id:
-            chat_partner_ids.add(s_id)
-        if r_id != request.user.id:
-            chat_partner_ids.add(r_id)
+    user_list = get_chat_partners_list(request.user)
 
     # If messages exist, open the most recent chat partner
     latest_msg = Message.objects.filter(
@@ -50,7 +132,9 @@ def chat_home(request):
     followers_count = Connection.objects.filter(receiver=request.user).count()
 
     return render(request, 'messages/chat_home.html', {
-        'users': [],
+        'other_user': None,
+        'messages': [],
+        'users': user_list,
         'following_count': following_count,
         'followers_count': followers_count,
     })
@@ -104,58 +188,7 @@ def chat_detail(request, user_id):
 
         return redirect('chat_detail', user_id=other_user.id)
 
-    # Find users with whom request.user has exchanged messages
-    partner_ids = Message.objects.filter(
-        Q(sender=request.user) | Q(receiver=request.user)
-    ).values_list('sender_id', 'receiver_id')
-    
-    chat_partner_ids = set()
-    for s_id, r_id in partner_ids:
-        if s_id != request.user.id:
-            chat_partner_ids.add(s_id)
-        if r_id != request.user.id:
-            chat_partner_ids.add(r_id)
-
-    # Always include current active partner (other_user)
-    chat_partner_ids.add(other_user.id)
-
-    users_qs = User.objects.filter(id__in=chat_partner_ids)
-
-    user_list = list(users_qs)
-    from django.utils import timezone
-    for u in user_list:
-        last_msg = Message.objects.filter(
-            Q(sender=request.user, receiver=u, deleted_by_sender=False) |
-            Q(sender=u, receiver=request.user, deleted_by_receiver=False)
-        ).order_by('-timestamp').first()
-        u.last_message = last_msg
-
-        # Filter metrics
-        u.unread_count = Message.objects.filter(
-            sender=u, receiver=request.user, is_read=False, deleted_by_receiver=False
-        ).count()
-
-        u.is_connection = Connection.objects.filter(
-            (Q(sender=request.user, receiver=u) | Q(sender=u, receiver=request.user))
-        ).exists()
-
-        has_proposal = Proposal.objects.filter(
-            (Q(job__client=request.user, freelancer=u) | Q(job__client=u, freelancer=request.user))
-        ).exists()
-        has_msg_job = Message.objects.filter(
-            (Q(sender=u, receiver=request.user) | Q(sender=request.user, receiver=u)),
-            proposal__isnull=False
-        ).exists()
-        u.has_jobs = has_proposal or has_msg_job
-
-        u.is_inmail = not u.is_connection
-
-        u.is_focused = u.is_connection or u.has_jobs or (u.last_message is not None)
-
-    user_list.sort(
-        key=lambda u: u.last_message.timestamp if getattr(u, 'last_message', None) and u.last_message else timezone.now().replace(year=2000),
-        reverse=True
-    )
+    user_list = get_chat_partners_list(request.user, active_partner=other_user)
 
     following_count = Connection.objects.filter(sender=request.user).count()
     followers_count = Connection.objects.filter(receiver=request.user).count()

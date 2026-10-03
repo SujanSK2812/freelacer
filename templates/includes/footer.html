@@ -5,7 +5,8 @@
     <div class="footer-grid">
       <!-- Column 1: Brand Info -->
       <div class="footer-col brand-col">
-        <a href="{% if request.user.is_superuser %}{% url 'accounts:admin_home' %}{% elif request.user.role == 'client' %}{% url 'client:client_home' %}{% else %}{% url 'freelancer:freelancer_home' %}{% endif %}" class="footer-logo">
+        <a href="{% if request.user.is_superuser %}{% url 'accounts:admin_home' %}{% elif request.user.role == 'client' %}{% url 'client:client_home' %}{% else %}{% url 'freelancer:freelancer_home' %}{% endif %}"
+          class="footer-logo">
           <img src="{% static 'images/logo.png' %}" alt="Freelancer Portal Logo" class="footer-brand-logo-img">
           <span class="logo-text">Freelancer<span class="logo-accent">Portal</span></span>
         </a>
@@ -13,11 +14,11 @@
           Connecting top independent talent with businesses worldwide to accomplish extraordinary work together.
         </p>
         <div class="footer-social-icons">
-          <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+
           <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
           <a href="https://linkedin.com" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
           <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+
         </div>
       </div>
 
@@ -279,23 +280,29 @@
       padding: 24px 0 16px;
       margin-top: 24px;
     }
+
     .upwork-footer-container {
       padding: 0 16px;
     }
+
     .footer-grid {
       flex-direction: column;
       gap: 24px;
     }
+
     .footer-col {
       min-width: 100%;
     }
+
     .brand-col {
       min-width: 100%;
       max-width: 100%;
     }
+
     .footer-social-icons {
       margin-top: 10px;
     }
+
     .footer-bottom-bar {
       flex-direction: column;
       gap: 12px;
@@ -323,4 +330,3 @@
     });
   });
 </script>
-
