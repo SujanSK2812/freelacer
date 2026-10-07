@@ -14,7 +14,13 @@
             padding: 0;
         }
 
-        body {
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             background-color: #f9fafb;
             font-family: var(--font-family-base) !important;
             color: #001e00;
@@ -23,8 +29,73 @@
 
         .dashboard-container {
             max-width: 1280px;
+            width: 100%;
             margin: 24px auto;
             padding: 0 24px;
+            box-sizing: border-box;
+        }
+
+        /* Profile Completion Banner */
+        .completion-notice-card {
+            background: #eef3f8;
+            border: 1px solid #0a66c2;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.08);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .completion-notice-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .completion-notice-content i {
+            font-size: 28px;
+            color: #0a66c2;
+            flex-shrink: 0;
+        }
+
+        .completion-notice-content h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #001e00;
+        }
+
+        .completion-notice-content p {
+            margin: 0;
+            font-size: 14px;
+            color: #5e6b7c;
+        }
+
+        .completion-notice-btn {
+            background: #0a66c2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .completion-notice-btn:hover {
+            background: #084e96;
         }
 
         /* Hero Welcome Banner */
@@ -40,12 +111,16 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
             flex-wrap: wrap;
             gap: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .welcome-user-info {
             display: flex;
             align-items: center;
             gap: 20px;
+            min-width: 0;
+            flex: 1;
         }
 
         .hero-avatar {
@@ -63,12 +138,18 @@
             overflow: hidden;
             border: 3px solid #ffffff;
             box-shadow: 0 0 0 1px #e4e6eb;
+            flex-shrink: 0;
         }
 
         .hero-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .hero-text {
+            min-width: 0;
+            flex: 1;
         }
 
         .hero-text h1 {
@@ -78,6 +159,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
+            word-break: break-word;
         }
 
         .top-rated-tag {
@@ -91,18 +174,21 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            white-space: nowrap;
         }
 
         .hero-headline {
             font-size: 14px;
             color: #5e6b7c;
             margin-top: 4px;
+            word-break: break-word;
         }
 
         .hero-stats-quick {
             display: flex;
             align-items: center;
             gap: 24px;
+            flex-shrink: 0;
         }
 
         .quick-stat-box {
@@ -113,6 +199,7 @@
             font-size: 22px;
             font-weight: 700;
             color: #0a66c2;
+            line-height: 1.2;
         }
 
         .quick-stat-lbl {
@@ -132,12 +219,14 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: background 0.15s ease;
+            white-space: nowrap;
         }
 
         .buy-connects-pill:hover {
-            background: #0f7a00;
+            background: #084e96;
         }
 
         /* 5 Metric Performance Grid */
@@ -146,6 +235,7 @@
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
+            width: 100%;
         }
 
         .metric-card {
@@ -154,6 +244,9 @@
             border-radius: 12px;
             padding: 20px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            min-width: 0;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         .metric-card:hover {
@@ -167,6 +260,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
+            gap: 8px;
         }
 
         .metric-icon-box {
@@ -179,12 +273,15 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            flex-shrink: 0;
         }
 
         .metric-trend {
             font-size: 12px;
             font-weight: 600;
             color: #0a66c2;
+            text-align: right;
+            word-break: break-word;
         }
 
         .metric-value {
@@ -192,6 +289,8 @@
             font-weight: 800;
             color: #001e00;
             letter-spacing: -0.5px;
+            line-height: 1.2;
+            word-break: break-all;
         }
 
         .metric-label {
@@ -203,8 +302,10 @@
         /* Dashboard Layout (Main Column + Right Sidebar) */
         .dashboard-layout {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: minmax(0, 1fr) 320px;
             gap: 24px;
+            width: 100%;
+            max-width: 100%;
         }
 
         /* Main Workspace Section */
@@ -212,27 +313,34 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         /* Custom Tabs */
         .tabs-header-bar {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             border-bottom: 2px solid #e4e6eb;
             margin-bottom: 16px;
             overflow-x: auto;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 4px; /* Prevent scrollbar overlapping the active border */
+            overscroll-behavior-x: contain;
+            padding-bottom: 6px;
+            width: 100%;
+            max-width: 100%;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
         }
         
-        /* Optional: style the scrollbar to be subtle */
         .tabs-header-bar::-webkit-scrollbar {
-            height: 4px;
+            height: 3px;
         }
         .tabs-header-bar::-webkit-scrollbar-thumb {
             background-color: #cbd5e1;
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         .tab-btn {
@@ -247,6 +355,10 @@
             transition: color 0.15s ease;
             white-space: nowrap;
             flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .tab-btn.active {
@@ -268,6 +380,16 @@
             border: 1px solid #e4e6eb;
             border-radius: 16px;
             padding: 24px;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .tab-content {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         .card-title-row {
@@ -275,12 +397,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
+            gap: 10px;
         }
 
         .card-title-row h3 {
             font-size: 18px;
             font-weight: 700;
             color: #001e00;
+            min-width: 0;
         }
 
         .view-all-link {
@@ -288,6 +412,8 @@
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .view-all-link:hover {
@@ -302,6 +428,9 @@
             margin-bottom: 12px;
             background: #ffffff;
             transition: border-color 0.15s ease;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .contract-item:hover {
@@ -312,6 +441,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            gap: 10px;
             margin-bottom: 8px;
         }
 
@@ -320,6 +450,10 @@
             font-weight: 700;
             color: #001e00;
             text-decoration: none;
+            min-width: 0;
+            flex: 1;
+            word-break: break-word;
+            line-height: 1.35;
         }
 
         .contract-title:hover {
@@ -333,6 +467,8 @@
             border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .status-badge.pending {
@@ -341,9 +477,20 @@
         }
 
         .contract-client-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
             font-size: 13px;
             color: #5e6b7c;
+            margin-top: 6px;
             margin-bottom: 12px;
+        }
+
+        .contract-client-info span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            word-break: break-word;
         }
 
         .contract-footer {
@@ -353,6 +500,8 @@
             padding-top: 12px;
             border-top: 1px solid #f3f4f6;
             font-size: 13px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .contract-budget {
@@ -364,30 +513,47 @@
         .contract-actions {
             display: flex;
             gap: 12px;
+            align-items: center;
         }
 
         .btn-sm-primary {
             background: #0a66c2;
             color: white;
             border: none;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 16px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-sm-primary:hover {
+            background: #084e96;
         }
 
         .btn-sm-secondary {
             background: transparent;
             border: 1px solid #0a66c2;
             color: #0a66c2;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 16px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-sm-secondary:hover {
+            background: #f0f7ff;
         }
 
         /* Proposal Item */
@@ -399,20 +565,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 14px;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .proposal-info {
+            min-width: 0;
+            flex: 1;
         }
 
         .proposal-info h4 {
             font-size: 15px;
             font-weight: 700;
             color: #001e00;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            word-break: break-word;
+            line-height: 1.35;
         }
 
         .proposal-meta-tags {
             display: flex;
-            gap: 16px;
+            flex-wrap: wrap;
+            gap: 10px 16px;
             font-size: 13px;
             color: #5e6b7c;
+        }
+
+        .proposal-meta-tags span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
         /* Recommended Jobs (Upwork Style) */
@@ -422,6 +606,9 @@
             padding: 20px;
             margin-bottom: 16px;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .upwork-job-card:hover {
@@ -442,6 +629,8 @@
             text-decoration: none;
             display: block;
             margin-bottom: 8px;
+            word-break: break-word;
+            line-height: 1.35;
         }
 
         .job-card-title:hover {
@@ -450,7 +639,7 @@
 
         .job-meta-row {
             display: flex;
-            gap: 16px;
+            gap: 12px 16px;
             font-size: 13px;
             color: #5e6b7c;
             margin-bottom: 12px;
@@ -460,7 +649,7 @@
         .job-meta-row span {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         .job-desc-text {
@@ -468,11 +657,12 @@
             color: #001e00;
             line-height: 1.5;
             margin-bottom: 14px;
+            word-break: break-word;
         }
 
         .job-trust-bar {
             display: flex;
-            gap: 16px;
+            gap: 12px 16px;
             font-size: 12px;
             color: #5e6b7c;
             margin-bottom: 14px;
@@ -505,11 +695,22 @@
             font-weight: 600;
         }
 
+        .job-action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            gap: 10px;
+        }
+
         /* Right Sidebar Cards */
         .sidebar-right {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         .sidebar-box {
@@ -517,6 +718,10 @@
             border: 1px solid #e4e6eb;
             border-radius: 16px;
             padding: 20px;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .sidebar-title {
@@ -544,8 +749,11 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            font-weight: 700;
             margin: 0 auto 12px;
             overflow: hidden;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 0 1px #e4e6eb;
         }
 
         .mini-avatar-box img {
@@ -558,6 +766,7 @@
             font-size: 16px;
             font-weight: 700;
             color: #001e00;
+            word-break: break-word;
         }
 
         .mini-user-role {
@@ -565,6 +774,7 @@
             color: #5e6b7c;
             margin-top: 2px;
             margin-bottom: 12px;
+            word-break: break-word;
         }
 
         .progress-bar-bg {
@@ -588,13 +798,15 @@
             border-radius: 12px;
             padding: 16px;
             text-align: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .connects-num {
             font-size: 32px;
             font-weight: 800;
             color: #0a66c2;
-            line-height: 1;
+            line-height: 1.1;
             margin-bottom: 4px;
         }
 
@@ -608,19 +820,23 @@
             background: #0a66c2;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 10px 16px;
             border-radius: 20px;
             width: 100%;
+            box-sizing: border-box;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
             text-decoration: none;
-            display: block;
-            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.15s ease;
         }
 
         .btn-full-green:hover {
-            background: #0f7a00;
+            background: #084e96;
         }
 
         /* Badges List */
@@ -630,6 +846,7 @@
             gap: 12px;
             padding: 10px 0;
             border-bottom: 1px solid #f3f4f6;
+            min-width: 0;
         }
 
         .badge-list-item:last-child {
@@ -646,28 +863,20 @@
             align-items: center;
             justify-content: center;
             font-size: 14px;
+            flex-shrink: 0;
         }
 
         .badge-text-title {
             font-size: 13px;
             font-weight: 600;
             color: #001e00;
+            word-break: break-word;
         }
 
         .badge-text-sub {
             font-size: 11px;
             color: #5e6b7c;
-        }
-
-        /* Testimonial Quote Box */
-        .testimonial-box {
-            background: #f9fafb;
-            border-left: 3px solid #0a66c2;
-            padding: 12px 14px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #5e6b7c;
-            font-style: italic;
+            word-break: break-all;
         }
 
         /* Empty State */
@@ -675,6 +884,8 @@
             text-align: center;
             padding: 32px 16px;
             color: #5e6b7c;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .empty-box i {
@@ -684,93 +895,369 @@
             display: block;
         }
 
+        .empty-box p {
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+            max-width: 100%;
+        }
+
         @media (max-width: 992px) {
             .dashboard-layout {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 20px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
             }
         }
 
         @media (max-width: 768px) {
             .dashboard-container {
                 margin: 16px auto;
-                padding: 0 14px;
+                padding: 0 16px;
             }
 
             .completion-notice-card {
                 flex-direction: column;
-                align-items: stretch !important;
+                align-items: stretch;
+                padding: 16px;
                 gap: 14px;
+            }
+
+            .completion-notice-content {
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .completion-notice-content i {
+                font-size: 24px;
+                margin-top: 2px;
+            }
+
+            .completion-notice-content h4 {
+                font-size: 15px;
+            }
+
+            .completion-notice-content p {
+                font-size: 13px;
             }
 
             .completion-notice-btn {
                 width: 100%;
                 text-align: center;
                 display: block;
+                padding: 11px 16px;
             }
 
             .welcome-hero-card {
-                padding: 20px 16px;
+                padding: 18px 16px;
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 16px;
+                border-radius: 14px;
             }
 
             .welcome-user-info {
+                width: 100%;
                 gap: 14px;
+            }
+
+            .hero-avatar {
+                width: 58px;
+                height: 58px;
+                font-size: 26px;
+            }
+
+            .hero-text h1 {
+                font-size: 19px;
+                gap: 6px;
+            }
+
+            .top-rated-tag {
+                font-size: 11px;
+                padding: 2px 8px;
+            }
+
+            .hero-headline {
+                font-size: 13px;
             }
 
             .hero-stats-quick {
                 width: 100%;
                 justify-content: space-between;
+                align-items: center;
                 border-top: 1px solid #f1f5f9;
                 padding-top: 14px;
-            }
-
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
             }
 
-            .contracts-tabs {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+            .quick-stat-box {
+                text-align: left;
+            }
+
+            .quick-stat-val {
+                font-size: 19px;
+            }
+
+            .quick-stat-lbl {
+                font-size: 11px;
+            }
+
+            .buy-connects-pill {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .metric-card {
+                padding: 14px 12px;
+                border-radius: 12px;
+            }
+
+            .metric-header {
+                margin-bottom: 8px;
+                gap: 6px;
+            }
+
+            .metric-icon-box {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+
+            .metric-trend {
+                font-size: 11px;
+                line-height: 1.2;
+                text-align: right;
+            }
+
+            .metric-value {
+                font-size: 22px;
+            }
+
+            .metric-label {
+                font-size: 12px;
+            }
+
+            .card-container {
+                padding: 16px 14px;
+                border-radius: 14px;
+            }
+
+            .tabs-header-bar {
+                gap: 12px;
+                margin-bottom: 16px;
+                padding-bottom: 6px;
+            }
+
+            .tab-btn {
+                font-size: 13.5px;
+                padding: 10px 4px;
+                gap: 6px;
+            }
+
+            .card-title-row {
+                margin-bottom: 14px;
+                gap: 8px;
+            }
+
+            .card-title-row h3 {
+                font-size: 16px;
+            }
+
+            .view-all-link {
+                font-size: 13px;
                 white-space: nowrap;
-                padding-bottom: 4px;
+            }
+
+            .contract-item {
+                padding: 14px;
+                border-radius: 10px;
+            }
+
+            .contract-top {
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 6px;
+            }
+
+            .contract-title {
+                font-size: 15px;
+            }
+
+            .contract-client-info {
+                flex-direction: column;
+                gap: 6px;
+                margin-top: 6px;
+                font-size: 12px;
+            }
+
+            .contract-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding-top: 10px;
+            }
+
+            .contract-budget {
+                font-size: 14px;
+            }
+
+            .contract-actions {
+                width: 100%;
+            }
+
+            .contract-actions .btn-sm-secondary,
+            .contract-actions .btn-sm-primary {
+                width: 100%;
+                text-align: center;
+                display: block;
+                padding: 8px 12px;
+            }
+
+            .proposal-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 14px;
+                gap: 10px;
+            }
+
+            .proposal-info h4 {
+                font-size: 14px;
+            }
+
+            .proposal-meta-tags {
+                flex-direction: column;
+                gap: 4px;
+                font-size: 12px;
+            }
+
+            .proposal-item .status-badge {
+                align-self: flex-start;
+            }
+
+            .upwork-job-card {
+                padding: 16px 14px;
+                border-radius: 12px;
+            }
+
+            .job-card-title {
+                font-size: 16px;
+            }
+
+            .job-meta-row, .job-trust-bar {
+                gap: 8px 12px;
+                font-size: 12px;
+            }
+
+            .job-action-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .job-action-row .btn-sm-primary {
+                width: 100%;
+                text-align: center;
+                display: block;
+            }
+
+            .sidebar-right {
+                gap: 16px;
+            }
+
+            .sidebar-box {
+                padding: 16px 14px;
+                border-radius: 14px;
+            }
+
+            .mini-avatar-box {
+                width: 58px;
+                height: 58px;
+                font-size: 22px;
+                margin: 0 auto 10px;
+            }
+
+            .empty-box {
+                padding: 24px 12px;
+            }
+
+            .empty-box i {
+                font-size: 32px;
+                margin-bottom: 8px;
+            }
+
+            .empty-box p {
+                font-size: 13px;
             }
         }
 
         @media (max-width: 480px) {
             .dashboard-container {
                 margin: 12px auto;
-                padding: 0 10px;
+                padding: 0 12px;
             }
 
             .welcome-hero-card {
-                padding: 16px 12px;
+                padding: 14px 12px;
+                border-radius: 12px;
             }
 
             .hero-avatar {
-                width: 56px;
-                height: 56px;
-                font-size: 24px;
+                width: 52px;
+                height: 52px;
+                font-size: 22px;
             }
 
             .hero-text h1 {
-                font-size: 18px;
-                flex-wrap: wrap;
+                font-size: 17px;
+            }
+
+            .metric-value {
+                font-size: 19px;
+            }
+
+            .metric-icon-box {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .card-container {
+                padding: 14px 10px;
+                border-radius: 12px;
+            }
+
+            .tabs-header-bar {
+                gap: 10px;
+            }
+
+            .tab-btn {
+                font-size: 13px;
+                padding: 8px 2px;
+            }
+
+            .sidebar-box {
+                padding: 14px 12px;
+                border-radius: 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .dashboard-container {
+                padding: 0 8px;
             }
 
             .metrics-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .contract-item {
-                padding: 16px 12px;
-            }
-
-            .contract-meta {
-                flex-direction: column;
-                gap: 6px;
             }
         }
     </style>
@@ -781,15 +1268,15 @@
 
 <div class="dashboard-container">
     {% if not request.user.is_superuser and profile_completeness < 100 %}
-    <div class="completion-notice-card" style="background: #eef3f8; border: 1px solid #0a66c2; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(10, 102, 194, 0.08);">
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <i class="fas fa-exclamation-circle" style="font-size: 28px; color: #0a66c2;"></i>
+    <div class="completion-notice-card">
+        <div class="completion-notice-content">
+            <i class="fas fa-exclamation-circle"></i>
             <div>
-                <h4 style="margin: 0 0 4px 0; font-size: 16px; color: #001e00;">Your Freelancer account has been created successfully.</h4>
-                <p style="margin: 0; font-size: 14px; color: #5e6b7c;">Please complete your profile details to improve your profile and help clients understand your skills and experience.</p>
+                <h4>Your Freelancer account has been created successfully.</h4>
+                <p>Please complete your profile details to improve your profile and help clients understand your skills and experience.</p>
             </div>
         </div>
-        <a href="{% url 'freelancer:create_profile' %}" class="completion-notice-btn" style="background: #0a66c2; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; white-space: nowrap; transition: background 0.2s;">Complete Profile →</a>
+        <a href="{% url 'freelancer:create_profile' %}" class="completion-notice-btn">Complete Profile →</a>
     </div>
     {% endif %}
 
@@ -913,7 +1400,7 @@
                                 <i class="fas fa-play-circle" style="font-size: 11px;"></i> In Progress
                             </span>
                         </div>
-                        <div class="contract-client-info" style="display:flex; flex-wrap:wrap; gap:14px; margin-top:6px; font-size:13px;">
+                        <div class="contract-client-info">
                             <span><i class="fas fa-user"></i> Client: <strong>{{ proposal.job.client.username }}</strong></span>
                             <span><i class="fas fa-stopwatch" style="color: #0a66c2;"></i> Delivery Target: <strong>{{ proposal.delivery_days }} days</strong></span>
                             {% if proposal.expected_completion_date or proposal.job.expected_completion_date %}
@@ -950,7 +1437,7 @@
                                 <i class="fas fa-check-circle"></i> Completed
                             </span>
                         </div>
-                        <div class="contract-client-info" style="display:flex; flex-wrap:wrap; gap:14px; margin-top:6px; font-size:13px;">
+                        <div class="contract-client-info">
                             <span><i class="fas fa-user"></i> Client: <strong>{{ proposal.job.client.username }}</strong></span>
                             <span><i class="fas fa-stopwatch" style="color: #0a66c2;"></i> Delivery Period: <strong>{{ proposal.delivery_days }} days</strong></span>
                             {% if proposal.expected_completion_date or proposal.job.expected_completion_date %}
@@ -1031,7 +1518,7 @@
                             {% endfor %}
                         </div>
                         {% endif %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                        <div class="job-action-row">
                             <span style="font-size: 12px; color: #5e6b7c;"><i class="fas fa-bolt" style="color:#0a66c2;"></i> Open for bidding</span>
                             {% if job.has_applied %}
                                 <span class="btn-sm-primary" style="background: #e8f5e9; color: #001e00; cursor: not-allowed; border: 1px solid #c8e6c9;">Applied <i class="fas fa-check" style="margin-left: 4px; color: #0a66c2;"></i></span>
@@ -1054,7 +1541,7 @@
         <aside class="sidebar-right">
             <!-- Profile Summary Card -->
             <div class="sidebar-box profile-summary-mini">
-                <div class="mini-avatar-box" style="display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; background: #0a66c2; color: white;">
+                <div class="mini-avatar-box">
                     {% if freelancer and freelancer.profile_picture %}
                         <img src="{{ freelancer.profile_picture.url|default:freelancer.profile_picture }}" alt="{{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover;">
                     {% else %}
@@ -1100,7 +1587,7 @@
 
                 <div class="badge-list-item">
                     <div class="badge-ic-icon" style="background:#e8f5e9; color:#0a66c2;"><i class="fas fa-user-check"></i></div>
-                    <div>
+                    <div class="badge-info-col">
                         <div class="badge-text-title">User Account Active</div>
                         <div class="badge-text-sub">Registered as {{ request.user.role|default:"Freelancer" }}</div>
                     </div>
@@ -1108,7 +1595,7 @@
 
                 <div class="badge-list-item">
                     <div class="badge-ic-icon" style="background:#e8f4fd; color:#0071dc;"><i class="fas fa-envelope"></i></div>
-                    <div>
+                    <div class="badge-info-col">
                         <div class="badge-text-title">Email Verified</div>
                         <div class="badge-text-sub">{{ request.user.email }}</div>
                     </div>
@@ -1144,6 +1631,9 @@
         if (target) target.style.display = 'block';
         if (btn) {
             btn.classList.add('active');
+            try {
+                btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            } catch (e) {}
         }
     }
 

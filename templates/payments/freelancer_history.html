@@ -611,6 +611,47 @@
             color: #991b1b;
             border: 1px solid #fecaca;
         }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 1.5rem 1rem 2.5rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .page-title-group h1 {
+                font-size: 1.5rem;
+                word-break: break-word;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .card {
+                padding: 1.25rem 1rem;
+                border-radius: 12px;
+            }
+            .card-title {
+                font-size: 1.15rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 1rem 0.5rem 2rem;
+            }
+            .card {
+                padding: 1rem 0.75rem;
+            }
+            .stat-card {
+                padding: 1.1rem;
+            }
+            .stat-number {
+                font-size: 1.35rem;
+            }
+        }
     </style>
 </head>
 <body>

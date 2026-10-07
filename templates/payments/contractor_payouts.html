@@ -990,6 +990,36 @@
         .btn-delete-payout:hover { background: #fca5a5; color: #7f1d1d; border-color: #f87171; }
         .badge-count { font-size: 0.85rem; color: #64748b; font-weight: 600; }
         .empty-state { text-align: center; padding: 3rem 1.5rem; color: #64748b; }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 1.25rem 0.85rem 2.5rem;
+            }
+            .card-header {
+                padding: 1rem 1.15rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .card-body {
+                padding: 1.25rem 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .channel-tabs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 1rem 0.5rem 2rem;
+            }
+            .card-body {
+                padding: 1rem 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>

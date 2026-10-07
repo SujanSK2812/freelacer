@@ -61,12 +61,12 @@
 
               <div class="nav-dropdown-item">
                 <a href="{% url 'client:client_dashboard' %}"
-                  class="nav-link {% if request.resolver_match.url_name == 'client_dashboard' %}active{% endif %}">
+                  class="nav-link {% if request.resolver_match.url_name == 'client_dashboard' or request.resolver_match.url_name == 'client_proposals' %}active{% endif %}">
                   My Projects <i class="fas fa-chevron-down nav-arrow"></i>
                 </a>
                 <div class="dropdown-popover">
-                  <a href="{% url 'client:client_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Client
-                    Dashboard</a>
+                  <a href="{% url 'client:client_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Client Dashboard</a>
+                  <a href="{% url 'client:client_proposals' %}"><i class="fas fa-file-invoice"></i> Proposals</a>
                   <a href="{% url 'client:create_job' %}"><i class="fas fa-plus"></i> Post a Job</a>
                 </div>
               </div>
@@ -223,8 +223,7 @@
             </div>
           </div>
           <div class="notif-footer">
-            <span style="font-size: 12px; color: #64748b;">Role: <strong>{{ request.user.role|default:"User"|title
-                }}</strong> Notifications</span>
+            <span style="font-size: 12px; color: #64748b;">Role: <strong>{{ request.user.role|default:"User"|title }}</strong> Notifications</span>
           </div>
         </div>
       </div>
@@ -1589,11 +1588,23 @@
     }
 
     .upwork-header-container {
-      padding: 0 14px;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .upwork-header-left {
+      gap: 10px;
+      min-width: 0;
+      flex-shrink: 1;
     }
 
     .upwork-header-right {
-      gap: 12px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .upwork-logo {
+      min-width: 0;
     }
   }
 
@@ -1610,25 +1621,41 @@
     .upwork-dropdown {
       position: fixed !important;
       top: 64px !important;
-      left: 12px !important;
-      right: 12px !important;
+      left: 10px !important;
+      right: 10px !important;
       width: auto !important;
-      max-width: calc(100vw - 24px) !important;
+      max-width: calc(100vw - 20px) !important;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
     }
   }
 
-  @media (max-width: 420px) {
+  @media (max-width: 480px) {
     .logo-text {
-      font-size: 18px !important;
+      font-size: 16px !important;
     }
 
     .brand-logo-img {
-      height: 30px !important;
+      height: 28px !important;
+      max-width: 30px !important;
     }
 
     .upwork-header-container {
-      padding: 0 10px;
+      padding: 0 8px;
+    }
+
+    .upwork-header-right {
+      gap: 6px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .logo-text {
+      font-size: 14px !important;
+    }
+
+    .brand-logo-img {
+      height: 24px !important;
+      max-width: 26px !important;
     }
   }
 </style>

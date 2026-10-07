@@ -368,15 +368,22 @@
         }
 
         @media (max-width: 600px) {
+            .dashboard-container {
+                padding: 0 10px;
+                margin: 1rem auto;
+            }
             .form-row-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
             .card-header {
-                padding: 1.25rem 1.5rem;
+                padding: 1.25rem 1rem;
             }
             .job-form {
-                padding: 1.25rem 1.5rem;
+                padding: 1.25rem 1rem;
+            }
+            .job-summary-card {
+                padding: 1.25rem 1rem;
             }
             .form-actions {
                 flex-direction: column-reverse;
@@ -385,6 +392,15 @@
             .form-actions .post-job-btn {
                 width: 100%;
                 justify-content: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .dashboard-container {
+                padding: 0 6px;
+            }
+            .card-header, .job-form, .job-summary-card {
+                padding: 1rem 0.75rem;
             }
         }
     </style>

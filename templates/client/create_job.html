@@ -625,7 +625,7 @@
       </div>
     </div>
 
-    <form method="POST" enctype="multipart/form-data" class="job-form">
+    <form method="POST" action="{% url 'client:create_job' %}" enctype="multipart/form-data" class="job-form">
       {% csrf_token %}
 
       <div class="job-form-grid">
@@ -727,44 +727,88 @@
   </div>
 </div>
 
+<!-- Upload Status Modal Overlay -->
+<div id="uploadStatusModal" class="upload-status-overlay" style="display: none;">
+  <div class="upload-status-card">
+    <div id="uploadSpinnerContainer" class="status-icon-wrap">
+      <div class="custom-spinner"></div>
+    </div>
+    <div id="uploadSuccessContainer" class="status-icon-wrap" style="display: none;">
+      <div class="success-icon-circle">
+        <i class="fas fa-check"></i>
+      </div>
+    </div>
+    <div id="uploadErrorContainer" class="status-icon-wrap" style="display: none;">
+      <div class="error-icon-circle">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+    </div>
+    
+    <h3 id="uploadStatusTitle" class="status-title">Uploading your post...</h3>
+    <p id="uploadStatusSubtitle" class="status-subtitle">Please wait while we save your work details.</p>
+    
+    <div id="uploadCountdownWrap" class="countdown-bar-wrap" style="display: none;">
+      <div id="uploadCountdownBar" class="countdown-bar-fill"></div>
+    </div>
+    
+    <button type="button" id="uploadDismissBtn" class="status-dismiss-btn" style="display: none;">Close & Try Again</button>
+  </div>
+</div>
+
 <script>
-  document.getElementById('image').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('imagePreview').src = e.target.result;
-        document.getElementById('imagePreviewContainer').style.display = 'block';
-      }
-      reader.readAsDataURL(file);
-    }
-  });
+document.addEventListener('DOMContentLoaded', function() {
+  const imageInput = document.getElementById('image');
+  const imagePreview = document.getElementById('imagePreview');
+  const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+  const removeImageBtn = document.getElementById('removeImageBtn');
 
-  document.getElementById('removeImageBtn').addEventListener('click', function() {
-    document.getElementById('image').value = '';
-    document.getElementById('imagePreviewContainer').style.display = 'none';
-    document.getElementById('imagePreview').src = '';
-  });
-
-  const posterInput = document.getElementById('poster');
-  if (posterInput) {
-    posterInput.addEventListener('change', function(e) {
+  if (imageInput && imagePreview && imagePreviewContainer) {
+    imageInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          document.getElementById('posterPreview').src = e.target.result;
-          document.getElementById('posterPreviewContainer').style.display = 'block';
+          imagePreview.src = e.target.result;
+          imagePreviewContainer.style.display = 'block';
         }
         reader.readAsDataURL(file);
       }
     });
 
-    document.getElementById('removePosterBtn').addEventListener('click', function() {
-      posterInput.value = '';
-      document.getElementById('posterPreviewContainer').style.display = 'none';
-      document.getElementById('posterPreview').src = '';
+    if (removeImageBtn) {
+      removeImageBtn.addEventListener('click', function() {
+        imageInput.value = '';
+        imagePreviewContainer.style.display = 'none';
+        imagePreview.src = '';
+      });
+    }
+  }
+
+  const posterInput = document.getElementById('poster');
+  const posterPreview = document.getElementById('posterPreview');
+  const posterPreviewContainer = document.getElementById('posterPreviewContainer');
+  const removePosterBtn = document.getElementById('removePosterBtn');
+
+  if (posterInput && posterPreview && posterPreviewContainer) {
+    posterInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          posterPreview.src = e.target.result;
+          posterPreviewContainer.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+      }
     });
+
+    if (removePosterBtn) {
+      removePosterBtn.addEventListener('click', function() {
+        posterInput.value = '';
+        posterPreviewContainer.style.display = 'none';
+        posterPreview.src = '';
+      });
+    }
   }
 
   // Custom CSS dropdown for Experience Level
@@ -831,15 +875,23 @@
 
   if (jobForm) {
     jobForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-
       // 1. Validate the form
       if (!jobForm.checkValidity()) {
         jobForm.reportValidity();
         return;
       }
 
-      if (isSubmittingJob) return; // Prevent duplicate posts
+      if (isSubmittingJob) {
+        e.preventDefault();
+        return; // Prevent duplicate posts
+      }
+
+      // If modal DOM elements are missing, fallback to native submission
+      if (!modal || !spinnerWrap || !statusTitle) {
+        return;
+      }
+
+      e.preventDefault();
       isSubmittingJob = true;
 
       // Disable post button to prevent duplicate clicks
@@ -851,14 +903,16 @@
 
       // 2. Show loading indicator with message "Uploading your post..."
       spinnerWrap.style.display = 'flex';
-      successWrap.style.display = 'none';
-      errorWrap.style.display = 'none';
-      countdownWrap.style.display = 'none';
-      dismissBtn.style.display = 'none';
-      countdownBar.style.transition = 'none';
-      countdownBar.style.width = '0%';
+      if (successWrap) successWrap.style.display = 'none';
+      if (errorWrap) errorWrap.style.display = 'none';
+      if (countdownWrap) countdownWrap.style.display = 'none';
+      if (dismissBtn) dismissBtn.style.display = 'none';
+      if (countdownBar) {
+        countdownBar.style.transition = 'none';
+        countdownBar.style.width = '0%';
+      }
       statusTitle.textContent = "Uploading your post...";
-      statusSubtitle.textContent = "Please wait while we upload your work details.";
+      if (statusSubtitle) statusSubtitle.textContent = "Please wait while we upload your work details.";
       modal.style.display = 'flex';
 
       // 3. Upload the post immediately (no delay before upload starts)
@@ -882,10 +936,10 @@
         if (!response.ok || data.status !== 'success') {
           // Upload failed: Do NOT show success message!
           spinnerWrap.style.display = 'none';
-          errorWrap.style.display = 'flex';
+          if (errorWrap) errorWrap.style.display = 'flex';
           statusTitle.textContent = "Upload Failed";
-          statusSubtitle.textContent = data.message || "An error occurred while uploading your work. Please try again.";
-          dismissBtn.style.display = 'inline-block';
+          if (statusSubtitle) statusSubtitle.textContent = data.message || "An error occurred while uploading your work. Please try again.";
+          if (dismissBtn) dismissBtn.style.display = 'inline-block';
           
           if (postBtn) {
             postBtn.disabled = false;
@@ -898,16 +952,18 @@
 
         // 4. Successful upload! Display success message: "Post uploaded successfully!"
         spinnerWrap.style.display = 'none';
-        successWrap.style.display = 'flex';
+        if (successWrap) successWrap.style.display = 'flex';
         statusTitle.textContent = "Post uploaded successfully!";
-        statusSubtitle.textContent = "Redirecting to your feed in 3 seconds...";
-        countdownWrap.style.display = 'block';
+        if (statusSubtitle) statusSubtitle.textContent = "Redirecting to your feed in 3 seconds...";
+        if (countdownWrap) countdownWrap.style.display = 'block';
 
         // Animate countdown bar over 3 seconds
-        requestAnimationFrame(() => {
-          countdownBar.style.transition = 'width 3s linear';
-          countdownBar.style.width = '100%';
-        });
+        if (countdownBar) {
+          requestAnimationFrame(() => {
+            countdownBar.style.transition = 'width 3s linear';
+            countdownBar.style.width = '100%';
+          });
+        }
 
         // 5. Wait exactly 3 seconds before redirecting to the correct page
         setTimeout(() => {
@@ -916,10 +972,10 @@
       })
       .catch((err) => {
         spinnerWrap.style.display = 'none';
-        errorWrap.style.display = 'flex';
+        if (errorWrap) errorWrap.style.display = 'flex';
         statusTitle.textContent = "Upload Error";
-        statusSubtitle.textContent = "Network error while uploading. Please check your connection and try again.";
-        dismissBtn.style.display = 'inline-block';
+        if (statusSubtitle) statusSubtitle.textContent = "Network error while uploading. Please check your connection and try again.";
+        if (dismissBtn) dismissBtn.style.display = 'inline-block';
         if (postBtn) {
           postBtn.disabled = false;
           postBtn.style.opacity = '1';
@@ -932,38 +988,11 @@
 
   if (dismissBtn) {
     dismissBtn.addEventListener('click', function() {
-      modal.style.display = 'none';
+      if (modal) modal.style.display = 'none';
     });
   }
+});
 </script>
-
-<!-- Upload Status Modal Overlay -->
-<div id="uploadStatusModal" class="upload-status-overlay" style="display: none;">
-  <div class="upload-status-card">
-    <div id="uploadSpinnerContainer" class="status-icon-wrap">
-      <div class="custom-spinner"></div>
-    </div>
-    <div id="uploadSuccessContainer" class="status-icon-wrap" style="display: none;">
-      <div class="success-icon-circle">
-        <i class="fas fa-check"></i>
-      </div>
-    </div>
-    <div id="uploadErrorContainer" class="status-icon-wrap" style="display: none;">
-      <div class="error-icon-circle">
-        <i class="fas fa-exclamation-triangle"></i>
-      </div>
-    </div>
-    
-    <h3 id="uploadStatusTitle" class="status-title">Uploading your post...</h3>
-    <p id="uploadStatusSubtitle" class="status-subtitle">Please wait while we save your work details.</p>
-    
-    <div id="uploadCountdownWrap" class="countdown-bar-wrap" style="display: none;">
-      <div id="uploadCountdownBar" class="countdown-bar-fill"></div>
-    </div>
-    
-    <button type="button" id="uploadDismissBtn" class="status-dismiss-btn" style="display: none;">Close & Try Again</button>
-  </div>
-</div>
 
 {% include 'includes/footer.html' %}
 

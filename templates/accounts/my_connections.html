@@ -1086,9 +1086,67 @@
         @media (max-width: 860px) {
             .mn-page-wrapper {
                 grid-template-columns: 1fr;
+                margin: 16px auto;
+                padding: 0 12px;
             }
             .mn-sidebar {
                 position: static;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .connection-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 14px 12px;
+            }
+            .connection-left {
+                width: 100%;
+            }
+            .connection-right {
+                width: 100%;
+                margin-left: 0;
+                justify-content: flex-end;
+            }
+            .mn-card-header {
+                padding: 14px 12px;
+            }
+            .mn-toolbar-wrap {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .mn-search-wrap {
+                width: 100%;
+                min-width: 0;
+            }
+            .mn-sort-wrap {
+                justify-content: space-between;
+                width: 100%;
+            }
+            .btn-message-pill {
+                padding: 6px 14px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .mn-page-wrapper {
+                padding: 0 8px;
+            }
+            .conn-avatar-wrap {
+                width: 48px;
+                height: 48px;
+            }
+            .conn-avatar-fallback {
+                font-size: 17px;
+            }
+            .conn-name-link {
+                font-size: 15px;
+            }
+            .conn-headline {
+                font-size: 12.5px;
             }
         }
     </style>

@@ -463,6 +463,7 @@
 
             .search-hero-title {
                 font-size: 18px;
+                word-break: break-word;
             }
 
             .search-form-flex {
@@ -474,42 +475,115 @@
                 justify-content: center;
             }
 
+            .feed-card-box {
+                padding: 16px 14px;
+                border-radius: 12px;
+            }
+
+            .tab-content-pane {
+                max-height: none;
+                min-height: auto;
+                overflow-y: visible;
+                padding-right: 0;
+            }
+
             .feed-tabs-header {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
                 white-space: nowrap;
+                gap: 16px;
             }
 
             .job-feed-item {
-                padding: 16px 14px;
+                padding: 16px 0;
             }
 
             .job-item-title {
                 font-size: 17px !important;
+                word-break: break-word;
             }
 
             .job-spec-meta {
                 flex-wrap: wrap;
-                gap: 6px;
+                gap: 8px;
             }
 
             .sidebar-card {
                 padding: 16px;
+            }
+
+            .post-author-row {
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+
+            .post-author-meta-name {
+                flex-wrap: wrap !important;
+                word-break: break-word !important;
+            }
+
+            .job-item-actions {
+                flex-wrap: wrap !important;
+                gap: 10px !important;
             }
         }
 
         @media (max-width: 480px) {
             .upwork-home-container {
                 margin: 12px auto;
-                padding: 0 10px;
+                padding: 0 8px;
             }
 
             .job-search-hero {
                 padding: 16px 12px;
+                border-radius: 12px;
+            }
+
+            .search-hero-title {
+                font-size: 16px;
+                line-height: 1.35;
+            }
+
+            .search-hero-subtitle {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+
+            .feed-card-box {
+                padding: 12px 10px;
+                border-radius: 10px;
+            }
+
+            .feed-tabs-header {
+                gap: 12px;
+            }
+
+            .feed-tab {
+                font-size: 14px;
+                padding: 10px 4px;
             }
 
             .job-feed-item {
-                padding: 14px 10px;
+                padding: 14px 0;
+            }
+
+            .post-stat-btn {
+                padding: 4px 6px !important;
+                font-size: 13px !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .upwork-home-container {
+                padding: 0 6px;
+            }
+
+            .feed-card-box {
+                padding: 10px 8px;
+            }
+
+            .feed-tab {
+                font-size: 13px;
             }
         }
     </style>
@@ -519,17 +593,6 @@
 {% include 'includes/header.html' %}
 
 <div class="upwork-home-container">
-    <!-- SEARCH HERO BANNER -->
-    <div class="job-search-hero">
-        <h2 class="search-hero-title">Find your next client project on Freelancer Portal</h2>
-        <form class="search-form-flex" action="{% url 'freelancer:search_results' %}" method="GET">
-            <div class="search-input-wrapper">
-                <i class="fas fa-search"></i>
-                <input type="text" name="q" class="search-hero-input" placeholder="Search by title, technology, or skills (e.g. Python, Django, React, Mobile)..." required>
-            </div>
-            <button type="submit" class="search-submit-btn">Search Jobs</button>
-        </form>
-    </div>
 
     <!-- MAIN 2-COLUMN LAYOUT -->
     <div class="upwork-home-layout">
@@ -549,9 +612,8 @@
                 <div id="client-posts" class="tab-content-pane" style="display: {% if active_tab == 'freelancer-posts' %}none{% else %}block{% endif %};">
                     {% for job in jobs %}
                     <article class="job-feed-item">
-                        <!-- Author Name & Role Banner -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="post-author-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
+                            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto;">
                                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2); overflow: hidden; flex-shrink: 0;">
                                     {% if job.author_dp %}
                                         <img src="{{ job.author_dp }}" alt="{{ job.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -561,10 +623,10 @@
                                         {{ job.client.username|slice:":1"|upper }}
                                     {% endif %}
                                 </div>
-                                <div>
-                                    <div style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px;">
-                                        {{ job.client.username }}
-                                        <span style="background: #e8f5e9; color: #0a66c2; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                <div style="min-width: 0;">
+                                    <div class="post-author-meta-name" style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; word-break: break-word;">
+                                        <span>{{ job.client.username }}</span>
+                                        <span style="background: #e8f5e9; color: #0a66c2; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;">
                                             <i class="fas fa-user-tie"></i> Client
                                         </span>
                                     </div>
@@ -729,8 +791,8 @@
                     {% for post in freelancer_posts %}
                     <article class="job-feed-item">
                         <!-- Author Name & Role Banner -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="post-author-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #f3f4f6;">
+                            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto;">
                                 <div style="width: 44px; height: 44px; border-radius: 50%; background: #0a66c2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; box-shadow: 0 2px 6px rgba(16, 138, 0, 0.2); overflow: hidden; flex-shrink: 0;">
                                     {% if post.author_dp or post.client.freelancerprofile.profile_picture %}
                                         <img src="{{ post.author_dp.url|default:post.client.freelancerprofile.profile_picture.url }}" alt="{{ post.client.username }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -738,10 +800,10 @@
                                         {{ post.client.username|slice:":1"|upper }}
                                     {% endif %}
                                 </div>
-                                <div>
-                                    <div style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px;">
-                                        {{ post.client.username }}
-                                        <span style="background: #e8f5e9; color: #0a66c2; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                <div style="min-width: 0;">
+                                    <div class="post-author-meta-name" style="font-weight: 700; font-size: 16px; color: #001e00; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; word-break: break-word;">
+                                        <span>{{ post.client.username }}</span>
+                                        <span style="background: #e8f5e9; color: #0a66c2; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;">
                                             <i class="fas fa-star"></i> Freelancer
                                         </span>
                                     </div>
@@ -750,7 +812,7 @@
                             </div>
                             
                             {% if post.client == request.user %}
-                            <div>
+                            <div style="flex-shrink: 0;">
                                 <button type="button" class="btn" style="background-color: transparent; border: 1px solid #dc2626; color: #dc2626; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 13px;" onclick="showDeleteShowcaseModal({{ post.id }})">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>

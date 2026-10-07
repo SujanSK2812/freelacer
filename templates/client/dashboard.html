@@ -468,6 +468,35 @@
             color: #004182;
         }
 
+        /* Scrollable container for posted projects */
+        .projects-scroll-container {
+            max-height: 620px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 4px 8px 14px 2px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+
+        .projects-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .projects-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .projects-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .projects-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -984,8 +1013,34 @@
                 justify-content: center;
             }
 
+            .projects-scroll-container {
+                max-height: 540px;
+                padding-right: 4px;
+            }
+
             .projects-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 0 8px;
+                margin: 0.75rem auto;
+            }
+            .welcome-banner {
+                padding: 1.1rem 0.85rem;
+                border-radius: 14px;
+            }
+            .welcome-text h1 {
+                font-size: 1.2rem;
+                word-break: break-word;
+            }
+            .job-card-item {
+                padding: 1rem 0.85rem;
+            }
+            .banner-stat-box {
+                padding: 6px 8px;
             }
         }
     </style>
@@ -1120,7 +1175,8 @@
                 </button>
             </div>
 
-            <div class="projects-grid" id="clientProjectsGrid">
+            <div class="projects-scroll-container" id="projectsScrollContainer">
+                <div class="projects-grid" id="clientProjectsGrid">
                 {% if client_jobs %}
                 {% for job in client_jobs %}
                 <div class="project-card client-project-item" data-category="{% if job.status == 'completed' or job.status == 'expired' or not job.is_active %}completed{% else %}active{% endif %}">
@@ -1203,6 +1259,7 @@
                     </a>
                 </div>
                 {% endif %}
+                </div>
             </div>
         </div>
 
@@ -1361,6 +1418,10 @@ function filterClientProjects(cat, btn) {
     const emptyMsg = document.getElementById('noFilteredProjectsMsg');
     if (emptyMsg) {
         emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+    const scrollContainer = document.getElementById('projectsScrollContainer');
+    if (scrollContainer) {
+        scrollContainer.scrollTop = 0;
     }
 }
 </script>

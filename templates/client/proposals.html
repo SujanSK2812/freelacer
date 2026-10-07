@@ -195,10 +195,70 @@
     
     .btn-message { background: #0a66c2; color: white; }
     .btn-message:hover { background: #004182; }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            margin: 1.25rem auto !important;
+            padding: 0 12px !important;
+        }
+        .proposals-box-inner {
+            padding: 1.25rem 1rem !important;
+        }
+        .proposals-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .filters-form {
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .filter-input {
+            width: 100%;
+        }
+        .status-filter-group {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .proposal-card {
+            padding: 1rem;
+        }
+        .proposal-header {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .proposal-meta {
+            grid-template-columns: 1fr;
+            padding: 0.75rem;
+        }
+        .proposal-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .dashboard-container {
+            padding: 0 8px !important;
+        }
+        .proposals-box-inner {
+            padding: 1rem 0.75rem !important;
+        }
+        .freelancer-avatar {
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+        }
+    }
 </style>
 
 <div class="dashboard-container" style="max-width: 1000px; margin: 2.5rem auto; padding: 0 1.5rem;">
-    <div style="background: #ffffff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); padding: 2rem;">
+    <div class="proposals-box-inner" style="background: #ffffff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); padding: 2rem;">
         
         <div class="proposals-header">
             <h2 style="margin: 0;"><i class="fas fa-file-invoice" style="color: #0a66c2;"></i> Received Proposals</h2>

@@ -373,6 +373,32 @@
         margin-bottom: 12px;
         display: block;
     }
+
+    @media (max-width: 768px) {
+        .discovery-page-container {
+            margin: 1.25rem auto 3rem auto;
+            padding: 0 12px;
+        }
+        .discovery-header-card {
+            padding: 14px 16px;
+        }
+        .people-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .discovery-page-container {
+            padding: 0 8px;
+        }
+        .people-grid {
+            grid-template-columns: 1fr;
+        }
+        .discovery-header-card {
+            padding: 12px;
+        }
+    }
 </style>
 {% endblock %}
 

@@ -1,13 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messaging | Freelancer Portal</title>
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
     <style>
         * {
@@ -16,7 +18,11 @@
             box-sizing: border-box;
         }
 
-        body, input, textarea, button, select {
+        body,
+        input,
+        textarea,
+        button,
+        select {
             font-family: var(--font-family-base);
         }
 
@@ -29,19 +35,23 @@
         }
 
         /* Protect Font Awesome icon fonts */
-        .fa, .fas, .fa-solid {
+        .fa,
+        .fas,
+        .fa-solid {
             font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
             font-weight: 900 !important;
             font-style: normal !important;
         }
 
-        .far, .fa-regular {
+        .far,
+        .fa-regular {
             font-family: "Font Awesome 6 Free", "Font Awesome 5 Free" !important;
             font-weight: 400 !important;
             font-style: normal !important;
         }
 
-        .fab, .fa-brands {
+        .fab,
+        .fa-brands {
             font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
             font-weight: 400 !important;
             font-style: normal !important;
@@ -68,7 +78,7 @@
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 0 0 1px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.03);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
             display: flex;
             flex-direction: column;
         }
@@ -449,49 +459,26 @@
             background: #ffffff;
         }
 
-        /* CHAT WINDOW HEADER */
-        .chat-top-header {
-            padding: 10px 18px;
-            border-bottom: 1px solid #e8e8e8;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
+        /* MOBILE CHAT HEADER (HIDDEN ON DESKTOP) */
+        .chat-mobile-header-bar {
+            display: none;
         }
 
-        .chat-header-user-meta {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header-name {
+        .chat-mobile-header-title {
             font-size: 14px;
-            font-weight: 700;
-            color: rgba(0, 0, 0, 0.9);
-            line-height: 1.25;
-            text-decoration: none;
+            font-weight: 600;
+            color: #1e293b;
         }
 
-        .chat-header-name:hover {
-            color: #0a66c2;
-            text-decoration: underline;
-        }
-
-        .chat-header-sub {
-            font-size: 11px;
-            color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 1px;
-        }
-
-        .chat-header-sub .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #057642;
-            display: inline-block;
+        @media (max-width: 768px) {
+            .chat-mobile-header-bar {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 14px;
+                background: #ffffff;
+                border-bottom: 1px solid #e8e8e8;
+            }
         }
 
         .chat-header-tools {
@@ -710,7 +697,7 @@
             border-radius: 8px;
             margin: 12px 20px 18px;
             background: #ffffff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -780,7 +767,8 @@
         }
 
         /* Circular light-grey circle on hover & active matching screenshot 1 */
-        .btn-tool-icon:hover, .btn-tool-icon.active {
+        .btn-tool-icon:hover,
+        .btn-tool-icon.active {
             background-color: #ebebeb;
             color: rgba(0, 0, 0, 0.95);
         }
@@ -858,8 +846,15 @@
 
 
         @keyframes popoverFadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .toolbar-actions-group {
@@ -942,734 +937,841 @@
             border: 1px solid #e0e0e0;
         }
 
+        .chat-mobile-back-btn {
+            display: none;
+        }
+
         @media (max-width: 940px) {
             .messaging-layout {
                 flex-direction: column;
             }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 12px 8px 24px;
+            }
+
+            .messaging-layout {
+                gap: 12px;
+            }
+
+            .msg-top-bar {
+                padding: 10px 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .msg-title-wrap {
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .msg-search-box {
+                flex: 1;
+                max-width: none;
+            }
+
+            .msg-filter-pills-bar {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+                padding: 8px 12px;
+                gap: 6px;
+            }
+
             .msg-workspace-split {
                 grid-template-columns: 1fr;
+                height: calc(100vh - 160px);
+                min-height: 500px;
+            }
+
+            body.has-active-chat .msg-conversations-col {
+                display: none !important;
+            }
+
+            body.has-active-chat .msg-chat-window-col {
+                display: flex !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            body:not(.has-active-chat) .msg-conversations-col {
+                display: block !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            body:not(.has-active-chat) .msg-chat-window-col {
+                display: none !important;
+            }
+
+            .chat-mobile-back-btn {
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                color: #0a66c2;
+                background: #f1f5f9;
+                text-decoration: none;
+                font-size: 14px;
+                margin-right: 8px;
+                flex-shrink: 0;
+            }
+
+            .chat-composer-box {
+                padding: 8px 10px;
             }
         }
     </style>
 </head>
-<body>
 
-{% include 'includes/header.html' %}
+<body class="{% if other_user %}has-active-chat{% endif %}">
 
-<main>
-    <div class="messaging-layout">
+    {% include 'includes/header.html' %}
 
-        <!-- LEFT: MAIN MESSAGING CARD -->
-        <div class="messaging-main-card">
-            
-            <!-- TOP BAR (Messaging Title, Search, Actions) -->
-            <div class="msg-top-bar">
-                <div class="msg-title-wrap">
-                    <span class="msg-heading">Messaging</span>
-                    <div class="msg-search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="msgSearchInput" class="msg-search-input" placeholder="Search messages">
+    <main>
+        <div class="messaging-layout">
+
+            <!-- LEFT: MAIN MESSAGING CARD -->
+            <div class="messaging-main-card">
+
+                <!-- TOP BAR (Messaging Title, Search, Actions) -->
+                <div class="msg-top-bar">
+                    <div class="msg-title-wrap">
+                        <span class="msg-heading">Messaging</span>
+                        <div class="msg-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="msgSearchInput" class="msg-search-input"
+                                placeholder="Search messages">
+                        </div>
                     </div>
+
+
                 </div>
 
-                <div class="msg-header-actions">
-                    <button type="button" class="btn-msg-icon-action" title="More options" onclick="toggleHeaderMenu()">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                    <a href="{% url 'accounts:find_connections' %}" class="btn-msg-icon-action" title="New conversation">
-                        <i class="far fa-edit"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- FILTER PILLS BAR -->
-            <div class="msg-filter-pills-bar">
-                <div class="dropdown-pill-wrap">
-                    <button type="button" class="filter-pill active" id="btnFocusedDropdown" onclick="handleFocusedClick(event)">
-                        <span id="focusedLabel">Focused</span> <i class="fas fa-caret-down" style="font-size: 10px; margin-left: 2px;"></i>
-                    </button>
-                    <div id="focusedDropdownMenu" class="focused-dropdown-menu">
-                        <button type="button" class="focused-dropdown-item active" data-type="focused" onclick="selectFocusedOption('focused', 'Focused', event)">
-                            <i class="fas fa-check" style="font-size: 11px;"></i> Focused
+                <!-- FILTER PILLS BAR -->
+                <div class="msg-filter-pills-bar">
+                    <div class="dropdown-pill-wrap">
+                        <button type="button" class="filter-pill active" id="btnFocusedDropdown"
+                            onclick="handleFocusedClick(event)">
+                            <span id="focusedLabel">Focused</span> <i class="fas fa-caret-down"
+                                style="font-size: 10px; margin-left: 2px;"></i>
                         </button>
-                        <button type="button" class="focused-dropdown-item" data-type="all" onclick="selectFocusedOption('all', 'All Messages', event)">
-                            <i class="fas fa-check" style="font-size: 11px; opacity: 0;"></i> All Messages
-                        </button>
+                        <div id="focusedDropdownMenu" class="focused-dropdown-menu">
+                            <button type="button" class="focused-dropdown-item active" data-type="focused"
+                                onclick="selectFocusedOption('focused', 'Focused', event)">
+                                <i class="fas fa-check" style="font-size: 11px;"></i> Focused
+                            </button>
+                            <button type="button" class="focused-dropdown-item" data-type="all"
+                                onclick="selectFocusedOption('all', 'All Messages', event)">
+                                <i class="fas fa-check" style="font-size: 11px; opacity: 0;"></i> All Messages
+                            </button>
+                        </div>
                     </div>
+
+
+                    <button type="button" class="filter-pill" id="pillUnread" onclick="filterTab('unread', this)">
+                        Unread <span id="unreadTotalBadge" class="pill-badge" style="display: none;">0</span>
+                    </button>
+                    <button type="button" class="filter-pill" id="pillConnections"
+                        onclick="filterTab('connections', this)">Connections</button>
+                    <button type="button" class="filter-pill pill-inmail" id="pillInMail"
+                        onclick="filterTab('inmail', this)">InMail</button>
+                    <button type="button" class="filter-pill" id="pillStarred"
+                        onclick="filterTab('starred', this)">Starred</button>
                 </div>
 
-                <button type="button" class="filter-pill" id="pillJobs" onclick="filterTab('jobs', this)">Jobs</button>
-                <button type="button" class="filter-pill" id="pillUnread" onclick="filterTab('unread', this)">
-                    Unread <span id="unreadTotalBadge" class="pill-badge" style="display: none;">0</span>
-                </button>
-                <button type="button" class="filter-pill" id="pillConnections" onclick="filterTab('connections', this)">Connections</button>
-                <button type="button" class="filter-pill pill-inmail" id="pillInMail" onclick="filterTab('inmail', this)">InMail</button>
-                <button type="button" class="filter-pill" id="pillStarred" onclick="filterTab('starred', this)">Starred</button>
-            </div>
+                <!-- SPLIT WORKSPACE: CONVERSATIONS & CHAT -->
+                <div class="msg-workspace-split">
 
-            <!-- SPLIT WORKSPACE: CONVERSATIONS & CHAT -->
-            <div class="msg-workspace-split">
-                
-                <!-- CONVERSATIONS LIST -->
-                <aside class="msg-conversations-col">
-                    <div class="conversations-scroll-box" id="convList">
-                        {% for user in users %}
-                        <a href="{% url 'chat_detail' user.id %}" 
-                           class="conversation-card-item {% if other_user and other_user.id == user.id %}active{% endif %}"
-                           data-user-id="{{ user.id }}"
-                           data-search="{{ user.get_full_name|lower }} {{ user.username|lower }} {% if user.last_message %}{{ user.last_message.message|lower }}{% else %}connected connection 1st{% endif %}"
-                           data-unread="{% if user.unread_count > 0 %}true{% else %}false{% endif %}"
-                           data-jobs="{% if user.has_jobs %}true{% else %}false{% endif %}"
-                           data-connection="{% if user.is_connection %}true{% else %}false{% endif %}"
-                           data-inmail="{% if user.is_inmail %}true{% else %}false{% endif %}"
-                           data-focused="{% if user.is_focused %}true{% else %}false{% endif %}"
-                           data-starred="false">
-                            
-                            <div class="conv-avatar-wrap">
-                                {% if user.get_profile_picture %}
+                    <!-- CONVERSATIONS LIST -->
+                    <aside class="msg-conversations-col">
+                        <div class="conversations-scroll-box" id="convList">
+                            {% for user in users %}
+                            <a href="{% url 'chat_detail' user.id %}"
+                                class="conversation-card-item {% if other_user and other_user.id == user.id %}active{% endif %}"
+                                data-user-id="{{ user.id }}"
+                                data-search="{{ user.get_full_name|lower }} {{ user.username|lower }} {% if user.last_message %}{{ user.last_message.message|lower }}{% else %}connected connection 1st{% endif %}"
+                                data-unread="{% if user.unread_count > 0 %}true{% else %}false{% endif %}"
+                                data-jobs="{% if user.has_jobs %}true{% else %}false{% endif %}"
+                                data-connection="{% if user.is_connection %}true{% else %}false{% endif %}"
+                                data-inmail="{% if user.is_inmail %}true{% else %}false{% endif %}"
+                                data-focused="{% if user.is_focused %}true{% else %}false{% endif %}"
+                                data-starred="false">
+
+                                <div class="conv-avatar-wrap">
+                                    {% if user.get_profile_picture %}
                                     <img src="{{ user.get_profile_picture }}" alt="{{ user.username }}">
-                                {% else %}
+                                    {% else %}
                                     {{ user.username|slice:":1"|upper }}
-                                {% endif %}
-                                <span class="conv-online-dot"></span>
-                            </div>
+                                    {% endif %}
+                                    <span class="conv-online-dot"></span>
+                                </div>
 
-                            <div class="conv-info-wrap">
-                                <div class="conv-top-row">
-                                    <span class="conv-name">{{ user.get_full_name|default:user.username }}</span>
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        {% if user.last_message %}
-                                        <span class="conv-date">{{ user.last_message.timestamp|date:"M d" }}</span>
-                                        {% elif user.is_connection %}
-                                        <span class="conv-date" style="color: #057642; font-size: 11px; font-weight: 600; background: #e8f5e9; padding: 1px 6px; border-radius: 8px;">1st</span>
+                                <div class="conv-info-wrap">
+                                    <div class="conv-top-row">
+                                        <span class="conv-name">{{ user.get_full_name|default:user.username }}</span>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            {% if user.last_message %}
+                                            <span class="conv-date">{{ user.last_message.timestamp|date:"M d" }}</span>
+                                            {% elif user.is_connection %}
+                                            <span class="conv-date"
+                                                style="color: #057642; font-size: 11px; font-weight: 600; background: #e8f5e9; padding: 1px 6px; border-radius: 8px;">1st</span>
+                                            {% endif %}
+                                            <button type="button" class="conv-star-btn" title="Star conversation"
+                                                onclick="toggleConvStar(event, '{{ user.id }}')">
+                                                <i class="far fa-star"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="conv-preview-text">
+                                        {% if user.unread_count > 0 %}
+                                        <span class="conv-unread-badge">{{ user.unread_count }}</span>
                                         {% endif %}
-                                        <button type="button" class="conv-star-btn" title="Star conversation" onclick="toggleConvStar(event, '{{ user.id }}')">
-                                            <i class="far fa-star"></i>
-                                        </button>
+                                        {% if user.last_message %}
+                                        {% if user.last_message.sender == request.user %}You: {% else %}{{ user.username }}: {% endif %}{{ user.last_message.message|default:"Attachment"|truncatechars:28 }}
+                                        {% elif user.is_connection %}
+                                        <span style="color: #057642; font-size: 12.5px; font-weight: 500;"><i
+                                                class="fas fa-handshake" style="margin-right: 4px;"></i> Connected · Say
+                                            hello!</span>
+                                        {% else %}
+                                        <span style="color: #94a3b8; font-style: italic;">No messages yet</span>
+                                        {% endif %}
                                     </div>
                                 </div>
-                                
-                                <div class="conv-preview-text">
-                                    {% if user.unread_count > 0 %}
-                                        <span class="conv-unread-badge">{{ user.unread_count }}</span>
-                                    {% endif %}
-                                    {% if user.last_message %}
-                                        {% if user.last_message.sender == request.user %}You: {% else %}{{ user.username }}: {% endif %}{{ user.last_message.message|default:"Attachment"|truncatechars:28 }}
-                                    {% elif user.is_connection %}
-                                        <span style="color: #057642; font-size: 12.5px; font-weight: 500;"><i class="fas fa-handshake" style="margin-right: 4px;"></i> Connected · Say hello!</span>
-                                    {% else %}
-                                        <span style="color: #94a3b8; font-style: italic;">No messages yet</span>
-                                    {% endif %}
-                                </div>
-                            </div>
 
-                        </a>
-                        {% empty %}
-                        <div style="text-align: center; padding: 36px 16px; color: rgba(0,0,0,0.5);">
-                            <i class="fas fa-inbox" style="font-size: 32px; color: #cbd5e1; margin-bottom: 8px;"></i>
-                            <p style="font-size: 13px;">No conversations yet.</p>
-                        </div>
-                        {% endfor %}
-
-                        <!-- Filter empty state -->
-                        <div id="filterEmptyState" style="display: none; text-align: center; padding: 40px 16px; color: rgba(0,0,0,0.55);">
-                            <i id="filterEmptyIcon" class="fas fa-filter" style="font-size: 28px; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
-                            <p id="filterEmptyText" style="font-size: 13px; font-weight: 500; margin-bottom: 10px;">No matching conversations found.</p>
-                            <button type="button" onclick="selectFocusedOption('all', 'All Messages', event)" style="border: 1.5px solid #0a66c2; background: #fff; padding: 4px 14px; border-radius: 14px; font-size: 12px; cursor: pointer; color: #0a66c2; font-weight: 600;">Show all messages</button>
-                        </div>
-                    </div>
-                </aside>
-
-                <!-- ACTIVE CHAT WINDOW -->
-                <div class="msg-chat-window-col">
-                    {% if other_user %}
-                    
-                    <!-- CHAT HEADER -->
-                    <div class="chat-top-header">
-                        <div class="chat-header-user-meta">
-                            <a href="{% url 'accounts:view_profile' other_user.id %}" class="chat-header-name">
-                                {{ other_user.get_full_name|default:other_user.username }}
                             </a>
-                            <div class="chat-header-sub">
-                                <span class="dot"></span> Mobile · Active now
+                            {% empty %}
+                            <div style="text-align: center; padding: 36px 16px; color: rgba(0,0,0,0.5);">
+                                <i class="fas fa-inbox"
+                                    style="font-size: 32px; color: #cbd5e1; margin-bottom: 8px;"></i>
+                                <p style="font-size: 13px;">No conversations yet.</p>
+                            </div>
+                            {% endfor %}
+
+                            <!-- Filter empty state -->
+                            <div id="filterEmptyState"
+                                style="display: none; text-align: center; padding: 40px 16px; color: rgba(0,0,0,0.55);">
+                                <i id="filterEmptyIcon" class="fas fa-filter"
+                                    style="font-size: 28px; color: #cbd5e1; margin-bottom: 8px; display: block;"></i>
+                                <p id="filterEmptyText" style="font-size: 13px; font-weight: 500; margin-bottom: 10px;">
+                                    No matching conversations found.</p>
+                                <button type="button" onclick="selectFocusedOption('all', 'All Messages', event)"
+                                    style="border: 1.5px solid #0a66c2; background: #fff; padding: 4px 14px; border-radius: 14px; font-size: 12px; cursor: pointer; color: #0a66c2; font-weight: 600;">Show
+                                    all messages</button>
                             </div>
                         </div>
+                    </aside>
 
-                        <div class="chat-header-tools">
-                            <button type="button" class="chat-tool-btn" onclick="showClearChatModal()" title="Clear conversation">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                            <button type="button" class="chat-tool-btn" title="Star conversation" onclick="toggleStar(this)">
-                                <i class="far fa-star"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- ACTIVE CHAT WINDOW -->
+                    <div class="msg-chat-window-col">
+                        {% if other_user %}
 
-                    {% if request.GET.cleared %}
-                    <div class="alert alert-success" style="margin: 10px 16px 4px 16px; padding: 10px 16px; border-radius: 8px; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; font-size: 13px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                        <span><i class="fas fa-check-circle" style="margin-right: 8px; color: #10b981;"></i> Chat with {{ other_user.username }} has been cleared.</span>
-                        <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 16px; color: #065f46; cursor: pointer; line-height: 1;">&times;</button>
-                    </div>
-                    {% endif %}
-
-                    <!-- THREAD STREAM -->
-                    <div class="chat-thread-stream" id="messagesBox">
-                        
-                        <!-- PROFILE INTRO CARD AT TOP OF CHAT -->
-                        <div class="chat-intro-profile-card">
-                            <div class="intro-avatar">
-                                {% if other_user.get_profile_picture %}
-                                    <img src="{{ other_user.get_profile_picture }}" alt="{{ other_user.username }}">
-                                {% else %}
-                                    {{ other_user.username|slice:":1"|upper }}
-                                {% endif %}
-                                <span class="intro-online-dot"></span>
-                            </div>
-
-                            <div class="intro-name-line">
-                                <span>{{ other_user.get_full_name|default:other_user.username }}</span>
-                                <span class="intro-tier-tag">· 1st</span>
-                            </div>
-
-                            <div class="intro-headline-text">
-                                {% if other_user.freelancerprofile.title %}
-                                    {{ other_user.freelancerprofile.title }}
-                                {% elif other_user.clientprofile.company_name %}
-                                    {{ other_user.clientprofile.company_name }}
-                                {% elif other_user.role %}
-                                    {{ other_user.role|title }} on Freelancer Portal
-                                {% else %}
-                                    Verified Professional
-                                {% endif %}
-                            </div>
+                        <!-- Mobile-only back navigation (Hidden on Desktop) -->
+                        <div class="chat-mobile-header-bar">
+                            <a href="{% url 'chat_home' %}" class="chat-mobile-back-btn"
+                                title="Back to conversations">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                            <span class="chat-mobile-header-title">
+                                {{ other_user.get_full_name|default:other_user.username }}
+                            </span>
                         </div>
 
-                        <!-- DATE DIVIDER -->
-                        {% if messages %}
-                        <div class="chat-date-separator">
-                            <span>{{ messages.0.timestamp|date:"M d" }}</span>
+                        {% if request.GET.cleared %}
+                        <div class="alert alert-success"
+                            style="margin: 10px 16px 4px 16px; padding: 10px 16px; border-radius: 8px; background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; font-size: 13px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                            <span><i class="fas fa-check-circle" style="margin-right: 8px; color: #10b981;"></i> Chat
+                                with {{ other_user.username }} has been cleared.</span>
+                            <button type="button" onclick="this.parentElement.remove()"
+                                style="background: none; border: none; font-size: 16px; color: #065f46; cursor: pointer; line-height: 1;">&times;</button>
                         </div>
                         {% endif %}
 
-                        <!-- MESSAGES -->
-                        {% for msg in messages %}
-                        <div class="msg-item-row">
-                            <div class="msg-sender-avatar">
-                                {% if msg.sender.get_profile_picture %}
-                                    <img src="{{ msg.sender.get_profile_picture }}" alt="{{ msg.sender.username }}">
-                                {% else %}
-                                    {{ msg.sender.username|slice:":1"|upper }}
-                                {% endif %}
+                        <!-- THREAD STREAM -->
+                        <div class="chat-thread-stream" id="messagesBox">
+
+                            <!-- PROFILE INTRO CARD AT TOP OF CHAT -->
+                            <div class="chat-intro-profile-card">
+                                <div class="intro-avatar">
+                                    {% if other_user.get_profile_picture %}
+                                    <img src="{{ other_user.get_profile_picture }}" alt="{{ other_user.username }}">
+                                    {% else %}
+                                    {{ other_user.username|slice:":1"|upper }}
+                                    {% endif %}
+                                    <span class="intro-online-dot"></span>
+                                </div>
+
+                                <div class="intro-name-line">
+                                    <span>{{ other_user.get_full_name|default:other_user.username }}</span>
+                                    <span class="intro-tier-tag">· 1st</span>
+                                </div>
+
+                                <div class="intro-headline-text">
+                                    {% if other_user.freelancerprofile.title %}
+                                    {{ other_user.freelancerprofile.title }}
+                                    {% elif other_user.clientprofile.company_name %}
+                                    {{ other_user.clientprofile.company_name }}
+                                    {% elif other_user.role %}
+                                    {{ other_user.role|title }} on Freelancer Portal
+                                    {% else %}
+                                    Verified Professional
+                                    {% endif %}
+                                </div>
                             </div>
 
-                            <div class="msg-body-wrap">
-                                <div class="msg-author-time-line">
-                                    <span class="msg-author-name">
-                                        {% if msg.sender == request.user %}You{% else %}{{ msg.sender.get_full_name|default:msg.sender.username }}{% endif %}
-                                    </span>
-                                    <span class="msg-time-stamp">· {{ msg.timestamp|date:"g:i A" }}</span>
-                                </div>
-
-                                {% if msg.proposal %}
-                                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin: 6px 0; color: #333;">
-                                    <h4 style="margin: 0 0 6px 0; color: #1e293b; font-size: 14px;">Bid Proposal: {{ msg.proposal.job.title }}</h4>
-                                    <p style="margin: 3px 0; font-size: 13px;"><strong>Bid:</strong> ₹{{ msg.proposal.bid_amount }}</p>
-                                    <p style="margin: 3px 0; font-size: 13px;"><strong>Delivery:</strong> {{ msg.proposal.delivery_days }} days</p>
-                                    <a href="{% url 'client:job_detail' msg.proposal.job.id %}" style="display: inline-block; margin-top: 8px; padding: 4px 12px; background: #0a66c2; color: #fff; text-decoration: none; border-radius: 14px; font-size: 12px;">View Details</a>
-                                </div>
-                                {% endif %}
-
-                                {% if msg.image %}
-                                <div style="margin: 6px 0; max-width: 320px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; background: #000;">
-                                    <a href="{{ msg.image.url }}" target="_blank" title="Click to view full image">
-                                        <img src="{{ msg.image.url }}" alt="Shared image" style="width: 100%; max-height: 280px; object-fit: cover; display: block; border-radius: 8px;">
-                                    </a>
-                                </div>
-                                {% endif %}
-
-                                {% if msg.gif_url %}
-                                <div style="margin: 6px 0; max-width: 280px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; background: #000;">
-                                    <img src="{{ msg.gif_url }}" alt="GIF" style="width: 100%; max-height: 240px; object-fit: cover; display: block; border-radius: 8px;">
-                                </div>
-                                {% endif %}
-
-                                {% if msg.file_attachment %}
-                                <div style="margin: 6px 0; display: inline-flex; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px;">
-                                    <i class="fas fa-file-alt" style="color: #0a66c2; font-size: 22px;"></i>
-                                    <div>
-                                        <div style="font-size: 13px; font-weight: 600; color: #1e293b;">{{ msg.file_name|default:"Attachment" }}</div>
-                                        {% if msg.file_size %}<div style="font-size: 11px; color: #64748b;">{{ msg.file_size }}</div>{% endif %}
-                                    </div>
-                                    <a href="{{ msg.file_attachment.url }}" download style="margin-left: 10px; color: #0a66c2; background: #eff6ff; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px;">
-                                        <i class="fas fa-download"></i>
-                                    </a>
-                                </div>
-                                {% endif %}
-
-                                {% if msg.message %}
-                                <div class="msg-content-text">{{ msg.message }}</div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Read indicator on last message -->
-                            {% if forloop.last and msg.sender == request.user %}
-                            <div class="msg-read-indicator">
-                                {% if other_user.get_profile_picture %}
-                                    <img src="{{ other_user.get_profile_picture }}" alt="Read">
-                                {% else %}
-                                    <div style="width:100%; height:100%; background:#0a66c2; color:#fff; font-size:8px; display:flex; align-items:center; justify-content:center;">✓</div>
-                                {% endif %}
+                            <!-- DATE DIVIDER -->
+                            {% if messages %}
+                            <div class="chat-date-separator">
+                                <span>{{ messages.0.timestamp|date:"M d" }}</span>
                             </div>
                             {% endif %}
+
+                            <!-- MESSAGES -->
+                            {% for msg in messages %}
+                            <div class="msg-item-row">
+                                <div class="msg-sender-avatar">
+                                    {% if msg.sender.get_profile_picture %}
+                                    <img src="{{ msg.sender.get_profile_picture }}" alt="{{ msg.sender.username }}">
+                                    {% else %}
+                                    {{ msg.sender.username|slice:":1"|upper }}
+                                    {% endif %}
+                                </div>
+
+                                <div class="msg-body-wrap">
+                                    <div class="msg-author-time-line">
+                                        <span class="msg-author-name">
+                                            {% if msg.sender == request.user %}You{% else %}{{ msg.sender.get_full_name|default:msg.sender.username }}{% endif %}
+                                        </span>
+                                        <span class="msg-time-stamp">· {{ msg.timestamp|date:"g:i A" }}</span>
+                                    </div>
+
+                                    {% if msg.proposal %}
+                                    <div
+                                        style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin: 6px 0; color: #333;">
+                                        <h4 style="margin: 0 0 6px 0; color: #1e293b; font-size: 14px;">Bid Proposal: {{ msg.proposal.job.title }}</h4>
+                                        <p style="margin: 3px 0; font-size: 13px;"><strong>Bid:</strong> ₹{{ msg.proposal.bid_amount }}</p>
+                                        <p style="margin: 3px 0; font-size: 13px;"><strong>Delivery:</strong> {{ msg.proposal.delivery_days }} days</p>
+                                        <a href="{% url 'client:job_detail' msg.proposal.job.id %}"
+                                            style="display: inline-block; margin-top: 8px; padding: 4px 12px; background: #0a66c2; color: #fff; text-decoration: none; border-radius: 14px; font-size: 12px;">View Details</a>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if msg.image %}
+                                    <div
+                                        style="margin: 6px 0; max-width: 320px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; background: #000;">
+                                        <a href="{{ msg.image.url }}" target="_blank" title="Click to view full image">
+                                            <img src="{{ msg.image.url }}" alt="Shared image"
+                                                style="width: 100%; max-height: 280px; object-fit: cover; display: block; border-radius: 8px;">
+                                        </a>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if msg.gif_url %}
+                                    <div
+                                        style="margin: 6px 0; max-width: 280px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; background: #000;">
+                                        <img src="{{ msg.gif_url }}" alt="GIF"
+                                            style="width: 100%; max-height: 240px; object-fit: cover; display: block; border-radius: 8px;">
+                                    </div>
+                                    {% endif %}
+
+                                    {% if msg.file_attachment %}
+                                    <div
+                                        style="margin: 6px 0; display: inline-flex; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 14px;">
+                                        <i class="fas fa-file-alt" style="color: #0a66c2; font-size: 22px;"></i>
+                                        <div>
+                                            <div style="font-size: 13px; font-weight: 600; color: #1e293b;">{{ msg.file_name|default:"Attachment" }}</div>
+                                            {% if msg.file_size %}<div style="font-size: 11px; color: #64748b;">{{ msg.file_size }}</div>{% endif %}
+                                        </div>
+                                        <a href="{{ msg.file_attachment.url }}" download
+                                            style="margin-left: 10px; color: #0a66c2; background: #eff6ff; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if msg.message %}
+                                    <div class="msg-content-text">{{ msg.message }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Read indicator on last message -->
+                                {% if forloop.last and msg.sender == request.user %}
+                                <div class="msg-read-indicator">
+                                    {% if other_user.get_profile_picture %}
+                                    <img src="{{ other_user.get_profile_picture }}" alt="Read">
+                                    {% else %}
+                                    <div
+                                        style="width:100%; height:100%; background:#0a66c2; color:#fff; font-size:8px; display:flex; align-items:center; justify-content:center;">
+                                        ✓</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% empty %}
+                            <div style="text-align: center; padding: 24px; color: rgba(0,0,0,0.5);">
+                                <p style="font-size: 13px;">No messages yet. Send a note below to start the
+                                    conversation.</p>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% empty %}
-                        <div style="text-align: center; padding: 24px; color: rgba(0,0,0,0.5);">
-                            <p style="font-size: 13px;">No messages yet. Send a note below to start the conversation.</p>
-                        </div>
-                        {% endfor %}
-                    </div>
 
-                    <!-- CHAT INPUT EDITOR CARD -->
-                    <form class="chat-input-editor-card" id="chatInputForm" method="POST" action="{% url 'chat_detail' other_user.id %}" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <!-- Hidden inputs for attachments -->
-                        <input type="file" id="chatImageInput" name="image" accept="image/*" style="display: none;" onchange="handleImageSelected(this)">
-                        <input type="file" id="chatFileInput" name="attachment" accept=".pdf,.doc,.docx,.zip,.txt,.xlsx,.csv,.png,.jpg,.jpeg" style="display: none;" onchange="handleFileSelected(this)">
-                        <input type="hidden" id="chatGifInput" name="gif_url" value="">
+                        <!-- CHAT INPUT EDITOR CARD -->
+                        <form class="chat-input-editor-card" id="chatInputForm" method="POST"
+                            action="{% url 'chat_detail' other_user.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
 
-                        <!-- Live Attachment Preview Box -->
-                        <div id="attachmentPreviewBox" class="attachment-preview-box" style="display: none;"></div>
+                            <!-- Hidden inputs for attachments -->
+                            <input type="file" id="chatImageInput" name="image" accept="image/*" style="display: none;"
+                                onchange="handleImageSelected(this)">
+                            <input type="file" id="chatFileInput" name="attachment"
+                                accept=".pdf,.doc,.docx,.zip,.txt,.xlsx,.csv,.png,.jpg,.jpeg" style="display: none;"
+                                onchange="handleFileSelected(this)">
+                            <input type="hidden" id="chatGifInput" name="gif_url" value="">
 
-                        <div class="chat-input-top-row">
-                            <textarea name="message" id="chatTextarea" class="chat-textarea" placeholder="Write a message..." autocomplete="off"></textarea>
-                            <button type="button" class="chat-collapse-btn" title="Expand/Collapse" onclick="toggleTextareaExpand()">
-                                <i class="fas fa-chevron-up" id="collapseChevron"></i>
-                            </button>
-                        </div>
+                            <!-- Live Attachment Preview Box -->
+                            <div id="attachmentPreviewBox" class="attachment-preview-box" style="display: none;"></div>
 
-                        <div class="chat-toolbar-bottom-row" style="position: relative;">
-                            <div class="toolbar-icons-group">
-                                <button type="button" class="btn-tool-icon" id="btnUploadImage" title="Add image" onclick="triggerImageUpload()">
-                                    <i class="far fa-image"></i>
-                                </button>
-                                <button type="button" class="btn-tool-icon" id="btnUploadFile" title="Attach file" onclick="triggerFileUpload()">
-                                    <i class="fas fa-paperclip"></i>
+                            <div class="chat-input-top-row">
+                                <textarea name="message" id="chatTextarea" class="chat-textarea"
+                                    placeholder="Write a message..." autocomplete="off"></textarea>
+                                <button type="button" class="chat-collapse-btn" title="Expand/Collapse"
+                                    onclick="toggleTextareaExpand()">
+                                    <i class="fas fa-chevron-up" id="collapseChevron"></i>
                                 </button>
                             </div>
 
-                            <div class="toolbar-actions-group">
-                                <button type="submit" class="btn-msg-send" id="btnSendMessage">
-                                    Send
-                                </button>
-                                <button type="button" class="btn-tool-icon" title="More" onclick="showClearChatModal()">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                            <div class="chat-toolbar-bottom-row" style="position: relative;">
+                                <div class="toolbar-icons-group">
+                                    <button type="button" class="btn-tool-icon" id="btnUploadImage" title="Add image"
+                                        onclick="triggerImageUpload()">
+                                        <i class="far fa-image"></i>
+                                    </button>
+                                    <button type="button" class="btn-tool-icon" id="btnUploadFile" title="Attach file"
+                                        onclick="triggerFileUpload()">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                </div>
 
-                    {% else %}
-                    <div class="empty-selection-box">
-                        <i class="fas fa-comments"></i>
-                        <h4>Your Messages</h4>
-                        <p>Select a conversation from the left to start chatting.</p>
+                                <div class="toolbar-actions-group">
+                                    <button type="submit" class="btn-msg-send" id="btnSendMessage">
+                                        Send
+                                    </button>
+
+                                </div>
+                            </div>
+                        </form>
+
+                        {% else %}
+                        <div class="empty-selection-box">
+                            <i class="fas fa-comments"></i>
+                            <h4>Your Messages</h4>
+                            <p>Select a conversation from the left to start chatting.</p>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
+
                 </div>
+            </div>
 
+        </div>
+    </main>
+
+    <!-- Clear Chat Confirmation Modal -->
+    <div id="clearChatModal" class="custom-modal-overlay">
+        <div class="custom-modal-card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">Clear Chat?</h3>
+            <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                Are you sure you want to clear this conversation? Your chat history will be removed for you.
+            </p>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn-tool-icon" onclick="closeClearChatModal()"
+                    style="width: auto; padding: 6px 16px; border-radius: 20px; border: 1px solid #ccc;">Cancel</button>
+                <form method="POST" action="{% if other_user %}{% url 'clear_chat' other_user.id %}{% endif %}"
+                    style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit"
+                        style="padding: 6px 18px; border-radius: 20px; background: #dc2626; color: #fff; border: none; font-weight: 600; cursor: pointer;">Yes,
+                        Clear</button>
+                </form>
             </div>
         </div>
-
     </div>
-</main>
 
-<!-- Clear Chat Confirmation Modal -->
-<div id="clearChatModal" class="custom-modal-overlay">
-    <div class="custom-modal-card">
-        <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">Clear Chat?</h3>
-        <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem;">
-            Are you sure you want to clear this conversation? Your chat history will be removed for you.
-        </p>
-        <div style="display: flex; justify-content: flex-end; gap: 10px;">
-            <button type="button" class="btn-tool-icon" onclick="closeClearChatModal()" style="width: auto; padding: 6px 16px; border-radius: 20px; border: 1px solid #ccc;">Cancel</button>
-            <form method="POST" action="{% if other_user %}{% url 'clear_chat' other_user.id %}{% endif %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" style="padding: 6px 18px; border-radius: 20px; background: #dc2626; color: #fff; border: none; font-weight: 600; cursor: pointer;">Yes, Clear</button>
-            </form>
-        </div>
-    </div>
-</div>
+    {% include 'includes/footer.html' %}
 
-{% include 'includes/footer.html' %}
-
-<script>
-    // Auto-scroll messages to bottom
-    const box = document.getElementById('messagesBox');
-    if (box) {
-        box.scrollTop = box.scrollHeight;
-    }
-
-    // Modal controls
-    function showClearChatModal() {
-        document.getElementById('clearChatModal').classList.add('active');
-    }
-    function closeClearChatModal() {
-        document.getElementById('clearChatModal').classList.remove('active');
-    }
-
-    /* =========================================================================
-       1. STARRED CONVERSATIONS (PERSISTENT VIA LOCALSTORAGE)
-       ========================================================================= */
-    const STARRED_STORAGE_KEY = 'fp_starred_chat_users';
-
-    function getStarredUsers() {
-        try {
-            return JSON.parse(localStorage.getItem(STARRED_STORAGE_KEY) || '[]');
-        } catch(e) {
-            return [];
+    <script>
+        // Auto-scroll messages to bottom
+        const box = document.getElementById('messagesBox');
+        if (box) {
+            box.scrollTop = box.scrollHeight;
         }
-    }
 
-    function saveStarredUsers(list) {
-        localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(list));
-    }
-
-    function initStarredCards() {
-        const starred = getStarredUsers();
-        document.querySelectorAll('#convList .conversation-card-item').forEach(card => {
-            const uid = card.getAttribute('data-user-id');
-            const starBtn = card.querySelector('.conv-star-btn');
-            if (starred.includes(uid)) {
-                card.setAttribute('data-starred', 'true');
-                if (starBtn) {
-                    starBtn.classList.add('starred');
-                    starBtn.innerHTML = '<i class="fas fa-star" style="color: #eab308;"></i>';
-                }
-            } else {
-                card.setAttribute('data-starred', 'false');
-                if (starBtn) {
-                    starBtn.classList.remove('starred');
-                    starBtn.innerHTML = '<i class="far fa-star"></i>';
-                }
-            }
-        });
-    }
-
-    function toggleConvStar(e, userId) {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        // Modal controls
+        function showClearChatModal() {
+            document.getElementById('clearChatModal').classList.add('active');
         }
-        let starred = getStarredUsers();
-        const card = document.querySelector(`#convList .conversation-card-item[data-user-id="${userId}"]`);
-        const isStarred = starred.includes(String(userId));
+        function closeClearChatModal() {
+            document.getElementById('clearChatModal').classList.remove('active');
+        }
 
-        if (isStarred) {
-            starred = starred.filter(id => id !== String(userId));
-            if (card) {
-                card.setAttribute('data-starred', 'false');
-                const btn = card.querySelector('.conv-star-btn');
-                if (btn) {
-                    btn.classList.remove('starred');
-                    btn.innerHTML = '<i class="far fa-star"></i>';
-                }
-            }
-        } else {
-            starred.push(String(userId));
-            if (card) {
-                card.setAttribute('data-starred', 'true');
-                const btn = card.querySelector('.conv-star-btn');
-                if (btn) {
-                    btn.classList.add('starred');
-                    btn.innerHTML = '<i class="fas fa-star" style="color: #eab308;"></i>';
-                }
+        /* =========================================================================
+           1. STARRED CONVERSATIONS (PERSISTENT VIA LOCALSTORAGE)
+           ========================================================================= */
+        const STARRED_STORAGE_KEY = 'fp_starred_chat_users';
+
+        function getStarredUsers() {
+            try {
+                return JSON.parse(localStorage.getItem(STARRED_STORAGE_KEY) || '[]');
+            } catch (e) {
+                return [];
             }
         }
-        saveStarredUsers(starred);
 
-        // If currently on Starred filter, refresh list
-        if (currentFilter === 'starred') {
-            applyCurrentFilter();
-        }
-    }
-
-    // Top header star toggle
-    function toggleStar(btn) {
-        const star = btn.querySelector('i');
-        {% if other_user %}
-        toggleConvStar(null, '{{ other_user.id }}');
-        {% endif %}
-        if (star.classList.contains('far')) {
-            star.classList.remove('far');
-            star.classList.add('fas');
-            star.style.color = '#eab308';
-        } else {
-            star.classList.remove('fas');
-            star.classList.add('far');
-            star.style.color = '';
-        }
-    }
-
-    /* =========================================================================
-       2. FILTER PILLS & FOCUSED DROPDOWN (WORKING LOGIC)
-       ========================================================================= */
-    let currentFilter = 'focused';
-    let selectedFocusedType = 'focused';
-
-    // Calculate unread badge count on page load
-    function updateUnreadBadge() {
-        let unreadCount = 0;
-        document.querySelectorAll('#convList .conversation-card-item').forEach(card => {
-            if (card.getAttribute('data-unread') === 'true') {
-                unreadCount++;
-            }
-        });
-        const badge = document.getElementById('unreadTotalBadge');
-        if (badge) {
-            if (unreadCount > 0) {
-                badge.textContent = unreadCount;
-                badge.style.display = 'inline-block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-    }
-
-    // Clear legacy archived storage if present
-    try {
-        localStorage.removeItem('archived_users');
-    } catch(e) {}
-
-    // Toggle Focused Dropdown Menu
-    function handleFocusedClick(e) {
-        if (e) e.stopPropagation();
-        const menu = document.getElementById('focusedDropdownMenu');
-        const btn = document.getElementById('btnFocusedDropdown');
-
-        if (menu) {
-            menu.classList.toggle('show');
+        function saveStarredUsers(list) {
+            localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(list));
         }
 
-        // Highlight Focused pill
-        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-
-        // Apply active focused filter
-        if (currentFilter !== 'focused' && currentFilter !== 'all') {
-            currentFilter = selectedFocusedType || 'focused';
-            applyCurrentFilter();
-        }
-    }
-
-    function toggleFocusedDropdown(e) {
-        handleFocusedClick(e);
-    }
-
-    function selectFocusedOption(type, label, e) {
-        if (e) e.stopPropagation();
-        selectedFocusedType = type;
-        currentFilter = type;
-
-        const menu = document.getElementById('focusedDropdownMenu');
-        if (menu) menu.classList.remove('show');
-
-        const labelEl = document.getElementById('focusedLabel');
-        if (labelEl) labelEl.textContent = label;
-
-        // Update active check in menu
-        document.querySelectorAll('.focused-dropdown-item').forEach(item => {
-            const isMatch = item.getAttribute('data-type') === type;
-            item.classList.toggle('active', isMatch);
-            const icon = item.querySelector('i');
-            if (icon) icon.style.opacity = isMatch ? '1' : '0';
-        });
-
-        const btn = document.getElementById('btnFocusedDropdown');
-        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-
-        applyCurrentFilter();
-    }
-
-    // Main Filter Handler
-    function filterTab(type, el) {
-        currentFilter = type;
-
-        // Visual active pill state
-        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-        if (el) el.classList.add('active');
-
-        // Close focused dropdown if open
-        const menu = document.getElementById('focusedDropdownMenu');
-        if (menu) menu.classList.remove('show');
-
-        applyCurrentFilter();
-    }
-
-    function applyCurrentFilter() {
-        const query = (document.getElementById('msgSearchInput') ? document.getElementById('msgSearchInput').value : '').toLowerCase().trim();
-        const rows = document.querySelectorAll('#convList .conversation-card-item');
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            const searchData = (row.getAttribute('data-search') || '').toLowerCase();
-            const isUnread = row.getAttribute('data-unread') === 'true';
-            const isJobs = row.getAttribute('data-jobs') === 'true';
-            const isConnection = row.getAttribute('data-connection') === 'true';
-            const isInMail = row.getAttribute('data-inmail') === 'true';
-            const isStarred = row.getAttribute('data-starred') === 'true';
-            const isFocused = row.getAttribute('data-focused') === 'true';
-
-            // Filter match logic
-            let matchesFilter = true;
-
-            if (currentFilter === 'focused') {
-                matchesFilter = isFocused;
-            } else if (currentFilter === 'all') {
-                matchesFilter = true;
-            } else if (currentFilter === 'unread') {
-                matchesFilter = isUnread;
-            } else if (currentFilter === 'jobs') {
-                matchesFilter = isJobs;
-            } else if (currentFilter === 'connections') {
-                matchesFilter = isConnection;
-            } else if (currentFilter === 'inmail') {
-                matchesFilter = isInMail;
-            } else if (currentFilter === 'starred') {
-                matchesFilter = isStarred;
-            }
-
-            // Search query match
-            const matchesSearch = !query || searchData.includes(query);
-
-            if (matchesFilter && matchesSearch) {
-                row.style.display = 'flex';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        // Filter Empty State
-        const emptyState = document.getElementById('filterEmptyState');
-        const emptyText = document.getElementById('filterEmptyText');
-        const emptyIcon = document.getElementById('filterEmptyIcon');
-
-        if (emptyState) {
-            if (visibleCount === 0 && rows.length > 0) {
-                emptyState.style.display = 'block';
-                if (currentFilter === 'focused') {
-                    emptyText.textContent = 'No focused conversations right now.';
-                    emptyIcon.className = 'fas fa-inbox';
-                } else if (currentFilter === 'unread') {
-                    emptyText.textContent = 'No unread conversations right now.';
-                    emptyIcon.className = 'far fa-envelope-open';
-                } else if (currentFilter === 'jobs') {
-                    emptyText.textContent = 'No job-related conversations found.';
-                    emptyIcon.className = 'fas fa-briefcase';
-                } else if (currentFilter === 'connections') {
-                    emptyText.textContent = 'No connection conversations found.';
-                    emptyIcon.className = 'fas fa-user-friends';
-                } else if (currentFilter === 'inmail') {
-                    emptyText.textContent = 'No InMail conversations found.';
-                    emptyIcon.className = 'fas fa-paper-plane';
-                } else if (currentFilter === 'starred') {
-                    emptyText.textContent = 'No starred conversations yet. Star any conversation to access it here!';
-                    emptyIcon.className = 'far fa-star';
+        function initStarredCards() {
+            const starred = getStarredUsers();
+            document.querySelectorAll('#convList .conversation-card-item').forEach(card => {
+                const uid = card.getAttribute('data-user-id');
+                const starBtn = card.querySelector('.conv-star-btn');
+                if (starred.includes(uid)) {
+                    card.setAttribute('data-starred', 'true');
+                    if (starBtn) {
+                        starBtn.classList.add('starred');
+                        starBtn.innerHTML = '<i class="fas fa-star" style="color: #eab308;"></i>';
+                    }
                 } else {
-                    emptyText.textContent = 'No matching conversations found.';
-                    emptyIcon.className = 'fas fa-search';
+                    card.setAttribute('data-starred', 'false');
+                    if (starBtn) {
+                        starBtn.classList.remove('starred');
+                        starBtn.innerHTML = '<i class="far fa-star"></i>';
+                    }
+                }
+            });
+        }
+
+        function toggleConvStar(e, userId) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            let starred = getStarredUsers();
+            const card = document.querySelector(`#convList .conversation-card-item[data-user-id="${userId}"]`);
+            const isStarred = starred.includes(String(userId));
+
+            if (isStarred) {
+                starred = starred.filter(id => id !== String(userId));
+                if (card) {
+                    card.setAttribute('data-starred', 'false');
+                    const btn = card.querySelector('.conv-star-btn');
+                    if (btn) {
+                        btn.classList.remove('starred');
+                        btn.innerHTML = '<i class="far fa-star"></i>';
+                    }
                 }
             } else {
-                emptyState.style.display = 'none';
+                starred.push(String(userId));
+                if (card) {
+                    card.setAttribute('data-starred', 'true');
+                    const btn = card.querySelector('.conv-star-btn');
+                    if (btn) {
+                        btn.classList.add('starred');
+                        btn.innerHTML = '<i class="fas fa-star" style="color: #eab308;"></i>';
+                    }
+                }
+            }
+            saveStarredUsers(starred);
+
+            // If currently on Starred filter, refresh list
+            if (currentFilter === 'starred') {
+                applyCurrentFilter();
             }
         }
-    }
 
-    // Search contacts listener
-    const searchInput = document.getElementById('msgSearchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', applyCurrentFilter);
-    }
-
-    /* =========================================================================
-       3. TOOLBAR OPTIONS (IMAGE 1): IMAGE, FILE, GIF & EMOJI
-       ========================================================================= */
-
-    // Textarea expand/collapse
-    function toggleTextareaExpand() {
-        const textarea = document.getElementById('chatTextarea');
-        const chevron = document.getElementById('collapseChevron');
-        if (!textarea) return;
-        if (textarea.style.height === '140px') {
-            textarea.style.height = '';
-            if (chevron) {
-                chevron.classList.remove('fa-chevron-down');
-                chevron.classList.add('fa-chevron-up');
-            }
-        } else {
-            textarea.style.height = '140px';
-            if (chevron) {
-                chevron.classList.remove('fa-chevron-up');
-                chevron.classList.add('fa-chevron-down');
+        // Top header star toggle
+        function toggleStar(btn) {
+            const star = btn.querySelector('i');
+            {% if other_user %}
+            toggleConvStar(null, '{{ other_user.id }}');
+            {% endif %}
+            if (star.classList.contains('far')) {
+                star.classList.remove('far');
+                star.classList.add('fas');
+                star.style.color = '#eab308';
+            } else {
+                star.classList.remove('fas');
+                star.classList.add('far');
+                star.style.color = '';
             }
         }
-    }
 
-    // --- Option A: Image Upload ---
-    function triggerImageUpload() {
-        const input = document.getElementById('chatImageInput');
-        if (input) input.click();
-    }
+        /* =========================================================================
+           2. FILTER PILLS & FOCUSED DROPDOWN (WORKING LOGIC)
+           ========================================================================= */
+        let currentFilter = 'focused';
+        let selectedFocusedType = 'focused';
 
-    function handleImageSelected(input) {
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-        
-        // Reset file attachment and gif
-        clearAttachmentPreview(false);
+        // Calculate unread badge count on page load
+        function updateUnreadBadge() {
+            let unreadCount = 0;
+            document.querySelectorAll('#convList .conversation-card-item').forEach(card => {
+                if (card.getAttribute('data-unread') === 'true') {
+                    unreadCount++;
+                }
+            });
+            const badge = document.getElementById('unreadTotalBadge');
+            if (badge) {
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
+        // Clear legacy archived storage if present
+        try {
+            localStorage.removeItem('archived_users');
+        } catch (e) { }
+
+        // Toggle Focused Dropdown Menu
+        function handleFocusedClick(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('focusedDropdownMenu');
+            const btn = document.getElementById('btnFocusedDropdown');
+
+            if (menu) {
+                menu.classList.toggle('show');
+            }
+
+            // Highlight Focused pill
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            // Apply active focused filter
+            if (currentFilter !== 'focused' && currentFilter !== 'all') {
+                currentFilter = selectedFocusedType || 'focused';
+                applyCurrentFilter();
+            }
+        }
+
+        function toggleFocusedDropdown(e) {
+            handleFocusedClick(e);
+        }
+
+        function selectFocusedOption(type, label, e) {
+            if (e) e.stopPropagation();
+            selectedFocusedType = type;
+            currentFilter = type;
+
+            const menu = document.getElementById('focusedDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            const labelEl = document.getElementById('focusedLabel');
+            if (labelEl) labelEl.textContent = label;
+
+            // Update active check in menu
+            document.querySelectorAll('.focused-dropdown-item').forEach(item => {
+                const isMatch = item.getAttribute('data-type') === type;
+                item.classList.toggle('active', isMatch);
+                const icon = item.querySelector('i');
+                if (icon) icon.style.opacity = isMatch ? '1' : '0';
+            });
+
+            const btn = document.getElementById('btnFocusedDropdown');
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            applyCurrentFilter();
+        }
+
+        // Main Filter Handler
+        function filterTab(type, el) {
+            currentFilter = type;
+
+            // Visual active pill state
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            // Close focused dropdown if open
+            const menu = document.getElementById('focusedDropdownMenu');
+            if (menu) menu.classList.remove('show');
+
+            applyCurrentFilter();
+        }
+
+        function applyCurrentFilter() {
+            const query = (document.getElementById('msgSearchInput') ? document.getElementById('msgSearchInput').value : '').toLowerCase().trim();
+            const rows = document.querySelectorAll('#convList .conversation-card-item');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const searchData = (row.getAttribute('data-search') || '').toLowerCase();
+                const isUnread = row.getAttribute('data-unread') === 'true';
+                const isJobs = row.getAttribute('data-jobs') === 'true';
+                const isConnection = row.getAttribute('data-connection') === 'true';
+                const isInMail = row.getAttribute('data-inmail') === 'true';
+                const isStarred = row.getAttribute('data-starred') === 'true';
+                const isFocused = row.getAttribute('data-focused') === 'true';
+
+                // Filter match logic
+                let matchesFilter = true;
+
+                if (currentFilter === 'focused') {
+                    matchesFilter = isFocused;
+                } else if (currentFilter === 'all') {
+                    matchesFilter = true;
+                } else if (currentFilter === 'unread') {
+                    matchesFilter = isUnread;
+                } else if (currentFilter === 'jobs') {
+                    matchesFilter = isJobs;
+                } else if (currentFilter === 'connections') {
+                    matchesFilter = isConnection;
+                } else if (currentFilter === 'inmail') {
+                    matchesFilter = isInMail;
+                } else if (currentFilter === 'starred') {
+                    matchesFilter = isStarred;
+                }
+
+                // Search query match
+                const matchesSearch = !query || searchData.includes(query);
+
+                if (matchesFilter && matchesSearch) {
+                    row.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Filter Empty State
+            const emptyState = document.getElementById('filterEmptyState');
+            const emptyText = document.getElementById('filterEmptyText');
+            const emptyIcon = document.getElementById('filterEmptyIcon');
+
+            if (emptyState) {
+                if (visibleCount === 0 && rows.length > 0) {
+                    emptyState.style.display = 'block';
+                    if (currentFilter === 'focused') {
+                        emptyText.textContent = 'No focused conversations right now.';
+                        emptyIcon.className = 'fas fa-inbox';
+                    } else if (currentFilter === 'unread') {
+                        emptyText.textContent = 'No unread conversations right now.';
+                        emptyIcon.className = 'far fa-envelope-open';
+                    } else if (currentFilter === 'jobs') {
+                        emptyText.textContent = 'No job-related conversations found.';
+                        emptyIcon.className = 'fas fa-briefcase';
+                    } else if (currentFilter === 'connections') {
+                        emptyText.textContent = 'No connection conversations found.';
+                        emptyIcon.className = 'fas fa-user-friends';
+                    } else if (currentFilter === 'inmail') {
+                        emptyText.textContent = 'No InMail conversations found.';
+                        emptyIcon.className = 'fas fa-paper-plane';
+                    } else if (currentFilter === 'starred') {
+                        emptyText.textContent = 'No starred conversations yet. Star any conversation to access it here!';
+                        emptyIcon.className = 'far fa-star';
+                    } else {
+                        emptyText.textContent = 'No matching conversations found.';
+                        emptyIcon.className = 'fas fa-search';
+                    }
+                } else {
+                    emptyState.style.display = 'none';
+                }
+            }
+        }
+
+        // Search contacts listener
+        const searchInput = document.getElementById('msgSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', applyCurrentFilter);
+        }
+
+        /* =========================================================================
+           3. TOOLBAR OPTIONS (IMAGE 1): IMAGE, FILE, GIF & EMOJI
+           ========================================================================= */
+
+        // Textarea expand/collapse
+        function toggleTextareaExpand() {
+            const textarea = document.getElementById('chatTextarea');
+            const chevron = document.getElementById('collapseChevron');
+            if (!textarea) return;
+            if (textarea.style.height === '140px') {
+                textarea.style.height = '';
+                if (chevron) {
+                    chevron.classList.remove('fa-chevron-down');
+                    chevron.classList.add('fa-chevron-up');
+                }
+            } else {
+                textarea.style.height = '140px';
+                if (chevron) {
+                    chevron.classList.remove('fa-chevron-up');
+                    chevron.classList.add('fa-chevron-down');
+                }
+            }
+        }
+
+        // --- Option A: Image Upload ---
+        function triggerImageUpload() {
+            const input = document.getElementById('chatImageInput');
+            if (input) input.click();
+        }
+
+        function handleImageSelected(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+
+            // Reset file attachment and gif
+            clearAttachmentPreview(false);
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                renderAttachmentPreview({
+                    type: 'image',
+                    src: e.target.result,
+                    name: file.name,
+                    size: (file.size / 1024).toFixed(1) + ' KB'
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- Option B: File / Document Attachment ---
+        function triggerFileUpload() {
+            const input = document.getElementById('chatFileInput');
+            if (input) input.click();
+        }
+
+        function handleFileSelected(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+
+            // Reset image and gif
+            clearAttachmentPreview(false);
+
             renderAttachmentPreview({
-                type: 'image',
-                src: e.target.result,
+                type: 'file',
                 name: file.name,
                 size: (file.size / 1024).toFixed(1) + ' KB'
             });
-        };
-        reader.readAsDataURL(file);
-    }
+        }
 
-    // --- Option B: File / Document Attachment ---
-    function triggerFileUpload() {
-        const input = document.getElementById('chatFileInput');
-        if (input) input.click();
-    }
+        // Preview Renderer & Cleaner
+        function renderAttachmentPreview(item) {
+            const box = document.getElementById('attachmentPreviewBox');
+            if (!box) return;
 
-    function handleFileSelected(input) {
-        if (!input.files || !input.files[0]) return;
-        const file = input.files[0];
-
-        // Reset image and gif
-        clearAttachmentPreview(false);
-
-        renderAttachmentPreview({
-            type: 'file',
-            name: file.name,
-            size: (file.size / 1024).toFixed(1) + ' KB'
-        });
-    }
-
-    // Preview Renderer & Cleaner
-    function renderAttachmentPreview(item) {
-        const box = document.getElementById('attachmentPreviewBox');
-        if (!box) return;
-
-        let content = '';
-        if (item.type === 'image' || item.type === 'gif') {
-            content = `
+            let content = '';
+            if (item.type === 'image' || item.type === 'gif') {
+                content = `
                 <img src="${item.src}" class="attachment-preview-thumb" alt="Preview">
                 <div class="attachment-info">
                     <div class="attachment-name">${item.name}</div>
@@ -1677,8 +1779,8 @@
                 </div>
                 <button type="button" class="attachment-remove-btn" title="Remove" onclick="clearAttachmentPreview(true)">&times;</button>
             `;
-        } else {
-            content = `
+            } else {
+                content = `
                 <div class="attachment-file-icon">
                     <i class="fas fa-file-alt"></i>
                 </div>
@@ -1688,93 +1790,94 @@
                 </div>
                 <button type="button" class="attachment-remove-btn" title="Remove" onclick="clearAttachmentPreview(true)">&times;</button>
             `;
+            }
+
+            box.innerHTML = content;
+            box.style.display = 'flex';
         }
 
-        box.innerHTML = content;
-        box.style.display = 'flex';
-    }
-
-    function clearAttachmentPreview(clearInputs = true) {
-        const box = document.getElementById('attachmentPreviewBox');
-        if (box) {
-            box.innerHTML = '';
-            box.style.display = 'none';
-        }
-        if (clearInputs) {
-            const imgInput = document.getElementById('chatImageInput');
-            if (imgInput) imgInput.value = '';
-            const fileInput = document.getElementById('chatFileInput');
-            if (fileInput) fileInput.value = '';
-            const gifInput = document.getElementById('chatGifInput');
-            if (gifInput) gifInput.value = '';
-        }
-    }
-    // Close popovers on outside click
-    document.addEventListener('click', function(e) {
-        const focusedMenu = document.getElementById('focusedDropdownMenu');
-        const focusedBtn = document.getElementById('btnFocusedDropdown');
-        if (focusedMenu && focusedMenu.classList.contains('show')) {
-            if (!focusedMenu.contains(e.target) && (!focusedBtn || !focusedBtn.contains(e.target))) {
-                focusedMenu.classList.remove('show');
+        function clearAttachmentPreview(clearInputs = true) {
+            const box = document.getElementById('attachmentPreviewBox');
+            if (box) {
+                box.innerHTML = '';
+                box.style.display = 'none';
+            }
+            if (clearInputs) {
+                const imgInput = document.getElementById('chatImageInput');
+                if (imgInput) imgInput.value = '';
+                const fileInput = document.getElementById('chatFileInput');
+                if (fileInput) fileInput.value = '';
+                const gifInput = document.getElementById('chatGifInput');
+                if (gifInput) gifInput.value = '';
             }
         }
-    });
-
-    // Form submission validation
-    const chatForm = document.getElementById('chatInputForm');
-    if (chatForm) {
-        chatForm.addEventListener('submit', function(e) {
-            const text = (document.getElementById('chatTextarea') ? document.getElementById('chatTextarea').value : '').trim();
-            const imgInput = document.getElementById('chatImageInput');
-            const fileInput = document.getElementById('chatFileInput');
-
-            const hasImage = imgInput && imgInput.files && imgInput.files.length > 0;
-            const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
-
-            if (!text && !hasImage && !hasFile) {
-                e.preventDefault();
-                alert('Please enter a message or attach an image or file before sending.');
+        // Close popovers on outside click
+        document.addEventListener('click', function (e) {
+            const focusedMenu = document.getElementById('focusedDropdownMenu');
+            const focusedBtn = document.getElementById('btnFocusedDropdown');
+            if (focusedMenu && focusedMenu.classList.contains('show')) {
+                if (!focusedMenu.contains(e.target) && (!focusedBtn || !focusedBtn.contains(e.target))) {
+                    focusedMenu.classList.remove('show');
+                }
             }
         });
-    }
 
-    function checkUrlFilter() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const filterParam = (urlParams.get('filter') || urlParams.get('tab') || '').toLowerCase();
-        if (filterParam) {
-            const pillMap = {
-                'connections': document.getElementById('pillConnections'),
-                'jobs': document.getElementById('pillJobs'),
-                'unread': document.getElementById('pillUnread'),
-                'inmail': document.getElementById('pillInMail'),
-                'starred': document.getElementById('pillStarred')
-            };
-            if (pillMap[filterParam]) {
-                filterTab(filterParam, pillMap[filterParam]);
-                return true;
-            } else if (filterParam === 'all') {
-                selectFocusedOption('all', 'All Messages', null);
-                return true;
-            }
+        // Form submission validation
+        const chatForm = document.getElementById('chatInputForm');
+        if (chatForm) {
+            chatForm.addEventListener('submit', function (e) {
+                const text = (document.getElementById('chatTextarea') ? document.getElementById('chatTextarea').value : '').trim();
+                const imgInput = document.getElementById('chatImageInput');
+                const fileInput = document.getElementById('chatFileInput');
+
+                const hasImage = imgInput && imgInput.files && imgInput.files.length > 0;
+                const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+
+                if (!text && !hasImage && !hasFile) {
+                    e.preventDefault();
+                    alert('Please enter a message or attach an image or file before sending.');
+                }
+            });
         }
-        return false;
-    }
 
-    // Initialize state on load
-    document.addEventListener('DOMContentLoaded', function() {
+        function checkUrlFilter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterParam = (urlParams.get('filter') || urlParams.get('tab') || '').toLowerCase();
+            if (filterParam) {
+                const pillMap = {
+                    'connections': document.getElementById('pillConnections'),
+                    'jobs': document.getElementById('pillJobs'),
+                    'unread': document.getElementById('pillUnread'),
+                    'inmail': document.getElementById('pillInMail'),
+                    'starred': document.getElementById('pillStarred')
+                };
+                if (pillMap[filterParam]) {
+                    filterTab(filterParam, pillMap[filterParam]);
+                    return true;
+                } else if (filterParam === 'all') {
+                    selectFocusedOption('all', 'All Messages', null);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Initialize state on load
+        document.addEventListener('DOMContentLoaded', function () {
+            initStarredCards();
+            updateUnreadBadge();
+            if (!checkUrlFilter()) {
+                applyCurrentFilter();
+            }
+        });
+        // In case DOM is already loaded
         initStarredCards();
         updateUnreadBadge();
         if (!checkUrlFilter()) {
             applyCurrentFilter();
         }
-    });
-    // In case DOM is already loaded
-    initStarredCards();
-    updateUnreadBadge();
-    if (!checkUrlFilter()) {
-        applyCurrentFilter();
-    }
-</script>
+    </script>
 
 </body>
+
 </html>

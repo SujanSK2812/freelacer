@@ -43,6 +43,7 @@
     .post-job-btn { background: #0a66c2; color: #ffffff; border: none; padding: 0.7rem 1.75rem; border-radius: 24px; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(10, 102, 194, 0.2); }
     .post-job-btn:hover { background: #004182; box-shadow: 0 4px 8px rgba(0, 65, 130, 0.3); transform: translateY(-1px); }
     @media (max-width: 640px) { .dashboard-container { padding: 0 1rem; margin: 1.5rem auto; } .card-header { flex-direction: column; align-items: flex-start; padding: 1.5rem; } .job-form { padding: 1.5rem; } .form-actions { flex-direction: column-reverse; } .form-actions .btn-cancel, .form-actions .post-job-btn { width: 100%; justify-content: center; } }
+    @media (max-width: 480px) { .dashboard-container { padding: 0 8px; margin: 1rem auto; } .card-header { padding: 1.25rem 1rem; } .job-form { padding: 1.25rem 1rem; } }
 
     /* Upload Status Modal Overlay */
     .upload-status-overlay {
@@ -246,9 +247,36 @@
   </div>
 </div>
 
-{% include 'includes/footer.html' %}
+<!-- Upload Status Modal Overlay -->
+<div id="uploadStatusModal" class="upload-status-overlay" style="display: none;">
+  <div class="upload-status-card">
+    <div id="uploadSpinnerContainer" class="status-icon-wrap">
+      <div class="custom-spinner"></div>
+    </div>
+    <div id="uploadSuccessContainer" class="status-icon-wrap" style="display: none;">
+      <div class="success-icon-circle">
+        <i class="fas fa-check"></i>
+      </div>
+    </div>
+    <div id="uploadErrorContainer" class="status-icon-wrap" style="display: none;">
+      <div class="error-icon-circle">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+    </div>
+    
+    <h3 id="uploadStatusTitle" class="status-title">Uploading your post...</h3>
+    <p id="uploadStatusSubtitle" class="status-subtitle">Please wait while we upload your showcase details.</p>
+    
+    <div id="uploadCountdownWrap" class="countdown-bar-wrap" style="display: none;">
+      <div id="uploadCountdownBar" class="countdown-bar-fill"></div>
+    </div>
+    
+    <button type="button" id="uploadDismissBtn" class="status-dismiss-btn" style="display: none;">Close & Try Again</button>
+  </div>
+</div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
   const imageInput = document.getElementById('image');
   const previewWrapper = document.getElementById('imagePreviewWrapper');
   const previewImg = document.getElementById('imagePreview');
@@ -419,38 +447,13 @@
 
   if (dismissBtn) {
     dismissBtn.addEventListener('click', function() {
-      modal.style.display = 'none';
+      if (modal) modal.style.display = 'none';
     });
   }
+});
 </script>
 
-<!-- Upload Status Modal Overlay -->
-<div id="uploadStatusModal" class="upload-status-overlay" style="display: none;">
-  <div class="upload-status-card">
-    <div id="uploadSpinnerContainer" class="status-icon-wrap">
-      <div class="custom-spinner"></div>
-    </div>
-    <div id="uploadSuccessContainer" class="status-icon-wrap" style="display: none;">
-      <div class="success-icon-circle">
-        <i class="fas fa-check"></i>
-      </div>
-    </div>
-    <div id="uploadErrorContainer" class="status-icon-wrap" style="display: none;">
-      <div class="error-icon-circle">
-        <i class="fas fa-exclamation-triangle"></i>
-      </div>
-    </div>
-    
-    <h3 id="uploadStatusTitle" class="status-title">Uploading your post...</h3>
-    <p id="uploadStatusSubtitle" class="status-subtitle">Please wait while we upload your showcase details.</p>
-    
-    <div id="uploadCountdownWrap" class="countdown-bar-wrap" style="display: none;">
-      <div id="uploadCountdownBar" class="countdown-bar-fill"></div>
-    </div>
-    
-    <button type="button" id="uploadDismissBtn" class="status-dismiss-btn" style="display: none;">Close & Try Again</button>
-  </div>
-</div>
+{% include 'includes/footer.html' %}
 
 </body>
 </html>
